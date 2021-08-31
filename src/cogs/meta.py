@@ -127,11 +127,10 @@ class MetaCog(commands.Cog, name="Other Commands"):
             colour=self.bot.embed_color, 
             description="\n".join([
                 f"{ctx.me.name} - Bot for Discord based on the indie game Baba Is You. "
-                "Written by RocketRace#0798 using the [discord.py](https://github.com/Rapptz/discord.py) library."
+                "Written by RocketRace#0798 (and modded by balt#6423) using the [discord.py](https://github.com/Rapptz/discord.py) library."
             ])
         )
-        about_embed.add_field(name="Links", value="[GitHub repository](https://github.com/RocketRace/robot-is-you)\n" + \
-            "[Support guild](https://discord.gg/rMX3YPK)"
+        about_embed.add_field(name="Links", value="[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n" + \
         )
         ut = datetime.utcnow() - self.bot.started
         stats = "".join([
