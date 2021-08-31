@@ -5,3 +5,9 @@ log.txt
 robot.db
 robot.db-shm
 robot.db-wal
+robot.db-shm
+src/__pycache__/tile.cpython-38.pyc
+src/cogs/__pycache__/global.cpython-38.pyc
+*.pyc
+robot.db
+robot.db-wal

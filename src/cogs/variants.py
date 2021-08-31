@@ -589,7 +589,16 @@ def setup(bot: Bot):
         return{
             "mask_alpha": True
         }
-        
+    
+    @handlers.handler(
+        pattern=r"cut",
+        variant_hints={"cut": "`cut` (Tiles below get this cut from them)"},
+        variant_group="Filters"
+    )
+    def cut(ctx: HandlerContext) -> TileFields:
+        return{
+            "cut_alpha": True
+        }
         
     @handlers.handler(
         pattern=r"neon",
@@ -689,7 +698,7 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"rotate(\d*)",
+        pattern=r"rotate(\d+)",
         variant_hints={"rotate": "`rotate` (Rotates the sprite _n_ degrees counterclockwise)"},
         variant_group="Filters"
     )
