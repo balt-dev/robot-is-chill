@@ -1,0 +1,12 @@
+[general]
+name=Baba Is You - m
+start=106level
+firstlevel=0level
+themecount=27
+author=Hempuli
+prize_max=225
+clear_max=12
+bonus_max=3
+[levels]
+levelid=328
+rolling_levelid=1

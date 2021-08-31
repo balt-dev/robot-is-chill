@@ -1,0 +1,27 @@
+[general]
+name=just no
+customparent=
+palette=test.png
+paletteroot=1
+levels=0
+paths=0
+specials=0
+leveltype=0
+unlockcount=0
+selectorX=-1
+selectorY=-1
+music=burn
+[tiles]
+changed=object005,object103,object072,object070,object000,object036,object059,
+object005_activecolour=0,2
+object005_colour=0,1
+object103_activecolour=4,1
+object103_colour=0,1
+object072_activecolour=2,3
+object072_colour=3,2
+object070_colour=2,3
+object000_colour=4,2
+object036_activecolour=0,2
+object036_colour=0,1
+object059_activecolour=2,2
+object059_colour=3,2

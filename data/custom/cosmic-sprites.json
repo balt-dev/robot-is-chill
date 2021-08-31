@@ -1,0 +1,55 @@
+[
+    {
+        "name": "fred",
+        "sprite": "fred",
+        "tiling": "2",
+        "color": [
+            "4",
+            "1"
+        ]
+    },
+    {
+        "name": "text_fred",
+        "sprite": "text_fred",
+        "tiling": "-1",
+        "color": [
+            "4",
+            "0"
+        ],
+        "active": [
+            "4",
+            "1"
+        ]
+    },
+    {
+        "name": "beta",
+        "sprite": "beta",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "pacman",
+        "sprite": "pacman",
+        "tiling": "3",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_pacman",
+        "sprite": "text_pacman",
+        "tiling": "-1",
+        "color": [
+            "6",
+            "1"
+        ],
+        "active": [
+            "2",
+            "4"
+        ]
+    }
+]

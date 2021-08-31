@@ -1,0 +1,16 @@
+[general]
+name=?
+palette=default.png
+levels=0
+selectorX=-1
+selectorY=-1
+customparent=
+paletteroot=1
+paths=0
+leveltype=0
+unlockcount=0
+mapid=?
+specials=0
+music=noise
+[tiles]
+changed=

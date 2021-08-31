@@ -1,0 +1,90 @@
+[
+    {
+        "name": "belbel",
+        "sprite": "belbel",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_belbel",
+        "sprite": "text_belbel",
+        "tiling": "-1",
+        "color": [
+            "6",
+            "1"
+        ],
+        "active": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "flushed",
+        "sprite": "flushed",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_flushed",
+        "sprite": "text_flushed",
+        "tiling": "-1",
+        "color": [
+            "6",
+            "1"
+        ],
+        "active": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "pensive",
+        "sprite": "pensive",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_pensive",
+        "sprite": "text_pensive",
+        "tiling": "-1",
+        "color": [
+            "6",
+            "1"
+        ],
+        "active": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "islandc",
+        "sprite": "islandc",
+        "tiling": "0",
+        "color": [
+            "6",
+            "1"
+        ]
+    },
+    {
+        "name": "text_island",
+        "sprite": "text_island",
+        "tiling": "-1",
+        "color": [
+            "6",
+            "0"
+        ],
+        "active": [
+            "6",
+            "1"
+        ]
+    }
+]

@@ -1,0 +1,29 @@
+[
+   {
+      "sprite": "text_edge",
+      "name": "text_edge",
+      "color": [
+         "0",
+         "3"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "sprite": "text_cute",
+      "name": "text_cute",
+      "color": [
+         "4",
+         "2"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "sprite": "text_soft",
+      "name": "text_soft",
+      "color": [
+         "0",
+         "3"
+      ],
+      "tiling": "-1"
+   }
+]

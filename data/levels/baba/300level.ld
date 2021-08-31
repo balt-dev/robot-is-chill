@@ -1,0 +1,17 @@
+[general]
+name=cannon
+customparent=
+palette=default.png
+paletteroot=1
+levels=0
+paths=0
+specials=0
+leveltype=0
+unlockcount=0
+selectorX=-1
+selectorY=-1
+[tiles]
+changed=object012,object034,
+object012_colour=5,0
+object034_activecolour=5,1
+object034_colour=5,0

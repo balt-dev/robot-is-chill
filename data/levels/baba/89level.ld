@@ -1,0 +1,27 @@
+[general]
+name=ruined orchard
+palette=garden.png
+levels=0
+selectorX=-1
+selectorY=-1
+customparent=
+paletteroot=1
+paths=0
+leveltype=0
+unlockcount=0
+specials=0
+music=garden
+[tiles]
+changed=object055,object114,object071,object079,object043,object115,object018,object070,object110,
+object055_colour=2,1
+object114_activecolour=0,2
+object114_colour=0,0
+object071_colour=1,0
+object079_root=0
+object079_image=tree2
+object043_activecolour=2,1
+object043_colour=2,0
+object115_colour=0,2
+object018_colour=0,0
+object070_layer=10
+object110_colour=1,0

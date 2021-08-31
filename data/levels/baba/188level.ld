@@ -1,0 +1,15 @@
+[general]
+name=triplets
+palette=variant.png
+levels=0
+paths=0
+leveltype=0
+unlockcount=0
+selectorX=-1
+selectorY=-1
+paletteroot=1
+customparent=
+specials=0
+[tiles]
+changed=object070,
+object070_layer=13

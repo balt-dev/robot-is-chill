@@ -1,0 +1,20 @@
+[
+    {
+        "name": "switch",
+        "sprite": "switch",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_switch",
+        "sprite": "text_switch",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    }
+]

@@ -1,0 +1,25 @@
+[general]
+name=even less there
+palette=autumn.png
+levels=0
+selectorX=-1
+selectorY=-1
+paths=0
+leveltype=0
+unlockcount=0
+music=burn
+particles=soot
+customparent=
+paletteroot=1
+specials=0
+[tiles]
+changed=object041,object100,object071,object053,
+object041_image=husk
+object041_name=husk
+object041_colour=6,1
+object100_colour=5,2
+object071_colour=1,0
+object053_image=text_husk
+object053_name=text_husk
+object053_activecolour=6,1
+object053_colour=5,1

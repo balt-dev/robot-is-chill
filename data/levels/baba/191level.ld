@@ -1,0 +1,24 @@
+[general]
+name=moving floor
+palette=ruins.png
+levels=0
+paths=0
+leveltype=0
+unlockcount=0
+selectorX=-1
+selectorY=-1
+customparent=
+paletteroot=1
+specials=0
+music=forest
+particles=pollen
+[tiles]
+changed=object018,object114,object115,
+object018_colour=1,2
+object114_image=text_bug
+object114_name=text_bug
+object114_activecolour=6,2
+object114_colour=6,0
+object115_image=bug
+object115_name=bug
+object115_colour=6,2

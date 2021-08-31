@@ -1,0 +1,22 @@
+[general]
+name=out of reach
+palette=default.png
+levels=0
+selectorX=-1
+selectorY=-1
+paths=0
+leveltype=0
+unlockcount=0
+customparent=
+paletteroot=1
+specials=1
+[specials]
+0X=20
+0Y=3
+0Z=0
+0data=controls,undo
+[tiles]
+changed=object063,
+object063_root=0
+object063_image=button_undo
+object063_colour=0,3

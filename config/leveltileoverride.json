@@ -1,0 +1,46 @@
+{
+   "hand": {
+      "tiling": "0",
+      "type": "0",
+      "sprite": "hand",
+      "color": [
+         "0",
+         "3"
+      ],
+      "source": "baba"
+   },
+   "text_hand": {
+      "tiling": "-1",
+      "type": "0",
+      "sprite": "text_hand",
+      "color": [
+         "0",
+         "3"
+      ],
+      "source": "baba"
+   },
+   "belt": {
+      "tiling": "3",
+      "type": "0",
+      "sprite": "belt",
+      "color": [
+         "1",
+         "1"
+      ],
+      "source": "baba"
+   },
+   "text_belt": {
+      "source": "baba",
+      "tiling": "-1",
+      "type": "0",
+      "sprite": "text_belt",
+      "color": [
+         "1",
+         "2"
+      ],
+      "active": [
+         "1",
+         "3"
+      ]
+   }
+}

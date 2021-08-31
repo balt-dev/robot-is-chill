@@ -1,0 +1,18 @@
+[general]
+name=out at sea
+palette=garden.png
+levels=0
+selectorX=-1
+selectorY=-1
+paths=0
+leveltype=0
+unlockcount=0
+customparent=
+paletteroot=1
+specials=0
+music=garden
+[tiles]
+changed=object071,object079,
+object071_colour=1,0
+object079_root=0
+object079_image=tree2

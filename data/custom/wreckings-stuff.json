@@ -1,0 +1,137 @@
+[
+   {
+      "name": "text_only",
+      "sprite": "text_only",
+      "color": [
+         "0",
+         "3"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_light",
+      "sprite": "text_light",
+      "color": [
+         "0",
+         "3"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_ignore",
+      "sprite": "text_ignore",
+      "color": [
+         "2",
+         "2"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_soon",
+      "sprite": "text_soon",
+      "color": [
+         "3",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_reset",
+      "sprite": "text_reset",
+      "color": [
+         "1",
+         "4"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_set",
+      "sprite": "text_set",
+      "color": [
+         "1",
+         "4"
+      ],
+      "tiling": "-1"
+   },
+      {
+      "name": "text_burn",
+      "sprite": "text_burn",
+      "color": [
+         "2",
+         "3"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_oneway",
+      "sprite": "text_oneway",
+      "color": [
+         "5",
+         "2"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_revive",
+      "sprite": "text_revive",
+      "color": [
+         "4",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_split",
+      "sprite": "text_split",
+      "color": [
+         "4",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_heavy",
+      "sprite": "text_heavy",
+      "color": [
+         "0",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_pass",
+      "sprite": "text_pass",
+      "color": [
+         "0",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_swim",
+      "sprite": "text_swim",
+      "color": [
+         "1",
+         "3"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_link",
+      "sprite": "text_link",
+      "color": [
+         "5",
+         "4"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_path",
+      "sprite": "text_path",
+      "color": [
+         "6",
+         "2"
+      ],
+      "tiling": "-1"
+   }
+]

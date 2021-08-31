@@ -1,0 +1,1478 @@
+{
+    "0level": {
+        "Win": {
+            "Gentle Nudge": "I don't mean to be rude, but if you need a hint here you are not going to have fun with this game."
+        }
+    },
+    "1level": {
+        "Win": {
+            "Gentle Nudge": "Do you notice how the words \"Flag,\" \"Is,\" and \"Win\" are all separated?"
+        }
+    },
+    "189level": {
+        "Win": {
+            "Gentle Nudge": "Has anything really changed between level 01 and this?"
+        }
+    },
+    "3level": {
+        "Win": {
+            "Gentle Nudge": "Have you made an assumption about how you will finish this level, an assumption involving the Flag? Perhaps that assumption is wrong."
+        }
+    },
+    "2level": {
+        "Win": {
+            "Gentle Nudge": "There is a rule in this level which makes it impossible to win. Perhaps you can break up that rule?"
+        }
+    },
+    "90level": {
+        "Win": {
+            "Gentle Nudge": "First, you need to get past the \"Baba is You\" without breaking it up. How will you do that? Why does the game end if you break the rule?",
+            "Bigger Nudge": "It looks like three pieces of text can be freely moved around. Can those pieces of text form a rule?"
+        }
+    },
+    "5level": {
+        "Win": {
+            "Gentle Nudge": "Is there a rule that says that whatever is **You** must only have one instance?"
+        }
+    },
+    "6level": {
+        "Win": {
+            "Gentle Nudge": "**Wall** is what?"
+        }
+    },
+    "20level": {
+        "Win": {
+            "Gentle Nudge": "What can you do with that extra \"Wall\"?"
+        }
+    },
+    "212level": {
+        "Win": {
+            "Gentle Nudge": "**You** is never going to walk across the Walls.",
+            "Bigger Nudge": "There are three potential obstacles: the Rock, the Star, and the Skull. Which one has properties you cannot change? Which one do you need to get rid of?"
+        }
+    },
+    "10level": {
+        "Win": {
+            "Gentle Nudge": "Which exact object cannot cross the *Algae?*",
+            "Bigger Nudge": "*Keke* seems to be stuck on its path. Is there any way that can be changed?"
+        }
+    },
+    "4level": {
+        "Win": {
+            "Gentle Nudge": "*You* does need to get into that square of Stars.",
+            "Bigger Nudge": "Do you recall which objects cannot interact with an object that is **Defeat?**"
+        }
+    },
+    "93level": {
+        "Win": {
+            "Gentle Nudge": "Baba will never get into the pen with the Flag. Baba will never collide with the Flag."
+        }
+    },
+    "209level": {
+        "Win": {
+            "Gentle Nudge": "It is very natural that **Key is Open** and **Door is Shut.** Must this always be the case?"
+        }
+    },
+    "15level": {
+        "Win": {
+            "Gentle Nudge": "To get through the first Door, remember your solution to the Overworld Level 07.",
+            "Bigger Nudge": "Have you made an assumption that both doors must be removed in the same way?"
+        }
+    },
+    "8level": {
+        "Win": {
+            "Gentle Nudge": "How have you created all your statements so far? Have you convinced yourself this is the only way?"
+        }
+    },
+    "236level": {
+        "Win": {
+            "Gentle Nudge": "The statement **[X] is [X]** will always overrule **[X] is [Y]**, so long as it exists."
+        }
+    },
+    "210level": {
+        "Win": {
+            "Gentle Nudge": "What is the title of this level?",
+            "Bigger Nudge": "You might always imagine that an **Open** object must always be brought to a **Shut** object. Can this interaction be done another way?"
+        }
+    },
+    "136level": {
+        "Win": {
+            "Gentle Nudge": "There are suspicious gaps around the rule \"Baba is You.\"",
+            "Bigger Nudge": "An object does not carry over properties once it is transformed into another object."
+        }
+    },
+    "30level": {
+        "Win": {
+            "Gentle Nudge": "What noun do you need to be Win?",
+            "Gentle Nudge #2": "If the Door and \"Crab\" noun were removed, would this level be solvable?",
+            "Bigger Nudge": "If you try to push \"Crab\" up to make **Crab is Win**, what happens that stops you?",
+            "Bigger Nudge #2": "There is a suspicious space underneath the word \"Baba.\"",
+            "Specific Hint": "The initial state of Lake 09 should tell you something about how to solve this puzzle."
+        }
+    },
+    "166level": {
+        "Win": {
+            "Gentle Nudge": "It is very natural for **Key** to be **Open** and **Door** to be **Shut**, but do you think that might be giving you a false assumption on how you will escape the pen?",
+            "Bigger Nudge": "If you can't think how you will escape the pen, imagine what would happen if every Wall were a Door and ever Door a Wall."
+        }
+    },
+    "211level": {
+        "Win": {
+            "Gentle Nudge": "Yes, you will have to push the Text at the top right to form both **Crab is Defeat** and **Flag is Win.** But when?",
+            "Bigger Nudge": "Your solution to Lake 05 should remind you that two statements can deal with either the same noun or same property. How can you use that here?",
+            "Specific Hint": "First get in the pen with the Flag, and then create the win condition."
+        }
+    },
+    "314level": {
+        "Win": {
+            "Gentle Nudge": "In the solution to the previous level, do you notice how you had an extra word that wasn't being used?",
+            "Bigger Nudge": "What are the things you can do with this leftover word that do not involve making it into a rule?",
+            "Another Big Nudge": "Only **You** cannot overlap with *Crab*. This time there is only one *Crab.*",
+            "Specific Hint": "This time you will create the win condition, and then get... something... into the pen."
+        }
+    },
+    "310level": {
+        "Win": {
+            "Gentle Nudge": "The space to the left of \"Violet\" looks empty."
+        }
+    },
+    "205level": {
+        "Win": {
+            "Gentle Nudge": "This level looks almost exactly like the opening level. Should it be completed the same way?"
+        }
+    },
+    "218level": {
+        "Win": {
+            "Gentle Nudge": "You can't change **Skull is Float**. How can Baba pass by?",
+            "Bigger Nudge": "If **Baba is Float** and **Water** is not, you can cross. Is there another way to cross?"
+        }
+    },
+    "171level": {
+        "Win": {
+            "Gentle Nudge": "What is preventing you from getting the top rock out of the corner?",
+            "Bigger Nudge": "Does \"Push\" provide you with any use?"
+        }
+    },
+    "172level": {
+        "Win": {
+            "Gentle Nudge": "There are two changes to this level. What are they?",
+            "Bigger Nudge": "One change is the placement of the rocks, yes. What is the other one? Has one of the rules changed? If so, that means the rule from the previous level does not apply."
+        }
+    },
+    "234level": {
+        "Win": {
+            "Gentle Nudge": "How many objects do you have access to that you can Sink in the Water?",
+            "Bigger Nudge": "You can't change the rules at the top of the screen. Why do you have access to them?"
+        }
+    },
+    "107level": {
+        "Win": {
+            "Gentle Nudge": "Why is \"Baba\" on your side of the river?"
+        }
+    },
+    "7level": {
+        "Win": {
+            "Gentle Nudge": "Who is going to cross the Skulls?",
+            "Bigger Nudge": "Who is going to push \"Win\" up two spaces?"
+        }
+    },
+    "37level": {
+        "Win": {
+            "Gentle Nudge": "How will you get \"Win\" out of the pond? How many pieces of *Water* need to be removed?",
+            "Bigger Nudge": "You start with three objects which can potentially be **You**. Do you need that many?",
+            "Specific Hint": "If **You** is multiple objects, you can afford to lose one."
+        }
+    },
+    "319level": {
+        "Win": {
+            "Gentle Nudge": "Imagine the rule **Bolt is Melt** did not exist. How would you solve this level?",
+            "Bigger Nudge": "The existence of **Bolt is Melt** means Baba must be in a very specific place at a very specific time. Why?"
+        }
+    },
+    "68level": {
+        "Win": {
+            "Gentle Nudge": "Something needs to be **Win**. What will the sentence which makes that rule look like?",
+            "Bigger Nudge": "Which exact words need to be added to the sentence as it stands initially in order to make **\\_\\_\\_ is Win?**"
+        }
+    },
+    "65level": {
+        "Win": {
+            "Gentle Nudge": "Don't overthink it - the only way out of the pen is to break up **Wall is Stop.** Therefore, it must be possible.",
+            "Bigger Nudge": "The very first thing you should try doing is pushing Keke around. Why can't you? What happens instead?"
+        }
+    },
+    "219level": {
+        "Win": {
+            "Gentle Nudge": "It seems redundant to have two separate statements about Baba."
+        }
+    },
+    "173level": {
+        "Win": {
+            "Gentle Nudge": "Which exact objects in this level will **Sink** into the *Water?* Which ones won't?"
+        }
+    },
+    "41level": {
+        "Win": {
+            "Gentle Nudge": "What exactly has changed between Island 08 and this level?",
+            "Bigger Nudge": "How many tiles of *Water* need to be removed to get \"Win\" out of the pond? What rule would you need to do that? Is that even possible?",
+            "Specific Hint": "How many tiles of *Water* need to be removed to get something into the pond?"
+        }
+    },
+    "134level": {
+        "Win": {
+            "Gentle Nudge": "Look at your solution to Island 10. Were there any leftover pieces, and if so, how many?",
+            "Bigger Nudge": "How will your win condition look different from than of Island 10?",
+            "Specific Hint": "What would you need in order to use your Robot or Cog twice?"
+        }
+    },
+    "318level": {
+        "Win": {
+            "Gentle Nudge": "If there is no \"Push\" available, how can you move both Baba and Keke?"
+        }
+    },
+    "215level": {
+        "Win": {
+            "Gentle Nudge": "Do you have access to any rules on the edges of the level? How can you change them?",
+            "Bigger Nudge": "Why are there three skulls in a row by the word \"Flag\"? Has this arrangement given you an assumption on how you will approach the word \"Flag\"?",
+            "Specific Hint": "How will you cross the *Water* from the left? Is it the same way you will cross back?"
+        }
+    },
+    "199level": {
+        "Win": {
+            "Gentle Nudge": "If an object has both properties, which takes precedence, **Weak** or **Defeat?**"
+        }
+    },
+    "52level": {
+        "Win": {
+            "Gentle Nudge": "How many total objects do you need to cross the water? Does it matter what kind of objects they are?",
+            "Bigger Nudge": "There's a suspicious area beneath one of the rules at the top."
+        }
+    },
+    "58level": {
+        "Win": {
+            "Gentle Nudge": "You know you have to destroy the box eventually. What rule could you change to allow for this?",
+            "Bigger Nudge": "*You* is definitely going to cross the water."
+        }
+    },
+    "17level": {
+        "Win": {
+            "Gentle Nudge": "Think back to your solution to Ruins 02. Could this be replicated somehow? Where on the screen would you do that?",
+            "Bigger Nudge": "Surely you don't need a Box and a Keke... at the same time."
+        }
+    },
+    "23level": {
+        "Win": {
+            "Gentle Nudge": "Work backwards. The Door is stopping you from reaching the Flag. How will you open this Door?",
+            "Bigger Nudge": "Are you imagining **Key is You?** What other rule must exist so that you do not lose the game as soon as you open the Door?",
+            "Specific Hint": "If you have figured out how to get the door open and still have something be **You,** then surely you can perform that activity multiple times."
+        }
+    },
+    "33level": {
+        "Win": {
+            "Gentle Nudge": "How many objects are dropped with **Has?**",
+            "Bigger Nudge": "Is there a sentence you can create which may allow you to get more objects from **Has?**",
+            "Specific Hint": "Winning this level involves making one single crossword-like appendage of sentences. You can set it up and never change it and still win."
+        }
+    },
+    "71level": {
+        "Win": {
+            "Gentle Nudge": "There is not one extra object in the pen with you. Every single one will be used before you escape, and each one has a very specific use.",
+            "Bigger Nudge": "You will get out of the pen before breaking up **Skull is Defeat.**"
+        }
+    },
+    "72level": {
+        "Win": {
+            "How to cross the first river": "*Baba* is never going to cross this one, not now, not ever.",
+            "Getting through the Door": "You know Keke will open the Door. What other rule do you need to keep from ending up with a single Baba on the wrong side of the river?",
+            "How to cross the second river": "It is no accident this river is only one tile wide.",
+            "Specific Hint": "Is there a difference between **Keke is Move** and **Baba is Move?** What is it? Why does it happen?"
+        }
+    },
+    "56level": {
+        "Win": {
+            "Gentle Nudge": "What was your solution to Lake 08?",
+            "Bigger Nudge": "After that, what was your solution to Lake 05?"
+        }
+    },
+    "129level": {
+        "Win": {
+            "Gentle Nudge": "What happens when there is no object which is **You?** What if this happens while something is **Move?**",
+            "Bigger Nudge": "Why would you need three Babas?",
+            "Specific Hint": "You might already know you need to get Keke across the Grass. To do this, you will need every single piece of text at once, all of which will cross with Keke."
+        }
+    },
+    "238level": {
+        "Win": {
+            "Gentle Nudge": "Could there be another reason for *Love* aside from getting you across the river?"
+        }
+    },
+    "221level": {
+        "Win": {
+            "Gentle Nudge": "**Flag is Win,** but there's no Flag. How will you create one?",
+            "Bigger Nudge": "The Key will in fact cross over the river."
+        }
+    },
+    "235level": {
+        "Win": {
+            "Gentle Nudge": "**Love** has two properties. Which one takes precendence, if Baba walks onto *Love?*",
+            "Bigger Nudge": "When you're on the left side, you need **Love** to not be **Push.** But when you're on the right side, you need it to be **Push.** How is this possible?"
+        }
+    },
+    "62level": {
+        "Win": {
+            "Gentle Nudge": "**Tele** works so long as there are at least two instances of the object which is **Tele.** What objects have more than one instance?"
+        }
+    },
+    "194level": {
+        "Win": {
+            "Gentle Nudge": "The only way to make the win condition is to get a stray \"Is\" into the space between \"Love\" and \"Win.\" Which of the two \"Is\" words can you safely move?",
+            "Bigger Nudge": "There's a suspicious amount of space next to \"Leaf is Defeat.\""
+        }
+    },
+    "220level": {
+        "Win": {
+            "Gentle Nudge": "It's only possible to make two adjustments to the rules. You'll need to do both of those.",
+            "Bigger Nudge": "How many spaces exist between \"Win\" and the Flag? How many objects do you have access to?"
+        }
+    },
+    "36level": {
+        "Win": {
+            "Gentle Nudge": "Who is going to fish out the \"Flag\" from the right chamber? Baba or Ghost?",
+            "Bigger Nudge": "Does the Flag move every time Baba moves, or every time you make a movement input?",
+            "Specific Hint": "**Baba is Move** and **Ghost is Pull** seems like a good idea, but it won't work. It's close, though..."
+        }
+    },
+    "26level": {
+        "Win": {
+            "Gentle Nudge": "Which is more likely? You getting the Ghost down to where the Key is, or you getting the Key up to the Ghost?",
+            "Bigger Nudge": "Your solution to Fall 03 will help you here."
+        }
+    },
+    "35level": {
+        "Win": {
+            "Gentle Nudge": "If there were no Foliage, how would you solve this level?",
+            "Bigger Nudge": "Remember that **Defeat** only destroys objects which are **You.**"
+        }
+    },
+    "137level": {
+        "Win": {
+            "Gentle Nudge": "Have you tried literally the only two moves you can make?"
+        }
+    },
+    "160level": {
+        "Win": {
+            "Gentle Nudge": "The only way to win this level is indeed to push \"Baba is\" to the right. But this ends the level - why?",
+            "Bigger Nudge": "You will need to sink two patches of water. Which ones and why?",
+            "Specific Hint": "Literally everything that isn't a Rock is **Not Rock.**"
+        }
+    },
+    "174level": {
+        "Win": {
+            "Gentle Nudge": "Lots of rules! Which ones can you push around? Which ones can't be pushed around but can still be amended?"
+        }
+    },
+    "77level": {
+        "Win": {
+            "Gentle Nudge": "**Wall is not Stop.**",
+            "Bigger Nudge": "It's curious how most rules outside the pen are so far away from you... except for **Wall is Wall.**"
+        }
+    },
+    "29level": {
+        "Win": {
+            "Gentle Nudge": "How will you get another piece of *Text* into the compartment in the upper right? Is there a way besides teleporting *Text?*",
+            "Bigger Nudge": "Do you really need Keke, Box, and Flag all at the same time?",
+            "Specific Hint": "Make a list of all the **[X] is You** statements that are possible in this level. Can you find more than three?"
+        }
+    },
+    "269level": {
+        "Win": {
+            "Gentle Nudge": "Why do you normally never push any *Text* into a corner or wall?",
+            "Bigger Nudge": "Is there a way you can retreive text from a corner or a wall?"
+        }
+    },
+    "307level": {
+        "Win": {
+            "Gentle Nudge": "Is there any way to actually produce a Keke? Why do you have that piece of text?",
+            "Bigger Nudge": "Isn't it strange that there's an \"Is Float\" just hanging out there? And that there's one square of Water right where the noun would go?",
+            "Specific Hint": "**Text is Not Float.**"
+        }
+    },
+    "70level": {
+        "Win": {
+            "Gentle Nudge": "There are only two possible pairs of rules. What are they? How are they made?",
+            "Bigger Nudge": "Can Baba be on the Skulls without dying? How?",
+            "Specific Hint": "If Baba crosses the Skulls, you will lose at least one piece of Text. Is there any piece you can safely lose?"
+        }
+    },
+    "239level": {
+        "Win": {
+            "Gentle Nudge": "What is the river really preventing you from doing this time?",
+            "Bigger Nudge": "Why is **Water Defeat** and not **Sink?**"
+        }
+    },
+    "138level": {
+        "Win": {
+            "Gentle Nudge": "Come on, there's only a couple moves you can even try."
+        }
+    },
+    "308level": {
+        "Win": {
+            "Gentle Nudge": "You no longer have access to the lower right pen or the rule **Float.** But one other rule was removed, and another was changed. Why do you think that is?",
+            "Bigger Nudge": "In the previous version of this level you made two Babas. What uses can you have for two Babas?",
+            "Specific Hint": "What rule would allow *Baba* to cross the Skull?"
+        }
+    },
+    "66level": {
+        "Win": {
+            "Gentle Nudge": "**Wall** isn't **Stop.**"
+        }
+    },
+    "246level": {
+        "Win": {
+            "Gentle Nudge": "What is stopping you from getting through the Door?",
+            "Bigger Nudge": "How are you going to get access to \"Win\"?"
+        }
+    },
+    "69level": {
+        "Win": {
+            "Gentle Nudge": "Work your way backwards. What is the final thing you will do in this level? In order to make that happen, what is the primary obstacle?",
+            "Bigger Nudge": "That belt sure starts in a really inconvenient spot. Is there a way to make it more convenient?",
+            "Specific Hint": "From the start, try pulling that Tree across the Belt. As soon you step on the Belt, move up. What happens? Does this perhaps tell you how to solve the level?"
+        }
+    },
+    "34level": {
+        "Win": {
+            "Gentle Nudge": "What rules need to exist in order to finish this level? Why does it not work for Keke to form those rules?",
+            "Bigger Nudge": "Where exactly does Keke need to be standing when those rules are formed?"
+        }
+    },
+    "57level": {
+        "Win": {
+            "Gentle Nudge": "Do you remember Ruins 04? What did you do to solve that level? What can you do here that is similar?"
+        }
+    },
+    "85level": {
+        "Win": {
+            "Gentle Nudge": "What is preventing you from pushing the Ghost out of the lower hallway? Is there any object you can use to get around that?",
+            "Bigger Nudge": "If you've figured out which object will be used, you'll notice there's something wrong with this object. What is it? How can that be changed?"
+        }
+    },
+    "151level": {
+        "Win": {
+            "Gentle Nudge": "If something is both **Push** and **Stop,** which takes precedence when you try to collide with it?",
+            "Specific Hint": "**Baba** is not **Stop.**"
+        }
+    },
+    "98level": {
+        "Win": {
+            "Gentle Nudge": "You can only manipulate something to be either **Right** or **Up.** How can you get all four directions out of this?"
+        }
+    },
+    "191level": {
+        "Win": {
+            "Gentle Nudge": "You seem to have an extra \"Is.\" What could that be for?",
+            "Bigger Nudge": "Is it really necessary to do all of your setup first and then send Keke through the belts?",
+            "Specific Hint": "The Flags can block the dead ends for you only so long as **Flag is Push.** Since you will have to break up that rule, what does that tell you about where you have to put the Flags and when?"
+        }
+    },
+    "315level": {
+        "Win": {
+            "Gentle Nudge": "How many items do you need in order to get onto the Flag? How many do you have at the start? What does that mean you are going to have to do?",
+            "Bigger Nudge": "You will need at least one Key and one Baba. What will the third object be? Will it be something new?",
+            "Specific Hint": "When you perform a transformation, does it help to think of it as one object turning into another, or as the subject of the sentence being destroyed and replaced by everything that comes after it?"
+        }
+    },
+    "248level": {
+        "Win": {
+            "Gentle Nudge": "You will have to create both rules **Belt is Wall** and **Flag is Win.** Where does Baba need to be when that happens?",
+            "Bigger Nudge": "Remember that **Belt** remains **Right** or **Up** even after you disconnect the rule."
+        }
+    },
+    "67level": {
+        "Win": {
+            "Gentle Nudge": "Do you remember how you got the Ghost out of the hallway in Forest 06? What rule can you have here to do a similar thing with the Bug?",
+            "Bigger Nudge": "Do you remember Forest 04? What about that solution needs to be replicated here? What rule did you have there that is missing here?",
+            "Specific Hint": "You do not have \"Move,\" but you do have another property that allows for motion. What needs to happen for this other property to take effect? Can you set up something that allows for this property to trigger every turn?"
+        }
+    },
+    "28level": {
+        "Win": {
+            "Gentle Nudge": "You will need to destroy at least one of the bugs. What rule change do you need to make this happen?",
+            "Bigger Nudge": "Do the boxes need to be in a 3x3 shape? Doesn't that get in the way?",
+            "Specific Hint": "You can make Keys out of Boxes. You only need five Keys, yet somehow you have exactly the number of Boxes you need..."
+        }
+    },
+    "233level": {
+        "Win": {
+            "Gentle Nudge": "How can you push \"Win\" around the corner? Have you solved two other levels in this world that may give you a hint on how you do that?",
+            "Bigger Nudge": "Is it possible to put Keke up into the top-right corner while it's facing downward?"
+        }
+    },
+    "50level": {
+        "Win": {
+            "Gentle Nudge": "Not sure how to give a hint without giving away the answer. Thank your lucky stars you have an easy puzzle right now."
+        }
+    },
+    "257level": {
+        "Win": {
+            "Gentle Nudge": "Which objects will the Flag swap with?",
+            "Bigger Nudge": "How many swaps can occur at once?",
+            "Specific Hint": "If you can't move Baba onto the Flag, is there a way to get the Flag onto Baba?"
+        }
+    },
+    "260level": {
+        "Win": {
+            "Gentle Nudge": "Why doesn't it work to just have Keke walk back and forth through the Grass?",
+            "Bigger Nudge": "Why do you have accesss to \"Skull\"?"
+        }
+    },
+    "271level": {
+        "Win": {
+            "Gentle Nudge": "How many pieces of Text do you have access to in the pen? How many spaces away are both the \"Swap\" and \"Win\" tiles?"
+        }
+    },
+    "268level": {
+        "Win": {
+            "Gentle Nudge": "Are you able to change the rule **Keke is Push?** How? What does this mean about all the rules you can make in this level?",
+            "Bigger Nudge": "For each rule you make, you will make quick use of it, throw it away, and never use it again. What are the rules you will make and in what order?",
+            "Specific Hint": "Does **Swap** follow the rules **Push** or **Stop** or does it override them?"
+        }
+    },
+    "193level": {
+        "Win": {
+            "Gentle Nudge": "You likely noticed that you have lost the extra \"Is\" from Forest 09. What else has changed?",
+            "Bigger Nudge": "Something about the arrangement of the belts in Forest 09 requires extra text. What is it?",
+            "Specific Hint": "You have three rows of Belts. Do you really need all of them?"
+        }
+    },
+    "54level": {
+        "Win": {
+            "Gentle Nudge": "What exactly is happening in a **[X] is [Y] and [Z]** sentence?",
+            "Bigger Nudge": "How familiar are you with algebra? Are there ways you can express statements in this game mathematically?",
+            "Specific Hint": "What is the Distributive Property? How is the solution to this level going to be a distribution of the solution to Forest 10?"
+        }
+    },
+    "9level": {
+        "Win": {
+            "Gentle Nudge": "Honestly? Okay, there is literally only one or two feasible rules you can make that I didn't describe above, so try those."
+        }
+    },
+    "11level": {
+        "Win": {
+            "Gentle Nudge": "You can easily get rid of *Door.* You can't get rid of *Wall* Find another way in the pen."
+        }
+    },
+    "13level": {
+        "Win": {
+            "Gentle Nudge": "What if you could create a new Empty space above the *Wall?*"
+        }
+    },
+    "80level": {
+        "Win": {
+            "Gentle Nudge": "Why doesn't the Key fall through the *Cloud?*"
+        }
+    },
+    "201level": {
+        "Win": {
+            "Gentle Nudge": "What happens when you make **Empty is You?** Now what happens when you move? Why does that happen? Does this tell you how you will win the level?"
+        }
+    },
+    "111level": {
+        "Win": {
+            "Gentle Nudge": "Why do you think you have two Babas?",
+            "Bigger Nudge": "Why do you have access to the \"Is\" next to \"Dust\" and \"Win\"?",
+            "Specific Hint": "What property do you need in order to carry the Moon?"
+        }
+    },
+    "112level": {
+        "Win": {
+            "Gentle Nudge": "You need to break up **Skull is Defeat.** Why? Does Baba need to cross a *Skull?*",
+            "Bigger Nudge": "It looks like Keke and Me are both positioned in a very specific way. Is there a change you could make to this position that would grant you access somewhere?",
+            "Specific Hint": "Keke need to push the word \"Defeat\" to the left. What is the path Keke will take, and how will you get them on that path?"
+        }
+    },
+    "79level": {
+        "Win": {
+            "Gentle Nudge": "You will have to make **Skull is Defeat** while you are on the far right side of the level. What can you use to make that happen? Where should Baba be when you make this move?",
+            "Bigger Nudge": "Try **Empty is Push** and notice that it usually traps you in place. Why is this? Is there a way to have **Empty is Push** and still move around? Why does that work?",
+            "Specific Hint": "Can you use something to allow Baba to move around while **Empty is Push?** Where does that rule need to be made?"
+        }
+    },
+    "216level": {
+        "Win": {
+            "Gentle Nudge": "Which object will open the Door?",
+            "Bigger Nudge": "Why is this level called \"Platformer\"? Is there something about that game genre that is similar to this one, besides the use of **Fall?**",
+            "Specific Hint": "Which exact path will Keke take? Which spot will it drop down beneath the first layer of Clouds?"
+        }
+    },
+    "226level": {
+        "Win": {
+            "Gentle Nudge": "How will you get an object down through the *Skulls?* Can you still control an object afterward?",
+            "Bigger Nudge": "Can you get both the Moon and the Star through the *Skulls?* Is there a way you can repeat the solution to a previous level in this world using both those objects?",
+            "Specific Hint": "What shape can the rules take to allow for four simultaneous rules? What should those rules be to allow you to be both below the *Skulls* and able to move upwards?"
+        }
+    },
+    "115level": {
+        "Win": {
+            "Gentle Nudge": "How will you form the rule **Star is Push?** What will you do with the Star?",
+            "Bigger Nudge": "Can you get any Text from the upper left into the chamber with the Moon? What area stops your progress? Isn't it interesting how much space there is in that area?",
+            "Specific Hint": "After getting rid of the Star, you will need to form two rules in different places. What are those rules? Where will they be? Which one will be made first?"
+        }
+    },
+    "82level": {
+        "Win": {
+            "Gentle Nudge": "If **Empty is Pull,** *Empty becomes solid.",
+            "Bigger Nudge": "Why do you have all this *Ice?*",
+            "Specific Hint": "You have probably worked out that you need to pull \"Win\" out of the hallway, but how can you do that while Baba is still able to move freely?"
+        }
+    },
+    "217level": {
+        "Win": {
+            "Gentle Nudge": "What are all the things that can be either **Open** or **Shut?** When you've worked out the two nouns you need, does it matter which one is which?",
+            "Bigger Nudge": "Have you noticed that when you **Open** a **Shut** object, the **Open** object never actually overlaps with the **Shut** object? The **Open** object just has to be moving toward it."
+        }
+    },
+    "324level": {
+        "Win": {
+            "Gentle Nudge": "Why do you have **Rocket is Push?**",
+            "Bigger Nudge": "Empty cannot move onto the Flag, and Moon is Defeat. How will you get Baba in there?",
+            "Specific Hint": "Look at your solution to Space 05. What else can be You? Why do you have access to \"Push\"?"
+        }
+    },
+    "125level": {
+        "Win": {
+            "Gentle Nudge": "Now that the Star is up there, what can you do with it you couldn't do before?",
+            "Bigger Nudge": "In order to get to the Star, you need **Dust is Weak.** Where should you place that rule? Is there a way you can place it somewhere and then move it somewhere else later?",
+            "Specific Hint": "Is there a way you can form the rule **Dust is Weak,** make a single change, and have the rule **Moon is Win** be made automatically?"
+        }
+    },
+    "59level": {
+        "Win": {
+            "Gentle Nudge": "*Something* has to change into *Key.* But you can't just turn everything into a Key. What condition do you need?",
+            "Bigger Nudge": "**Keke on** Grass will do things to *Keke.* **Grass on Keke** will do things to *Grass.*"
+        }
+    },
+    "94level": {
+        "Win": {
+            "Gentle Nudge": "You have to create **Baba is Win,** which will also make the *Grass* unable to cross. Can you prepare something ahead of time?"
+        }
+    },
+    "242level": {
+        "Win": {
+            "Gentle Nudge": "How will you get the Rock into the chamber with the Water? Will you leave that chamber the same way?",
+            "Bigger Nudge": "You can't unmake the phrase **Belt is Shift** once it is made. Is there something else you can do?"
+        }
+    },
+    "124level": {
+        "Win": {
+            "Gentle Nudge": "Once you cross the Belt, is there any way to return to the starting area? If not, what do you need to do before you cross it?",
+            "Bigger Nudge": "Does anything need to actually sink into the Water? Or does \"Flag\" just need to be pushed up?",
+            "Specific Hint": "Is there a way for you to push one object on top of another, and then push both at the same time?"
+        }
+    },
+    "64level": {
+        "Win": {
+            "Gentle Nudge": "Eventually you need both **Lava is Defeat** and **Door is Shut.** Where should Baba be when those rules are made? Where should the Hand be?",
+            "Bigger Nudge": "How many pieces of Wall do you have access to? Do you think this is too many, too few, or just right?",
+            "Specific Hint": "Assuming that something were to move from the bottom-right hallway to the Door, what path would it take? How many turns would it need to make?"
+        }
+    },
+    "89level": {
+        "Win": {
+            "Gentle Nudge": "Where are you going to get *Keys* from?",
+            "Bigger Nudge": "You'll have to cross the Belt at some point. The Keys will need to cross, too, but will they cross at the Belt?",
+            "Specific Hint": "Start by finding a use for the Belt placed near \"Open.\" Does that Belt have to stay in that spot?"
+        }
+    },
+    "150level": {
+        "Win": {
+            "Gentle Nudge": "**Pillar is Stop,** but **Rock** is not. How could you use those objects differently?",
+            "Bigger Nudge": "Do you really have enough pieces to sink into the *Water?*",
+            "Specific Hint": "Is there a way you can get another rule into the passage with the *Water?* Maybe you could use that rule to then create a third, hybrid rule?"
+        }
+    },
+    "91level": {
+        "Win": {
+            "Gentle Nudge": "You cannot block all the *Keke* from getting to the Text on the left. Is there another way you can protect that sentence?",
+            "Bigger Nudge": "Is there something else you can use the *Keke* for?",
+            "Specific Hint": "Something needs to be true at first, and then not true later. What is it? If you know that, this level should be a cakewalk."
+        }
+    },
+    "130level": {
+        "Win": {
+            "Gentle Nudge": "You can't change **Fruit** into something else. Is there another transformation you could do?",
+            "Bigger Nudge": "What possible reason do you have \"On\"?",
+            "Specific Hint": "Is there a sentence that would allow you to get past the Key without pushing it, but then be able to push the Key out to the left?"
+        }
+    },
+    "92level": {
+        "Win": {
+            "Gentle Nudge": "**Defeat** overrides **Win.** If **Ice and Flag is Defeat,** then you'll lose even if **Ice is Win.** This means you must move each piece of text in a certain order. Which one must be moved first?",
+            "Bigger Nudge": "What do you think will cross the *Skulls?* How do you think that object will get there?",
+            "Another Big Nudge": "Where does Baba need to be when the win condition is created?",
+            "Specific Hint": "Is there a chain reaction you could set up so that Baba can patiently wait in between the Ice and the Flag while something else moves around the level?"
+        }
+    },
+    "127level": {
+        "Win": {
+            "Gentle Nudge": "To get rid of the Skull, you need both a Keke and a Rock on it. Where can you get a Keke?",
+            "Bigger Nudge": "Why do you have two \"Is\" pieces? Do you ever really need multiple statements at a time?",
+            "Specific Hint": "You may already know you need to ultimately replicate your setup from Garden 04 on the right side of the belt. Aside from removing the Skull, what extra step needs to be done before you can get to that point?"
+        }
+    },
+    "142level": {
+        "Win": {
+            "Gentle Nudge": "Is there any way to cross the Belt to the left? If not, what rules do you need in place before you cross to the right? What objects do you need?",
+            "Bigger Nudge": "Why do you have a rule preventing you from transforming **Lava,** but not a rule preventing you from transforming Ice?",
+            "Specific Hint #1": "Can you make a transformation if there is something overlapping the object being transformed? Have you done it before?",
+            "Specific Hint #2": "Is there a way to create both **Lava is Push** and **Ice is Push** using only one \"Is\"?"
+        }
+    },
+    "148level": {
+        "Win": {
+            "Gentle Nudge": "Keke cannot cross the fire. You needs to be *Baba.*",
+            "Bigger Nudge": "Don't create **Baba is You** horizontally. Find a way to make it vertically.",
+            "Specific Hint": "Is there a way **You** can switch from **Keke** to **Baba** while you're in the lower half of the level?"
+        }
+    },
+    "47level": {
+        "Win": {
+            "Gentle Nudge": "This level is designed to make you start a wild goose chase on the solution. What looks like the obvious route should be avoided.",
+            "Bigger Nudge": "You have two Babas in order to do something very specific, and it's not to sacrifice one of them.",
+            "Specific Hint": "You have to dig \"Keke\" out without losing either Baba."
+        }
+    },
+    "266level": {
+        "Win": {
+            "Gentle Nudge": "What do you suppose needs to be **Fall?** Is that related to how you will push \"Grass\" down?",
+            "Bigger Nudge": "Why do you suppose you have access to \"Pull\"?",
+            "Specific Hint": "You need to find a way to move upwards even if **Baba is Fall.**"
+        }
+    },
+    "95level": {
+        "Win": {
+            "Gentle Nudge": "First, just get the Key out of that little dead end. Have you been given an item which will help you do that?",
+            "Bigger Nudge": "You will never get the Key into the hall with the Rock. Find a way to get the Rock out.",
+            "Specific Hint": "You can't push the Rock onto the Key - they'll just swap places. You need to swap the Key onto the Rock somehow, using an intermediary object."
+        }
+    },
+    "146level": {
+        "Win": {
+            "Gentle Nudge": "**Baba is Group** and **Group is You** is all just another way to write a simpler phrase.",
+            "Bigger Nudge": "If you can create the exact phrase **Baba is You,** then you'll have three extra words to use."
+        }
+    },
+    "46level": {
+        "Win": {
+            "Gentle Nudge": "No Text should cross the Belt. There's not enough room on that side.",
+            "Bigger Nudge": "To open the Doors, you need something to be both **Push** and **Open.** How do you normally get one object to have both properties?",
+            "Specific Hint": "More than one object can be **Group.**"
+        }
+    },
+    "270level": {
+        "Win": {
+            "Gentle Nudge": "How will you create the phrase **Flag is Win?** What steps are required to get something in that lower hallway?",
+            "Bigger Nudge": "You might think that, by pushing **Baba is You** one space to the left, you can have something else safely **Fall** into the lower hallway. And you're right, you can do that. But then you can't beat the level.",
+            "Specific Hint": "You first need to get **Baba is You** across the Belt to the right."
+        }
+    },
+    "101level": {
+        "Win": {
+            "Gentle Nudge": "Somehow, you must get some Text from the top area to the bottom in order to make **X is Open**. What will X be?",
+            "Bigger Nudge": "Your solution to Fall B may be useful here.",
+            "Specific Hint": "Whatever is **Open** does not exist yet. You can create it. In fact, you can create it twice!"
+        }
+    },
+    "109level": {
+        "Win": {
+            "Gentle Nudge": "First, you have to get access to the \"Bat.\" Put all the Text you can into the central area.",
+            "Bigger Nudge": "The only way to get rid of the Bats is to make them **You.**",
+            "Specific Hint": "You need to make both **Bat** and something else into **Group** at the same time."
+        }
+    },
+    "119level": {
+        "Win": {
+            "Gentle Nudge": "How many objects can you control at one time with **Group?**",
+            "Bigger Nudge": "One of your final moves will be to create **Ice is Melt.**",
+            "Specific Hint": "How can you put something on the Ice without it being **You?**"
+        }
+    },
+    "145level": {
+        "Win": {
+            "Gentle Nudge": "Can you push the Ghost all the way to the Key? Can you push the Key all the way to the Ghost? Where exactly do you get stuck?",
+            "Specific Hint": "You need the Ghost to be pushable up to a very particular point, and then you need to be able to walk through it. You can't change the rules after you cross the Tile, so what rule can you make which is conditional?"
+        }
+    },
+    "176level": {
+        "Win": {
+            "Gentle Nudge": "**Baba facing Wall** is a rule. **Baba** next to **Wall** is not. What is the difference between those ideas?",
+            "Bigger Nudge": "Is there a way you can move a Box without access to any **Push** rule?",
+            "Specific Hint": "You need to change your teleport destination point so that you appear next to a wall without **Facing** it."
+        }
+    },
+    "122level": {
+        "Win": {
+            "Gentle Nudge": "How many of the initial rules can be broken up? How many can be modified otherwise?",
+            "Bigger Nudge": "The Skulls can't harm you if there's no **You** in the tunnel.",
+            "Specific Hint": "Remember your solution to Cavern 02, or 01, or whatever it is now. It's \"Tour.\" That solution should tell you what to do here."
+        }
+    },
+    "178level": {
+        "Win": {
+            "Gentle Nudge": "**Text is not Push,** yet you can still move the Text around. Why?",
+            "Bigger Nudge": "How can you get up to the top part of the level? Will you come back the same way?",
+            "Specific Hint #1": "Your first objective is to create **Flag is Win.** Yet you have to change some other rule before you can do that.",
+            "Specific Hint #2": "If you push \"Win\" to the left while **Text is not Push,** what happens? Does this give you a clue as to how to solve this level?"
+        }
+    },
+    "51level": {
+        "Win": {
+            "Gentle Nudge": "**Rock is Defeat,** so literally the only way to win is if **Text is Win.**",
+            "Bigger Nudge": "Think back to your solution to Cavern 01, or 04, or whatever. It was \"Mouse Hole.\" How did you get the Rock onto the Key then? Could you do the same thing here?",
+            "Specific Hint": "You need to perform two swaps with one push."
+        }
+    },
+    "21level": {
+        "Win": {
+            "Gentle Nudge": "Can you get rid of the *Walls?* If not, can you at least get them out of the way?"
+        }
+    },
+    "241level": {
+        "Win": {
+            "Gentle Nudge": "Getting across the Water will be easy. How about getting across the Belt? Is there any way to get a Baba more than one space away at a time?"
+        }
+    },
+    "31level": {
+        "Win": {
+            "Gentle Nudge": "A transformation must be made. Is there a way to prevent at least one object from transforming?Think back to a much earlier level."
+        }
+    },
+    "240level": {
+        "Win": {
+            "Gentle Nudge": "What will prevent a Key from spawning when it is **More?**",
+            "Bigger Nudge": "Where will you place the Rock ahead of time?"
+        }
+    },
+    "19level": {
+        "Win": {
+            "Gentle Nudge": "Wait, there's no *Love* in the level. Why do you have the text \"Love\"? Is this related to the text \"All\"?",
+            "Another Big Nudge": "Why is there a space to the right of \"All\"?",
+            "Specific Hint": "How many things are created if you make **[X] is All?** How many of those things do you have access to as nouns? How many Doors are there?"
+        }
+    },
+    "110level": {
+        "Win": {
+            "Gentle Nudge": "What will prevent something that is **More** from growing?",
+            "Specific Hint": "Can you get to **Flag is Melt** before the *Lava* overtakes the Flag? Or do you need to do something else?"
+        }
+    },
+    "18level": {
+        "Win": {
+            "Gentle Nudge": "Remember your solution to Chasm C. Could you do something similar here?",
+            "Bigger Nudge": "Think of which piece of text must go the right of \"All.\" Which is more useful, **Is** or **Has?**",
+            "Specific Hint": "Why do you have two Babas? Is there some way you can form rules with two Babas that you cannot with one?"
+        }
+    },
+    "25level": {
+        "Win": {
+            "Gentle Nudge": "How many objects do you have which block *More?**",
+            "Bigger Nudge": "Can you fully block the Star's growth? Do you even want to?",
+            "Specific Hint": "Remember that the Star will not continue to grow if you break up the rule **Star is More.**"
+        }
+    },
+    "60level": {
+        "Win": {
+            "Gentle Nudge": "You have access to two tiles of \"Baba.\" Why?",
+            "Specific Hint": "Clearly you are going to perform some transformations. What are they going to be? In what order?"
+        }
+    },
+    "155level": {
+        "Win": {
+            "Gentle Nudge": "Isn't it a coincidence how the \"Is Open\" can be placed next to the Door?"
+        }
+    },
+    "164level": {
+        "Win": {
+            "Gentle Nudge": "Is Keke of any use to you? If so, in what exact way?",
+            "Bigger Nudge": "You need to break up **Box is Hot.** But you are also going to need that rule. How can you get around this?"
+        }
+    },
+    "175level": {
+        "Win": {
+            "Gentle Nudge": "You can't move any *Text* around, but is there something else you can move? How is that something else just a little bit like *Text?*",
+            "Bigger Nudge": "Why do you suppose you have two Rocks?",
+            "Specific Hint": "Can you make one rule change which will allow for **Text is Push?** What is it? What other change do you need to make it happen?"
+        }
+    },
+    "167level": {
+        "Win": {
+            "Gentle Nudge": "Start by trying to get to the right side of the level, to break **Rock and Water is Stop.** What rules need to exist in order to do that?",
+            "Bigger Nudge": "Now think about the left passage. How will you get past the first Rock and Water?",
+            "Even Bigger Nudge": "How will you get past the second tile of Water? Then the final Rock?",
+            "Specific Hint": "You need three rules to exist simultaneously. If you have the exact right rules in the right orientation, then you will be able to turn them into only two rules. What will each rule say? Will any of those be made with the object instead of the noun? What are their orientations?"
+        }
+    },
+    "156level": {
+        "Win": {
+            "Gentle Nudge": "Breaking up **Keke is Sleep** shouldn't be difficult, but it won't help you solve the level. **Keke** needs to be something else.",
+            "Bigger Nudge": "Don't you think it's convenient how there's a nice horizontal hallway that aligns perfectly with \"Sleep\"?",
+            "Another Big Nudge": "Isn't it convenient how \"Is Float\" is situated just one space below the hallway?",
+            "Specific Hint": "Is there a way to have Baba or Lava have three properties simultaneously?"
+        }
+    },
+    "165level": {
+        "Win": {
+            "Gentle Nudge": "You will have to break up the initial **Fungus is Push** rule. But you still need it. Where and how can you build it again?",
+            "Bigger Nudge": "Why do you suppose there is a Skull separating the upper and lower areas?",
+            "Specific Hint": "Can you make both **Rock** and **Fungus** be **Word** at the same time?"
+        }
+    },
+    "163level": {
+        "Win": {
+            "Gentle Nudge": "Baba will enter one of the two chambers and never leave. Which one?",
+            "Bigger Nudge": "The Rock will enter the other chamber and never leave. How will this happen?",
+            "Another Big Nudge": "Does the \"Not\" go into one of the chambers? If so, which one?",
+            "Specific Hint": "Your very first move in this level will end up being the placement of the \"Not.\""
+        }
+    },
+    "105level": {
+        "Win": {
+            "Gentle Nudge": "What makes something **Lonely?**",
+            "Specific Hint": "**Defeat** requires two objects to overlap."
+        }
+    },
+    "100level": {
+        "Win": {
+            "Gentle Nudge": "This level is built to trick you into making an assumption on how it will end. What is that assumption the game is tricking you into?",
+            "Bigger Nudge": "You will never get love across the Ice.",
+            "Specific Hint": "You'll need to change the win condition."
+        }
+    },
+    "195level": {
+        "Win": {
+            "Gentle Nudge": "Which is more likely, getting the Key to the Box or getting the Box to the Key? Which one is always Push and which one is only Push sometimes?",
+            "Bigger Nudge": "If something is Push only when it is Lonely, you can walk past it in the hallway.",
+            "Specific Hint": "You'll need to create a rule across the Skull."
+        }
+    },
+    "116level": {
+        "Win": {
+            "Gentle Nudge": "**Lonely Text** will never leave the pen. In fact, no text at all should leave the pen.",
+            "Bigger Nudge": "You get one chance to change Baba's movement - make sure it's in the right spot.",
+            "Specific Hint": "If you could just make **Baba is You,** this level will be easy."
+        }
+    },
+    "120level": {
+        "Win": {
+            "Gentle Nudge": "You first need to get \"Sun\" out from the Rubble.",
+            "Bigger Nudge": "What rules do you need to get rid of the Sun?",
+            "Specific Hint #1": "You need to make **Sun is Shut** at the same time as **Baba is You.** What will that look like.",
+            "Specific Hint #2": "To create both rules at once, you'll need Baba's help."
+        }
+    },
+    "118level": {
+        "Win": {
+            "Gentle Nudge": "How many spaces do you need to fill to get both Babas to the lower platforms? How many spaces are between the left and right sides?",
+            "Bigger Nudge": "How many pieces you do have on the top half (not including the two Babas)?",
+            "Another Big Nudge": "Remember that **Key is Push** and **Door is Push.**"
+        }
+    },
+    "99level": {
+        "Win": {
+            "Gentle Nudge": "Getting out of the starting area requires that one piece of Text be pushed against the far right Wall. Is it still possible to use every single piece of Text?",
+            "Bigger Nudge": "Why do you suppose there's two columns of tile - a left side and a right side?",
+            "Another Big Nudge": "Could there possibly be another use for the Bird aside from breaking up Lonely Baba is Tile?",
+            "Specific Hint": "Somehow you need the Bird to move you around the level."
+        }
+    },
+    "104level": {
+        "Win": {
+            "Gentle Nudge": "There are four entrances into that central area from the start. Each has one use. What order will you use them?",
+            "Bigger Nudge": "Look at the room with \"Flag.\" How will you approach and leave this room?",
+            "Speicific Hint": "You need to set up both Pillars in front of specific entrances/exits, break up **Pillar is Push,** do something, then recreate **Pillar is Push.**"
+        }
+    },
+    "48level": {
+        "Win": {
+            "Gentle Nudge": "What exactly has changed from Mountain 06 to this level? Make sure you catch every change.",
+            "Bigger Nudge": "Even if somehow you could make **Door is Push,** your solution to this level is still impossible in Mountain 06.",
+            "Another Big Nudge": "You don't die because Baba steps off the platform. You die because Baba is **Lonely.**",
+            "Specific Hint": "Make *Baba* not **Lonely** and this level is a cakewalk. What can Baba overlap with that will make free movement possible?"
+        }
+    },
+    "243level": {
+        "Win": {
+            "Gentle Nudge": "When does the Level move? Does **Level is Move** affect in any way the steps you take to win this level?"
+        }
+    },
+    "245level": {
+        "Win": {
+            "Gentle Nudge": "It would sure be nice if the *Walls* weren't there. What properties can be added to **Level?**",
+            "Bigger Nudge": "First, get rid of the Door. Is there any way to make something both **You** and **Hot?**",
+            "Specific Hint": "First things first, move **Baba is You** upwards to make some room."
+        },
+        "Transform": {
+            "Gentle Nudge": "You notice how, if **Level is Weak,** the entire level gets affected?",
+            "Bigger Nudge": "Is there something else this level can be?"
+        }
+    },
+    "117level": {
+        "Win": {
+            "Gentle Nudge": "If **Level is Defeat,** will both Keke and Baba be destroyed?",
+            "Bigger Nudge": "If somehow you lose Baba, is there a way to bring it back?",
+            "Specific Hint": "You need something which is not **You** to create **Level is Defeat,** and then that thing needs to bring **You** back. Is there something you could place under the hallway with \"Defeat\"?"
+        },
+        "Transform": {
+            "Gentle Nudge": "As before, you can make **Level is Defeat,** which affects the whole level. Are there any possibilities with that?",
+            "Bigger Nudge": "What else can this level be?"
+        }
+    },
+    "203level": {
+        "Win": {
+            "Gentle Nudge": "What rule needs to exist to allow you into the room with \"End\"? Where will the pieces to make that rule come from?",
+            "Bigger Nudge": "You will have to use all three pieces of Ice.",
+            "Another Big Nudge": "**Keke** will have to be **Move** eventually, but where will she move? In the left side pen or the right? Keke will only be in one or the other.",
+            "Specific Hint": "Your first step needs to be to break up **Belt is Shift,** and one of your final steps will involve recreating that rule."
+        }
+    },
+    "78level": {
+        "Bonus": {
+            "Gentle Nudge": "Hold on, there's no Baba is You or Flag is Win rules. How are you able to solve this level?",
+            "Bigger Nudge": "The rules have to exist somewhere... can you find them?"
+        }
+    },
+    "192level": {
+        "Win": {
+            "Gentle Nudge": "Don't overcomplicate this. Where can you get a Flag?"
+        }
+    },
+    "197level": {
+        "Win": {
+            "Gentle Nudge": "What exactly has changed from the previous level to this? Make sure you notice every single change.",
+            "Bigger Nudge": "It would be really nice if somehow you could get the noun \"Love.\"",
+            "Specific Hint": "You don't have space to make **Love is Flag,** but you can make a different sentence there."
+        }
+    },
+    "84level": {
+        "Win": {
+            "Gentle Nudge": "What exactly triggers Baba's death? Are there multiple triggers? Is there a way to remove one of those triggers?",
+            "Bigger Nudge": "Once you can freely move Baba around, the only real difficulty in this level comes if you have the wrong assumption about the win condition."
+        }
+    },
+    "227level": {
+        "Win": {
+            "Gentle Nudge": "If Baba is on a Wall, is it **Facing** that Wall?"
+        }
+    },
+    "141level": {
+        "Win": {
+            "Gentle Nudge": "How many things are **You?** If you make **Not Baba is You,** now how many things are **You** and what are they?",
+            "Bigger Nudge": "It's probably obvious that **Rock is Push** is not a useful rule, but why do you think you have access to those pieces of text?",
+            "Specific Hint": "You need to move back and forth, and every time you move right, **Flag is You,** while every time you move left, **Flag** is not **You.**"
+        }
+    },
+    "247level": {
+        "Win": {
+            "Gentle Nudge": "**Baba is not Win.** **Rock** can be **Win** but you'll never overlap with it, just like Wall. So what can be **Win?**",
+            "Bigger Nudge": "Wouldn't it be nice if you could push \"Sink\" to the left?",
+            "Specific Hint": "You need to remove one strategic piece of the Wall to make **Level is Win.**"
+        },
+        "Transform": {
+            "Gentle Nudge": "You won't actually make the exact phrase \"Level is You,\" but **Level** will be **You** all the same.",
+            "Bigger Nudge": "Is there a way to get Baba outside the pen?",
+            "Specific Hint": "You need two Rocks."
+        }
+    },
+    "231level": {
+        "Win": {
+            "Gentle Nudge": "Remember your solution to Island 11? That will get you started here.",
+            "Bigger Nudge": "Why are you given two Rocks?",
+            "Another Big Nudge": "Why do you suppose there's a space below Keke to the left?",
+            "Specific Hint": "It's easy to make **Baba is Keke,** but what you really need is **Keke is Baba** somehow..."
+        }
+    },
+    "250level": {
+        "Win": {
+            "Gentle Nudge": "Should **Wall** be **Sink,** or something else?",
+            "Bigger Nudge": "**Wall is Sink** is an unnecessary rule but you do need access to all three pieces of text.",
+            "Specific Hint": "If the Rock were replaced with another piece of Wall, you could still get out of the pen."
+        }
+    },
+    "230level": {
+        "Win": {
+            "Gentle Nudge": "If you could have **Rock is You** without any *Babas,* this level would be easy. Why?",
+            "Bigger Nudge": "If there were no Skull, this level would be easy. Why?",
+            "Specific Hint": "You need to place an important piece of text while **Skull is not Stop.**"
+        }
+    },
+    "275level": {
+        "Win": {
+            "Gentle Nudge": "What exactly has changed between this level and ???-8?",
+            "Bigger Nudge": "Your solution to levels 9 and 10 will give you a hint on the sentence you need. It won't be exactly the same but it will be similar.",
+            "Specific Hint": "You need a way to say **Keke is not Keke,** but only using one \"Keke.\""
+        }
+    },
+    "168level": {
+        "Win": {
+            "Gentle Nudge": "Which direction can you approach the first Key from?",
+            "Bigger Nudge": "Why do you suppose there's a Key next to \"Win\"? Why wouldn't the level just be designed so that you could make that sentence without it?",
+            "Specific Hint": "You need to avoid transformations until you have used the first Key. There is no way to get \"Is\" on the Flag without making a strategic transformation."
+        }
+    },
+    "t1level": {
+        "Win": {
+            "Gentle Nudge": "The final state of this level will have you making two complete rules arranged in a cross, **Flag is Win** and what else?",
+            "Bigger Nudge": "Why do you suppose those two Belts are there?",
+            "Specific Hint": "You need to use both Kekes and the Belts to remake **Baba is You** horizontally."
+        }
+    },
+    "n2level": {
+        "Win": {
+            "Gentle Nudge": "Which is more likely, **Baba is You** and **Wall is Win,** or **Wall is You** and **Baba is Win?**",
+            "Bigger Nudge": "Is there perhaps way to prepare the pieces \"Baba\" and \"Win\" so that when you create **Wall is You* they are both in a good position?"
+        }
+    },
+    "196level": {
+        "Win": {
+            "Gentle Nudge": "What's the point of **Tele,** if **Rock and Skull is Stop?**",
+            "Bigger Nudge": "Why do you suppose you have three Flags? You would only need two to make **Tele** work, but you have three.",
+            "Specific Hint": "Remember your solution to Cavern 14? You need to reproduce the same effect via a different method."
+        }
+    },
+    "n1level": {
+        "Win": {
+            "Gentle Nudge": "To get across to the Flag, you first need **Baba has Keke,** then **Keke has Baba,** and then **Baba has Keke** again. Are you given any pieces to manipulate Text without your direct input?",
+            "Bigger Nudge": "You have access to six Belts but you can only move four of them. What arrangment can you make with those?",
+            "Specific Hint": "You have to use every available piece you can. Look everywhere for what you can use."
+        }
+    },
+    "293level": {
+        "Win": {
+            "Gentle Nudge": "What will this level look like when you win? Will \"Stop\" be part of a sentence?",
+            "Bigger Nudge": "First, try to get \"Win\" to the right half of the level. In doing that do you see how to prevent Baba from falling?",
+            "Specific Hint": "You need to create bridges using text in order to create **Flag is Win** next to the Flag."
+        }
+    },
+    "286level": {
+        "Win": {
+            "Gentle Nudge": "Okay, so you need **Baba on Baba.** How will you get that to happen? Start there.",
+            "Bigger Nudge": "Perhaps you have come to the assumption that the *Rocks* should stay *Rocks* and the *Walls* should stay *Walls?*",
+            "Another Big Nudge": "Is there a way to get a piece of Text on a piece of Wall? Without transforming something under Text into Wall?",
+            "Specific Hint": "You need to create a series of something with **Shift** to push every object necessary into one spot."
+        }
+    },
+    "255level": {
+        "Win": {
+            "Gentle Nudge": "How will you get rid of the Skulls? Is there a way to form the word required?",
+            "Bigger Nudge": "Could certain letters perhaps have more than one use?",
+            "Specific Hint": "You can't make the *Walls* go away, but you could find some phrase to just push them out of the way. That phrase requires you free the \"T.\""
+        }
+    },
+    "252level": {
+        "Win": {
+            "Gentle Nudge": "You can easily make **Rock **is You, but that will make the level impossible.",
+            "Bigger Nudge": "Somehow you need to make Baba **Float,** **Hot,** and **You,** and put a Baba outside the fence.",
+            "Specific Hint": "Start by making **Rock is Baba.**"
+        }
+    },
+    "253level": {
+        "Win": {
+            "Gentle Nudge": "Getting the \"AB\" out will be easy. Getting it out without making the Belts unusable will be easy. Finding out how to put \"AB\" into \"Baba is You\" will probably not.",
+            "Bigger Nudge": "It's possible to get all five Belts out and usable. You certainly can solve this with four, but five is easier. How can you get all five Belts?",
+            "Another Big Nudge": "Use the belts to create an automatic conveyor system to make the sentence you need."
+        }
+    },
+    "280level": {
+        "Win": {
+            "Gentle Nudge": "Which Door can you open to free up all the letters \"W-A-L-L\"?",
+            "Bigger Nudge": "How will you get out of the pen? Does that solution give you a hint on how to free up all the text?",
+            "Specific Hint": "Can **Door** be both **Open** and **Shut?**"
+        }
+    },
+    "313level": {
+        "Win": {
+            "Gentle Nudge": "Think how you're going to get a Flag. What object will be Flag?",
+            "Bigger Nudge": "**Belt** cannot be **Belt.** What else can it be to prevent the Flag falling too far?",
+            "Specific Hint": "If you make **Flag is Fall** too early, it falls past the Skull. If you make **Belt is Ghost** too early, you can't make anything **Fall.** You need both of those statements. What can you do?"
+        }
+    },
+    "281level": {
+        "Win": {
+            "Gentle Nudge": "Why do you suppose \"Love\" exists?",
+            "Bigger Nudge": "What are the steps required to get the Star to be a Flag?",
+            "Specific Hint #1": "You still need to make something **Fall** and something else **Ghost** at the exact same time.",
+            "Specific Hint #2": "Is there something that both \"Ghost\" and \"Star\" share?"
+        }
+    },
+    "264level": {
+        "Reach Extra 1": {
+            "Specific Hint #1": "It would be nice if you could push something out of the way.",
+            "Specific Hint #2": "It was impossible to push this thing until completing \"Crushers.\""
+        },
+        "Reach Extra 2": {
+            "Specific Hint": "Is there an object in plain sight which could be turned into a level?"
+        },
+        "Reach extra 3/4": {
+            "Specific Hint": "Specific Hint: Both of these levels come from the same object."
+        },
+        "Reach Flag": {
+            "Specific Hint": "You need to get rid of Baba somehow - and it can't be Level."
+        },
+        "Reach Extra 5": {
+            "Gentle Nudge": "What other object could be a level?",
+            "Bigger Nudge": "Why is there an \"Is\" just floating over there to the left?",
+            "Specific Hint": "First, you'll need **Baba is Grass** and **Level is Push.**"
+        }
+    },
+    "261level": {
+        "Win": {
+            "Gentle Nudge": "First, how are you going to get out of the first room? Which piece of text can you afford to lose?",
+            "Bigger Nudge": "You want to make **Skull is Weak.** Which exact piece of text prevents that from happening?",
+            "Specific Hint": "Remember your solution to Fall-C. What sentence did you make there that you can make here?"
+        },
+        "Transform": {
+            "Gentle Nudge": "In order to progress in Depths, what do you need **Level** to be? Look back at the picture above. Only one thing works.",
+            "Bigger Nudge": "Solve normally until you've cleared all the Skulls out. But before you step on the Flag, are there any pieces of text you can still move around?",
+            "Specific Hint": "You need to make a certain rule in order to fish \"Level\" and \"Skull\" out."
+        }
+    },
+    "251level": {
+        "Win": {
+            "Gentle Nudge": "Do you really need a hint? The only difficulty here is getting your bearings in a rotating level."
+        }
+    },
+    "263level": {
+        "Transform": {
+            "Gentle Nudge": "Somehow you need to push \"Weak\" up into the hallway. But you'll never get enough pieces of text to push it up that way.",
+            "Bigger Nudge": "First, find a way to get \"Push\" out of the spot to the right. What rule needs to exist to do that?",
+            "Specific Hint": "Remember your solution to Forest 11? It involved a particular quirk of **Shift** with overlapping pieces."
+        }
+    },
+    "262level": {
+        "Win": {
+            "Gentle Nudge": "Are you really supposed to push \"Skull\" to the left?",
+            "Bigger Nudge": "The \"Skull\" text in the pen with Keke could literally be any word and this level would be solved the same way.",
+            "Specific Hint": "If **Skull** is neither **Sink** nor **Defeat,** this level becomes obvious."
+        }
+    },
+    "265level": {
+        "Transform": {
+            "Gentle Nudge": "If the level is getting too far off screen to see, you can press against a Wall repeatedly to get it back in frame.",
+            "Bigger Nudge": "Why are both *Hedge* and *Wall* in this level?",
+            "Specific Hint": "There are two possible things **Level** can be. Which one of those is useful on the world map?"
+        }
+    },
+    "274level": {
+        "Win": {
+            "Gentle Nudge": "Which piece of text can you sink into the Water?",
+            "Bigger Nudge": "What is the one thing you need \"Push\" for?",
+            "Specific Hint": "You've been given access to two \"Shift\" pieces for a reason."
+        }
+    },
+    "272level": {
+        "Win": {
+            "Gentle Nudge": "The Bug is only useful because it is Push. You don't need to keep the Bug a Bug and you don't need to make more Bugs (which you can't do anyway).",
+            "Bigger Nudge": "You can make Skull, Keke, or Me. Do any of those have useful properties for you? In particular, what can Skull do?",
+            "Specific Hint": "First, place the Bug somewhere useful. Then find out what transformations are needed to get rid of that Me permanently.",
+            "Another Specific Hint": "You can't change the direction that me or skull faces."
+        }
+    },
+    "222level": {
+        "Win": {
+            "Gentle Nudge": "Why is there another \"Baba is\"?",
+            "Bigger Nudge": "If you can get a sentence **Baba is You** somewhere other than that corner, this level can be more easily solved.",
+            "Specific Hint": "If **Baba is You** and **Baba is Move,** you go two spaces at once."
+        }
+    },
+    "223level": {
+        "Win": {
+            "Gentle Nudge": "Could Keke be useful early in this level? What can you do to Keke?",
+            "Bigger Nudge": "That open space two squares away from the left \"Baba\" looks suspicious.",
+            "Specific Hint #1": "You have to do two transformations total.",
+            "Specific Hint #2": "Something needs to be **Move,** and then **You.**"
+        }
+    },
+    "135level": {
+        "Win": {
+            "Gentle Nudge": "Do you really need Baba and Keke?",
+            "Bigger Nudge": "Is there a situation where you could wait for a turn and still have Baba move?",
+            "Specific Hint": "Remember your solution to Forest 11 or Depths 03 - how could you do the same thing here?"
+        }
+    },
+    "283level": {
+        "Reach 09": {
+            "Specific Hint #1": "There are three Doors and only two Flags. One of those Doors will remain closed.",
+            "Specific Hint #2": "Where can you get two extra pieces to sink in the Water?"
+        },
+        "Reach 11": {
+            "Gentle Nudge": "What should **Cursor** be?",
+            "Bigger Nudge": "Why is there a Flag on the other side of the Door?",
+            "Specific Hint": "Two Babas will be sunk into the Water."
+        },
+        "Reach 12": {
+            "Gentle Nudge": "Look at the line in the lower right. You can pretty easily get the Cursor onto it. How will you get off it?",
+            "Bigger Nudge": "First, use the Flag on the lower left to open that Door.",
+            "Specific Hint": "You need to turn **Cursor** into something else, then turn it back. What can you turn it into that is capable of movement?"
+        },
+        "Win": {
+            "Specific Hint": "You already know how to make the Cursor into something else. You'll need to do this a few times."
+        },
+        "Reach Extra 4": {
+            "Gentle Nudge": "Is there an object somewhere that looks a little different from the others?",
+            "Specific Hint": "Why is only one flower not red?"
+        },
+        "Reach Extra 5": {
+            "Gentle Nudge": "Is there an object that could be a level, but isn't?",
+            "Bigger Nudge": "Where can you get a piece of text \"Level\"?",
+            "Specific Hint": "There are actually multiple instances of this object, but somehow only one of them will turn into a level."
+        }
+    },
+    "288level": {
+        "Win": {
+            "Gentle Nudge": "Think about the arrangement of rules you'll need when the Key reaches the Door. What will that look like?",
+            "Bigger Nudge": "Which pieces of text can be used to get the Key on the same level as the Door?"
+        }
+    },
+    "287level": {
+        "Win": {
+            "Gentle Nudge": "It would be nice if **Baba near Wall is You** weren't a rule.",
+            "Bigger Nudge": "What else could **Baba** be **Near?**"
+        }
+    },
+    "302level": {
+        "Baba": {
+            "Gentle Nudge": "There is no way to fish \"Baba\" out without creating Lava is More.",
+            "Another Little Nudge": "You'll never outrun the Lava.",
+            "Bigger Nudge": "First, get that \"Shift\" out of the bottom area. Are there any other bits of text you can salvage?",
+            "Specific Hint #1": "Remember your solution to Forest 11. Could you use that to get a piece of text over to the right to block that piece of Lava?",
+            "Specific Hint #2": "If you shift too many pieces of text to the right, you won't have enough to block the Lava pool on the left."
+        },
+        "Flag": {
+            "Gentle Nudge": "Once again, your first move is to get \"Shift\" out of there, but that's all you'll get out of there.",
+            "Bigger Nudge": "What will \"Text\" overlap with?",
+            "Specific Hint": "You'll need to reproduce your solution to Depths 03 - almost exactly."
+        }
+    },
+    "285level": {
+        "Win": {
+            "Gentle Nudge": "Think how you could make **Flag is Win.** Notice how that would make **[something] is Flag.**",
+            "Specific Hint #1": "The first step is to somehow get \"Shift\" down the Belt.",
+            "Specific Hint #2": "The second step is to get \"Is\" and \"Shift\" into the lower area."
+        }
+    },
+    "291level": {
+        "Win": {
+            "Gentle Nudge": "Creating **Level is Fall** in the hopes that it will free up \"Win\" won't work. I tried. A lot.",
+            "Bigger Nudge": "Why do you suppose you've been given \"On\" and \"Not\"?",
+            "Specific Hint": "**Cliff** can't be **Baba,** but can it be something else?"
+        }
+    },
+    "132level": {
+        "Win": {
+            "Gentle Nudge": "If there were no Keke, how would you solve this?",
+            "Bigger Nudge": "Is **Belt** always **Shift?**",
+            "Specific Hint": "Regardless of whether Keke is there or not, the solution is roughly the same. Keke just makes you have to set up the text in a certain spot."
+        }
+    },
+    "295level": {
+        "Win": {
+            "Gentle Nudge": "What path is Me going to take?",
+            "Bigger Nudge": "Why do you suppose you have those Rocks?",
+            "Specific Hint": "You actually only need one Rock, and it's not to make a bridge for Keke."
+        }
+    },
+    "297level": {
+        "Transform": {
+            "Gentle Nudge": "You need this level to be **Flag** to open doors on the map... but you also need it to be **Baba** to push that Flag. What does this mean?",
+            "Bigger Nudge": "Did you complete the ???-Extra level \"Hazel Den\"?",
+            "Specific Hint": "You need to create more Love."
+        }
+    },
+    "298level": {
+        "Win": {
+            "Gentle Nudge": "You need both Stars, but the two Boxes just seem to get in the way...",
+            "Bigger Nudge": "What are you given \"On\" for?",
+            "Specific Hint": "Find a way to move both the Box and the Star at the exact same time."
+        }
+    },
+    "303level": {
+        "Win": {
+            "Gentle Nudge": "Who is You if **Not Baba is You?** Who is You if **Not Not Baba is You?**",
+            "Bigger Nudge": "You don't need all the \"Nots,\" but you'll need at least around half of them."
+        },
+        "Transform": {
+            "Gentle Nudge": "There's only one thing **Level** can be, but you can't just make the statement **Level is X.**",
+            "Bigger Nudge": "Are the \"Nots\" only good for making the \"Level is\" statement?",
+            "Specific Hint": "You need the three Rocks to be aligned horizontally."
+        }
+    },
+    "289level": {
+        "Win": {
+            "Gentle Nudge": "Where should Keke be while you're pushing it?",
+            "Bigger Nudge": "What will be the arrangement of text when you push Keke onto the Ice?",
+            "Specific Hint": "Keke should overlap with \"Is.\""
+        }
+    },
+    "284level": {
+        "Transform": {
+            "Gentle Nudge": "Why does the Level disappear if you make Level is Melt? What causes something to melt?",
+            "Bigger Nudge": "How will you get rid of that piece of Water?",
+            "Specific Hint": "Level is Melt won't do anything if it isn't interacting with anything Hot."
+        }
+    },
+    "277level": {
+        "Win": {
+            "Gentle Nudge": "First, just try to get to the upper area. What do you think \"Near\" is for?",
+            "Bigger Nudge": "Think outside the box.",
+            "Specific Hint": "No, seriously, you need to literally think outside the box."
+        }
+    },
+    "279level": {
+        "Win": {
+            "Gentle Nudge": "Why do you suppose you have the letters \"I\" and \"S\"?",
+            "Bigger Nudge": "What arrangement of words do you need to form both Baba is Push and Keke is Push?",
+            "Specific Hint": "Is there any way you can get something to teleport one way, but not teleport back?"
+        }
+    },
+    "292level": {
+        "Win": {
+            "Gentle Nudge": "How many things do you need to sink to get access to everywhere in this level?",
+            "Bigger Nudge": "How long do you need \"Text\"?",
+            "Specific Hint": "Remember your solution to Ruins 04. How can that be useful here?"
+        }
+    },
+    "309level": {
+        "Win": {
+            "Gentle Nudge": "Yes, every single piece of text is vital to the solution.",
+            "Specific Hint #1": "Remember your solution to Fall Extra 3? How can that be useful here?",
+            "Specific Hint #2": "Remember your solution to Island 11? How can that be useful here? What is a second way this can be useful?",
+            "Specific Hint #3": "How can you get text to overlap?"
+        }
+    },
+    "299level": {
+        "Win": {
+            "Gentle Nudge": "**Level** is already **Down.** Is there a way to move it?"
+        }
+    },
+    "188level": {
+        "Win": {
+            "Gentle Nudge": "How many rules can you make with *Baba* (if **Baba is Word**)? Keep in mind you'll need to use one Baba to go to the Flag.",
+            "Bigger Nudge": "What is the point of that Rock?",
+            "Specific Hint": "Remember your solution to Chasm Extra 5? How did you create **Baba is Word** and **Baba is You** simultaneously in that level?"
+        }
+    },
+    "323level": {
+        "Win": {
+            "Gentle Nudge": "What spaces exactly will cause Baba to sink?",
+            "Bigger Nudge": "How many spaces thick is this \"barrier\"?",
+            "Specific Hint": "**Empty is Push** is pretty close to what you need."
+        }
+    },
+    "320level": {
+        "Win": {
+            "Gentle Nudge": "At some point **Keke** will be **Move.** What can you do before that?",
+            "Bigger Nudge": "Why and when does the *Ice* turn into *Wall?*",
+            "Specific Hint": "Ignore \"Box.\" Push Keke where you need her to go and then make **Keke is Move.**"
+        }
+    }
+}
