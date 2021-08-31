@@ -2,3 +2,6 @@ auth.py
 updatebaba.ps1
 run.ps1
 log.txt
+robot.db
+robot.db-shm
+robot.db-wal
