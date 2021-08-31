@@ -5,10 +5,12 @@ from src.constants import BABA_WORLD
 from typing import TYPE_CHECKING, Literal, TypedDict
 
 from PIL import Image
+import re
 
 from . import errors
 
 if TYPE_CHECKING:
+    # @ps-ignore
     RawGrid = list[list[list['RawTile']]]
     FullGrid = list[list[list['FullTile']]]
     GridIndex = tuple[int, int, int]
@@ -25,9 +27,7 @@ class RawTile:
     @classmethod
     def from_str(cls, string: str) -> RawTile:
         '''Parse from user input'''
-        parts = string.split(";")
-        if parts[0] == string:
-            parts = string.split(":")
+        parts = re.split('[\;,\:]', string)
         if len(parts[0]) == 0:
             raise errors.EmptyTile()
         if any(len(part) == 0 for part in parts):
@@ -45,6 +45,7 @@ class TileFields(TypedDict, total=False):
     color_index: tuple[int, int]
     color_rgb: tuple[int, int, int]
     empty: bool
+    cut_alpha: bool
     mask_alpha: bool
     meta_level: int
     custom_direction: int
@@ -65,6 +66,7 @@ class FullTile:
     color_index: tuple[int, int] = (0, 3)
     color_rgb: tuple[int, int, int] | None = None
     custom: bool = False
+    cut_alpha: bool = False
     mask_alpha: bool = False
     style_flip: bool = False
     empty: bool = False
@@ -88,4 +90,5 @@ class FullTile:
 class ReadyTile:
     '''Tile that's about to be rendered, and already has a prerendered sprite.'''
     frames: tuple[Image.Image, Image.Image, Image.Image] | None
+    cut_alpha: bool = False
     mask_alpha: bool = False

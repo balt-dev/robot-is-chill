@@ -48,6 +48,7 @@ class Renderer:
         upscale: bool = True,
         extra_out: str | BinaryIO | None = None,
         extra_name: str | None = None,
+        frames: list[int] = [1,2,3]
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -77,7 +78,7 @@ class Renderer:
         
         # This is appropriate padding, no sprites can go beyond it
         padding = constants.DEFAULT_SPRITE_SIZE
-        for frame in range(3):
+        for frame in frames:
             width = len(grid[0])
             height = len(grid)
             img_width = width * constants.DEFAULT_SPRITE_SIZE + 2 * padding
@@ -107,8 +108,10 @@ class Renderer:
                 for tile in stack:
                     if tile.frames is None:
                         continue
-                    
-                    for frame, sprite in enumerate(tile.frames):
+                    tframes = []
+                    for f in frames:
+                        tframes.append(tile.frames[f-1])
+                    for frame, sprite in enumerate(tframes[:len(frames)]):
                         x_offset = (sprite.width - constants.DEFAULT_SPRITE_SIZE) // 2
                         y_offset = (sprite.height - constants.DEFAULT_SPRITE_SIZE) // 2
                         if x == 0:
@@ -125,6 +128,15 @@ class Renderer:
 
                             imgs[frame+i].paste(
                                 sprite, 
+                                (
+                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
+                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                ), 
+                                alpha
+                            )
+                        elif tile.cut_alpha:
+                            imgs[frame+i].paste(
+                                Image.new("RGBA", (sprite.width, sprite.height)), 
                                 (
                                     x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
                                     y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
@@ -214,7 +226,7 @@ class Renderer:
             sprite = self.recolor(sprite, rgb)
             out.append(sprite)
         f0, f1, f2 = out
-        return ReadyTile((f0, f1, f2), tile.mask_alpha)
+        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha)
 
     async def render_full_tiles(
         self,

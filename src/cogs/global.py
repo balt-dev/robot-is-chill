@@ -169,7 +169,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             for y, row in enumerate(word_grid):
                 for x, word in enumerate(row):
-                    if potential_count == 2:
+                    if potential_count == 6:
                         raise Exception
                     potential_flags.append((word, x, y))
                     potential_count += 1
@@ -179,6 +179,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         to_delete = []
         raw_output = False
         default_to_letters = False
+        frames = [1,2,3]
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -205,13 +206,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if letter_match:
                 default_to_letters = True
                 to_delete.append((x, y))
+            frames_match = re.fullmatch(r"-frames=\[([1,2,3]),?([1,2,3])?,?([1,2,3])?\]", flag)
+            if frames_match and frames_match.group(1):
+                frames = [int(frames_match.group(1))]
+                if frames_match.group(2):
+                    frames.append(int(frames_match.group(2)))
+                if frames_match.group(3):
+                    frames.append(int(frames_match.group(3)))
+                to_delete.append((x, y))
             combine_match = re.fullmatch(r"-combine", flag)
             if combine_match:
                 async for m in ctx.channel.history(limit=100):
                     print("iterating")
                     if m.attachments:
                         before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
-                        print("Before image exists")
                         break
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
@@ -277,6 +285,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 upscale=not raw_output,
                 extra_out=extra_buffer,
                 extra_name=extra_names[0] if raw_output else None, # type: ignore
+                frames=frames
             )
         except errors.TileNotFound as e:
             word = e.args[0]
