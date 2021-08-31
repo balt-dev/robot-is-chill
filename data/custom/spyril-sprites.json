@@ -1,0 +1,38 @@
+[
+    {
+        "name": "bibi",
+        "sprite": "bibi",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "koko",
+        "sprite": "koko",
+        "tiling": "2",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "mu",
+        "sprite": "mu",
+        "tiling": "2",
+        "color": [
+            "3",
+            "1"
+        ]
+    },
+    {
+        "name": "fufu",
+        "sprite": "fufu",
+        "tiling": "2",
+        "color": [
+            "5",
+            "2"
+        ]
+    }
+]

@@ -1,0 +1,82 @@
+[
+    {
+        "name": "balalt",
+        "sprite": "balalt",
+        "tiling": "1",
+        "color": [
+            "0",
+            "1"
+        ]
+    },   
+    {
+        "name": "text_balalt",
+        "sprite": "text_balalt",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "1"
+        ]
+    },   
+    {
+        "name": "crystalball",
+        "sprite": "crystalball",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "0"
+        ]
+    },
+    {
+        "name": "fu",
+        "sprite": "fu",
+        "tiling": "2",
+        "color": [
+            "3",
+            "2"
+        ]
+    },
+    {
+        "name": "text_fu",
+        "sprite": "text_fu",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "1"
+        ],
+        "active": [
+            "3",
+            "2"
+        ]
+    },
+    {
+        "name": "jeje",
+        "sprite": "jeje",
+        "tiling": "2",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "text_jeje",
+        "sprite": "text_jeje",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ],
+        "active": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "metronome",
+        "sprite": "metronome",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    }
+]

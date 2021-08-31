@@ -1,0 +1,56 @@
+[
+    {
+        "name": "bishop",
+        "sprite": "bishop",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "king",
+        "sprite": "king",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "knight",
+        "sprite": "knight",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "pawn",
+        "sprite": "pawn",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "queen",
+        "sprite": "queen",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "rook",
+        "sprite": "rook",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    }
+]

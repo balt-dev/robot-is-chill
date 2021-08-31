@@ -1,0 +1,24 @@
+[
+    {
+        "name": "ika",
+        "sprite": "ika",
+        "tiling": "2",
+        "color": [
+            "5",
+            "3"
+        ]
+    },
+    {
+        "name": "text_ika",
+        "sprite": "text_ika",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "1"
+        ],
+        "active": [
+            "5",
+            "3"
+        ]
+    }
+]

@@ -1,0 +1,76 @@
+[
+    {
+        "sprite": "plus",
+        "name": "plus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "sprite": "goose",
+        "name": "goose",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "level",
+        "sprite": "level",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1",
+        "tags": "baba_special"
+    },
+    {
+        "name": "sale",
+        "sprite": "sale",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sale",
+        "sprite": "text_sale",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1",
+        "type": "0"
+    },
+    {
+        "name": "spore",
+        "sprite": "spore",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "edge",
+        "sprite": "edge",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "plate",
+        "sprite": "plate",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]
