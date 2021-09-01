@@ -112,8 +112,8 @@ class Renderer:
                     for f in frames:
                         tframes.append(tile.frames[f-1])
                     for frame, sprite in enumerate(tframes[:len(frames)]):
-                        x_offset = (sprite.width - constants.DEFAULT_SPRITE_SIZE) // 2
-                        y_offset = (sprite.height - constants.DEFAULT_SPRITE_SIZE) // 2
+                        x_offset = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[0]
+                        y_offset = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[1]
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -238,7 +238,7 @@ class Renderer:
             sprite = self.recolor(sprite, rgb)
             out.append(sprite)
         f0, f1, f2 = out
-        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha)
+        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace)
 
     async def render_full_tiles(
         self,
