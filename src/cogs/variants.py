@@ -707,5 +707,16 @@ def setup(bot: Bot):
         return {
             "angle": angle
         }
+
+    @handlers.handler(
+        pattern=r"displace\[(\d+)\-(\d+)\]",
+        variant_hints={"displace": "`displace` (Displaces the sprite by _x_ and _y_ pixels.)"},
+        variant_group="Filters"
+    )
+    def Rotate(ctx: HandlerContext) -> TileFields:
+        return {
+            "displace": (int(ctx.groups[0]),int(ctx.groups[1]))
+        }
+        
         
     return handlers

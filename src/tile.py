@@ -55,7 +55,8 @@ class TileFields(TypedDict, total=False):
     angle: int
     blur_radius: int
     glitch: int
-    filters: list[str] = field(default_factory=list)
+    filters: list[str]
+    displace: tuple[int,int]
 
 @dataclass
 class FullTile:
@@ -70,6 +71,7 @@ class FullTile:
     mask_alpha: bool = False
     style_flip: bool = False
     empty: bool = False
+    displace: tuple[int,int] = (0,0)
     meta_level: int = 0
     custom_direction: int | None = None
     custom_style: Literal["noun", "property", "letter"] | None = None
@@ -92,3 +94,4 @@ class ReadyTile:
     frames: tuple[Image.Image, Image.Image, Image.Image] | None
     cut_alpha: bool = False
     mask_alpha: bool = False
+    displace: tuple[int,int] = (0,0)
