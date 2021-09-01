@@ -73,7 +73,6 @@ class Renderer:
                 newImage = Image.new('RGBA', (img_width_raw, img_height_raw), (255, 255, 255, 0))
                 newImage.paste(im, (0, 0))
                 frame = newImage
-                print(frame)
                 imgs.append(frame)
         
         # This is appropriate padding, no sprites can go beyond it
