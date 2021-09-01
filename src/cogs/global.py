@@ -685,4 +685,4 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 def setup(bot: Bot):
     bot.add_cog(GlobalCog(bot))
 
-#testing webhook
+#testing webhook 2
