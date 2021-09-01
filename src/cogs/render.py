@@ -124,8 +124,10 @@ class Renderer:
                             pad_d = max(pad_d, y_offset)
                         alpha = sprite.getchannel("A")
                         if tile.mask_alpha:
+                            if background is not None: 
+                                palette_color = palette_img.getpixel(background)
+                                sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
                             alpha = ImageChops.invert(alpha)
-
                             imgs[frame+i].paste(
                                 sprite, 
                                 (
@@ -135,14 +137,24 @@ class Renderer:
                                 alpha
                             )
                         elif tile.cut_alpha:
-                            imgs[frame+i].paste(
-                                Image.new("RGBA", (sprite.width, sprite.height)), 
-                                (
-                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
-                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
-                                ), 
-                                alpha
-                            )
+                            if background is not None: 
+                                imgs[frame+i].paste(
+                                    Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)), 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                    ), 
+                                    alpha
+                                )
+                            else:
+                                imgs[frame+i].paste(
+                                    Image.new("RGBA", (sprite.width, sprite.height)), 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                    ), 
+                                    alpha
+                                )
                         else:
                             imgs[frame+i].paste(
                                 sprite, 
