@@ -709,7 +709,7 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
-        pattern=r"displace\[(\-?\d{1,3})\~(\-?\d{1,3})\]",
+        pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
         variant_hints={"displace": "`displace` (Displaces the sprite by _x_ and _y_ pixels.)"},
         variant_group="Filters"
     )

@@ -206,7 +206,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if letter_match:
                 default_to_letters = True
                 to_delete.append((x, y))
-            frames_match = re.fullmatch(r"-frames=\[([1,2,3]),?([1,2,3])?,?([1,2,3])?\]", flag)
+            frames_match = re.fullmatch(r"-frames=([1,2,3]),?([1,2,3])?,?([1,2,3])?", flag)
             if frames_match and frames_match.group(1):
                 frames = [int(frames_match.group(1))]
                 if frames_match.group(2):
