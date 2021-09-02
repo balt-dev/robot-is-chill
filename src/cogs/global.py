@@ -180,6 +180,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         raw_output = False
         default_to_letters = False
         frames = [1,2,3]
+        speed = 200
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -224,6 +225,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             combine_match2 = re.fullmatch(r"-combine=(.+)", flag)
             if combine_match2:
                 before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
+                to_delete.append((x, y))
+            speed_match = re.fullmatch(r"-speed=([\d\.]+)", flag)
+            if speed_match:
+                try:
+                    speed = int(200 * max(min(1/float(speed_match.group(1)),10),0.1))
+                except:
+                    speed = 200
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
@@ -288,7 +296,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 upscale=not raw_output,
                 extra_out=extra_buffer,
                 extra_name=extra_names[0] if raw_output else None, # type: ignore
-                frames=frames
+                frames=frames,
+                speed=speed
             )
         except errors.TileNotFound as e:
             word = e.args[0]
