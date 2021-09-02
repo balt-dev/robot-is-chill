@@ -229,7 +229,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             speed_match = re.fullmatch(r"-speed=([\d\.]+)", flag)
             if speed_match:
                 try:
-                    speed = int(200 * max(min(1/float(speed_match.group(1)),10),0.1))
+                    speed = int(200 * max(min(1/float(speed_match.group(1)),200),0.05))
                 except:
                     speed = 200
                 to_delete.append((x, y))
