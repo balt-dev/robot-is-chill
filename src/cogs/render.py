@@ -681,7 +681,9 @@ class Renderer:
         base = Image.merge("RGBA", (base, base, base, base))
         if level % 2 == 0 and level != 0:
             base.paste(orig, (level, level), mask=orig)
-        
+        elif level % 2 == 1 and level != 1:
+            blank = Image.new("RGBA", orig.size)
+            base.paste(blank, (level, level), mask=orig)
         return base
 
     def save_frames(

@@ -12,6 +12,7 @@ from os import listdir
 from time import time
 from typing import Any, OrderedDict, TYPE_CHECKING
 
+import asyncio
 import aiohttp
 import discord
 from discord.ext import commands
@@ -23,7 +24,6 @@ from .. import constants, errors
 from ..db import CustomLevelData, LevelData
 from ..tile import RawTile
 from ..types import Bot, Context
-
 
 def try_index(string: str, value: str) -> int:
     '''Returns the index of a substring within a string.
@@ -313,12 +313,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
         msg = f"`{ctx.message.content}`\n*Rendered in {delta:.2f} s*"
-        await ctx.reply(content=msg, file=discord.File(buffer, filename=filename, spoiler=spoiler))
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
             await ctx.send("*Raw files:*", file=discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"))
+        await ctx.reply(content=msg, file=discord.File(buffer, filename=filename, spoiler=spoiler))
         
-
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def rule(self, ctx: Context, *, objects: str = ""):
@@ -678,10 +677,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Only the author should be mentioned
         mentions = discord.AllowedMentions(everyone=False, users=[ctx.author], roles=False)
 
+
+
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
 
 def setup(bot: Bot):
     bot.add_cog(GlobalCog(bot))
 
-#testing webhook 2
+#testing webhook
