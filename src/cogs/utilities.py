@@ -77,6 +77,18 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     def __init__(self, bot: Bot):
         self.bot = bot
 
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    @commands.command(name="undo")
+    async def undo(self, ctx: Context):
+        '''Deletes the last message sent from the bot.'''
+        async for m in ctx.channel.history(limit=1):
+            await m.delete()
+        async for m in ctx.channel.history(limit=100):
+            if m.author.id == 753421978324566046:
+                await m.delete()
+                await ctx.send('Removed last message.', delete_after=3.0)
+                break
+        
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def search(self, ctx: Context, *, query: str):
