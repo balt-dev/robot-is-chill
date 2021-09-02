@@ -221,7 +221,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
                         break
                 to_delete.append((x, y))
-            combine_match2 = re.fullmatch(r"-combine=(.+) ", flag)
+            combine_match2 = re.fullmatch(r"-combine=(.+)", flag)
             if combine_match2:
                 before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
                 to_delete.append((x, y))
