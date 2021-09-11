@@ -126,9 +126,12 @@ class Renderer:
                             pad_d = max(pad_d, y_offset)
                         alpha = sprite.getchannel("A")
                         if tile.mask_alpha:
+                            alpha = ImageChops.invert(alpha)
                             if background is not None: 
                                 palette_color = palette_img.getpixel(background)
-                                sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
+                            else:
+                                palette_color = (0,0,0,0)
+                            sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
                             imgs[frame+i].paste(
                                 sprite, 
                                 (
@@ -136,7 +139,7 @@ class Renderer:
                                     y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
                                 ), 
                                 alpha
-                            )
+                            ) 
                         elif tile.cut_alpha:
                             if background is not None: 
                                 imgs[frame+i].paste(

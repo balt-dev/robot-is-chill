@@ -170,6 +170,15 @@
          "3"
       ]
    },
+     {
+      "name": "errorhappy",
+      "sprite": "errorhappy",
+      "tiling": "-1",
+      "color": [
+         "0",
+         "3"
+      ]
+   },
 	{
       "name": "text_@",
       "sprite": "text_@",
