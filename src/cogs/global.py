@@ -207,24 +207,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if letter_match:
                 default_to_letters = True
                 to_delete.append((x, y))
-            frames_match = re.fullmatch(r"-frames=([1,2,3]),?([1,2,3])?,?([1,2,3])?,?([1,2,3])?", flag)
-            if frames_match and frames_match.group(1):
-                frames = [int(frames_match.group(1))]
-                if frames_match.group(2):
-                    frames.append(int(frames_match.group(2)))
-                if frames_match.group(3):
-                    frames.append(int(frames_match.group(3)))
-                if frames_match.group(4):
-                    frames.append(int(frames_match.group(4)))
+            frames_match = re.fullmatch(r"-frames=([1,2,3]).*", flag)
+            if frames_match and frames_match.group(0):
+                frames = []
+                for n in re.finditer(r"[1,2,3]", flag[8:]):
+                    if n.group(0) in ['1','2','3']:
+                        frames.append(int(n.group(0)))
                 to_delete.append((x, y))
-            combine_match = re.fullmatch(r"-combine", flag)
+            combine_match = re.fullmatch(r"-combine", flag) or re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
             if combine_match:
                 async for m in ctx.channel.history(limit=100):
                     if m.attachments:
                         before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
                         break
                 to_delete.append((x, y))
-            combine_match2 = re.fullmatch(r"-combine=(.+)", flag)
+            combine_match2 = re.fullmatch(r"-combine=(.+)", flag) or re.fullmatch(r"-c=(.+)", flag) or re.fullmatch(r"--combine=(.+)", flag)
             if combine_match2:
                 before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
                 to_delete.append((x, y))
@@ -309,8 +306,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word.name}`?")
             return await ctx.error(f"The tile `{word}` could not be found.")
         except errors.BadTileProperty as e:
-            word, (w, h) = e.args
-            return await ctx.error(f"The tile `{word}` could not be made into a property, because it's too big (`{w} by {h}`).")
+            return await ctx.error(f"Error! `{e.args[1]}`")
         except errors.EmptyVariant as e:
             word = e.args[0]
             return await ctx.error(
@@ -323,7 +319,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
-        msg = f"`{ctx.message.content}`\n*Rendered in {delta:.2f} s*"
+        await ctx.send('`'+ctx.message.content[0:1998]+'`')
+        msg = f"*Rendered in {delta:.2f} s*"
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
             await ctx.send("*Raw files:*", file=discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"))

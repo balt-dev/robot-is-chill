@@ -17,6 +17,24 @@
       ],
       "tiling": "-1"
    },
+   {
+      "name": "cucu",
+      "sprite": "cucu",
+      "tiling": "2",
+      "color": [
+         "0",
+         "3"
+      ]
+   },
+   {
+      "name": "text_cucu",
+      "sprite": "text_cucu",
+      "color": [
+         "0",
+         "1"
+      ],
+      "tiling": "-1"
+   },
   {
       "name": "cookie",
       "sprite": "cookie",
@@ -134,28 +152,37 @@
       ],
       "tiling": "-1"
    },
-     {
-      "name": "balaltleft",
-      "sprite": "balaltleft",
-      "tiling": "1",
+	{
+      "name": "balaltcorner",
+      "sprite": "balaltcorner",
+      "tiling": "0",
       "color": [
          "0",
          "1"
       ]
    },
-   {
-      "name": "text_balaltleft",
-      "sprite": "text_balaltleft",
-      "color": [
-         "0",
-         "1"
-      ],
-      "tiling": "-1"
-   },
      {
       "name": "bibi",
       "sprite": "bibi",
       "tiling": "2",
+      "color": [
+         "0",
+         "3"
+      ]
+   },
+	{
+      "name": "text_@",
+      "sprite": "text_@",
+      "tiling": "-1",
+      "color": [
+         "0",
+         "3"
+      ]
+   },
+	{
+      "name": "error?",
+      "sprite": "creepyerror",
+      "tiling": "-1",
       "color": [
          "0",
          "3"

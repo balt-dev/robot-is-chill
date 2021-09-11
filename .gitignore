@@ -11,3 +11,5 @@ src/cogs/__pycache__/global.cpython-38.pyc
 *.pyc
 robot.db
 robot.db-wal
+*.db
+run.sh
