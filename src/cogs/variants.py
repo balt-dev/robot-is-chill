@@ -680,7 +680,7 @@ def setup(bot: Bot):
         variant_hints={"glitch": "`glitch` (Displaces some pixels by abusing rotation inaccuracy.)"},
         variant_group="Filters"
     )
-    def Rotate(ctx: HandlerContext) -> TileFields:
+    def glitch(ctx: HandlerContext) -> TileFields:
         intensity = int(ctx.groups[0])
         return {
             "glitch": intensity
@@ -691,7 +691,7 @@ def setup(bot: Bot):
         variant_hints={"blur": "`blur` (Gaussian blurs the sprite with a radius of _n_.)"},
         variant_group="Filters"
     )
-    def Rotate(ctx: HandlerContext) -> TileFields:
+    def blur_radius(ctx: HandlerContext) -> TileFields:
         radius = int(ctx.groups[0])
         return {
             "blur_radius": radius
@@ -702,20 +702,30 @@ def setup(bot: Bot):
         variant_hints={"rotate": "`rotate` (Rotates the sprite _n_ degrees counterclockwise)"},
         variant_group="Filters"
     )
-    def Rotate(ctx: HandlerContext) -> TileFields:
+    def rotate(ctx: HandlerContext) -> TileFields:
         angle = int(ctx.groups[0])
         return {
             "angle": angle
         }
 
     @handlers.handler(
-        pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
-        variant_hints={"displace": "`displace` (Displaces the sprite by _x_ and _y_ pixels.)"},
+        pattern=r"scale([\d\.]+)\/([\d\.]+)",
+        variant_hints={"scale": "`scale` (Scales the sprite by _n1_ on the x axis and _n2_ on the y axis.)"},
         variant_group="Filters"
     )
-    def Rotate(ctx: HandlerContext) -> TileFields:
+    def scale(ctx: HandlerContext) -> TileFields:
         return {
-            "displace": (int(ctx.groups[0]),int(ctx.groups[1]))
+            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(float(ctx.groups[1]),48),0.01))
+        }
+
+    @handlers.handler(
+        pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
+        variant_hints={"displace": "`displace` (Displaces the sprite by _x_ pixels to the right and _y_ pixels downwards.)"},
+        variant_group="Filters"
+    )
+    def displace(ctx: HandlerContext) -> TileFields:
+        return {
+            "displace": (0-int(ctx.groups[0]),0-int(ctx.groups[1]))
         }
         
         

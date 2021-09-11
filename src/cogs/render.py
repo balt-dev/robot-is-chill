@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import copy
+import math
 import random
 import zipfile
+from collections import Counter
 from io import BytesIO
 from typing import TYPE_CHECKING, BinaryIO
 
 import numpy as np
-import math
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
 from src.tile import FullTile, ReadyTile
 
 from .. import constants, errors
 from ..utils import cached_open
-from collections import Counter
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -81,14 +81,14 @@ class Renderer:
         for frame in frames:
             width = len(grid[0])
             height = len(grid)
-            img_width = width * constants.DEFAULT_SPRITE_SIZE + 2 * padding
-            img_height =  height * constants.DEFAULT_SPRITE_SIZE + 2 * padding
+            img_width = width * constants.DEFAULT_SPRITE_SIZE + 2 * padding 
+            img_height = height * constants.DEFAULT_SPRITE_SIZE + 2 * padding
 
             if images and image_source is not None:
                 img = Image.new("RGBA", (img_width, img_height))
                 # for loop in case multiple background images are used (i.e. baba's world map)
                 for image in images:
-                    overlap = Image.open(f"data/images/{image_source}/{image}_{frame + 1}.png") # bg images are 1-indexed
+                    overlap = Image.open(f"data/images/{image_source}/{image}_{frame}.png")
                     img.paste(overlap, (padding, padding), mask=overlap)
             # bg color
             elif background is not None:
@@ -112,8 +112,10 @@ class Renderer:
                     for f in frames:
                         tframes.append(tile.frames[f-1])
                     for frame, sprite in enumerate(tframes[:len(frames)]):
-                        x_offset = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[0]
-                        y_offset = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[1]
+                        x_offset = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 )
+                        y_offset = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 )
+                        x_offset_disp = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[0]
+                        y_offset_disp = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[1]
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -127,12 +129,11 @@ class Renderer:
                             if background is not None: 
                                 palette_color = palette_img.getpixel(background)
                                 sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
-                            alpha = ImageChops.invert(alpha)
                             imgs[frame+i].paste(
                                 sprite, 
                                 (
-                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
-                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
                                 ), 
                                 alpha
                             )
@@ -141,8 +142,8 @@ class Renderer:
                                 imgs[frame+i].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)), 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
                                     ), 
                                     alpha
                                 )
@@ -150,8 +151,8 @@ class Renderer:
                                 imgs[frame+i].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height)), 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
                                     ), 
                                     alpha
                                 )
@@ -159,8 +160,8 @@ class Renderer:
                             imgs[frame+i].paste(
                                 sprite, 
                                 (
-                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset,
-                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset
+                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
                                 ), 
                                 mask=sprite
                             )
@@ -209,7 +210,8 @@ class Renderer:
                     filters=tile.filters,
                     blur=tile.blur_radius,
                     angle=tile.angle,
-                    glitch=tile.glitch
+                    glitch=tile.glitch,
+                    scale=tile.scale
                 )
             else:
                 if tile.name in ("icon",):
@@ -233,14 +235,15 @@ class Renderer:
                     filters=tile.filters,
                     blur=tile.blur_radius,
                     angle=tile.angle,
-                    glitch=tile.glitch
+                    glitch=tile.glitch,
+                    scale=tile.scale
                 )
             # Color conversion
             rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
             sprite = self.recolor(sprite, rgb)
             out.append(sprite)
         f0, f1, f2 = out
-        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace)
+        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)
 
     async def render_full_tiles(
         self,
@@ -282,21 +285,13 @@ class Renderer:
         filters: list[str],
         blur: int,
         angle: int,
-        glitch: int
+        glitch: int,
+        scale: tuple[float,float]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
         raw = text.replace("/", "")
         newline_count = text.count("/")
-
-        # This is to prevent possible DOS attacks using massive text
-        # Note however that this is unlikely to be an issue unless this
-        # function takes input from unexpected sources, as even 8 ** 4000
-        # is relatively okay to compute
-        # The default is low enough to prevent abuse, but high enough to 
-        # ensure that no actual text can be excluded.
-        if len(raw) > constants.MAX_TEXT_LENGTH:
-            raise errors.CustomTextTooLong(text)
 
         if seed is None:
             seed = random.randint(0, 8 ** len(raw))
@@ -305,7 +300,7 @@ class Renderer:
         # Get mode and split status
         if newline_count > 1:
             raise errors.TooManyLines(text, newline_count)
-        elif newline_count == 1:
+        elif newline_count >= 1:
             fixed = True
             mode = "small"
             index = text.index("/")
@@ -352,7 +347,7 @@ class Renderer:
         except KeyError as e:
             raise errors.BadCharacter(text, mode, e.args[0])
 
-        max_width = constants.DEFAULT_SPRITE_SIZE
+        max_width = max(sum(widths[:index]),constants.DEFAULT_SPRITE_SIZE)
         def check_or_adjust(widths: list[int], index: int) -> int:
             '''Is the arrangement valid?'''
             if mode == "small":
@@ -453,7 +448,7 @@ class Renderer:
             buf = BytesIO(letter_sprite)
             letters.append(Image.open(buf))
 
-        sprite = Image.new("L", (constants.DEFAULT_SPRITE_SIZE, constants.DEFAULT_SPRITE_SIZE))
+        sprite = Image.new("L", (max(sum(widths[:index]),constants.DEFAULT_SPRITE_SIZE), constants.DEFAULT_SPRITE_SIZE))
         if mode == "small":
             x = gaps[0]
             y_center = 6
@@ -497,7 +492,8 @@ class Renderer:
             name="text"+raw,
             blur=blur,
             angle=angle,
-            glitch=glitch
+            glitch=glitch,
+            scale=scale
         )
 
     async def apply_options_name(
@@ -512,7 +508,8 @@ class Renderer:
         filters: list[str],
         blur: int,
         angle: int,
-        glitch: int
+        glitch: int,
+        scale: tuple[float,float]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -534,7 +531,8 @@ class Renderer:
                 name=name,
                 blur=blur,
                 angle=angle,
-                glitch=glitch
+                glitch=glitch,
+                scale=scale
             )
         except ValueError as e:
             size = e.args[0]
@@ -554,9 +552,12 @@ class Renderer:
         name: str,
         blur: int,
         angle: int,
-        glitch: int
+        glitch: int,
+        scale: tuple[float,float]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
+        if scale != (1,1):
+            sprite = sprite.resize((int(math.floor(sprite.width*scale[0])),int(math.floor(sprite.height*scale[1]))), resample=Image.NEAREST) 
         if glitch != 0:
             randlist = []
             width, height = sprite.size
@@ -570,7 +571,7 @@ class Renderer:
                 randlist.append(a)
             sprite = sprite.rotate(-1*sum(randlist))
             sprite = sprite.crop(((sprite.width - widthold)//2, (sprite.height - heightold)//2, (sprite.width + widthold)//2, (sprite.height + heightold)//2))
-                
+        
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
@@ -581,9 +582,9 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
                 sprite = sprite.crop((box[0], box[1], constants.DEFAULT_SPRITE_SIZE + box[0], constants.DEFAULT_SPRITE_SIZE + box[1]))
             if style == "property":
-                if sprite.height != constants.DEFAULT_SPRITE_SIZE or sprite.width != constants.DEFAULT_SPRITE_SIZE:
-                    raise ValueError(sprite.size)
                 plate, box = self.bot.db.plate(direction, wobble)
+                if scale != (1,1):
+                    plate = plate.resize((int(math.floor(plate.width*scale[0])),int(math.floor(plate.height*scale[1]))), resample=Image.NEAREST) 
                 plate = self.make_meta(plate, meta_level)
                 plate_alpha = plate.getchannel("A")
                 sprite_alpha = sprite.getchannel("A").crop(
@@ -659,7 +660,9 @@ class Renderer:
             colors = [item for items, c in Counter(colors).most_common() for item in [items] * c]
             for x in range(sprite.size[0]):
                 for y in range(sprite.size[1]):
-                    if sprite.getpixel((x,y)) != colors[-1]:
+                    r1,g1,b1,a1 = sprite.getpixel((x,y))
+                    r2,g2,b2,a2 = colors[-1]
+                    if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
                         sprite.putpixel((x,y),(0,0,0,0))
                     else:
                         sprite.putpixel((x,y),(255,255,255,255))

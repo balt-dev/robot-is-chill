@@ -28,8 +28,6 @@ class RawTile:
     def from_str(cls, string: str) -> RawTile:
         '''Parse from user input'''
         parts = re.split('[\;,\:]', string)
-        if len(parts[0]) == 0:
-            raise errors.EmptyTile()
         if any(len(part) == 0 for part in parts):
             raise errors.EmptyVariant(parts[0])
         return RawTile(parts[0], parts[1:])
@@ -57,6 +55,7 @@ class TileFields(TypedDict, total=False):
     glitch: int
     filters: list[str]
     displace: tuple[int,int]
+    scale: tuple[float,float]
 
 @dataclass
 class FullTile:
@@ -72,6 +71,7 @@ class FullTile:
     style_flip: bool = False
     empty: bool = False
     displace: tuple[int,int] = (0,0)
+    scale: tuple[float,float] = (1,1)
     meta_level: int = 0
     custom_direction: int | None = None
     custom_style: Literal["noun", "property", "letter"] | None = None
@@ -95,3 +95,4 @@ class ReadyTile:
     cut_alpha: bool = False
     mask_alpha: bool = False
     displace: tuple[int,int] = (0,0)
+    scale: tuple[int,int] = (1,1)

@@ -86,8 +86,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         async for m in ctx.channel.history(limit=100):
             if m.author.id == 753421978324566046:
                 await m.delete()
-                await ctx.send('Removed last message.', delete_after=3.0)
                 break
+        await ctx.send('Removed last message.', delete_after=3.0)
         
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
