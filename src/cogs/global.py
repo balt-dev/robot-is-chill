@@ -250,6 +250,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             stacked_row: list[list[str]] = []
             for stack in row:
                 split = stack.split("&")
+                for n in range(len(split)):
+                    split[n] = split[n].replace('rule_','text_')
                 stacked_row.append(split)
                 #if len(split) > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
                 #    return await ctx.error(f"Stack too high ({len(split)}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")

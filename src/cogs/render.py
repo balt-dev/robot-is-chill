@@ -18,6 +18,17 @@ from ..utils import cached_open
 if TYPE_CHECKING:
     from ...ROBOT import Bot
 
+def find_coeffs(pa, pb):
+    matrix = []
+    for p1, p2 in zip(pa, pb):
+        matrix.append([p1[0], p1[1], 1, 0, 0, 0, -p2[0]*p1[0], -p2[0]*p1[1]])
+        matrix.append([0, 0, 0, p1[0], p1[1], 1, -p2[1]*p1[0], -p2[1]*p1[1]])
+
+    A = np.matrix(matrix, dtype=np.float)
+    B = np.array(pb).reshape(8)
+
+    res = np.dot(np.linalg.inv(A.T * A) * A.T, B)
+    return np.array(res).reshape(8)
 
 class Renderer:
     '''This class exposes various image rendering methods. 
@@ -214,7 +225,8 @@ class Renderer:
                     blur=tile.blur_radius,
                     angle=tile.angle,
                     glitch=tile.glitch,
-                    scale=tile.scale
+                    scale=tile.scale,
+                    warp=tile.warp
                 )
             else:
                 if tile.name in ("icon",):
@@ -239,7 +251,8 @@ class Renderer:
                     blur=tile.blur_radius,
                     angle=tile.angle,
                     glitch=tile.glitch,
-                    scale=tile.scale
+                    scale=tile.scale,
+                    warp=tile.warp
                 )
             # Color conversion
             rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
@@ -289,7 +302,8 @@ class Renderer:
         blur: int,
         angle: int,
         glitch: int,
-        scale: tuple[float,float]
+        scale: tuple[float,float],
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -496,7 +510,8 @@ class Renderer:
             blur=blur,
             angle=angle,
             glitch=glitch,
-            scale=scale
+            scale=scale,
+            warp=warp
         )
 
     async def apply_options_name(
@@ -512,7 +527,8 @@ class Renderer:
         blur: int,
         angle: int,
         glitch: int,
-        scale: tuple[float,float]
+        scale: tuple[float,float],
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -535,7 +551,8 @@ class Renderer:
                 blur=blur,
                 angle=angle,
                 glitch=glitch,
-                scale=scale
+                scale=scale,
+                warp=warp
             )
         except ValueError as e:
             size = e.args[0]
@@ -554,13 +571,36 @@ class Renderer:
         filters: list[str],
         name: str,
         blur: int,
-        angle: int,
+        angle: float,
         glitch: int,
-        scale: tuple[float,float]
+        scale: tuple[float,float],
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
+        if "face" in filters:
+            colors = []
+            for x in range(sprite.size[0]):
+                for y in range(sprite.size[1]):
+                    if sprite.getchannel("A").getpixel((x,y)) > 0 :
+                        colors += [sprite.getpixel((x,y))]
+            colors = [item for items, c in Counter(colors).most_common() for item in [items] * c]
+            for x in range(sprite.size[0]):
+                for y in range(sprite.size[1]):
+                    r1,g1,b1,a1 = sprite.getpixel((x,y))
+                    r2,g2,b2,a2 = colors[-1]
+                    if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
+                        sprite.putpixel((x,y),(0,0,0,0))
+                    else:
+                        sprite.putpixel((x,y),(255,255,255,255))
         if scale != (1,1):
             sprite = sprite.resize((int(math.floor(sprite.width*scale[0])),int(math.floor(sprite.height*scale[1]))), resample=Image.NEAREST) 
+        if warp != ((0.0,0.0),(24.0,0.0),(24.0,24.0),(0.0,24.0)):
+            print([(warp[0][0], warp[0][1]), (warp[1][0], warp[1][1]), (warp[2][0], warp[2][1]), (warp[3][0], warp[3][1])])
+            coeffs = find_coeffs(
+                    [(0, 0), (sprite.width, 0), (sprite.width, sprite.height), (0, sprite.height)],
+                    [(warp[0][0], warp[0][1]), (warp[1][0], warp[1][1]), (warp[2][0], warp[2][1]), (warp[3][0], warp[3][1])])
+            sprite = sprite.transform((sprite.width, sprite.height), Image.PERSPECTIVE, coeffs,
+                    Image.NEAREST)
         if glitch != 0:
             randlist = []
             width, height = sprite.size
@@ -574,7 +614,7 @@ class Renderer:
                 randlist.append(a)
             sprite = sprite.rotate(-1*sum(randlist))
             sprite = sprite.crop(((sprite.width - widthold)//2, (sprite.height - heightold)//2, (sprite.width + widthold)//2, (sprite.height + heightold)//2))
-        
+            
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
@@ -603,41 +643,23 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
-        if "flipx" in filters:
-            sprite = ImageOps.mirror(sprite)
-        if "flipy" in filters:
-            sprite = ImageOps.flip(sprite)
-        if "neon" in filters:
-            def clamp(mini, num, maxi):
-                return sorted((mini, num, maxi))[1]
-            sprite2 = copy.deepcopy(sprite)
-            for x in range(sprite.size[0]):
-                for y in range(sprite.size[1]):
-                    if sprite.getchannel("A").getpixel((x,y)) > 0 :
-                        neighbors = 0;
-                        for xo,yo in [[1,0],[0,1],[-1,0],[0,-1]]:
-                            if name.startswith("text_"):
-                                if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
-                                        a = (0,0,0,0)
-                                else:
-                                    try:
-                                        a = sprite.getpixel((x+xo,y+yo))
-                                    except:
-                                        a = (0,0,0,0)
-                            else:
-                                a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
-                            b = sprite.getpixel((x,y))
-                            neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
-                        if neighbors==4:
-                            r,g,b,a = sprite.getpixel((x,y))
-                            a = int(round(a / 1.8))
-                            sprite2.putpixel((x,y),(r,g,b,a))
-                        neighbors = 0;
-                        for xo in [-1,0,1]:
-                            for yo in [-1,0,1]:
+        for filter in filters:
+            if filter == "flipx":
+                sprite = ImageOps.mirror(sprite)
+            if filter == "flipy":
+                sprite = ImageOps.flip(sprite)
+            if filter == "neon":
+                def clamp(mini, num, maxi):
+                    return sorted((mini, num, maxi))[1]
+                sprite2 = copy.deepcopy(sprite)
+                for x in range(sprite.size[0]):
+                    for y in range(sprite.size[1]):
+                        if sprite.getchannel("A").getpixel((x,y)) > 0 :
+                            neighbors = 0;
+                            for xo,yo in [[1,0],[0,1],[-1,0],[0,-1]]:
                                 if name.startswith("text_"):
                                     if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
-                                        a = (0,0,0,0)
+                                            a = (0,0,0,0)
                                     else:
                                         try:
                                             a = sprite.getpixel((x+xo,y+yo))
@@ -647,28 +669,32 @@ class Renderer:
                                     a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
                                 b = sprite.getpixel((x,y))
                                 neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
-                        if neighbors==9:
-                            r,g,b,a = sprite2.getpixel((x,y))
-                            a = int(round(a / 1.8))
-                            sprite2.putpixel((x,y),(r,g,b,a))
-            sprite = sprite2
-        if "blank" in filters:
-            sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
-        if "face" in filters:
-            colors = []
-            for x in range(sprite.size[0]):
-                for y in range(sprite.size[1]):
-                    if sprite.getchannel("A").getpixel((x,y)) > 0 :
-                        colors += [sprite.getpixel((x,y))]
-            colors = [item for items, c in Counter(colors).most_common() for item in [items] * c]
-            for x in range(sprite.size[0]):
-                for y in range(sprite.size[1]):
-                    r1,g1,b1,a1 = sprite.getpixel((x,y))
-                    r2,g2,b2,a2 = colors[-1]
-                    if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
-                        sprite.putpixel((x,y),(0,0,0,0))
-                    else:
-                        sprite.putpixel((x,y),(255,255,255,255))
+                            if neighbors==4:
+                                r,g,b,a = sprite.getpixel((x,y))
+                                a = max(int(round(a / 8)),30)
+                                sprite2.putpixel((x,y),(r,g,b,a))
+                            neighbors = 0
+                            for xo in [-1,0,1]:
+                                for yo in [-1,0,1]:
+                                    if name.startswith("text_"):
+                                        if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
+                                            a = (0,0,0,0)
+                                        else:
+                                            try:
+                                                a = sprite.getpixel((x+xo,y+yo))
+                                            except:
+                                                a = (0,0,0,0)
+                                    else:
+                                        a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
+                                    b = sprite.getpixel((x,y))
+                                    neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
+                            if neighbors==9:
+                                r,g,b,a = sprite2.getpixel((x,y))
+                                a = int(round(a / 1.8))
+                                sprite2.putpixel((x,y),(r,g,b,a))
+                sprite = sprite2
+            if filter == "blank":
+                sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
         if angle != 0:
             sprite = sprite.rotate(-angle)
         if blur != 0:

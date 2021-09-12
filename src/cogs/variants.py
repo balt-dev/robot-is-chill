@@ -698,12 +698,12 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"rotate(\d+)",
+        pattern=r"rotate([\d\.]+)",
         variant_hints={"rotate": "`rotate` (Rotates the sprite _n_ degrees counterclockwise)"},
         variant_group="Filters"
     )
     def rotate(ctx: HandlerContext) -> TileFields:
-        angle = int(ctx.groups[0])
+        angle = float(ctx.groups[0])
         return {
             "angle": angle
         }
@@ -727,6 +727,16 @@ def setup(bot: Bot):
         return {
             "displace": (0-int(ctx.groups[0]),0-int(ctx.groups[1]))
         }
-        
+
+    @handlers.handler(
+        pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
+        variant_hints={"warp": "`warp` \n Transforms the corners of the image according to the input multipliers.\n Order goes top left, bottom left, bottom right, top left. \n Defaults to \":warp(0/0)(24/0)(24/24)(0/24)\".\n I don't really understand the values that well, so I can't help you there."},
+        variant_group="Filters"
+    )
+    def warp(ctx: HandlerContext) -> TileFields:
+        print(((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7]))))
+        return {
+            "warp": ((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7])))
+        }
         
     return handlers
