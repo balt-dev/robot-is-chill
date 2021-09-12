@@ -35,7 +35,7 @@ class RawTile:
     @property
     def is_text(self) -> bool:
         '''Text is special'''
-        return self.name.startswith("text_")
+        return self.name.startswith("text_") or self.name.startswith("rule_")
 
 class TileFields(TypedDict, total=False):
     sprite: tuple[str, str]
@@ -50,12 +50,13 @@ class TileFields(TypedDict, total=False):
     custom_style: Literal["noun", "property", "letter"]
     custom: bool
     style_flip: bool
-    angle: int
+    angle: float
     blur_radius: int
     glitch: int
     filters: list[str]
     displace: tuple[int,int]
     scale: tuple[float,float]
+    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
 
 @dataclass
 class FullTile:
@@ -76,9 +77,10 @@ class FullTile:
     custom_direction: int | None = None
     custom_style: Literal["noun", "property", "letter"] | None = None
     filters: list[str] = field(default_factory=list)
-    angle: int = 0
+    angle: float = 0
     blur_radius: int = 0
     glitch: int = 0
+    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]] = ((0,0),(24,0),(24,24),(0,24))
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:

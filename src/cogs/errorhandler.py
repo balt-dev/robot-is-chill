@@ -6,6 +6,7 @@ from asyncio import create_task
 
 import discord
 from discord.ext import commands
+import numpy
 
 from ..types import Bot, Context
 
@@ -143,10 +144,18 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error("We're being ratelimited. Try again later.")
             if error.status == 401:
                 return await ctx.error("This action cannot be performed.")
+            if error.status == 503:
+                return await ctx.error("HTTP server unavailable.")
             return await ctx.error("There was an error while processing this action.")
         
+        elif isinstance(error, numpy.linalg.LinAlgError):
+            return await ctx.error("Rendering failed! More than one value was found for a point when solving perspective transform.")
+
         # All other Errors not returned come here... And we can just print the default TraceBack + log
-        await ctx.error(f"An exception occurred: {type(error)}\n{error}\n```{''.join(traceback.format_tb(error.__traceback__))}```")
+        if len(''.join(traceback.format_tb(error.__traceback__))) > 1850:
+            await ctx.error(f"An exception occurred: {type(error)}\n{error}\n```{''.join(traceback.format_tb(error.__traceback__))[:1850]}... \n\n(Character limit reached!)```")
+        else:
+            await ctx.error(f"An exception occurred: {type(error)}\n{error}\n```{''.join(traceback.format_tb(error.__traceback__))}```")
         await self.logger.send(embed=emb)
         print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
