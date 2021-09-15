@@ -10,7 +10,10 @@ import collections
 from src import constants
 from typing import Any, Optional
 
+import time
 import discord
+import importlib  
+glbl = importlib.import_module("src.cogs.global")
 from discord.ext import commands
 from PIL import Image, ImageChops, ImageDraw
 
@@ -52,6 +55,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             await ctx.send(f"Reloaded extension `{cog}` from `src/cogs/{cog}.py`.")
         else:
             await ctx.send("Unknown extension provided.")
+            return None
 
     @commands.command(aliases=["reboot"])
     @commands.is_owner()

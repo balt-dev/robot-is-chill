@@ -57,6 +57,8 @@ class TileFields(TypedDict, total=False):
     displace: tuple[int,int]
     scale: tuple[float,float]
     warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
+    neon: float
+    opacity: float
 
 @dataclass
 class FullTile:
@@ -80,7 +82,9 @@ class FullTile:
     angle: float = 0
     blur_radius: int = 0
     glitch: int = 0
-    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]] = ((0,0),(24,0),(24,24),(0,24))
+    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]] = ((0,0),(0,0),(0,0),(0,0))
+    neon: float = 1
+    opacity: float = 1
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:

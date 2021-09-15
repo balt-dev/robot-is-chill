@@ -253,10 +253,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for n in range(len(split)):
                     split[n] = split[n].replace('rule_','text_')
                 stacked_row.append(split)
-                #if len(split) > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
-                #    return await ctx.error(f"Stack too high ({len(split)}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
             stacked_grid.append(stacked_row)
-
 
         # Get the dimensions of the grid
         width = max(len(row) for row in stacked_grid)
@@ -265,7 +262,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000 character limit)
         area = width * height
-        if area > constants.MAX_TILES and ctx.author.id != self.bot.owner_id:
+        if area > constants.MAX_TILES:
             return await ctx.error(f"Too many tiles ({area}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
         elif area == 0:
             return await ctx.error(f"Can't render nothing.")
@@ -359,6 +356,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         '''
         await self.render_tiles(ctx, objects=objects, rule=True)
 
+    # Generates tiles from a text file.
+    @commands.command()
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    async def file(self, ctx: Context):
+        '''Renders the text from a file attatchment.'''
+        attachment_url = ctx.message.attachments[0].url
+        file_request = requests.get(attachment_url)
+        await self.render_tiles(ctx, objects=file_request.content.decode(), rule=False)
     # Generates an animated gif of the tiles provided, using the default palette
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
