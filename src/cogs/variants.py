@@ -601,20 +601,27 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"neon",
-        variant_hints={"neon": "`neon` (Surrounded pixels get darker)"},
+        pattern=r"neon(?:([\d\.]+))?",
+        variant_hints={"neon": "`neon[int]` (Surrounded pixels get less opaque by n. If not specified, n is 1.4.)"},
         variant_group="Filters"
     )
     def neon(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["neon"]
-            }
-        except:
-            return{
-                "filters": ["neon"]
-            }
-            
+        neon = ctx.groups[0] or 1.4
+        return {
+            "neon": float(neon)
+        }
+    
+    @handlers.handler(
+        pattern=r"opacity(?:([\d\.]+))?",
+        variant_hints={"opacity": "`opacity<int>` (The image gets less opaque by n.)"},
+        variant_group="Filters"
+    )
+    def neon(ctx: HandlerContext) -> TileFields:
+        opacity = ctx.groups[0] or 1
+        return {
+            "opacity": float(opacity)
+        }
+
     @handlers.handler(
         pattern=r"blank",
         variant_hints={"blank": "`blank` (Makes all of the sprite its palette-defined color.)"},
@@ -677,50 +684,51 @@ def setup(bot: Bot):
         
     @handlers.handler(
         pattern=r"glitch(\d{1,3})|g(\d{1,3})",
-        variant_hints={"glitch": "`glitch` (Displaces some pixels by abusing rotation inaccuracy.)"},
+        variant_hints={"glitch": "`glitch<int>` (Displaces some pixels by abusing rotation inaccuracy.)"},
         variant_group="Filters"
     )
     def glitch(ctx: HandlerContext) -> TileFields:
-        intensity = int(ctx.groups[0])
+        intensity = ctx.groups[0] or 0
         return {
-            "glitch": intensity
+            "glitch": int(intensity) 
         }
     
     @handlers.handler(
         pattern=r"blur(\d)",
-        variant_hints={"blur": "`blur` (Gaussian blurs the sprite with a radius of _n_.)"},
+        variant_hints={"blur": "`blur<int>` (Gaussian blurs the sprite with a radius of n.)"},
         variant_group="Filters"
     )
     def blur_radius(ctx: HandlerContext) -> TileFields:
-        radius = int(ctx.groups[0])
+        radius = ctx.groups[0] or 0
         return {
-            "blur_radius": radius
+            "blur_radius": int(radius) 
         }
         
     @handlers.handler(
         pattern=r"rotate([\d\.]+)",
-        variant_hints={"rotate": "`rotate` (Rotates the sprite _n_ degrees counterclockwise)"},
+        variant_hints={"rotate": "`rotate<int>` (Rotates the sprite n degrees counterclockwise)"},
         variant_group="Filters"
     )
     def rotate(ctx: HandlerContext) -> TileFields:
-        angle = float(ctx.groups[0])
+        angle = ctx.groups[0] or 0
         return {
-            "angle": angle
+            "angle": float(angle) 
         }
 
     @handlers.handler(
-        pattern=r"scale([\d\.]+)\/([\d\.]+)",
-        variant_hints={"scale": "`scale` (Scales the sprite by _n1_ on the x axis and _n2_ on the y axis.)"},
+        pattern=r"scale([\d\.]+)(?:\/([\d\.]+))?",
+        variant_hints={"scale": "`scale<int>/[int]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
         variant_group="Filters"
     )
     def scale(ctx: HandlerContext) -> TileFields:
+        n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
         return {
-            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(float(ctx.groups[1]),48),0.01))
+            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
         }
 
     @handlers.handler(
         pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
-        variant_hints={"displace": "`displace` (Displaces the sprite by _x_ pixels to the right and _y_ pixels downwards.)"},
+        variant_hints={"displace": "`displace<int>/<int>` (Displaces the sprite by x pixels to the right and y pixels downwards.)"},
         variant_group="Filters"
     )
     def displace(ctx: HandlerContext) -> TileFields:
@@ -730,7 +738,7 @@ def setup(bot: Bot):
 
     @handlers.handler(
         pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
-        variant_hints={"warp": "`warp` \n Transforms the corners of the image according to the input multipliers.\n Order goes top left, bottom left, bottom right, top left. \n Defaults to \":warp(0/0)(24/0)(24/24)(0/24)\".\n I don't really understand the values that well, so I can't help you there."},
+        variant_hints={"warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, bottom left, bottom right, top right. \n Values are the offset of the point, as (right/down)."},
         variant_group="Filters"
     )
     def warp(ctx: HandlerContext) -> TileFields:

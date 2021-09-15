@@ -7,6 +7,7 @@ import zipfile
 from collections import Counter
 from io import BytesIO
 from typing import TYPE_CHECKING, BinaryIO
+import cv2
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -18,17 +19,101 @@ from ..utils import cached_open
 if TYPE_CHECKING:
     from ...ROBOT import Bot
 
-def find_coeffs(pa, pb):
-    matrix = []
-    for p1, p2 in zip(pa, pb):
-        matrix.append([p1[0], p1[1], 1, 0, 0, 0, -p2[0]*p1[0], -p2[0]*p1[1]])
-        matrix.append([0, 0, 0, p1[0], p1[1], 1, -p2[1]*p1[0], -p2[1]*p1[1]])
+def create_perspective_transform_matrix(src, dst):
+    """ Creates a perspective transformation matrix which transforms points
+        in quadrilateral ``src`` to the corresponding points on quadrilateral
+        ``dst``.
 
-    A = np.matrix(matrix, dtype=np.float)
-    B = np.array(pb).reshape(8)
+        Will raise a ``np.linalg.LinAlgError`` on invalid input.
+        """
+    # See:
+    # * http://xenia.media.mit.edu/~cwren/interpolator/
+    # * http://stackoverflow.com/a/14178717/71522
+    in_matrix = []
+    for (x, y), (X, Y) in zip(src, dst):
+        in_matrix.extend([
+            [x, y, 1, 0, 0, 0, -X * x, -X * y],
+            [0, 0, 0, x, y, 1, -Y * x, -Y * y],
+        ])
 
-    res = np.dot(np.linalg.inv(A.T * A) * A.T, B)
-    return np.array(res).reshape(8)
+    A = np.matrix(in_matrix, dtype=np.float)
+    B = np.array(dst).reshape(8)
+    af = np.dot(np.linalg.inv(A.T * A) * A.T, B)
+    return np.append(np.array(af).reshape(8), 1).reshape((3, 3))
+
+
+def create_perspective_transform(src, dst, round=False, splat_args=False):
+    """ Returns a function which will transform points in quadrilateral
+        ``src`` to the corresponding points on quadrilateral ``dst``::
+
+            >>> transform = create_perspective_transform(
+            ...     [(0, 0), (10, 0), (10, 10), (0, 10)],
+            ...     [(50, 50), (100, 50), (100, 100), (50, 100)],
+            ... )
+            >>> transform((5, 5))
+            (74.99999999999639, 74.999999999999957)
+
+        If ``round`` is ``True`` then points will be rounded to the nearest
+        integer and integer values will be returned.
+
+            >>> transform = create_perspective_transform(
+            ...     [(0, 0), (10, 0), (10, 10), (0, 10)],
+            ...     [(50, 50), (100, 50), (100, 100), (50, 100)],
+            ...     round=True,
+            ... )
+            >>> transform((5, 5))
+            (75, 75)
+
+        If ``splat_args`` is ``True`` the function will accept two arguments
+        instead of a tuple.
+
+            >>> transform = create_perspective_transform(
+            ...     [(0, 0), (10, 0), (10, 10), (0, 10)],
+            ...     [(50, 50), (100, 50), (100, 100), (50, 100)],
+            ...     splat_args=True,
+            ... )
+            >>> transform(5, 5)
+            (74.99999999999639, 74.999999999999957)
+
+        If the input values yield an invalid transformation matrix an identity
+        function will be returned and the ``error`` attribute will be set to a
+        description of the error::
+
+            >>> tranform = create_perspective_transform(
+            ...     np.zeros((4, 2)),
+            ...     np.zeros((4, 2)),
+            ... )
+            >>> transform((5, 5))
+            (5.0, 5.0)
+            >>> transform.error
+            'invalid input quads (...): Singular matrix
+        """
+    try:
+        transform_matrix = create_perspective_transform_matrix(src, dst)
+        error = None
+    except np.linalg.LinAlgError as e:
+        transform_matrix = np.identity(3, dtype=np.float)
+        error = "invalid input quads (%s and %s): %s" %(src, dst, e)
+        error = error.replace("\n", "")
+
+    to_eval = "def perspective_transform(%s):\n" %(
+        splat_args and "*pt" or "pt",
+    )
+    to_eval += "  res = np.dot(transform_matrix, ((pt[0], ), (pt[1], ), (1, )))\n"
+    to_eval += "  res = res / res[2]\n"
+    if round:
+        to_eval += "  return (int(round(res[0][0])), int(round(res[1][0])))\n"
+    else:
+        to_eval += "  return (res[0][0], res[1][0])\n"
+    locals = {
+        "transform_matrix": transform_matrix,
+    }
+    locals.update(globals())
+    exec(to_eval in locals, locals)
+    res = locals["perspective_transform"]
+    res.matrix = transform_matrix
+    res.error = error
+    return res
 
 class Renderer:
     '''This class exposes various image rendering methods. 
@@ -40,11 +125,12 @@ class Renderer:
     def recolor(self, sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
         '''Apply rgb color multiplication (0-255)'''
         r,g,b = rgb
-        arr = np.asarray(sprite, dtype='float64')
-        arr[..., 0] *= r / 256
-        arr[..., 1] *= g / 256
-        arr[..., 2] *= b / 256
-        return Image.fromarray(arr.astype('uint8'))
+        rc,gc,bc,ac = sprite.split()
+        rc = rc.point(lambda i: i * (r/256))
+        gc = gc.point(lambda i: i * (g/256))
+        bc = bc.point(lambda i: i * (b/256))
+        
+        return Image.merge('RGBA', (rc,gc,bc,ac))
                 
     async def render(
         self,
@@ -226,7 +312,9 @@ class Renderer:
                     angle=tile.angle,
                     glitch=tile.glitch,
                     scale=tile.scale,
-                    warp=tile.warp
+                    warp=tile.warp,
+                    neon=tile.neon,
+                    opacity=tile.opacity
                 )
             else:
                 if tile.name in ("icon",):
@@ -252,7 +340,9 @@ class Renderer:
                     angle=tile.angle,
                     glitch=tile.glitch,
                     scale=tile.scale,
-                    warp=tile.warp
+                    warp=tile.warp,
+                    neon=tile.neon,
+                    opacity=tile.opacity
                 )
             # Color conversion
             rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
@@ -303,7 +393,9 @@ class Renderer:
         angle: int,
         glitch: int,
         scale: tuple[float,float],
-        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
+        neon: float,
+        opacity: float
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -368,24 +460,12 @@ class Renderer:
         def check_or_adjust(widths: list[int], index: int) -> int:
             '''Is the arrangement valid?'''
             if mode == "small":
-                if fixed:
-                    if sum(widths[:index]) > max_width or sum(widths[index:]) > max_width:
-                        raise errors.CustomTextTooLong(text)
-                else:
-                    if sum(widths) > 2 * max_width:
-                        raise errors.CustomTextTooLong(text)
+                if not fixed:
                     while sum(widths[:index]) > max_width:
                         index -= 1
                     while sum(widths[index:]) > max_width:
                         index += 1
-                    if sum(widths[:index]) > max_width or sum(widths[index:]) > max_width:
-                        raise errors.CustomTextTooLong(text)
-                    if index == 0 or index == len(raw):
-                        raise errors.CustomTextTooLong(text)
                     return index
-            else:
-                if sum(widths) > max_width:
-                    raise errors.CustomTextTooLong(text)
             return index
         
         def too_squished(widths: list[int], index: int) -> bool:
@@ -511,7 +591,9 @@ class Renderer:
             angle=angle,
             glitch=glitch,
             scale=scale,
-            warp=warp
+            warp=warp,
+            neon=neon,
+            opacity=opacity
         )
 
     async def apply_options_name(
@@ -528,7 +610,9 @@ class Renderer:
         angle: int,
         glitch: int,
         scale: tuple[float,float],
-        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
+        neon: float,
+        opacity: float
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -552,7 +636,9 @@ class Renderer:
                 angle=angle,
                 glitch=glitch,
                 scale=scale,
-                warp=warp
+                warp=warp,
+                neon=neon,
+                opacity=opacity
             )
         except ValueError as e:
             size = e.args[0]
@@ -574,7 +660,9 @@ class Renderer:
         angle: float,
         glitch: int,
         scale: tuple[float,float],
-        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
+        warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
+        neon: float,
+        opacity: float
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -593,14 +681,13 @@ class Renderer:
                     else:
                         sprite.putpixel((x,y),(255,255,255,255))
         if scale != (1,1):
-            sprite = sprite.resize((int(math.floor(sprite.width*scale[0])),int(math.floor(sprite.height*scale[1]))), resample=Image.NEAREST) 
-        if warp != ((0.0,0.0),(24.0,0.0),(24.0,24.0),(0.0,24.0)):
-            print([(warp[0][0], warp[0][1]), (warp[1][0], warp[1][1]), (warp[2][0], warp[2][1]), (warp[3][0], warp[3][1])])
-            coeffs = find_coeffs(
-                    [(0, 0), (sprite.width, 0), (sprite.width, sprite.height), (0, sprite.height)],
-                    [(warp[0][0], warp[0][1]), (warp[1][0], warp[1][1]), (warp[2][0], warp[2][1]), (warp[3][0], warp[3][1])])
-            sprite = sprite.transform((sprite.width, sprite.height), Image.PERSPECTIVE, coeffs,
-                    Image.NEAREST)
+            wid = int(max(sprite.width*scale[0],sprite.width))
+            hgt = int(max(sprite.height*scale[1],sprite.height))
+            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST) 
+            if (wid,hgt) != (sprite.width,sprite.height):
+                im = Image.new('RGBA',(wid,hgt),(0,0,0,0))
+                im.paste(sprite,(wid-int(sprite.width*(2-scale[0])), hgt-int(sprite.height*(2-scale[1]))))
+                sprite = im
         if glitch != 0:
             randlist = []
             width, height = sprite.size
@@ -648,18 +735,42 @@ class Renderer:
                 sprite = ImageOps.mirror(sprite)
             if filter == "flipy":
                 sprite = ImageOps.flip(sprite)
-            if filter == "neon":
-                def clamp(mini, num, maxi):
-                    return sorted((mini, num, maxi))[1]
-                sprite2 = copy.deepcopy(sprite)
-                for x in range(sprite.size[0]):
-                    for y in range(sprite.size[1]):
-                        if sprite.getchannel("A").getpixel((x,y)) > 0 :
-                            neighbors = 0;
-                            for xo,yo in [[1,0],[0,1],[-1,0],[0,-1]]:
+            if filter == "blank":
+                sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
+        if opacity < 1:
+            r,g,b,a = sprite.split()
+            sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
+        if neon > 1:
+            def clamp(mini, num, maxi):
+                return sorted((mini, num, maxi))[1]
+            sprite2 = copy.deepcopy(sprite)
+            for x in range(sprite.size[0]):
+                for y in range(sprite.size[1]):
+                    if sprite.getchannel("A").getpixel((x,y)) > 0 :
+                        neighbors = 0
+                        for xo,yo in [[1,0],[0,1],[-1,0],[0,-1]]:
+                            if name.startswith("text_"):
+                                if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
+                                        a = (0,0,0,0)
+                                else:
+                                    try:
+                                        a = sprite.getpixel((x+xo,y+yo))
+                                    except:
+                                        a = (0,0,0,0)
+                            else:
+                                a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
+                            b = sprite.getpixel((x,y))
+                            neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
+                        if neighbors==4:
+                            r,g,b,a = sprite.getpixel((x,y))
+                            a = max(int(round(a / neon)),30)
+                            sprite2.putpixel((x,y),(r,g,b,a))
+                        neighbors = 0
+                        for xo in [-1,0,1]:
+                            for yo in [-1,0,1]:
                                 if name.startswith("text_"):
                                     if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
-                                            a = (0,0,0,0)
+                                        a = (0,0,0,0)
                                     else:
                                         try:
                                             a = sprite.getpixel((x+xo,y+yo))
@@ -669,36 +780,30 @@ class Renderer:
                                     a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
                                 b = sprite.getpixel((x,y))
                                 neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
-                            if neighbors==4:
-                                r,g,b,a = sprite.getpixel((x,y))
-                                a = max(int(round(a / 8)),30)
-                                sprite2.putpixel((x,y),(r,g,b,a))
-                            neighbors = 0
-                            for xo in [-1,0,1]:
-                                for yo in [-1,0,1]:
-                                    if name.startswith("text_"):
-                                        if (sprite.size[0]-1 < x+xo) or (x+xo < 0) or (sprite.size[1]-1 < y+yo) or (y+yo < 0):
-                                            a = (0,0,0,0)
-                                        else:
-                                            try:
-                                                a = sprite.getpixel((x+xo,y+yo))
-                                            except:
-                                                a = (0,0,0,0)
-                                    else:
-                                        a = sprite.getpixel((clamp(0,x+xo,sprite.size[0]-1),clamp(0,y+yo,sprite.size[1]-1)))
-                                    b = sprite.getpixel((x,y))
-                                    neighbors += int(a[0]==b[0] and a[1]==b[1] and a[2]==b[2] and a[3]==b[3])
-                            if neighbors==9:
-                                r,g,b,a = sprite2.getpixel((x,y))
-                                a = int(round(a / 1.8))
-                                sprite2.putpixel((x,y),(r,g,b,a))
-                sprite = sprite2
-            if filter == "blank":
-                sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
+                        if neighbors==9:
+                            r,g,b,a = sprite2.getpixel((x,y))
+                            a = int(round(a / 1.2))
+                            sprite2.putpixel((x,y),(r,g,b,a))
+            sprite = sprite2
         if angle != 0:
             sprite = sprite.rotate(-angle)
         if blur != 0:
             sprite = sprite.filter(ImageFilter.GaussianBlur(radius = blur))
+        if warp != ((0.0,0.0),(0.0,0.0),(0.0,0.0),(0.0,0.0)):
+            size2warp = sprite.size
+            spritenumpywarp = np.array(sprite)
+            widwarp = [abs(min(warp[0][0],(warp[1][0]+sprite.width),(warp[2][0]+sprite.width),warp[3][0])),max(warp[0][0],(warp[1][0]+sprite.width),(warp[2][0]+sprite.width),warp[3][0])]
+            hgtwarp = [abs(min(warp[0][1],warp[1][1],(warp[2][1]+sprite.height),(warp[3][1]+sprite.height))),max(warp[0][1],warp[1][1],(warp[2][1]+sprite.height),(warp[3][1]+sprite.height))]
+            dummywarp = Image.new('RGBA',(math.floor(sum(widwarp)),math.floor(sum(hgtwarp))),(0,0,0,0))
+            srcpoints = np.array([[0,0],[sprite.width,0],[sprite.width,sprite.height],[0,sprite.height]])
+            dstpoints = np.array([[warp[0][0], warp[0][1]], [(warp[1][0]+sprite.width),warp[1][1]], [(warp[2][0]+sprite.width),(warp[2][1]+sprite.height)], [warp[3][0], (warp[3][1]+sprite.height)]])
+            srcpoints = np.float32(srcpoints.tolist())
+            dstpoints = np.float32(dstpoints.tolist())
+            Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
+            warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=dummywarp.size[1::-1], flags = cv2.INTER_NEAREST)
+            sprite = Image.new('RGBA',(math.floor(sum(widwarp)+sprite.width),math.floor(sum(hgtwarp)+sprite.height)),(0,0,0,0))
+            sprite.paste(Image.fromarray(warped),(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1])),Image.fromarray(warped))
+            print(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1]))
         return sprite
 
     def make_meta(self, img: Image.Image, level: int) -> Image.Image:
