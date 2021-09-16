@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # limits
-MAX_STACK = 256
+MAX_STACK = 2584
 MAX_META_DEPTH = 24
 MAX_TILES = 2584
 MAX_TEXT_LENGTH = 32

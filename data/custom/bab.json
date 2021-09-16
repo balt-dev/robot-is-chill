@@ -243,6 +243,24 @@
       "tiling": "-1"
    },
    {
+	  "name": "text_txt",
+      "sprite": "text_txt",
+      "color": [
+         "4",
+         "1"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_n't",
+      "sprite": "text_n't",
+      "color": [
+         "2",
+         "2"
+      ],
+      "tiling": "-1"
+   },
+   {
       "name": "til",
       "sprite": "til",
       "color": [
