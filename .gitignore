@@ -13,3 +13,8 @@ robot.db
 robot.db-wal
 *.db
 run.sh
+src/__pycache__/constants.cpython-38.pyc
+src/cogs/__pycache__/global.cpython-38.pyc
+src/cogs/__pycache__/render.cpython-38.pyc
+robot.db-wal
+robot.db-shm

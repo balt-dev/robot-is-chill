@@ -145,6 +145,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         '''Performs the bulk work for both `tile` and `rule` commands.'''
+        #for t in re.findall(r'\"((?:[\w\(\)\/\#]+[\W]?)+)+\"', objects):
+        #    for t2 in re.findall(r'[\w\(\)\/\:\.\-\#]+', t):
+        #        print(t2)
         await ctx.trigger_typing()
         start = time()
         tiles = objects.lower().strip().replace("\\", "")
@@ -253,6 +256,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for n in range(len(split)):
                     split[n] = split[n].replace('rule_','text_')
                 stacked_row.append(split)
+                if len(split) > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
+                    return await ctx.error(f"Stack too high ({len(split)}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
             stacked_grid.append(stacked_row)
 
         # Get the dimensions of the grid
@@ -262,7 +267,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000 character limit)
         area = width * height
-        if area > constants.MAX_TILES:
+        #letting centdemeern1 have more tiles bc he asked nicely
+        if area > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id): 
             return await ctx.error(f"Too many tiles ({area}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
         elif area == 0:
             return await ctx.error(f"Can't render nothing.")

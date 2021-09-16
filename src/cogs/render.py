@@ -801,8 +801,7 @@ class Renderer:
             dstpoints = np.float32(dstpoints.tolist())
             Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=dummywarp.size[1::-1], flags = cv2.INTER_NEAREST)
-            sprite = Image.new('RGBA',(math.floor(sum(widwarp)+sprite.width),math.floor(sum(hgtwarp)+sprite.height)),(0,0,0,0))
-            sprite.paste(Image.fromarray(warped),(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1])),Image.fromarray(warped))
+            sprite = Image.fromarray(warped)
             print(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1]))
         return sprite
 
