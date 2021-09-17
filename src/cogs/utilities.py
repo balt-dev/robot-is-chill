@@ -9,6 +9,7 @@ from typing import Any, Sequence
 from src.tile import RawTile
 from src.db import CustomLevelData, LevelData, TileData
 
+import time
 import discord
 from discord.ext import commands, menus
 from PIL import Image, ImageFont, ImageDraw
@@ -83,10 +84,18 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         '''Deletes the last message sent from the bot.'''
         async for m in ctx.channel.history(limit=1):
             await m.delete()
-        async for m in ctx.channel.history(limit=100):
-            if m.author.id == 753421978324566046:
+        n = 0
+        h = ctx.channel.history(limit=100)
+        async for m in h:
+            if m.author.id == self.bot.user.id or n != 0:
                 await m.delete()
+                time.sleep(0.1)
+                if n == 0:
+                    n += 1
+            if n == 3:
                 break
+            elif n != 0:
+                n += 1
         await ctx.send('Removed last message.', delete_after=3.0)
         
     @commands.command()
