@@ -12,8 +12,6 @@ from typing import Any, Optional
 
 import time
 import discord
-import importlib  
-glbl = importlib.import_module("src.cogs.global")
 from discord.ext import commands
 from PIL import Image, ImageChops, ImageDraw
 

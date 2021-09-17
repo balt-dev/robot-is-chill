@@ -220,7 +220,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             combine_match = re.fullmatch(r"-combine", flag) or re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
             if combine_match:
                 async for m in ctx.channel.history(limit=100):
-                    if m.attachments:
+                    if m.attachments and m.content != '=file':
                         before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
                         break
                 to_delete.append((x, y))
