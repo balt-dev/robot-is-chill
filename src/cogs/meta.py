@@ -158,7 +158,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def invite(self, ctx: Context):
         '''Links for the bot support server'''
-        msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=8&scope=bot)"
+        msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite.](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)"
         )
         await ctx.send(embed=msg)
     
