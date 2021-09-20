@@ -22,8 +22,8 @@
       "sprite": "brik",
       "tiling": "-1",
       "color": [
-         "0",
-         "3"
+         "2",
+         "1"
       ]
    },
    {
@@ -48,8 +48,8 @@
       "name": "kee",
       "sprite": "kee",
       "color": [
-         "6",
-         "2"
+         "2",
+         "4"
       ],
       "tiling": "-1"
    },
@@ -73,7 +73,7 @@
    },
    {
       "name": "text_andbab",
-      "sprite": "text_&",
+      "sprite": "text_andbab",
       "color": [
          "0",
          "3"
@@ -139,7 +139,7 @@
       "sprite": "text_goaway",
       "color": [
          "6",
-         "2"
+         "1"
       ],
       "tiling": "-1"
    },
@@ -149,6 +149,15 @@
       "color": [
          "2",
          "4"
+      ],
+      "tiling": "-1"
+   },
+   {
+      "name": "text_aw",
+      "sprite": "text_aw",
+      "color": [
+         "2",
+         "1"
       ],
       "tiling": "-1"
    },
@@ -165,8 +174,8 @@
       "name": "text_kee",
       "sprite": "text_kee",
       "color": [
-         "6",
-         "2"
+         "2",
+         "4"
       ],
       "tiling": "-1"
    },
@@ -201,8 +210,8 @@
       "name": "text_noswim",
       "sprite": "text_noswim",
       "color": [
-         "3",
-         "2"
+         "1",
+         "3"
       ],
       "tiling": "-1"
    },
@@ -211,7 +220,7 @@
       "sprite": "text_roc",
       "color": [
          "6",
-         "2"
+         "1"
       ],
       "tiling": "-1"
    },
@@ -228,7 +237,7 @@
       "name": "text_wal",
       "sprite": "text_wal",
       "color": [
-         "1",
+         "0",
          "1"
       ],
       "tiling": "-1"
@@ -320,7 +329,7 @@
       "tiling": "-1",
       "color": [
          "0",
-         "2"
+         "3"
       ]
    },
    {
@@ -328,7 +337,7 @@
       "sprite": "kat",
       "tiling": "-1",
       "color": [
-         "2",
+         "0",
          "3"
       ]
    },
@@ -364,8 +373,8 @@
       "sprite": "text_flof",
       "tiling": "-1",
       "color": [
-         "0",
-         "2"
+         "4",
+         "1"
       ]
    },
    {
@@ -373,8 +382,8 @@
       "sprite": "text_kat",
       "tiling": "-1",
       "color": [
-         "2",
-         "3"
+         "4",
+         "1"
       ]
    },
    {
@@ -427,8 +436,125 @@
       "sprite": "til",
       "tiling": "-1",
       "color": [
-         "0",
+         "1",
          "0"
+      ]
+   },
+   {
+      "name": "slogkat",
+      "sprite": "slogkat",
+      "tiling": "-1",
+      "color": [
+         "2",
+         "3"
+      ]
+   },
+   {
+      "name": "text_slogkat",
+      "sprite": "text_slogkat",
+      "tiling": "-1",
+      "color": [
+         "4",
+         "1"
+      ]
+   },
+   {
+      "name": "fof",
+      "sprite": "fof",
+      "tiling": "-1",
+      "color": [
+         "5",
+         "3"
+      ]
+   },
+   {
+      "name": "text_fof",
+      "sprite": "text_fof",
+      "tiling": "-1",
+      "color": [
+         "5",
+         "3"
+      ]
+   },
+   {
+      "name": "jij",
+      "sprite": "jij",
+      "tiling": "-1",
+      "color": [
+         "6",
+         "2"
+      ]
+   },
+   {
+      "name": "text_jij",
+      "sprite": "text_jij",
+      "tiling": "-1",
+      "color": [
+         "6",
+         "2"
+      ]
+   },
+   {
+      "name": "ballt",
+      "sprite": "ballt",
+      "tiling": "-1",
+      "color": [
+         "0",
+         "1"
+      ]
+   },
+   {
+      "name": "text_ballt",
+      "sprite": "text_ballt",
+      "tiling": "-1",
+      "color": [
+         "0",
+         "1"
+      ]
+   },
+   {
+      "name": "steev",
+      "sprite": "steev",
+      "tiling": "-1",
+      "color": [
+         "2",
+         "3"
+      ]
+   },
+   {
+      "name": "text_steev",
+      "sprite": "text_steev",
+      "tiling": "-1",
+      "color": [
+         "2",
+         "3"
+      ]
+   },
+   {
+      "name": "lie",
+      "sprite": "lie",
+      "tiling": "-1",
+      "color": [
+         "4",
+         "1"
+      ]
+   },
+   {
+      "name": "text_lie",
+      "sprite": "text_lie",
+      "tiling": "-1",
+      "color": [
+         "4",
+         "1"
+      ]
+   },
+   {
+      "name": "ballalltcorner",
+      "sprite": "ballalltcorner",
+      "tiling": "-1",
+      "color": [
+         "0",
+         "1"
       ]
    }
 ]
