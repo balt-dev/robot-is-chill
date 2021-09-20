@@ -151,6 +151,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await ctx.trigger_typing()
         start = time()
         tiles = objects.lower().strip().replace("\\", "")
+        tiles = 
 
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
