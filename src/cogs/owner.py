@@ -61,16 +61,23 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def viewzip(self, ctx: Context):
-        m = zipfile.ZipFile(BytesIO(ctx.message.attachments[0].read())).namelist()
+        m = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read())).namelist()
         m.sort()
         n  = '\n'.join(m)
         print(n)
         await ctx.send(f"```\n{n}```")
 
+    @commands.command()
+    @commands.is_owner()
+    async def spritedirs(self, ctx: Context):
+        await ctx.reply('```'+'\n'.join(next(os.walk('data/sprites/'))[1])+'```')
+
+    @commands.command()
+    @commands.is_owner()
     async def addsprite(self, ctx: Context, pack_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
         '''Adds sprites to a specified sprite pack'''
         zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
-        sprite_name = re.match(r'.+/(.+?)(?:\_\d)*.png', zip.namelist()[0]).groups()[0]   
+        sprite_name = re.match(r'(?:.+/)?(.+?)(?:\_\d)*\.png', zip.namelist()[0]).groups()[0]   
         if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
             return await ctx.error(f"Pack {pack_name} doesn't exist.")
         for name in zip.namelist():

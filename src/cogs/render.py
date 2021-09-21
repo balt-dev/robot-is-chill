@@ -679,7 +679,7 @@ class Renderer:
                     if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
                         sprite.putpixel((x,y),(0,0,0,0))
                     else:
-                        sprite.putpixel((x,y),(255,255,255,255))
+                        sprite.putpixel((x,y),(r1,g1,b1,a1))
         if scale != (1,1):
             wid = int(max(sprite.width*scale[0],sprite.width))
             hgt = int(max(sprite.height*scale[1],sprite.height))
@@ -785,10 +785,6 @@ class Renderer:
                             a = int(round(a / 1.2))
                             sprite2.putpixel((x,y),(r,g,b,a))
             sprite = sprite2
-        if angle != 0:
-            sprite = sprite.rotate(-angle)
-        if blur != 0:
-            sprite = sprite.filter(ImageFilter.GaussianBlur(radius = blur))
         if warp != ((0.0,0.0),(0.0,0.0),(0.0,0.0),(0.0,0.0)):
             size2warp = sprite.size
             spritenumpywarp = np.array(sprite)
@@ -803,6 +799,10 @@ class Renderer:
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=dummywarp.size[1::-1], flags = cv2.INTER_NEAREST)
             sprite = Image.fromarray(warped)
             print(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1]))
+        if angle != 0:
+            sprite = sprite.rotate(-angle)
+        if blur != 0:
+            sprite = sprite.filter(ImageFilter.GaussianBlur(radius = blur))
         return sprite
 
     def make_meta(self, img: Image.Image, level: int) -> Image.Image:

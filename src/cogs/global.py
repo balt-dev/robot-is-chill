@@ -145,13 +145,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         '''Performs the bulk work for both `tile` and `rule` commands.'''
+        #for t in re.finditer(r'\"(.*?)\":([^ &]+)',objects):
+        #    await ctx.send(re.sub(r'([^ &]+)', f'\\1:{re.escape(t.group(2))}', objects[t.span()[0]+1:t.span()[1]-2-len(t.group(2))]))
+
         #for t in re.findall(r'\"((?:[\w\(\)\/\#]+[\W]?)+)+\"', objects):
         #    for t2 in re.findall(r'[\w\(\)\/\:\.\-\#]+', t):
         #        print(t2)
         await ctx.trigger_typing()
         start = time()
         tiles = objects.lower().strip().replace("\\", "")
-        tiles = 
 
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
