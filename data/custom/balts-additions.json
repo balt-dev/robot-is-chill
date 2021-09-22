@@ -423,7 +423,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_lessthan",
+        "name": "text_>",
         "sprite": "text_lessthan",
         "color": [
             "0",
@@ -432,7 +432,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_greaterthan",
+        "name": "text_<",
         "sprite": "text_greaterthan",
         "color": [
             "0",

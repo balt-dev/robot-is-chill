@@ -153,8 +153,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         #        print(t2)
         await ctx.trigger_typing()
         start = time()
-        tiles = objects.lower().strip().replace("\\", "")
 
+        tiles = objects.lower().strip().replace("\\", "")
+        tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
         tiles = tiles.replace("|", "")
@@ -208,6 +209,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             raw_match = re.fullmatch(r"--raw|-r", flag)
             if raw_match:
                 raw_output = True
+                to_delete.append((x, y))
+            if re.fullmatch(r"--comment(.*)", flag): 
                 to_delete.append((x, y))
             letter_match = re.fullmatch(r"--letter|-l", flag)
             if letter_match:
