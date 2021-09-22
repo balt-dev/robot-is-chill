@@ -206,8 +206,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 if palette + ".png" not in listdir("data/palettes"):
                     return await ctx.error(f"Could not find a palette with name \"{palette}\".")
                 to_delete.append((x, y))
-            raw_match = re.fullmatch(r"--raw|-r", flag)
+            raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
+                raw_name = raw_match.groups()[0] if raw_match.groups()[0] else None
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 
@@ -305,7 +306,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 out=buffer,
                 upscale=not raw_output,
                 extra_out=extra_buffer,
-                extra_name=extra_names[0] if raw_output else None, # type: ignore
+                extra_name=raw_name if raw_output else None, # type: ignore
                 frames=frames,
                 speed=speed
             )

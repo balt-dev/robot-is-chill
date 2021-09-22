@@ -314,7 +314,8 @@ class Renderer:
                     scale=tile.scale,
                     warp=tile.warp,
                     neon=tile.neon,
-                    opacity=tile.opacity
+                    opacity=tile.opacity,
+                    pixelate=tile.pixelate
                 )
             else:
                 if tile.name in ("icon",):
@@ -342,7 +343,8 @@ class Renderer:
                     scale=tile.scale,
                     warp=tile.warp,
                     neon=tile.neon,
-                    opacity=tile.opacity
+                    opacity=tile.opacity,
+                    pixelate=tile.pixelate
                 )
             # Color conversion
             rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
@@ -395,7 +397,8 @@ class Renderer:
         scale: tuple[float,float],
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
-        opacity: float
+        opacity: float,
+        pixelate: int
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -593,7 +596,8 @@ class Renderer:
             scale=scale,
             warp=warp,
             neon=neon,
-            opacity=opacity
+            opacity=opacity,
+            pixelate=pixelate
         )
 
     async def apply_options_name(
@@ -612,7 +616,8 @@ class Renderer:
         scale: tuple[float,float],
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
-        opacity: float
+        opacity: float,
+        pixelate: int
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -638,7 +643,8 @@ class Renderer:
                 scale=scale,
                 warp=warp,
                 neon=neon,
-                opacity=opacity
+                opacity=opacity,
+                pixelate=pixelate
             )
         except ValueError as e:
             size = e.args[0]
@@ -662,7 +668,8 @@ class Renderer:
         scale: tuple[float,float],
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
-        opacity: float
+        opacity: float,
+        pixelate: int
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -688,6 +695,10 @@ class Renderer:
                 im = Image.new('RGBA',(wid,hgt),(0,0,0,0))
                 im.paste(sprite,(wid-int(sprite.width*(2-scale[0])), hgt-int(sprite.height*(2-scale[1]))))
                 sprite = im
+        if pixelate > 1:
+            wid,hgt = sprite.size
+            sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
+            sprite = sprite.resize((wid,hgt), resample=Image.NEAREST)
         if glitch != 0:
             randlist = []
             width, height = sprite.size
@@ -831,7 +842,7 @@ class Renderer:
         out: str | BinaryIO,
         speed: int,
         extra_out: str | BinaryIO | None = None,
-        extra_name: str | None = None,
+        extra_name: str = 'render',
     ) -> None:
         '''Saves the images as a gif to the given file or buffer.
         
@@ -853,12 +864,13 @@ class Renderer:
         )
         if not isinstance(out, str):
             out.seek(0)
-        if extra_name is not None and extra_out is not None:
+        if extra_name == None: extra_name = 'render'
+        if extra_out is not None:
             file = zipfile.PyZipFile(extra_out, "x")
             for i, img in enumerate(imgs):
                 buffer = BytesIO()
                 img.save(buffer, "PNG")
-                file.writestr(f"{extra_name}_{i+1}.png", buffer.getvalue())
+                file.writestr(f"{extra_name}_{i//3}_{(i%3)+1}.png", buffer.getvalue())
             file.close()
 
 def setup(bot: Bot):

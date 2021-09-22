@@ -7,5 +7,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "message",
+        "sprite": "message",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "camera",
+        "sprite": "camera",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

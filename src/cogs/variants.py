@@ -402,6 +402,7 @@ def setup(bot: Bot):
         variant_group="Alternate sprites"
     )
     def raw_variant(ctx: HandlerContext) -> TileFields:
+        print(ctx.tile_data)
         variant = int(ctx.variant)
         tile_data = ctx.tile_data
         if tile_data is None:
@@ -612,19 +613,19 @@ def setup(bot: Bot):
         }
     
     @handlers.handler(
-        pattern=r"pixelate(?:([\d\.]+))?",
+        pattern=r"pixelate(?:([\d]+))?",
         variant_hints={"pixelate": "`pixelate<int>` (Pixelates the sprite with a radius of n.)"},
         variant_group="Filters"
     )
     def neon(ctx: HandlerContext) -> TileFields:
         pixelate = ctx.groups[0]
         return {
-            "neon": int(neon)
+            "pixelate": int(pixelate)
         }
     
     @handlers.handler(
         pattern=r"opacity(?:([\d\.]+))?",
-        variant_hints={"opacity": "`opacity<int>` (The image gets less opaque by n.)"},
+        variant_hints={"opacity": "`opacity<float>` (The image gets less opaque by n.)"},
         variant_group="Filters"
     )
     def neon(ctx: HandlerContext) -> TileFields:

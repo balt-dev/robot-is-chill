@@ -59,6 +59,7 @@ class TileFields(TypedDict, total=False):
     warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
     neon: float
     opacity: float
+    pixelate: int
 
 @dataclass
 class FullTile:
@@ -85,6 +86,7 @@ class FullTile:
     warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]] = ((0,0),(0,0),(0,0),(0,0))
     neon: float = 1
     opacity: float = 1
+    pixelate: int = 0
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
