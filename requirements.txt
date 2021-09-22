@@ -1,5 +1,6 @@
 discord.py>=1.7.3
 Pillow>=8.3.0
 jishaku>=1.18
+opencv-python>=4.0.0.0
 git+https://github.com/Rapptz/asqlite
 git+https://github.com/Rapptz/discord-ext-menus
