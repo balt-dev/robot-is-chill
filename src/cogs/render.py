@@ -788,17 +788,17 @@ class Renderer:
         if warp != ((0.0,0.0),(0.0,0.0),(0.0,0.0),(0.0,0.0)):
             size2warp = sprite.size
             spritenumpywarp = np.array(sprite)
-            widwarp = [abs(min(warp[0][0],(warp[1][0]+sprite.width),(warp[2][0]+sprite.width),warp[3][0])),max(warp[0][0],(warp[1][0]+sprite.width),(warp[2][0]+sprite.width),warp[3][0])]
-            hgtwarp = [abs(min(warp[0][1],warp[1][1],(warp[2][1]+sprite.height),(warp[3][1]+sprite.height))),max(warp[0][1],warp[1][1],(warp[2][1]+sprite.height),(warp[3][1]+sprite.height))]
+            widwarp = [-1*min(warp[0][0],warp[3][0],0),max((warp[1][0]+sprite.width),(warp[2][0]+sprite.width),sprite.width)]
+            hgtwarp = [-1*min(warp[0][1],warp[1][1],0),max((warp[2][1]+sprite.height),(warp[3][1]+sprite.height),sprite.height)]
             dummywarp = Image.new('RGBA',(math.floor(sum(widwarp)),math.floor(sum(hgtwarp))),(0,0,0,0))
             srcpoints = np.array([[0,0],[sprite.width,0],[sprite.width,sprite.height],[0,sprite.height]])
             dstpoints = np.array([[warp[0][0], warp[0][1]], [(warp[1][0]+sprite.width),warp[1][1]], [(warp[2][0]+sprite.width),(warp[2][1]+sprite.height)], [warp[3][0], (warp[3][1]+sprite.height)]])
             srcpoints = np.float32(srcpoints.tolist())
             dstpoints = np.float32(dstpoints.tolist())
             Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
+            print(dummywarp.size[1::-1])
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=dummywarp.size[1::-1], flags = cv2.INTER_NEAREST)
             sprite = Image.fromarray(warped)
-            print(math.floor(widwarp[1]-size2warp[0]),math.floor(hgtwarp[1]-size2warp[1]))
         if angle != 0:
             sprite = sprite.rotate(-angle)
         if blur != 0:

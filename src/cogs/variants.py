@@ -602,13 +602,24 @@ def setup(bot: Bot):
         
     @handlers.handler(
         pattern=r"neon(?:([\d\.]+))?",
-        variant_hints={"neon": "`neon[int]` (Surrounded pixels get less opaque by n. If not specified, n is 1.4.)"},
+        variant_hints={"neon": "`neon[float]` (Surrounded pixels get less opaque by n. If not specified, n is 1.4.)"},
         variant_group="Filters"
     )
     def neon(ctx: HandlerContext) -> TileFields:
         neon = ctx.groups[0] or 1.4
         return {
             "neon": float(neon)
+        }
+    
+    @handlers.handler(
+        pattern=r"pixelate(?:([\d\.]+))?",
+        variant_hints={"pixelate": "`pixelate<int>` (Pixelates the sprite with a radius of n.)"},
+        variant_group="Filters"
+    )
+    def neon(ctx: HandlerContext) -> TileFields:
+        pixelate = ctx.groups[0]
+        return {
+            "neon": int(neon)
         }
     
     @handlers.handler(
@@ -738,7 +749,7 @@ def setup(bot: Bot):
 
     @handlers.handler(
         pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
-        variant_hints={"warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, bottom left, bottom right, top right. \n Values are the offset of the point, as (right/down)."},
+        variant_hints={"warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, top right, bottom right, bottom left. \n Values are the offset of the point, as (right/down)."},
         variant_group="Filters"
     )
     def warp(ctx: HandlerContext) -> TileFields:

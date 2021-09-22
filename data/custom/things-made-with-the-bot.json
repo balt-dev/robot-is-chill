@@ -1,0 +1,11 @@
+[
+    {
+        "name": "folder",
+        "sprite": "folder",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    }
+]
