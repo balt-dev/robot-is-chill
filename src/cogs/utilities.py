@@ -82,20 +82,26 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command(name="undo")
     async def undo(self, ctx: Context):
         '''Deletes the last message sent from the bot.'''
-        async for m in ctx.channel.history(limit=1):
-            await m.delete()
-        n = 0
-        h = ctx.channel.history(limit=100)
-        async for m in h:
-            if m.author.id == self.bot.user.id or n != 0:
+        if isinstance(ctx.channel, discord.channel.DMChannel):
+            async for m in ctx.channel.history(limit=100):
+                if m.author.id == self.bot.user.id:
+                    await m.delete()
+                    break
+        else:
+            async for m in ctx.channel.history(limit=1):
                 await m.delete()
-                time.sleep(0.1)
-                if n == 0:
+            n = 0
+            h = ctx.channel.history(limit=100)
+            async for m in h:
+                if m.author.id == self.bot.user.id or n != 0:
+                    await m.delete()
+                    time.sleep(0.1)
+                    if n == 0:
+                        n += 1
+                if n == 3:
+                    break
+                elif n != 0:
                     n += 1
-            if n == 3:
-                break
-            elif n != 0:
-                n += 1
         await ctx.send('Removed last message.', delete_after=3.0)
         
     @commands.command()

@@ -228,8 +228,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if combine_match:
                 async for m in ctx.channel.history(limit=100):
                     if m.attachments and m.content != '=file':
-                        before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
-                        break
+                        try:
+                            before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
+                            break
+                        except:
+                            pass
                 to_delete.append((x, y))
             combine_match2 = re.fullmatch(r"-combine=(.+)", flag) or re.fullmatch(r"-c=(.+)", flag) or re.fullmatch(r"--combine=(.+)", flag)
             if combine_match2:
@@ -372,11 +375,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     # Generates tiles from a text file.
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
-    async def file(self, ctx: Context):
-        '''Renders the text from a file attatchment.'''
+    async def file(self, ctx: Context, rule: str = ''):
+        '''Renders the text from a file attatchment.
+        Add -r, --rule, -rule, -t, --text, or -text to render as text.'''
         attachment_url = ctx.message.attachments[0].url
         file_request = requests.get(attachment_url)
-        await self.render_tiles(ctx, objects=file_request.content.decode(), rule=False)
+        await self.render_tiles(ctx, objects=file_request.content.decode(), rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
     # Generates an animated gif of the tiles provided, using the default palette
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
