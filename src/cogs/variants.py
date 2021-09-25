@@ -697,6 +697,66 @@ def setup(bot: Bot):
             return{
                 "filters": ["flipy"]
             }
+    
+    @handlers.handler(
+        pattern=r"scanx",
+        variant_hints={"scanx": "`scanx` (Applies a horizonal scanline effect.)"},
+        variant_group="Filters"
+    )
+    def scanx(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["scanx"]
+            }
+        except:
+            return{
+                "filters": ["scanx"]
+            }
+    
+    @handlers.handler(
+        pattern=r"scany",
+        variant_hints={"scany": "`scany` (Applies a vertical scanline effect.)"},
+        variant_group="Filters"
+    )
+    def scany(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["scany"]
+            }
+        except:
+            return{
+                "filters": ["scany"]
+            }
+    
+    @handlers.handler(
+        pattern=r"invert",
+        variant_hints={"invert": "`invert` (Inverts sprite color.)"},
+        variant_group="Filters"
+    )
+    def invert(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["invert"]
+            }
+        except:
+            return{
+                "filters": ["invert"]
+            }
+    
+    @handlers.handler(
+        pattern=r"fisheye",
+        variant_hints={"fisheye": "`fisheye` (Applies fisheye effect.)"},
+        variant_group="Filters"
+    )
+    def fisheye(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["fisheye"]
+            }
+        except:
+            return{
+                "filters": ["fisheye"]
+            }
         
     @handlers.handler(
         pattern=r"glitch(\d{1,3})|g(\d{1,3})",
