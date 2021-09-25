@@ -1,5 +1,5 @@
 [general]
-name=Baba Is You - m
+name=Baba Is You - Mobile
 start=106level
 firstlevel=0level
 themecount=27

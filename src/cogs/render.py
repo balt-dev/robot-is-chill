@@ -324,6 +324,9 @@ class Renderer:
                     path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
                 elif tile.name == "default":
                     path = f"data/sprites/{constants.BABA_WORLD}/default_{wobble + 1}.png"
+                elif tile.variant_number == -1: #this is so :(
+                    source, sprite_name = tile.sprite
+                    path = f"data/sprites/vanilla/error_0_{wobble + 1}.png"
                 else:
                     source, sprite_name = tile.sprite
                     path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
