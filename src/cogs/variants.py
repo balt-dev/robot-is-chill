@@ -697,6 +697,36 @@ def setup(bot: Bot):
             return{
                 "filters": ["flipy"]
             }
+    
+    @handlers.handler(
+        pattern=r"scanx",
+        variant_hints={"scanx": "`scanx` (Applies a horizonal scanline effect.)"},
+        variant_group="Filters"
+    )
+    def scanx(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["scanx"]
+            }
+        except:
+            return{
+                "filters": ["scanx"]
+            }
+    
+    @handlers.handler(
+        pattern=r"scany",
+        variant_hints={"scany": "`scany` (Applies a vertical scanline effect.)"},
+        variant_group="Filters"
+    )
+    def scany(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["scany"]
+            }
+        except:
+            return{
+                "filters": ["scany"]
+            }
         
     @handlers.handler(
         pattern=r"glitch(\d{1,3})|g(\d{1,3})",
