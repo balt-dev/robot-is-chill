@@ -113,12 +113,24 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         self.bot.exit_code = 1
         await self.bot.close()
 
-    @commands.command(aliases=["kill", "yeet"])
+    @commands.command(aliases=["kill", "yeet", "defeat", "empty", "not"])
     @commands.is_owner()
-    async def logout(self, ctx: Context):
+    async def logout(self, ctx: Context, endsentence : str = ""):
         '''Kills the bot process.'''
-        if ctx.invoked_with == "yeet":
+        if endsentence != "": #Normally, logout doesn't trigger with arguments.
+            if ctx.invoked_with == "not":
+                if endsentence == "robot": #Check if the argument is *actually* robot, making robot is not robot
+                    await ctx.send("Poofing bot process...")
+                    await self.bot.close() # Trigger close before returning
+            return #Doesn't close the bot if any of these logic statements is false
+        elif ctx.invoked_with == "not":
+            return #Catch "robot is not"
+        elif ctx.invoked_with == "yeet":
             await ctx.send("Yeeting bot process...")
+        elif ctx.invoked_with == "defeat":
+            await ctx.send("Processing robot is defeat...")
+        elif ctx.invoked_with == "empty":
+            await ctx.send("Voiding bot process...")
         else:
             await ctx.send("Killing bot process...")
         await self.bot.close()
