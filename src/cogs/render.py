@@ -744,6 +744,11 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        def scan(spritenumpyscan):
+            for i in range(len(spritenumpyscan)):
+                if (i%2)==1:
+                    spritenumpyscan[i]=0
+            return spritenumpyscan
         for filter in filters:
             if filter == "flipx":
                 sprite = ImageOps.mirror(sprite)
@@ -751,6 +756,12 @@ class Renderer:
                 sprite = ImageOps.flip(sprite)
             if filter == "blank":
                 sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
+            if filter == "scanx":
+                spritenumpyscan = np.array(sprite)
+                sprite = Image.fromarray(scan(spritenumpyscan))
+            if filter == "scany":
+                spritenumpyscan = np.array(sprite).swapaxes(0,1)
+                sprite = Image.fromarray(scan(spritenumpyscan).swapaxes(0,1))
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
