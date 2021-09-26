@@ -852,5 +852,15 @@ def setup(bot: Bot):
         return{
             "palette": ctx.groups[0]
         }
+
+    @handlers.handler(
+        pattern=r"overlay\/(\w+)",
+        variant_hints={"overlay": "`overlay/<overlayname>` (Applies an overlay on the tile.)"},
+        variant_group="Filters"
+    )
+    def overlay(ctx: HandlerContext) -> TileFields:
+        return{
+            "overlay": ctx.groups[0]
+        }
         
     return handlers
