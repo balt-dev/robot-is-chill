@@ -62,6 +62,7 @@ class TileFields(TypedDict, total=False):
     pixelate: int
     freeze: bool
     negative: bool
+    palette: str
 
 @dataclass
 class FullTile:
@@ -91,6 +92,7 @@ class FullTile:
     pixelate: int = 0
     freeze: bool = False
     negative: bool = False
+    palette: str = ""
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
