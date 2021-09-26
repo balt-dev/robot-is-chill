@@ -62,7 +62,6 @@ class TileFields(TypedDict, total=False):
     pixelate: int
     freeze: bool
     negative: bool
-    negative: bool
 
 @dataclass
 class FullTile:
