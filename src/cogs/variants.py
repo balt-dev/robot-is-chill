@@ -729,7 +729,7 @@ def setup(bot: Bot):
             }
     
     @handlers.handler(
-        pattern=r"invert",
+        pattern=r"invert|inv",
         variant_hints={"invert": "`invert` (Inverts sprite color.)"},
         variant_group="Filters"
     )
@@ -821,6 +821,36 @@ def setup(bot: Bot):
         print(((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7]))))
         return {
             "warp": ((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7])))
+        }
+    
+    @handlers.handler(
+        pattern=r"freeze",
+        variant_hints={"freeze": "`freeze` (Freezes the first wobble frame of the tile.)"},
+        variant_group="Filters"
+    )
+    def freeze(ctx: HandlerContext) -> TileFields:
+        return{
+            "freeze": True
+        }
+
+    @handlers.handler(
+        pattern=r"negative|neg",
+        variant_hints={"negative": "`negative` (RGB color inversion.)"},
+        variant_group="Filters"
+    )
+    def freeze(ctx: HandlerContext) -> TileFields:
+        return{
+            "negative": True
+        }
+
+    @handlers.handler(
+        pattern=r"palette\/(\w+)\/",
+        variant_hints={"palette": "`palette/<palettename>/` (Applies a different color palette to the tile.)"},
+        variant_group="Filters"
+    )
+    def palette(ctx: HandlerContext) -> TileFields:
+        return{
+            "palette": ctx.groups[0]
         }
         
     return handlers

@@ -302,6 +302,8 @@ class Renderer:
         x, y = position
         for frame in range(3):
             wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
+            if tile.freeze:
+                wobble=0
             if tile.custom:
                 sprite = await self.generate_sprite(
                     tile.name,
@@ -351,8 +353,15 @@ class Renderer:
                     pixelate=tile.pixelate
                 )
             # Color conversion
-            rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            if tile.palette=="":
+                rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            else:
+                rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
             sprite = self.recolor(sprite, rgb)
+            if tile.negative:
+                inverted = 255-np.array(sprite)
+                inverted[:,:,3] = 255-inverted[:,:,3]
+                sprite = Image.fromarray(abs(inverted))
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)
