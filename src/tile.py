@@ -60,6 +60,9 @@ class TileFields(TypedDict, total=False):
     neon: float
     opacity: float
     pixelate: int
+    freeze: bool
+    negative: bool
+    negative: bool
 
 @dataclass
 class FullTile:
@@ -87,6 +90,8 @@ class FullTile:
     neon: float = 1
     opacity: float = 1
     pixelate: int = 0
+    freeze: bool = False
+    negative: bool = False
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
