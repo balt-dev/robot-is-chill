@@ -851,11 +851,14 @@ class Renderer:
 
     def make_meta(self, img: Image.Image, level: int) -> Image.Image:
         '''Applies a meta filter to an image.'''
-        if level > constants.MAX_META_DEPTH:
+        if abs(level) > constants.MAX_META_DEPTH:
             raise ValueError(level)
         
         orig = img.copy()
         base = img.getchannel("A")
+        if level<0:
+            level=abs(level)
+            base=ImageOps.invert(base)
         for _ in range(level):
             temp = base.crop((-2, -2, base.width + 2, base.height + 2))
             filtered = ImageChops.invert(temp).filter(ImageFilter.FIND_EDGES)

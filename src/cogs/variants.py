@@ -504,20 +504,20 @@ def setup(bot: Bot):
     )
     def meta(ctx: HandlerContext) -> TileFields:
         level = ctx.fields.get("meta_level", 0)
-        if level >= constants.MAX_META_DEPTH:
+        if abs(level) >= constants.MAX_META_DEPTH:
             raise errors.BadMetaVariant(ctx.tile.name, ctx.variant, level)
         return {
             "meta_level": level + 1
         }
     
     @handlers.handler(
-        pattern=r"m(\d+)",
+        pattern=r"m(-*\d+)",
         variant_hints={"m1": "`mX` (A specific meta depth, e.g. `m1`, `m3`)"},
         variant_group="Filters"
     )
     def meta_absolute(ctx: HandlerContext) -> TileFields:
         level = int(ctx.groups[0])
-        if level > constants.MAX_META_DEPTH:
+        if abs(level) > constants.MAX_META_DEPTH:
             raise errors.BadMetaVariant(ctx.tile.name, ctx.variant, level)
         return {
             "meta_level": level
