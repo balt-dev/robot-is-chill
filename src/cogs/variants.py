@@ -411,19 +411,19 @@ def setup(bot: Bot):
         try:
             if tiling in constants.AUTO_TILINGS:
                 if variant >= 16:
-                    raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+                    raise Exception()
             else:
                 dir, anim = split_variant(variant)
                 if dir != 0:
                     if tiling not in constants.DIRECTION_TILINGS or dir not in constants.DIRECTIONS:
-                        raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+                        raise Exception()
                 if anim != 0:
                     if anim in constants.SLEEP_VARIANTS.values():
                         if tiling not in constants.SLEEP_TILINGS:
-                            raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+                            raise Exception()
                     else:
                         if tiling not in constants.ANIMATION_TILINGS or anim not in constants.ANIMATION_VARIANTS.values():
-                            raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+                            raise Exception()
             return {
                 "variant_number": variant
             }
