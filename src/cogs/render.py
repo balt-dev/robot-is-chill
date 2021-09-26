@@ -354,7 +354,10 @@ class Renderer:
                     pixelate=tile.pixelate
                 )
             # Color conversion
-            rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            if tile.palette=="":
+                rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            else:
+                rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
             sprite = self.recolor(sprite, rgb)
             if tile.negative:
                 inverted = 255-np.array(sprite)
