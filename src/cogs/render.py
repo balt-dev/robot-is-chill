@@ -361,7 +361,9 @@ class Renderer:
                     rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
                 sprite = self.recolor(sprite, rgb)
             else:
-                rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
+                try: rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
+                except FileNotFoundError:
+                    raise errors.OverlayNotFound("Couldn't apply overlay: overlay not found")
                 ovsprite = np.array(sprite).astype("float64")
                 ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
                 ovsprite=(ovsprite).astype("uint8")
