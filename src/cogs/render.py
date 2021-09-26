@@ -354,11 +354,19 @@ class Renderer:
                     pixelate=tile.pixelate
                 )
             # Color conversion
-            if tile.palette=="":
-                rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            if tile.overlay == "":
+                if tile.palette=="":
+                    rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+                else:
+                    rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
+                sprite = self.recolor(sprite, rgb)
             else:
-                rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
-            sprite = self.recolor(sprite, rgb)
+                rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
+                ovsprite = np.array(sprite).astype("float64")
+                ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
+                ovsprite=(ovsprite).astype("uint8")
+                print(ovsprite)
+                sprite = Image.fromarray(ovsprite)
             if tile.negative:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
