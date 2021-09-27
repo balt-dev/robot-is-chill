@@ -511,7 +511,7 @@ def setup(bot: Bot):
         }
     
     @handlers.handler(
-        pattern=r"m(-*\d+)",
+        pattern=r"m(-{0,1}\d+)",
         variant_hints={"m1": "`mX` (A specific meta depth, e.g. `m1`, `m3`)"},
         variant_group="Filters"
     )
@@ -861,6 +861,16 @@ def setup(bot: Bot):
     def overlay(ctx: HandlerContext) -> TileFields:
         return{
             "overlay": ctx.groups[0]
+        }
+    
+    @handlers.handler(
+        pattern=r"(?:brightness|bright)([\d\.]*)",
+        variant_hints={"brightness": "`brightness<factor>` (Darkens or brightens the tile by multiplying it by factor.)"},
+        variant_group="Filters"
+    )
+    def brightness(ctx: HandlerContext) -> TileFields:
+        return{
+            "brightness": float(ctx.groups[0])
         }
         
     return handlers

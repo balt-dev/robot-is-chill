@@ -373,6 +373,12 @@ class Renderer:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
                 sprite = Image.fromarray(abs(inverted))
+            if tile.brightness != 1:
+                bsprite = np.array(sprite,dtype="float64")
+                bsprite*=tile.brightness
+                bsprite[bsprite>255]=255
+                bsprite[bsprite<0]=0
+                sprite = Image.fromarray(bsprite.astype("uint8"))
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)
@@ -788,9 +794,9 @@ class Renderer:
                 inverted[:,:,3] = 255-inverted[:,:,3]
                 sprite = Image.fromarray(abs(inverted))
             if filter == "fisheye":
-                spritenumpyscan = np.array(sprite)
-                spritenumpyscan = fish.fish(spritenumpyscan,0.5)
-                sprite = Image.fromarray(spritenumpyscan)
+                spritefish = np.array(sprite)
+                spritefish = fish.fish(spritefish,0.5)
+                sprite = Image.fromarray(spritefish)
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))

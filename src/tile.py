@@ -64,6 +64,7 @@ class TileFields(TypedDict, total=False):
     negative: bool
     palette: str
     overlay: str
+    brightness: float
 
 @dataclass
 class FullTile:
@@ -95,6 +96,7 @@ class FullTile:
     negative: bool = False
     palette: str = ""
     overlay: str = ""
+    brightness: float = 1
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
