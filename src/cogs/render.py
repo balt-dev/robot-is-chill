@@ -319,7 +319,9 @@ class Renderer:
                     warp=tile.warp,
                     neon=tile.neon,
                     opacity=tile.opacity,
-                    pixelate=tile.pixelate
+                    pixelate=tile.pixelate,
+                    wavex=tile.wavex,
+                    wavey=tile.wavey
                 )
             else:
                 if tile.name in ("icon",):
@@ -351,34 +353,36 @@ class Renderer:
                     warp=tile.warp,
                     neon=tile.neon,
                     opacity=tile.opacity,
-                    pixelate=tile.pixelate
+                    pixelate=tile.pixelate,
+                    wavex=tile.wavex,
+                    wavey=tile.wavey
                 )
             # Color conversion
-            if tile.palette=="":
-                rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            if tile.overlay == "":
+                if tile.palette=="":
+                    rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+                else:
+                    rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
+                sprite = self.recolor(sprite, rgb)
             else:
-                rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
-            sprite = self.recolor(sprite, rgb)
-            if tile.overlay != "":
-                try: 
-                    overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA")
-                    if overlay.width < sprite.width or overlay.height < sprite.height:
-                        width = math.ceil(sprite.width/overlay.width)
-                        height = math.ceil(sprite.height/overlay.height)
-                        rgb = np.tile(np.array(overlay),(height,width,1))/255
-                    else:
-                        rgb = np.array(overlay)/255
+                try: rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
                 except FileNotFoundError:
                     raise errors.OverlayNotFound("Couldn't apply overlay: overlay not found")
                 ovsprite = np.array(sprite).astype("float64")
-                print(rgb.shape,ovsprite.shape)
                 ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
                 ovsprite=(ovsprite).astype("uint8")
+                # print(ovsprite)
                 sprite = Image.fromarray(ovsprite)
             if tile.negative:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
                 sprite = Image.fromarray(abs(inverted))
+            if tile.brightness != 1:
+                bsprite = np.array(sprite,dtype="float64")
+                bsprite*=(tile.brightness,tile.brightness,tile.brightness,1)
+                bsprite[bsprite>255]=255
+                bsprite[bsprite<0]=0
+                sprite = Image.fromarray(bsprite.astype("uint8"))
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)
@@ -428,7 +432,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -627,7 +633,9 @@ class Renderer:
             warp=warp,
             neon=neon,
             opacity=opacity,
-            pixelate=pixelate
+            pixelate=pixelate,
+            wavex=wavex,
+            wavey=wavey
         )
 
     async def apply_options_name(
@@ -647,7 +655,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -674,7 +684,9 @@ class Renderer:
                 warp=warp,
                 neon=neon,
                 opacity=opacity,
-                pixelate=pixelate
+                pixelate=pixelate,
+                wavex=wavex,
+                wavey=wavey
             )
         except ValueError as e:
             size = e.args[0]
@@ -699,7 +711,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -742,6 +756,20 @@ class Renderer:
                 randlist.append(a)
             sprite = sprite.rotate(-1*sum(randlist))
             sprite = sprite.crop(((sprite.width - widthold)//2, (sprite.height - heightold)//2, (sprite.width + widthold)//2, (sprite.height + heightold)//2))
+        def rotate(li, x):
+            return li[-x % len(li):] + li[:-x % len(li)]
+        if wavex[1]!=0:
+            numpysprite = np.array(sprite)
+            for l in range(len(numpysprite)):
+                off = np.sin(l*wavex[2]/(np.pi)+wavex[0])*wavex[1]
+                numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
+            sprite = Image.fromarray(numpysprite)
+        if wavey[1]!=0:
+            numpysprite = np.array(sprite).swapaxes(0,1)
+            for l in range(len(numpysprite)):
+                off = np.sin(-l*wavey[2]/(np.pi)+wavey[0])*wavey[1]
+                numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
+            sprite = Image.fromarray(numpysprite.swapaxes(0,1))
             
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
@@ -794,9 +822,9 @@ class Renderer:
                 inverted[:,:,3] = 255-inverted[:,:,3]
                 sprite = Image.fromarray(abs(inverted))
             if filter == "fisheye":
-                spritenumpyscan = np.array(sprite)
-                spritenumpyscan = fish.fish(spritenumpyscan,0.5)
-                sprite = Image.fromarray(spritenumpyscan)
+                spritefish = np.array(sprite)
+                spritefish = fish.fish(spritefish,0.5)
+                sprite = Image.fromarray(spritefish)
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
