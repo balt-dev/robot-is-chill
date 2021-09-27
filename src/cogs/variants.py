@@ -854,8 +854,8 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
-        pattern=r"overlay\/(\w+)",
-        variant_hints={"overlay": "`overlay/<overlayname>` (Applies an overlay on the tile.)"},
+        pattern=r"o\!(\w+)",
+        variant_hints={"overlay": "`o!<overlayname>` (Applies an overlay on the tile.)"},
         variant_group="Filters"
     )
     def overlay(ctx: HandlerContext) -> TileFields:
