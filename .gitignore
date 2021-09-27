@@ -22,3 +22,4 @@ robot.db-shm
 *.db-wal
 *.pyc
 *.pyc
+robot.db-shm
