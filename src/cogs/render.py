@@ -319,7 +319,9 @@ class Renderer:
                     warp=tile.warp,
                     neon=tile.neon,
                     opacity=tile.opacity,
-                    pixelate=tile.pixelate
+                    pixelate=tile.pixelate,
+                    wavex=tile.wavex,
+                    wavey=tile.wavey
                 )
             else:
                 if tile.name in ("icon",):
@@ -351,7 +353,9 @@ class Renderer:
                     warp=tile.warp,
                     neon=tile.neon,
                     opacity=tile.opacity,
-                    pixelate=tile.pixelate
+                    pixelate=tile.pixelate,
+                    wavex=tile.wavex,
+                    wavey=tile.wavey
                 )
             # Color conversion
             if tile.overlay == "":
@@ -367,7 +371,7 @@ class Renderer:
                 ovsprite = np.array(sprite).astype("float64")
                 ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
                 ovsprite=(ovsprite).astype("uint8")
-                print(ovsprite)
+                # print(ovsprite)
                 sprite = Image.fromarray(ovsprite)
             if tile.negative:
                 inverted = 255-np.array(sprite)
@@ -428,7 +432,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -627,7 +633,9 @@ class Renderer:
             warp=warp,
             neon=neon,
             opacity=opacity,
-            pixelate=pixelate
+            pixelate=pixelate,
+            wavex=wavex,
+            wavey=wavey
         )
 
     async def apply_options_name(
@@ -647,7 +655,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -674,7 +684,9 @@ class Renderer:
                 warp=warp,
                 neon=neon,
                 opacity=opacity,
-                pixelate=pixelate
+                pixelate=pixelate,
+                wavex=wavex,
+                wavey=wavey
             )
         except ValueError as e:
             size = e.args[0]
@@ -699,7 +711,9 @@ class Renderer:
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
-        pixelate: int
+        pixelate: int,
+        wavex: tuple[float,float,float],
+        wavey: tuple[float,float,float]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -742,6 +756,20 @@ class Renderer:
                 randlist.append(a)
             sprite = sprite.rotate(-1*sum(randlist))
             sprite = sprite.crop(((sprite.width - widthold)//2, (sprite.height - heightold)//2, (sprite.width + widthold)//2, (sprite.height + heightold)//2))
+        def rotate(li, x):
+            return li[-x % len(li):] + li[:-x % len(li)]
+        if wavex[1]!=0:
+            numpysprite = np.array(sprite)
+            for l in range(len(numpysprite)):
+                off = np.sin(l*wavex[2]/(np.pi)+wavex[0])*wavex[1]
+                numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
+            sprite = Image.fromarray(numpysprite)
+        if wavey[1]!=0:
+            numpysprite = np.array(sprite).swapaxes(0,1)
+            for l in range(len(numpysprite)):
+                off = np.sin(-l*wavey[2]/(np.pi)+wavey[0])*wavey[1]
+                numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
+            sprite = Image.fromarray(numpysprite.swapaxes(0,1))
             
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
