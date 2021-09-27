@@ -761,13 +761,13 @@ class Renderer:
         if wavex[1]!=0:
             numpysprite = np.array(sprite)
             for l in range(len(numpysprite)):
-                off = np.sin(((l/numpysprite.shape[0])*wavex[2]*np.pi*2)+wavex[0])*wavex[1]
+                off = np.sin(((l/numpysprite.shape[0])*wavex[2]*np.pi*2)+(wavex[0]/numpysprite.shape[0]*np.pi*2))*wavex[1]
                 numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
             sprite = Image.fromarray(numpysprite)
         if wavey[1]!=0:
             numpysprite = np.array(sprite).swapaxes(0,1)
             for l in range(len(numpysprite)):
-                off = np.sin(((-l/numpysprite.shape[0])*wavey[2]*np.pi*2)+wavey[0])*wavey[1]
+                off = np.sin(((l/numpysprite.shape[0])*wavey[2]*np.pi*2)+(wavey[0]/numpysprite.shape[0]*np.pi*2))*-wavey[1]
                 numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
             sprite = Image.fromarray(numpysprite.swapaxes(0,1))
             
