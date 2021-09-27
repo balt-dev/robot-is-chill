@@ -375,7 +375,7 @@ class Renderer:
                 sprite = Image.fromarray(abs(inverted))
             if tile.brightness != 1:
                 bsprite = np.array(sprite,dtype="float64")
-                bsprite*=tile.brightness
+                bsprite*=(tile.brightness,tile.brightness,tile.brightness,1)
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
