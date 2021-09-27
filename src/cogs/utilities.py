@@ -5,6 +5,8 @@ from pathlib import Path
 import re
 from os import listdir
 from typing import Any, Sequence
+import numpy as np
+import cv2
 
 from src.tile import RawTile
 from src.db import CustomLevelData, LevelData, TileData
@@ -300,6 +302,21 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             clear_reactions_after=True
         ).start(ctx)
         
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    @commands.command(name="overlays")
+    async def overlays(self, ctx: Context):
+        '''Lists every valid overlay.'''
+        output = discord.Embed(
+            title="",
+            color=self.bot.embed_color
+        )
+        output.add_field(
+            name="Valid overlays",
+            value="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/')),
+            inline=True
+        )
+        await ctx.reply(embed=output)
+
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette")
     async def show_palette(self, ctx: Context, palette: str):

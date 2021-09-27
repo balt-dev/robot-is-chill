@@ -439,5 +439,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bibad",
+        "sprite": "bibad",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]
