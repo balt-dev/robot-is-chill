@@ -89,7 +89,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         elif isinstance(err, errors.BadMetaVariant):
             depth = rest[0]
             return await ctx.error(
-                f"{msg}. `{depth}` is greater than the maximum meta depth, which is `{constants.MAX_META_DEPTH}`."
+                f"{msg}. `abs({depth})` is greater than the maximum meta depth, which is `{constants.MAX_META_DEPTH}`."
             )
         elif isinstance(err, errors.UnknownVariant):
             return await ctx.error(

@@ -51,6 +51,12 @@ class BadTilingVariant(VariantError):
     extra args: tiling
     '''
 
+class OverlayNotFound(Exception):
+    '''Variant doesn't match tiling
+    
+    extra args: tiling
+    '''
+
 class TileNotText(VariantError):
     '''Can't apply text variants on tiles'''
 

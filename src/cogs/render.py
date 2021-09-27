@@ -354,11 +354,21 @@ class Renderer:
                     pixelate=tile.pixelate
                 )
             # Color conversion
-            if tile.palette=="":
-                rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+            if tile.overlay == "":
+                if tile.palette=="":
+                    rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
+                else:
+                    rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
+                sprite = self.recolor(sprite, rgb)
             else:
-                rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
-            sprite = self.recolor(sprite, rgb)
+                try: rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
+                except FileNotFoundError:
+                    raise errors.OverlayNotFound("Couldn't apply overlay: overlay not found")
+                ovsprite = np.array(sprite).astype("float64")
+                ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
+                ovsprite=(ovsprite).astype("uint8")
+                print(ovsprite)
+                sprite = Image.fromarray(ovsprite)
             if tile.negative:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
@@ -851,11 +861,14 @@ class Renderer:
 
     def make_meta(self, img: Image.Image, level: int) -> Image.Image:
         '''Applies a meta filter to an image.'''
-        if level > constants.MAX_META_DEPTH:
+        if abs(level) > constants.MAX_META_DEPTH:
             raise ValueError(level)
         
         orig = img.copy()
         base = img.getchannel("A")
+        if level<0:
+            level=abs(level)
+            base=ImageOps.invert(base)
         for _ in range(level):
             temp = base.crop((-2, -2, base.width + 2, base.height + 2))
             filtered = ImageChops.invert(temp).filter(ImageFilter.FIND_EDGES)
