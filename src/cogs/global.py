@@ -345,9 +345,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         renderembed.set_footer(text=f'Rendered in {delta:.2f} s') 
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
-            await ctx.send("*Raw files:*", file=discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"))
-        await ctx.send(embed=renderembed, file=image)
-        await ctx.message.delete()
+            await ctx.reply(embed=renderembed, files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
+        else:
+            await ctx.reply(embed=renderembed, file=image)
         
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
