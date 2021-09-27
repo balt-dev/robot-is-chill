@@ -139,7 +139,7 @@ class CommandErrorHandler(commands.Cog):
 
         elif isinstance(error, discord.HTTPException):
             if error.status == 400:
-                return await ctx.error("This action could not be performed.")
+                return await ctx.error(f"This action could not be performed.\n`{error}`")
             if error.status == 429:
                 return await ctx.error("We're being ratelimited. Try again later.")
             if error.status == 401:

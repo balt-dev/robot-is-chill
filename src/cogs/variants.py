@@ -402,7 +402,6 @@ def setup(bot: Bot):
         variant_group="Alternate sprites"
     )
     def raw_variant(ctx: HandlerContext) -> TileFields:
-        print(ctx.tile_data)
         variant = int(ctx.variant)
         tile_data = ctx.tile_data
         if tile_data is None:
@@ -803,6 +802,56 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
+        pattern=r"add",
+        variant_hints={"add": "`add` (Makes the tile's RGB add to the tiles below.)"},
+        variant_group="Filters"
+    )
+    def add(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'add'
+        }
+    
+    @handlers.handler(
+        pattern=r"subtract",
+        variant_hints={"subtract": "`subtract` (Makes the tile's RGB subtract from the tiles below.)"},
+        variant_group="Filters"
+    )
+    def subtract(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'subtract'
+        }
+    
+    @handlers.handler(
+        pattern=r"maximum",
+        variant_hints={"maximum": "`maximum` (Compares the tile's RGB from the tiles below, and keeps the max for each channel.)"},
+        variant_group="Filters"
+    )
+    def maximum(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'maximum'
+        }
+
+    @handlers.handler(
+        pattern=r"minimum",
+        variant_hints={"minimum": "`minimum` (Compares the tile's RGB from the tiles below, and keeps the minimum for each channel.)"},
+        variant_group="Filters"
+    )
+    def minimum(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'minimum'
+        }
+
+    @handlers.handler(
+        pattern=r"multiply",
+        variant_hints={"multiply": "`multiply` (Makes the tile's RGB multiply with the tiles below.)"},
+        variant_group="Filters"
+    )
+    def subtract(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'multiply'
+        }
+
+    @handlers.handler(
         pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
         variant_hints={"displace": "`displace<int>/<int>` (Displaces the sprite by x pixels to the right and y pixels downwards.)"},
         variant_group="Filters"
@@ -818,7 +867,6 @@ def setup(bot: Bot):
         variant_group="Filters"
     )
     def warp(ctx: HandlerContext) -> TileFields:
-        print(((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7]))))
         return {
             "warp": ((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7])))
         }
@@ -838,7 +886,7 @@ def setup(bot: Bot):
         variant_hints={"negative": "`negative` (RGB color inversion.)"},
         variant_group="Filters"
     )
-    def freeze(ctx: HandlerContext) -> TileFields:
+    def negative(ctx: HandlerContext) -> TileFields:
         return{
             "negative": True
         }
@@ -854,8 +902,8 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
-        pattern=r"o\!(\w+)",
-        variant_hints={"overlay": "`o!<overlayname>` (Applies an overlay on the tile.)"},
+        pattern=r"(?:overlay\/|o\!)(\w+)",
+        variant_hints={"overlay": "`(o!|overlay/)<overlayname>` (Applies an overlay on the tile.)"},
         variant_group="Filters"
     )
     def overlay(ctx: HandlerContext) -> TileFields:
