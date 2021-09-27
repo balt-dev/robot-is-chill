@@ -511,7 +511,7 @@ def setup(bot: Bot):
         }
     
     @handlers.handler(
-        pattern=r"m(-*\d+)",
+        pattern=r"m(-{0,1}\d+)",
         variant_hints={"m1": "`mX` (A specific meta depth, e.g. `m1`, `m3`)"},
         variant_group="Filters"
     )
@@ -861,6 +861,36 @@ def setup(bot: Bot):
     def overlay(ctx: HandlerContext) -> TileFields:
         return{
             "overlay": ctx.groups[0]
+        }
+    
+    @handlers.handler(
+        pattern=r"(?:brightness|bright)([\d\.]*)",
+        variant_hints={"brightness": "`brightness<factor>` (Darkens or brightens the tile by multiplying it by factor.)"},
+        variant_group="Filters"
+    )
+    def brightness(ctx: HandlerContext) -> TileFields:
+        return{
+            "brightness": float(ctx.groups[0])
+        }
+
+    @handlers.handler(
+        pattern=r"wavex([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"wavex": "`wavex<offset>/<amplitude>/<speed>` (Creates a wave of horizonal lines going in order from top to bottom.)"},
+        variant_group="Filters"
+    )
+    def wavex(ctx: HandlerContext) -> TileFields:
+        return{
+            "wavex": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]))
+        }
+
+    @handlers.handler(
+        pattern=r"wavey([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"wavey": "`wavey<offset>/<amplitude>/<speed>` (Creates a wave of vertical lines going in order from left to right.)"},
+        variant_group="Filters"
+    )
+    def wavey(ctx: HandlerContext) -> TileFields:
+        return{
+            "wavey": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]))
         }
         
     return handlers
