@@ -67,6 +67,7 @@ class TileFields(TypedDict, total=False):
     brightness: float
     wavex: tuple[float,float,float]
     wavey: tuple[float,float,float]
+    blending: str
 
 @dataclass
 class FullTile:
@@ -101,6 +102,7 @@ class FullTile:
     brightness: float = 1
     wavex: tuple[float,float,float] = (0,0,0)
     wavey: tuple[float,float,float] = (0,0,0)
+    blending: str = None
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
@@ -118,3 +120,4 @@ class ReadyTile:
     mask_alpha: bool = False
     displace: tuple[int,int] = (0,0)
     scale: tuple[int,int] = (1,1)
+    blending: str = None

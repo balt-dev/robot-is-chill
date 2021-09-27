@@ -334,12 +334,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
-        await ctx.send('`'+ctx.message.content[0:1998]+'`')
-        msg = f"*Rendered in {delta:.2f} s*"
+        image = discord.File(buffer, filename=filename, spoiler=spoiler)
+        renderembed = discord.Embed(
+            title=discord.Embed.Empty,
+            colour=self.bot.embed_color, 
+            description=ctx.message.content
+        )
+        renderembed.set_author(name=ctx.author.name+'#'+ctx.author.discriminator,url=f'https://discordapp.com/users/{ctx.author.id}',icon_url=f'https://cdn.discordapp.com/avatars/{ctx.author.id}/{ctx.author.avatar}.gif?size=32')
+        renderembed.set_image(url=f'attachment://{filename}')
+        renderembed.set_footer(text=f'Rendered in {delta:.2f} s') 
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
             await ctx.send("*Raw files:*", file=discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"))
-        await ctx.reply(content=msg, file=discord.File(buffer, filename=filename, spoiler=spoiler))
+        await ctx.send(embed=renderembed, file=image)
+        await ctx.message.delete()
         
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
