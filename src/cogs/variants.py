@@ -872,5 +872,25 @@ def setup(bot: Bot):
         return{
             "brightness": float(ctx.groups[0])
         }
+
+    @handlers.handler(
+        pattern=r"wavex([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"wavex": "`wavex<offset>/<amplitude>/<speed>` (Creates a wave of horizonal lines going in order from top to bottom.)"},
+        variant_group="Filters"
+    )
+    def wavex(ctx: HandlerContext) -> TileFields:
+        return{
+            "wavex": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]))
+        }
+
+    @handlers.handler(
+        pattern=r"wavey([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"wavey": "`wavey<offset>/<amplitude>/<speed>` (Creates a wave of vertical lines going in order from left to right.)"},
+        variant_group="Filters"
+    )
+    def wavey(ctx: HandlerContext) -> TileFields:
+        return{
+            "wavey": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]))
+        }
         
     return handlers

@@ -65,6 +65,8 @@ class TileFields(TypedDict, total=False):
     palette: str
     overlay: str
     brightness: float
+    wavex: tuple[float,float,float]
+    wavey: tuple[float,float,float]
 
 @dataclass
 class FullTile:
@@ -97,6 +99,8 @@ class FullTile:
     palette: str = ""
     overlay: str = ""
     brightness: float = 1
+    wavex: tuple[float,float,float] = (0,0,0)
+    wavey: tuple[float,float,float] = (0,0,0)
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
