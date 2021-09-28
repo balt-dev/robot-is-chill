@@ -259,14 +259,90 @@ class Renderer:
                                     alpha
                                 )
                         else:
-                            imgs[frame+i].paste(
-                                sprite, 
-                                (
-                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
-                                ), 
-                                mask=sprite
-                            )
+                            if tile.blending == 'add':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                imgs[frame+i] = Image.fromarray(cv2.add(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))
+                            elif tile.blending == 'subtract':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                inmp = np.asarray(imgtemp)
+                                inmp[:,:,3] = 0
+                                imgs[frame+i] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame+i]),inmp))  
+                            elif tile.blending == 'maximum':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                imgs[frame+i] = Image.fromarray(cv2.max(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))  
+                            elif tile.blending == 'minimum':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                imgtempar = np.asarray(imgtemp)
+                                imgtempar[:,:,3] = np.asarray(imgs[frame+i])[:,:,3]
+                                imgs[frame+i].paste(
+                                    Image.fromarray(cv2.min(np.asarray(imgs[frame+i]),imgtempar)),
+                                    (
+                                        0,
+                                        0
+                                    ), 
+                                    mask=imgtemp
+                                )
+                            elif tile.blending == 'multiply':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                imgtempar = np.asarray(imgtemp)
+                                imgtempar[:,:,3] = 1
+                                imgs[frame+i].paste(
+                                    Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame+i]),np.asarray(imgtemp))),
+                                    (
+                                        0,
+                                        0
+                                    ), 
+                                    mask=imgtemp
+                                )
+                            else:
+                                imgs[frame+i].paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
         
         outs = []
         n = 0
@@ -330,7 +406,7 @@ class Renderer:
                     path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
                 elif tile.name == "default":
                     path = f"data/sprites/{constants.BABA_WORLD}/default_{wobble + 1}.png"
-                elif tile.variant_number == -1: #this is so :(
+                elif tile.variant_number == -1: 
                     source, sprite_name = tile.sprite
                     path = f"data/sprites/vanilla/error_0_{wobble + 1}.png"
                 else:
@@ -371,7 +447,6 @@ class Renderer:
                 ovsprite = np.array(sprite).astype("float64")
                 ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
                 ovsprite=(ovsprite).astype("uint8")
-                # print(ovsprite)
                 sprite = Image.fromarray(ovsprite)
             if tile.negative:
                 inverted = 255-np.array(sprite)
@@ -385,7 +460,7 @@ class Renderer:
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             out.append(sprite)
         f0, f1, f2 = out
-        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)
+        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending)
 
     async def render_full_tiles(
         self,
@@ -426,9 +501,9 @@ class Renderer:
         seed: int | None = None,
         filters: list[str],
         blur: int,
+        scale: tuple[float,float],
         angle: int,
         glitch: int,
-        scale: tuple[float,float],
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
         opacity: float,
@@ -627,9 +702,9 @@ class Renderer:
             filters=filters,
             name="text"+raw,
             blur=blur,
+            scale=scale,
             angle=angle,
             glitch=glitch,
-            scale=scale,
             warp=warp,
             neon=neon,
             opacity=opacity,
@@ -651,9 +726,9 @@ class Renderer:
         blur: int,
         angle: int,
         glitch: int,
-        scale: tuple[float,float],
         warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]],
         neon: float,
+        scale: tuple[float,float],
         opacity: float,
         pixelate: int,
         wavex: tuple[float,float,float],
@@ -676,11 +751,11 @@ class Renderer:
                 meta_level=meta_level,
                 wobble=wobble,
                 filters=filters,
+                scale=scale,
                 name=name,
                 blur=blur,
                 angle=angle,
                 glitch=glitch,
-                scale=scale,
                 warp=warp,
                 neon=neon,
                 opacity=opacity,
@@ -884,7 +959,6 @@ class Renderer:
             srcpoints = np.float32(srcpoints.tolist())
             dstpoints = np.float32(dstpoints.tolist())
             Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
-            print(dummywarp.size[1::-1])
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=dummywarp.size[1::-1], flags = cv2.INTER_NEAREST)
             sprite = Image.fromarray(warped)
         if angle != 0:

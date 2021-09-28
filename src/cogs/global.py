@@ -334,12 +334,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
-        await ctx.send('`'+ctx.message.content[0:1998]+'`')
-        msg = f"*Rendered in {delta:.2f} s*"
+        image = discord.File(buffer, filename=filename, spoiler=spoiler)
+        description=ctx.message.content
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
-            await ctx.send("*Raw files:*", file=discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"))
-        await ctx.reply(content=msg, file=discord.File(buffer, filename=filename, spoiler=spoiler))
+            await ctx.reply(f'`{description[:1998]}`', files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
+        else:
+            await ctx.reply(f'`{description[:1998]}`', file=image)
         
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -627,7 +628,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 custom_level = CustomLevelData.from_row(row)
             else:
                 # Expensive operation 
-                await ctx.reply("Searching for custom level... this might take a while", mention_author=False)
+                await ctx.reply("Searching for custom level... this might take a while", mention_author=False, delete_after=10)
                 await ctx.trigger_typing()
                 async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/exists?code={fine_query.upper()}") as resp:
                     if resp.status in (200, 304):
@@ -637,7 +638,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query)
                             except ValueError as e:
                                 size = e.args[0]
-                                return await ctx.error(f"The level code is valid, but the level's width, height or area is way too big ({size})!")
+                                return await ctx.error(f"The level code is valid, but the level's width, height or area is too big. ({size})")
                             except aiohttp.ClientResponseError as e:
                                 return await ctx.error(f"The Baba Is Bookmark site returned a bad response. Try again later.")
         if custom_level is None:
@@ -654,12 +655,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             path = level.unique()
             display = level.display()
             rows = [
-                f"Name: ||`{display}`||" if spoiler else f"Name: `{display}`",
-                f"ID: `{path}`",
+                f"Name: ||{display}||" if spoiler else f"Name: {display}",
+                f"ID: {path}",
             ]
             if level.subtitle:
                 rows.append(
-                    f"Subtitle: `{level.subtitle}`"
+                    f"Subtitle: {level.subtitle}"
                 )
             mobile_exists = os.path.exists(f"target/renders/{level.world}_m/{level.id}.gif")
             
@@ -673,33 +674,33 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 )
 
             if mobile and mobile_exists:
-                gif = discord.File(f"target/renders/{level.world}_m/{level.id}.gif", spoiler=True)
+                gif = discord.File(f"target/renders/{level.world}_m/{level.id}.gif", filename=level.world+'_m_'+level.id+'.gif', spoiler=True)
             elif mobile and not mobile_exists:
                 rows.append("*This level doesn't have a mobile version. Using the normal gif instead...*")
-                gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", spoiler=True)
+                gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
             else:
-                gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", spoiler=True)
+                gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
         else:
-            gif = discord.File(f"target/renders/levels/{level.code}.gif", spoiler=True)
+            gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
             path = level.unique()
             display = level.name
             rows = [
-                f"Name: ||`{display}`|| (by `{level.author}`)" 
-                    if spoiler else f"Name: `{display}` (by `{level.author}`)",
-                f"Level code: `{path}`",
+                f"Name: ||{display}|| (by {level.author})" 
+                    if spoiler else f"Name: {display} (by {level.author})",
+                f"Level code: {path}",
             ]
             if level.subtitle:
                 rows.append(
-                    f"Subtitle: `{level.subtitle}`"
+                    f"Subtitle: {level.subtitle}"
                 )
 
         if len(levels) > 0:
             extras = [level.unique() for level in levels.values()]
             if len(levels) > constants.OTHER_LEVELS_CUTOFF:
                 extras = extras[:constants.OTHER_LEVELS_CUTOFF]
-            paths = ", ".join(f"`{extra}`" for extra in extras)
+            paths = ", ".join(f"{extra}" for extra in extras)
             plural = "result" if len(extras) == 1 else "results"
-            suffix = ", `...`" if len(levels) > constants.OTHER_LEVELS_CUTOFF else ""
+            suffix = ", ..." if len(levels) > constants.OTHER_LEVELS_CUTOFF else ""
             rows.append(
                 f"*Found {len(levels)} other {plural}: {paths}{suffix}*"
             )
@@ -708,8 +709,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Only the author should be mentioned
         mentions = discord.AllowedMentions(everyone=False, users=[ctx.author], roles=False)
-
-
 
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)

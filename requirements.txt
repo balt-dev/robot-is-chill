@@ -1,4 +1,4 @@
-discord.py>=1.7.3
+git+https://github.com/Rapptz/discord.py/tree/feature/threads
 Pillow>=8.3.0
 jishaku>=1.18
 opencv-python>=4.0.0.0
