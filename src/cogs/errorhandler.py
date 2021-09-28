@@ -3,10 +3,10 @@ from __future__ import annotations
 import sys
 import traceback
 from asyncio import create_task
+import numpy
 
 import discord
 from discord.ext import commands
-import numpy
 
 from ..types import Bot, Context
 
