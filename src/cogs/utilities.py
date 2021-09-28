@@ -305,7 +305,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="overlays")
     async def overlays(self, ctx: Context):
-        await ctx.reply("\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/')))
+        """Lists all available overlays."""
+        await ctx.send(embed=discord.Embed(
+            title="Available overlays",
+            colour=self.bot.embed_color,
+            description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette")
