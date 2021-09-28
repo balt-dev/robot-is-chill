@@ -305,17 +305,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="overlays")
     async def overlays(self, ctx: Context):
-        '''Lists every valid overlay.'''
-        output = discord.Embed(
-            title="",
-            color=self.bot.embed_color
-        )
-        output.add_field(
-            name="Valid overlays",
-            value="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/')),
-            inline=True
-        )
-        await ctx.reply(embed=output)
+        await ctx.reply("\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/')))
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette")
@@ -378,36 +368,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             clear_reactions_after=True
         ).start(ctx)
 
-    @commands.cooldown(5, 8, type=commands.BucketType.channel)
-    @commands.command(name="variants")
-    async def list_variants(self, ctx: Context, tile: str):
-        '''List valid sprite variants for a given tile.'''
-        # Clean the input
-        clean_tile = tile.strip().lower()
-
-        
-        output = discord.Embed(
-            title=f"Valid sprite variants for `{clean_tile}`",
-            color=self.bot.embed_color
-        )
-
-        tile_data_cache: dict[str, TileData] = {}
-        data = await self.bot.db.tile(clean_tile)
-        if data is not None:
-            tile_data_cache[clean_tile] = data
-        else:
-            output.set_footer(text="Note: This tile doesn't exist in the database, so it's not necessarily valid.")
-        
-        raw_tile = RawTile(clean_tile, [])
-        variant_groups = self.bot.handlers.valid_variants(raw_tile, tile_data_cache)
-        for group, variants in variant_groups.items():
-            output.add_field(
-                name=group,
-                value="\n".join(f"- {string}" for string in variants),
-                inline=True
-            )
-        
-        await ctx.reply(embed=output)
 
 def setup(bot: Bot):
     bot.add_cog(UtilityCommandsCog(bot))

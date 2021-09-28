@@ -4,7 +4,8 @@ import asyncio
 import itertools
 from datetime import datetime
 from subprocess import PIPE, STDOUT, TimeoutExpired, run
-from time import time
+from time import time, time_ns, timezone
+import math
 
 import discord
 from discord.ext import commands
@@ -152,15 +153,18 @@ class MetaCog(commands.Cog, name="Other Commands"):
     @commands.cooldown(5, 8, commands.BucketType.channel)
     async def ping(self, ctx: Context):
         '''Returns bot latency.'''
-        await ctx.send(f"Latency: {round(self.bot.latency, 3)} seconds")
+        clamp = lambda val, mn, mx: max(min(val,mx),mn)
+        pingns = (((time_ns()/1000000000)-ctx.message.created_at.timestamp())+18000)/10 #change this to your timezone
+        await ctx.send(embed=discord.Embed(
+            title="Latency", 
+            color=discord.Color(int(('{0:02x}'.format(clamp(math.floor(pingns*250),0,255))+('{0:02x}'.format(255-clamp(math.floor(pingns*250),0,255)))+'00'),16)),
+            description=f"{round(pingns, 3)} seconds"))
 
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def invite(self, ctx: Context):
         '''Links for the bot support server'''
-        msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite.](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)"
-        )
-        await ctx.send(embed=msg)
+        await ctx.send(text="https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)")
     
     @commands.command(aliases=["interpret"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -244,27 +248,13 @@ class MetaCog(commands.Cog, name="Other Commands"):
             try: 
                 await self.bot.wait_for("ready", timeout=55.0)
             except asyncio.TimeoutError:
-                err = discord.Embed(
-                    title="Disconnect", 
-                    type="rich", 
-                    description=f"{self.bot.user.mention} has disconnected.", 
-                    color=0xff8800)
+                err = description=f"{self.bot.user.mention} has disconnected.",
             else:
-                err = discord.Embed(
-                    title="Reconnected",
-                    type="rich",
-                    description=f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds.",
-                    color=0xffaa00
-                )
+                err = f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds."
         else: 
-            err = discord.Embed(
-                title="Resumed", 
-                type="rich", 
-                description=f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds.", 
-                color=0xffff00
-            )
+            err = f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds."
         logger = await self.bot.fetch_webhook(594692503014473729)
-        await logger.send(embed=err)
+        await logger.send(text=err)
     
     def cog_unload(self):
         self.bot.help_command = self._original_help_command
