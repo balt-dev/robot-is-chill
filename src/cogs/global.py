@@ -25,6 +25,8 @@ from ..db import CustomLevelData, LevelData
 from ..tile import RawTile
 from ..types import Bot, Context
 
+import config
+
 def try_index(string: str, value: str) -> int:
     '''Returns the index of a substring within a string.
     Returns -1 if not found.
@@ -371,6 +373,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         `rule -P=test tile_baba on baba is word`
         `rule baba eat baba - tile_baba tile_baba:l`
         '''
+        if config.danger_mode:
+            await self.warn_dangermode(ctx)
         await self.render_tiles(ctx, objects=objects, rule=True)
 
     # Generates tiles from a text file.
@@ -411,7 +415,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         `tile baba&flag ||cake||`
         `tile -P=mountain -B baba bird:l`
         '''
+        if config.danger_mode:
+            await self.warn_dangermode(ctx)
         await self.render_tiles(ctx, objects=objects, rule=False)
+
+    async def warn_dangermode(self, ctx: Context):
+        warning_embed = discord.Embed(title="Warning: Danger Mode",color=discord.Color(16711680),description="Warning: Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
+        await ctx.send(embed=warning_embed)
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         '''Finds levels by query.
