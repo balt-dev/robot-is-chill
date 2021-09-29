@@ -20,3 +20,4 @@ cogs = [
     "src.cogs.utilities",
     "jishaku"
 ]
+danger_mode = False

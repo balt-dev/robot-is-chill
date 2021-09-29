@@ -940,5 +940,25 @@ def setup(bot: Bot):
         return{
             "wavey": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]))
         }
+
+    @handlers.handler(
+        pattern=r"gradientx([\d\.]*)\/([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"gradientx": "`gradientx<start>/<end>/<startvalue>/<endvalue>` (Creates a horizonal gradient on the tile going from left to right.)"},
+        variant_group="Filters"
+    )
+    def gradientx(ctx: HandlerContext) -> TileFields:
+        return{
+            "gradientx": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]),float(ctx.groups[3]))
+        }
+
+    @handlers.handler(
+        pattern=r"gradienty([\d\.]*)\/([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
+        variant_hints={"gradienty": "`gradienty<start>/<end>/<startvalue>/<endvalue>` (Creates a vertical gradient on the tile going from top to bottom.)"},
+        variant_group="Filters"
+    )
+    def gradienty(ctx: HandlerContext) -> TileFields:
+        return{
+            "gradienty": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]),float(ctx.groups[3]))
+        }
         
     return handlers

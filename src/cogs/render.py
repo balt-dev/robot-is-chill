@@ -399,7 +399,9 @@ class Renderer:
                     opacity=tile.opacity,
                     pixelate=tile.pixelate,
                     wavex=tile.wavex,
-                    wavey=tile.wavey
+                    wavey=tile.wavey,
+                    gradientx=tile.gradientx,
+                    gradienty=tile.gradienty
                 )
             else:
                 if tile.name in ("icon",):
@@ -433,7 +435,9 @@ class Renderer:
                     opacity=tile.opacity,
                     pixelate=tile.pixelate,
                     wavex=tile.wavex,
-                    wavey=tile.wavey
+                    wavey=tile.wavey,
+                    gradientx=tile.gradientx,
+                    gradienty=tile.gradienty
                 )
             # Color conversion
             if tile.overlay == "":
@@ -460,6 +464,9 @@ class Renderer:
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
+            numpysprite = np.array(sprite)
+            numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
+            sprite = Image.fromarray(numpysprite)
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending, time.time()-t)
@@ -511,7 +518,9 @@ class Renderer:
         opacity: float,
         pixelate: int,
         wavex: tuple[float,float,float],
-        wavey: tuple[float,float,float]
+        wavey: tuple[float,float,float],
+        gradientx: tuple[float,float,float,float],
+        gradienty: tuple[float,float,float,float]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -712,7 +721,9 @@ class Renderer:
             opacity=opacity,
             pixelate=pixelate,
             wavex=wavex,
-            wavey=wavey
+            wavey=wavey,
+            gradientx=gradientx,
+            gradienty=gradienty
         )
 
     async def apply_options_name(
@@ -734,7 +745,9 @@ class Renderer:
         opacity: float,
         pixelate: int,
         wavex: tuple[float,float,float],
-        wavey: tuple[float,float,float]
+        wavey: tuple[float,float,float],
+        gradientx: tuple[float,float,float,float],
+        gradienty: tuple[float,float,float,float]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -763,7 +776,9 @@ class Renderer:
                 opacity=opacity,
                 pixelate=pixelate,
                 wavex=wavex,
-                wavey=wavey
+                wavey=wavey,
+                gradientx=gradientx,
+                gradienty=gradienty
             )
         except ValueError as e:
             size = e.args[0]
@@ -790,7 +805,9 @@ class Renderer:
         opacity: float,
         pixelate: int,
         wavex: tuple[float,float,float],
-        wavey: tuple[float,float,float]
+        wavey: tuple[float,float,float],
+        gradientx: tuple[float,float,float,float],
+        gradienty: tuple[float,float,float,float]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -839,6 +856,26 @@ class Renderer:
                 off = np.sin(((l/numpysprite.shape[0])*wavey[2]*np.pi*2)+(wavey[0]/numpysprite.shape[0]*np.pi*2))*-wavey[1]
                 numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
             sprite = Image.fromarray(numpysprite.swapaxes(0,1))
+        def gradient(head:int,start:float,end:float,startvalue:float,endvalue:float):
+            v=(head-start)/(end-start)
+            if v<0:
+                return startvalue
+            elif v>1:
+                return endvalue
+            else:
+                return startvalue+((endvalue-startvalue)*v)
+        if gradientx!=(1,1,1,1):
+            numpysprite = np.array(sprite).swapaxes(0,1)
+            for l in range(len(numpysprite)):
+                v=gradient(l,*(gradientx*np.array([24,24,1,1])))
+                numpysprite[l]=numpysprite[l]*(v,v,v,1)
+            sprite = Image.fromarray(numpysprite.swapaxes(0,1))
+        if gradienty!=(1,1,1,1):
+            numpysprite = np.array(sprite)
+            for l in range(len(numpysprite)):
+                v=gradient(l,*(gradienty*np.array([24,24,1,1])))
+                numpysprite[l]=numpysprite[l]*(v,v,v,1)
+            sprite = Image.fromarray(numpysprite)
             
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
