@@ -121,3 +121,4 @@ class ReadyTile:
     displace: tuple[int,int] = (0,0)
     scale: tuple[int,int] = (1,1)
     blending: str = None
+    delta: float = 0
