@@ -8,6 +8,7 @@ from collections import Counter
 from io import BytesIO
 from typing import TYPE_CHECKING, BinaryIO
 import cv2
+import time
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -372,6 +373,7 @@ class Renderer:
         sprite_cache: dict[str, Image.Image]
     ) -> ReadyTile:
         '''woohoo'''
+        t = time.time()
         if tile.empty:
             return ReadyTile(None)
         out = []
@@ -460,7 +462,7 @@ class Renderer:
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             out.append(sprite)
         f0, f1, f2 = out
-        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending)
+        return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending, time.time()-t)
 
     async def render_full_tiles(
         self,
@@ -805,15 +807,7 @@ class Renderer:
                     if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
                         sprite.putpixel((x,y),(0,0,0,0))
                     else:
-                        sprite.putpixel((x,y),(r1,g1,b1,a1))
-        if scale != (1,1):
-            wid = int(max(sprite.width*scale[0],sprite.width))
-            hgt = int(max(sprite.height*scale[1],sprite.height))
-            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST) 
-            if (wid,hgt) != (sprite.width,sprite.height):
-                im = Image.new('RGBA',(wid,hgt),(0,0,0,0))
-                im.paste(sprite,(wid-int(sprite.width*(2-scale[0])), hgt-int(sprite.height*(2-scale[1]))))
-                sprite = im
+                        sprite.putpixel((x,y),(r1,g1,b1,a1)
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
@@ -874,6 +868,14 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        if scale != (1,1):
+            wid = int(max(sprite.width*scale[0],sprite.width))
+            hgt = int(max(sprite.height*scale[1],sprite.height))
+            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST) 
+            if (wid,hgt) != (sprite.width,sprite.height):
+                im = Image.new('RGBA',(wid,hgt),(0,0,0,0))
+                im.paste(sprite,(wid-int(sprite.width*(2-scale[0])), hgt-int(sprite.height*(2-scale[1]))))
+                sprite = im
         def scan(spritenumpyscan):
             for i in range(len(spritenumpyscan)):
                 if (i%2)==1:
