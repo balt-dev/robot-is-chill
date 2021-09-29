@@ -462,6 +462,9 @@ class Renderer:
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
+            numpysprite = np.array(sprite)
+            numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
+            sprite = Image.fromarray(numpysprite)
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending)
@@ -999,9 +1002,6 @@ class Renderer:
             sprite = sprite.rotate(-angle)
         if blur != 0:
             sprite = sprite.filter(ImageFilter.GaussianBlur(radius = blur))
-        numpysprite = np.array(sprite)
-        numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
-        sprite = Image.fromarray(numpysprite)
         return sprite
 
     def make_meta(self, img: Image.Image, level: int) -> Image.Image:
