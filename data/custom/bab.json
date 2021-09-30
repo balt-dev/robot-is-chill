@@ -556,5 +556,14 @@
          "0",
          "1"
       ]
+   },
+   {
+      "name": "nobaddont",
+      "sprite": "nobaddont",
+      "tiling": "-1",
+      "color": [
+         "2",
+         "2"
+      ]
    }
 ]
