@@ -56,13 +56,14 @@ class TileFields(TypedDict, total=False):
     filters: list[str]
     displace: tuple[int,int]
     scale: tuple[float,float]
-    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]]
+    warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]]
     neon: float
     opacity: float
     pixelate: int
     freeze: bool
     negative: bool
     palette: str
+    complement: bool
     overlay: str
     brightness: float
     wavex: tuple[float,float,float]
@@ -93,12 +94,13 @@ class FullTile:
     angle: float = 0
     blur_radius: int = 0
     glitch: int = 0
-    warp: tuple[tuple[float,float],tuple[float,float],tuple[float,float],tuple[float,float]] = ((0,0),(0,0),(0,0),(0,0))
+    warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]] = ((0,0),(0,0),(0,0),(0,0))
     neon: float = 1
     opacity: float = 1
     pixelate: int = 0
     freeze: bool = False
     negative: bool = False
+    complement: bool = False
     palette: str = ""
     overlay: str = ""
     brightness: float = 1

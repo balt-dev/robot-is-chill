@@ -1,1 +1,442 @@
-[{"name": "bubu", "sprite": "bubu", "tiling": "2", "color": ["4", "4"]}, {"name": "text_bubu", "sprite": "text_bubu", "color": ["4", "4"], "tiling": "-1"}, {"name": "balt", "sprite": "balt", "tiling": "2", "color": ["0", "1"]}, {"name": "text_balt", "sprite": "text_balt", "color": ["0", "1"], "tiling": "-1"}, {"name": "warn", "sprite": "warn", "color": ["0", "3"]}, {"name": "point", "sprite": "point", "color": ["0", "3"]}, {"name": "comma", "sprite": "comma", "color": ["0", "3"]}, {"name": "text_'", "sprite": "text_'", "color": ["0", "3"]}, {"name": "text_asterisk", "sprite": "text_asterisk", "color": ["0", "3"]}, {"name": "slash", "sprite": "slash", "color": ["0", "3"]}, {"name": "minus", "sprite": "minus", "color": ["0", "3"]}, {"name": "equals", "sprite": "equals", "color": ["0", "3"]}, {"name": "no", "sprite": "no", "color": ["2", "2"]}, {"name": "yes", "sprite": "yes", "color": ["5", "3"]}, {"name": "hempuli", "sprite": "hempuli", "color": ["4", "2"], "tiling": "-1"}, {"name": "text_hempuli", "sprite": "text_hempuli", "color": ["4", "2"], "tiling": "-1"}, {"name": "wug", "sprite": "wug", "tiling": "2", "color": ["2", "4"]}, {"name": "text_wug", "sprite": "text_wug", "color": ["2", "4"], "tiling": "-1"}, {"name": "ant", "sprite": "ant", "tiling": "0", "color": ["0", "3"]}, {"name": "text_ant", "sprite": "text_ant", "tiling": "-1", "color": ["0", "3"]}, {"name": "bulb", "sprite": "bulb", "tiling": "-1", "color": ["2", "4"]}, {"name": "text_bulb", "sprite": "text_bulb", "tiling": "-1", "color": ["2", "4"]}, {"name": "border", "sprite": "border", "tiling": "-1", "color": ["1", "0"]}, {"name": "text_border", "sprite": "text_border", "tiling": "-1", "color": ["1", "0"]}, {"name": "sand", "sprite": "sand", "tiling": "1", "color": ["2", "4"]}, {"name": "text_sand", "sprite": "text_sand", "tiling": "-1", "color": ["2", "4"]}, {"name": "cactus", "sprite": "cactus", "tiling": "-1", "color": ["5", "2"]}, {"name": "text_cactus", "sprite": "text_cactus", "tiling": "-1", "color": ["5", "2"]}, {"name": "hawke", "sprite": "hawke", "tiling": "0", "color": ["0", "3"]}, {"name": "text_hawke", "sprite": "text_hawke", "tiling": "-1", "color": ["1", "4"]}, {"name": "text_badbad_old", "sprite": "text_badbad", "tiling": "-1", "color": ["1", "4"]}, {"name": "badbad_old", "sprite": "badbad", "tiling": "2", "color": ["0", "3"]}, {"name": "cherry", "sprite": "cherry", "tiling": "-1", "color": ["2", "2"]}, {"name": "text_cherry", "sprite": "text_cherry", "tiling": "-1", "color": ["2", "2"]}, {"name": "mobile", "sprite": "mobile", "tiling": "-1", "color": ["0", "1"]}, {"name": "text_mobile", "sprite": "text_mobile", "tiling": "-1", "color": ["0", "2"]}, {"name": "tuto", "sprite": "tuto", "tiling": "-1", "color": ["0", "3"]}, {"name": "text_tuto", "sprite": "text_tuto", "tiling": "-1", "color": ["0", "3"]}, {"name": "hbaba", "sprite": "hbaba", "tiling": "2", "color": ["0", "3"]}, {"name": "what_old", "sprite": "what_old", "tiling": "-1", "color": ["0", "3"]}, {"name": "hexagon", "sprite": "hexagon", "tiling": "-1", "color": ["3", "0"]}, {"name": "text_unoplusfour", "sprite": "text_unocard", "tiling": "-1", "color": ["0", "1"]}, {"name": "unoplusfour", "sprite": "unocard", "tiling": "0", "color": ["0", "1"]}, {"name": "text_unoreverse", "sprite": "text_unocardrev", "tiling": "-1", "color": ["2", "2"]}, {"name": "unoreverse", "sprite": "unocardrev", "tiling": "0", "color": ["2", "2"]}, {"name": "blocker", "sprite": "blocker", "color": ["0", "3"], "tiling": "1"}, {"name": "link", "sprite": "link", "color": ["0", "3"], "tiling": "1"}, {"name": "discord", "sprite": "discord", "color": ["3", "3"], "tiling": "-1"}]
+[
+    {
+        "name": "bubu",
+        "sprite": "bubu",
+        "tiling": "2",
+        "color": [
+            "4",
+            "4"
+        ]
+    },
+    {
+        "name": "text_bubu",
+        "sprite": "text_bubu",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "balt",
+        "sprite": "balt",
+        "tiling": "2",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "text_balt",
+        "sprite": "text_balt",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "warn",
+        "sprite": "warn",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "point",
+        "sprite": "point",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "comma",
+        "sprite": "comma",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_'",
+        "sprite": "text_'",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_asterisk",
+        "sprite": "text_asterisk",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "slash",
+        "sprite": "slash",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "minus",
+        "sprite": "minus",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "equals",
+        "sprite": "equals",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "no",
+        "sprite": "no",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "yes",
+        "sprite": "yes",
+        "color": [
+            "5",
+            "3"
+        ]
+    },
+    {
+        "name": "hempuli",
+        "sprite": "hempuli",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hempuli",
+        "sprite": "text_hempuli",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wug",
+        "sprite": "wug",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_wug",
+        "sprite": "text_wug",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ant",
+        "sprite": "ant",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_ant",
+        "sprite": "text_ant",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "bulb",
+        "sprite": "bulb",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_bulb",
+        "sprite": "text_bulb",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "border",
+        "sprite": "border",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "0"
+        ]
+    },
+    {
+        "name": "text_border",
+        "sprite": "text_border",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "0"
+        ]
+    },
+    {
+        "name": "sand",
+        "sprite": "sand",
+        "tiling": "1",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_sand",
+        "sprite": "text_sand",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "cactus",
+        "sprite": "cactus",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "2"
+        ]
+    },
+    {
+        "name": "text_cactus",
+        "sprite": "text_cactus",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "2"
+        ]
+    },
+    {
+        "name": "hawke",
+        "sprite": "hawke",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_hawke",
+        "sprite": "text_hawke",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "4"
+        ]
+    },
+    {
+        "name": "text_badbad_old",
+        "sprite": "text_badbad",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "4"
+        ]
+    },
+    {
+        "name": "badbad_old",
+        "sprite": "badbad",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "cherry",
+        "sprite": "cherry",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "text_cherry",
+        "sprite": "text_cherry",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "mobile",
+        "sprite": "mobile",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "text_mobile",
+        "sprite": "text_mobile",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "2"
+        ]
+    },
+    {
+        "name": "tuto",
+        "sprite": "tuto",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_tuto",
+        "sprite": "text_tuto",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "hbaba",
+        "sprite": "hbaba",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "what_old",
+        "sprite": "what_old",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "hexagon",
+        "sprite": "hexagon",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "0"
+        ]
+    },
+    {
+        "name": "text_unoplusfour",
+        "sprite": "text_unocard",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "unoplusfour",
+        "sprite": "unocard",
+        "tiling": "0",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "text_unoreverse",
+        "sprite": "text_unocardrev",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "unoreverse",
+        "sprite": "unocardrev",
+        "tiling": "0",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "blocker",
+        "sprite": "blocker",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "link",
+        "sprite": "link",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "discord",
+        "sprite": "discord",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "debug",
+        "sprite": "debug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "baljeet",
+        "sprite": "baljeet",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

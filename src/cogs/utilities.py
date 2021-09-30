@@ -100,7 +100,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     time.sleep(0.1)
                     if n == 0:
                         n += 1
-                if n == 3:
+                if n == 2:
                     break
                 elif n != 0:
                     n += 1
