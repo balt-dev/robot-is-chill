@@ -438,5 +438,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pizzag",
+        "sprite": "pizzag",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
