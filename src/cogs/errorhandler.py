@@ -149,7 +149,7 @@ class CommandErrorHandler(commands.Cog):
             return await ctx.error("There was an error while processing this action.")
         
         elif isinstance(error, numpy.linalg.LinAlgError):
-            return await ctx.error("Rendering failed! More than one value was found for a point when solving perspective transform.")
+            return await ctx.error("The given warp points are unsolvable.")
 
         # All other Errors not returned come here... And we can just print the default TraceBack + log
         if len(''.join(traceback.format_tb(error.__traceback__))) > 1850:

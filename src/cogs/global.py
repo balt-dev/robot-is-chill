@@ -3,6 +3,7 @@ import collections
 import os
 import requests
 
+import math
 from PIL import Image
 import re
 from datetime import datetime
@@ -190,6 +191,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         default_to_letters = False
         frames = [1,2,3]
         speed = 200
+        global_variant = ''
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -247,6 +249,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 except:
                     speed = 200
                 to_delete.append((x, y))
+            global_match = re.fullmatch(r"-global=(.+)", flag)
+            if global_match:
+                global_variant = ':'+global_match.group(1)
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         
@@ -259,6 +265,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             cause = e.args[0]
             return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
 
+        tilecount = 0
         # Splits "&"-joined words into stacks
         stacked_grid: list[list[list[str]]] = []
         for row in comma_grid:
@@ -266,7 +273,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for stack in row:
                 split = stack.split("&")
                 for n in range(len(split)):
-                    split[n] = split[n].replace('rule_','text_')
+                    tilecount+=1
+                    split[n] = split[n].replace('rule_','text_') + global_variant
                 stacked_row.append(split)
                 if len(split) > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
                     return await ctx.error(f"Stack too high ({len(split)}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
@@ -278,11 +286,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000 character limit)
-        area = width * height
-        #letting centdemeern1 have more tiles bc he asked nicely
-        if area > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id): 
-            return await ctx.error(f"Too many tiles ({area}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
-        elif area == 0:
+        if tilecount > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id): 
+            return await ctx.error(f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
+        elif tilecount == 0:
             return await ctx.error(f"Can't render nothing.")
 
         # Pad the word rows from the end to fit the dimensions
@@ -299,7 +305,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 before_image=before_image
             except:
                 before_image=None
-            await self.bot.renderer.render(
+            avgdelta, maxdelta = await self.bot.renderer.render(
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=palette,
@@ -338,11 +344,24 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         delta = time() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
         description=ctx.message.content
+        embed = discord.Embed(
+            color = self.bot.embed_color,
+            title = discord.Embed.Empty,
+            description = discord.Embed.Empty
+        )
+        stats = f''' 
+        Total render time: {math.ceil(delta*1000)} ms
+        Tiles rendered: {tilecount}
+        Average render time of all tiles: {math.ceil(avgdelta*1000)} ms
+        Maximum render time of any tile: {math.ceil(maxdelta*1000)} ms
+        '''
+        
+        embed.add_field(name="Render statistics", value=stats)
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
-            await ctx.reply(f'`{description[:1998]}`', files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
+            await ctx.reply(f'`{description[:1998]}`', embed=embed, files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
         else:
-            await ctx.reply(f'`{description[:1998]}`', file=image)
+            await ctx.reply(f'`{description[:1998]}`', embed=embed, file=image)
         
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -420,8 +439,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await self.render_tiles(ctx, objects=objects, rule=False)
 
     async def warn_dangermode(self, ctx: Context):
-        warning_embed = discord.Embed(title="Warning: Danger Mode",color=discord.Color(16711680),description="Warning: Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
-        await ctx.send(embed=warning_embed)
+        warning_embed = discord.Embed(title="Warning: Danger Mode",color=discord.Color(16711680),description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
+        await ctx.send(embed=warning_embed, delete_after=5)
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         '''Finds levels by query.

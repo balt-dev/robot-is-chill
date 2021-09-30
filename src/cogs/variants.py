@@ -606,7 +606,7 @@ def setup(bot: Bot):
         
     @handlers.handler(
         pattern=r"neon(?:([\d\.]+))?",
-        variant_hints={"neon": "`neon[float]` (Surrounded pixels get less opaque by n. If not specified, n is 1.4.)"},
+        variant_hints={"neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.)"},
         variant_group="Filters"
     )
     def neon(ctx: HandlerContext) -> TileFields:
@@ -890,7 +890,17 @@ def setup(bot: Bot):
         return{
             "negative": True
         }
-
+        
+    @handlers.handler(
+        pattern=r"complement|comp",
+        variant_hints={"complement": "`complement` (HSL hue inversion.)"},
+        variant_group="Filters"
+    )
+    def complement(ctx: HandlerContext) -> TileFields:
+        return{
+            "complement": True
+        }
+        
     @handlers.handler(
         pattern=r"palette\/(\w+)",
         variant_hints={"palette": "`palette/<palettename>` (Applies a different color palette to the tile.)"},

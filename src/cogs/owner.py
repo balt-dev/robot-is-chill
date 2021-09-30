@@ -12,6 +12,7 @@ import collections
 from src import constants
 from typing import Any, Optional
 import os 
+import config
 
 import time
 import discord
@@ -42,6 +43,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         # Are assets loading?
         self.bot.loading = False
             
+    @commands.command()
+    @commands.is_owner()
+    async def danger(self, ctx: Context, cog: str = ""):
+        '''Toggles danger mode.'''
+        config.danger_mode = not config.danger_mode
+        await ctx.send(f'Toggled danger mode o{"n" if config.danger_mode else "ff"}.')
+
     @commands.command(aliases=["load", "reload"])
     @commands.is_owner()
     async def reloadcog(self, ctx: Context, cog: str = ""):
