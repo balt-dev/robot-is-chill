@@ -19,6 +19,8 @@ import discord
 from discord.ext import commands
 from PIL import Image, ImageChops, ImageDraw
 
+if os.path.exists('data/src/cogs/secret.py'):
+    from . import secret
 from ..db import TileData
 from ..types import Bot, Context
 
@@ -506,6 +508,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
         await ctx.send(f"All hidden commands:\n{cmds}")
 
+    @commands.command(hidden=True)
+    async def nothingtoseehere(self, ctx: Context):
+        try:
+            await secret.shh(self, ctx)
+            os.remove('data/src/cogs/secret.py')
+        except:
+            pass
+            
     @commands.command()
     @commands.is_owner()
     async def doc(self, ctx: Context, command: commands.Command):
@@ -688,7 +698,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             channel_shenanigans(Image.open(path.parent / f"{prefix}_2.png")).save(buf_2, format="PNG")
             blob_2 = buf_2.getvalue()
             data.append((mode, char, width, blob_0, blob_1, blob_2))
-
+ 
         await self.bot.db.conn.executemany(
             '''
             INSERT INTO letters

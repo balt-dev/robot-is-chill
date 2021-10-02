@@ -305,7 +305,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 before_image=before_image
             except:
                 before_image=None
-            avgdelta, maxdelta = await self.bot.renderer.render(
+            avgdelta, maxdelta, tiledelta = await self.bot.renderer.render(
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=palette,
@@ -351,6 +351,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         )
         stats = f''' 
         Total render time: {math.ceil(delta*1000)} ms
+        Active render time: {math.ceil(tiledelta*1000)} ms
         Tiles rendered: {tilecount}
         Average render time of all tiles: {math.ceil(avgdelta*1000)} ms
         Maximum render time of any tile: {math.ceil(maxdelta*1000)} ms

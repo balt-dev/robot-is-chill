@@ -154,7 +154,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
     async def ping(self, ctx: Context):
         '''Returns bot latency.'''
         clamp = lambda val, mn, mx: max(min(val,mx),mn)
-        pingns = (((time_ns()/1000000000)-ctx.message.created_at.timestamp())+18000)/10 #change this to your timezone
+        pingns = self.bot.latency
         await ctx.send(embed=discord.Embed(
             title="Latency", 
             color=discord.Color(int(('{0:02x}'.format(clamp(math.floor(pingns*250),0,255))+('{0:02x}'.format(255-clamp(math.floor(pingns*250),0,255)))+'00'),16)),

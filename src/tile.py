@@ -63,7 +63,7 @@ class TileFields(TypedDict, total=False):
     freeze: bool
     negative: bool
     palette: str
-    complement: bool
+    hueshift: float
     overlay: str
     brightness: float
     wavex: tuple[float,float,float]
@@ -100,7 +100,7 @@ class FullTile:
     pixelate: int = 0
     freeze: bool = False
     negative: bool = False
-    complement: bool = False
+    hueshift: float = 0.0
     palette: str = ""
     overlay: str = ""
     brightness: float = 1
