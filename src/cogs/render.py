@@ -68,9 +68,9 @@ def hsv_to_rgb(hsv):
     return rgb.astype('uint8')
 
 
-def shift_hue(arr):
+def shift_hue(arr,hueshift):
     hsv=rgb_to_hsv(arr)
-    hsv[...,0]= (hsv[...,0] + 0.5) % 1
+    hsv[...,0]= (hsv[...,0] + (hueshift/360)) % 1
     rgb=hsv_to_rgb(hsv)
     return rgb
 
@@ -132,8 +132,22 @@ class Renderer:
                 frame = newImage
                 imgs.append(frame)
         
-        # This is appropriate padding, no sprites can go beyond it
-        padding = constants.DEFAULT_SPRITE_SIZE
+
+        # "This is appropriate padding, no sprites can go beyond it" -RocketRace, 201X
+        # Guess you were wrong there :)
+        def wl(a): 
+            try: 
+                return a.frames[0].width
+            except: 
+                return 0
+        def hl(a): 
+            try: 
+                return a.frames[0].height
+            except: 
+                return 0
+        
+        padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid])),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid])))
+        padding = padding[0] if type(padding) == list else padding
         for frame in frames:
             width = len(grid[0])
             height = len(grid)
@@ -321,7 +335,7 @@ class Renderer:
             extra_out=extra_out,
             extra_name=extra_name,
         )
-        return sum(times)/len(times), max(times)
+        return sum(times)/len(times), max(times), sum(times)
 
     async def render_full_tile(self,
         tile: FullTile,
@@ -406,7 +420,14 @@ class Renderer:
                     rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
                 sprite = self.recolor(sprite, rgb)
             else:
-                try: rgb = np.array(Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA"))/255
+                try: 
+                    overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA")
+                    if overlay.width < sprite.width or overlay.height < sprite.height:
+                        width = math.ceil(sprite.width/overlay.width)
+                        height = math.ceil(sprite.height/overlay.height)
+                        rgb = np.tile(np.array(overlay),(height,width,1))/255
+                    else:
+                        rgb = np.array(overlay)/255
                 except FileNotFoundError:
                     raise errors.OverlayNotFound("Couldn't apply overlay: overlay not found")
                 ovsprite = np.array(sprite).astype("float64")
@@ -417,8 +438,8 @@ class Renderer:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
                 sprite = Image.fromarray(abs(inverted))
-            if tile.complement:
-                sprite = Image.fromarray(shift_hue(np.array(sprite,dtype="uint8")))
+            if tile.hueshift != 0.0:
+                sprite = Image.fromarray(shift_hue(np.array(sprite,dtype="uint8"),tile.hueshift))
             if tile.brightness != 1:
                 bsprite = np.array(sprite,dtype="float64")
                 bsprite*=(tile.brightness,tile.brightness,tile.brightness,1)
@@ -814,6 +835,15 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        if "floodfill" in filters:
+            f = lambda x: 420 if x > 0 else 0
+            g = lambda x: 0 if x == 69 else 255
+            im = np.array(sprite)
+            ima = im[:,:,3]
+            ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
+            imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima, np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
+            im[:,:,3] = imf[1:-1,1:-1]
+            sprite = Image.fromarray(np.array(im))
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)

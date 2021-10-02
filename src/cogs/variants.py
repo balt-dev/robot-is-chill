@@ -741,6 +741,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["invert"]
             }
+            
+    @handlers.handler(
+        pattern=r"floodfill|flood",
+        variant_hints={"floodfill": "`floodfill` (Fills in all open pockets in the sprite.)"},
+        variant_group="Filters"
+    )
+    def floodfill(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["floodfill"]
+            }
+        except:
+            return{
+                "filters": ["floodfill"]
+            }
     
     @handlers.handler(
         pattern=r"fisheye",
@@ -872,6 +887,16 @@ def setup(bot: Bot):
         }
     
     @handlers.handler(
+        pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
+        variant_hints={"warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, top right, bottom right, bottom left. \n Values are the offset of the point, as (right/down)."},
+        variant_group="Filters"
+    )
+    def warp(ctx: HandlerContext) -> TileFields:
+        return {
+            "warp": ((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7])))
+        }
+    
+    @handlers.handler(
         pattern=r"freeze",
         variant_hints={"freeze": "`freeze` (Freezes the first wobble frame of the tile.)"},
         variant_group="Filters"
@@ -898,7 +923,17 @@ def setup(bot: Bot):
     )
     def complement(ctx: HandlerContext) -> TileFields:
         return{
-            "complement": True
+            "hueshift": 180
+        }
+        
+    @handlers.handler(
+        pattern=r"(?:hueshift|hs)(-?[\d\.]+)",
+        variant_hints={"hueshift": "`hueshift<float>` (HSL hue shift.)"},
+        variant_group="Filters"
+    )
+    def hueshift(ctx: HandlerContext) -> TileFields:
+        return{
+            "hueshift": float(ctx.groups[0]) if ctx.groups[0] else 0.0
         }
         
     @handlers.handler(
