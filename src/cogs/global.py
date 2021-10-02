@@ -403,9 +403,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def file(self, ctx: Context, rule: str = ''):
         '''Renders the text from a file attatchment.
         Add -r, --rule, -rule, -t, --text, or -text to render as text.'''
-        attachment_url = ctx.message.attachments[0].url
-        file_request = requests.get(attachment_url)
-        await self.render_tiles(ctx, objects=file_request.content.decode(), rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
+        urls = []
+        for attachement in ctx.message.attachments:
+            urls.append(attachement.url)
+        urls+=re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\.txt',ctx.message.content)
+        for attachment_url in urls:
+            file_request = requests.get(attachment_url)
+            await self.render_tiles(ctx, objects=file_request.content.decode(), rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
     # Generates an animated gif of the tiles provided, using the default palette
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
