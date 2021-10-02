@@ -937,7 +937,7 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"palette\/(\w+)",
+        pattern=r"(?:palette\/|p\!)(\w+)",
         variant_hints={"palette": "`palette/<palettename>` (Applies a different color palette to the tile.)"},
         variant_group="Filters"
     )
