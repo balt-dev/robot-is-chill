@@ -312,7 +312,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
-    @commands.command(name="palette")
+    @commands.command(name="palette", aliases=["pal"])
     async def show_palette(self, ctx: Context, palette: str):
         '''Displays palette image.
 
