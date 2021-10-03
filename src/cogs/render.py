@@ -449,7 +449,7 @@ class Renderer:
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
-            if tile.filterimage != None:
+            if tile.filterimage != "":
                 ifilterimage = Image.open(requests.get(tile.filterimage, stream=True).raw).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage)
             numpysprite = np.array(sprite)
