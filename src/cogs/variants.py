@@ -1005,5 +1005,15 @@ def setup(bot: Bot):
         return{
             "gradienty": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]),float(ctx.groups[3]))
         }
+
+    @handlers.handler(
+        pattern=r"(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
+        variant_hints={"filterimage": "`filterimage/<url>` applies a filter image."},
+        variant_group="Filters"
+    )
+    def filterimage(ctx: HandlerContext) -> TileFields:
+        return {
+            "filterimage": "https://"+ctx.groups[0]
+        }
         
     return handlers
