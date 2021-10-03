@@ -510,11 +510,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command(hidden=True)
     async def nothingtoseehere(self, ctx: Context):
-        try:
-            await secret.shh(self, ctx)
-            os.remove('data/src/cogs/secret.py')
-        except:
-            pass
+        await ctx.send('amoung pequeño')
             
     @commands.command()
     @commands.is_owner()
