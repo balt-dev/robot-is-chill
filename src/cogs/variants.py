@@ -1007,13 +1007,18 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
-        pattern=r"(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
-        variant_hints={"filterimage": "`filterimage/<url>` applies a filter image.\nWarning: big images may take a while to render.\nImages bigger than 64 pixels not recommended.\nTip: Remove the http(s):// part from the URLs!"},
+        pattern=r"(abs){0,1}(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
+        variant_hints={"filterimage": "`[abs]filterimage/<url>` `[abs]filterimage=<url>` `[abs]fi!<url>` `[abs]fi=<url>` applies a filter image.\nWarning: big images may take a while to render.\nImages bigger than 64 pixels not recommended.\nTip: Remove the http(s):// part from the URLs!\nUse variant with `abs` in front of the name to use absolute positions!"},
         variant_group="Filters"
     )
     def filterimage(ctx: HandlerContext) -> TileFields:
+        a = ctx.groups[0] if ctx.groups[0] else ""
+        url = ctx.groups[1]
+        url=url.replace("localhost","")
+        if url[:url.find("/")].replace(".","").isnumeric():
+            url=""
         return {
-            "filterimage": "https://"+ctx.groups[0]
+            "filterimage": a+"https://"+url
         }
         
     return handlers

@@ -7,7 +7,7 @@ import numpy as np
 #B Brightness
 #A Alpha
 
-def apply_filterimage(img,fil):
+def apply_filterimage(img,fil,absolute):
 	npimg = np.array(img)
 	npfil = np.array(fil,dtype=int)
 
@@ -19,7 +19,7 @@ def apply_filterimage(img,fil):
 			brightness = npfil[y,x,2]
 			alpha = npfil[y,x,3]
 			if alpha>0:
-				color = npimg[((samplecoordinates[1]+y)%npimg.shape[1]),((samplecoordinates[0]+x)%npimg.shape[0])]
+				color = npimg[((samplecoordinates[1]+(y if not absolute else 0))%npimg.shape[1]),((samplecoordinates[0]+(x if not absolute else 0))%npimg.shape[0])]
 				color[:3]=(color[:3]*(brightness/255)).astype(int)
 				color[3]=int(color[3]*(alpha/255))
 			else:
