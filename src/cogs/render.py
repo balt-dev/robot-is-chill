@@ -377,7 +377,8 @@ class Renderer:
                     wavex=tile.wavex,
                     wavey=tile.wavey,
                     gradientx=tile.gradientx,
-                    gradienty=tile.gradienty
+                    gradienty=tile.gradienty,
+                    crop=tile.crop
                 )
             else:
                 if tile.name in ("icon",):
@@ -413,7 +414,8 @@ class Renderer:
                     wavex=tile.wavex,
                     wavey=tile.wavey,
                     gradientx=tile.gradientx,
-                    gradienty=tile.gradienty
+                    gradienty=tile.gradienty,
+                    crop=tile.crop
                 )
             # Color conversion
             if tile.overlay == "":
@@ -513,7 +515,8 @@ class Renderer:
         wavex: tuple[float,float,float],
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
-        gradienty: tuple[float,float,float,float]
+        gradienty: tuple[float,float,float,float],
+        crop: tuple[int,int,int,int]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -716,7 +719,8 @@ class Renderer:
             wavex=wavex,
             wavey=wavey,
             gradientx=gradientx,
-            gradienty=gradienty
+            gradienty=gradienty,
+            crop=crop
         )
 
     async def apply_options_name(
@@ -740,7 +744,8 @@ class Renderer:
         wavex: tuple[float,float,float],
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
-        gradienty: tuple[float,float,float,float]
+        gradienty: tuple[float,float,float,float],
+        crop: tuple[int,int,int,int]
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -771,7 +776,8 @@ class Renderer:
                 wavex=wavex,
                 wavey=wavey,
                 gradientx=gradientx,
-                gradienty=gradienty
+                gradienty=gradienty,
+                crop=crop
             )
         except ValueError as e:
             size = e.args[0]
@@ -800,7 +806,8 @@ class Renderer:
         wavex: tuple[float,float,float],
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
-        gradienty: tuple[float,float,float,float]
+        gradienty: tuple[float,float,float,float],
+        crop: tuple[int,int,int,int]
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
@@ -846,6 +853,11 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        if any(crop):
+            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[0]+crop[3]))
+            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
+            im.paste(cropped,(crop[0],crop[1]))
+            sprite = im
         if "floodfill" in filters:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
@@ -910,10 +922,6 @@ class Renderer:
             wid = int(max(sprite.width*scale[0],sprite.width))
             hgt = int(max(sprite.height*scale[1],sprite.height))
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST) 
-            if (wid,hgt) != (sprite.width,sprite.height):
-                im = Image.new('RGBA',(wid,hgt),(0,0,0,0))
-                im.paste(sprite,(wid-int(sprite.width*(2-scale[0])), hgt-int(sprite.height*(2-scale[1]))))
-                sprite = im
         def scan(spritenumpyscan):
             for i in range(len(spritenumpyscan)):
                 if (i%2)==1:

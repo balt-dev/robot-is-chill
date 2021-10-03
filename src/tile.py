@@ -71,6 +71,7 @@ class TileFields(TypedDict, total=False):
     blending: str
     gradientx: tuple[float,float,float,float]
     gradienty: tuple[float,float,float,float]
+    crop: tuple[int,int,int,int]
     filterimage: str
 
 @dataclass
@@ -110,6 +111,7 @@ class FullTile:
     blending: str = None
     gradientx: tuple[float,float,float,float] = (1,1,1,1)
     gradienty: tuple[float,float,float,float] = (1,1,1,1)
+    crop: tuple[int,int,int,int] = (0,0,24,24)
     filterimage: str = ""
     
     @classmethod
