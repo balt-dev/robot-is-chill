@@ -1008,7 +1008,7 @@ def setup(bot: Bot):
 
     @handlers.handler(
         pattern=r"(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
-        variant_hints={"filterimage": "`filterimage/<url>` applies a filter image."},
+        variant_hints={"filterimage": "`filterimage/<url>` applies a filter image.\nWarning: big images may take a while to render.\nImages bigger than 64 pixels not recommended.\nTip: Remove the http(s):// part from the URLs!"},
         variant_group="Filters"
     )
     def filterimage(ctx: HandlerContext) -> TileFields:
