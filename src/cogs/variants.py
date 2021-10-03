@@ -1005,5 +1005,15 @@ def setup(bot: Bot):
         return{
             "gradienty": (float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2]),float(ctx.groups[3]))
         }
+
+    @handlers.handler(
+        pattern=r"crop\((\d+?)\/(\d+?)\/(\d+?)\/(\d+?)\)",
+        variant_hints={"crop": "`crop(<x>/<y>/<width>/<height>)` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
+        variant_group="Filters"
+    )
+    def crop(ctx: HandlerContext) -> TileFields:
+        return{
+            "crop": (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
+        }
         
     return handlers
