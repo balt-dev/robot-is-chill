@@ -71,6 +71,7 @@ class TileFields(TypedDict, total=False):
     blending: str
     gradientx: tuple[float,float,float,float]
     gradienty: tuple[float,float,float,float]
+    filterimage: str
 
 @dataclass
 class FullTile:
@@ -109,6 +110,7 @@ class FullTile:
     blending: str = None
     gradientx: tuple[float,float,float,float] = (1,1,1,1)
     gradienty: tuple[float,float,float,float] = (1,1,1,1)
+    filterimage: str = ""
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
