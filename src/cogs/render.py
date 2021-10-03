@@ -21,6 +21,9 @@ if TYPE_CHECKING:
     from ...ROBOT import Bot
 
 import src.cogs.fish as fish
+import src.cogs.filterimage as filterimage
+
+import requests
 
 def rgb_to_hsv(rgb):
     # Translated from source of colorsys.rgb_to_hsv
@@ -448,6 +451,14 @@ class Renderer:
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
+            if tile.filterimage != "":
+                url=tile.filterimage
+                absolute = False
+                if url.startswith("abs"):
+                    url=url[3:]
+                    absolute = True
+                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
+                sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
