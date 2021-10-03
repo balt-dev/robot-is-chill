@@ -72,6 +72,7 @@ class TileFields(TypedDict, total=False):
     gradientx: tuple[float,float,float,float]
     gradienty: tuple[float,float,float,float]
     crop: tuple[int,int,int,int]
+    filterimage: str
 
 @dataclass
 class FullTile:
@@ -111,6 +112,8 @@ class FullTile:
     gradientx: tuple[float,float,float,float] = (1,1,1,1)
     gradienty: tuple[float,float,float,float] = (1,1,1,1)
     crop: tuple[int,int,int,int] = (0,0,24,24)
+    filterimage: str = ""
+    
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
         '''Create a FullTile from a RawTile and TileFields'''
