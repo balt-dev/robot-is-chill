@@ -1007,6 +1007,21 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
+        pattern=r"(abs){0,1}(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
+        variant_hints={"filterimage": "`[abs]filterimage/<url>` `[abs]filterimage=<url>` `[abs]fi!<url>` `[abs]fi=<url>` applies a filter image.\nWarning: big images may take a while to render.\nImages bigger than 64 pixels not recommended.\nTip: Remove the http(s):// part from the URLs!\nUse variant with `abs` in front of the name to use absolute positions!"},
+        variant_group="Filters"
+    )
+    def filterimage(ctx: HandlerContext) -> TileFields:
+        a = ctx.groups[0] if ctx.groups[0] else ""
+        url = ctx.groups[1]
+        url=url.replace("localhost","")
+        if url[:url.find("/")].replace(".","").isnumeric():
+            url=""
+        return {
+            "filterimage": a+"https://"+url
+        }
+
+    @handlers.handler(
         pattern=r"crop\((\d+?)\/(\d+?)\/(\d+?)\/(\d+?)\)",
         variant_hints={"crop": "`crop(<x>/<y>/<width>/<height>)` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
         variant_group="Filters"
