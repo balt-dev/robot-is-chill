@@ -146,6 +146,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for row in grid
         ]
 
+    async def trigger_typing(self, ctx: Context):
+        try: await ctx.trigger_typing()
+        except:
+            embed = discord.Embed(title="Info: Typing...",color=discord.Color(7340031),description="I couldn't trigger typing in this channel.\nJust letting you know that I *am* busy processing your command!")
+            await ctx.reply(embed=embed,delete_after=5,mention_author=False)
+
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         '''Performs the bulk work for both `tile` and `rule` commands.'''
         #for t in re.finditer(r'\"(.*?)\":([^ &]+)',objects):
@@ -154,7 +160,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         #for t in re.findall(r'\"((?:[\w\(\)\/\#]+[\W]?)+)+\"', objects):
         #    for t2 in re.findall(r'[\w\(\)\/\:\.\-\#]+', t):
         #        print(t2)
-        await ctx.trigger_typing()
+        await self.trigger_typing(ctx)
         start = time()
 
         tiles = objects.lower().strip().replace("\\", "")
@@ -643,7 +649,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     
     async def perform_level_command(self, ctx: Context, query: str, *, mobile: bool):
         # User feedback
-        await ctx.trigger_typing()
+        await self.trigger_typing(ctx)
 
         custom_level: CustomLevelData | None = None
         
@@ -663,7 +669,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             else:
                 # Expensive operation 
                 await ctx.reply("Searching for custom level... this might take a while", mention_author=False, delete_after=10)
-                await ctx.trigger_typing()
+                await self.trigger_typing(ctx)
                 async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/exists?code={fine_query.upper()}") as resp:
                     if resp.status in (200, 304):
                         data = await resp.json()
