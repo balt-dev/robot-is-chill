@@ -338,7 +338,10 @@ class Renderer:
             extra_out=extra_out,
             extra_name=extra_name,
         )
-        return sum(times)/len(times), max(times), sum(times)
+        if len(times)==0:
+            return 0, 0, 0
+        else:
+            return sum(times)/len(times), max(times), sum(times)
 
     async def render_full_tile(self,
         tile: FullTile,
