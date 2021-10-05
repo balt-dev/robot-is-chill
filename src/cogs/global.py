@@ -149,7 +149,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def trigger_typing(self, ctx: Context):
         try: await ctx.trigger_typing()
         except:
-            embed = discord.Embed(title="Info: Typing...",color=discord.Color(7340031),description="I couldn't trigger typing in this channel.\nJust letting you know that I *am* busy processing your command!")
+            embed = discord.Embed(title=discord.Embed.Empty,color=discord.Color(7340031),description="Processing...")
             await ctx.reply(embed=embed,delete_after=5,mention_author=False)
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
