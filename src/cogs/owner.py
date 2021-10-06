@@ -508,9 +508,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
         await ctx.send(f"All hidden commands:\n{cmds}")
 
-    @commands.command(hidden=True)
-    async def nothingtoseehere(self, ctx: Context):
-        await ctx.send('amoung pequeño')
+    @commands.command()
+    @commands.is_owner()
+    async def clearconsole(self, ctx: Context):
+        os.system('cls||clear')
+        await ctx.send('Console cleared.')
             
     @commands.command()
     @commands.is_owner()

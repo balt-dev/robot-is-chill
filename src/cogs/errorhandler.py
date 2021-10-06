@@ -7,6 +7,7 @@ import numpy
 
 import discord
 from discord.ext import commands
+import requests 
 
 from ..types import Bot, Context
 
@@ -151,11 +152,14 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, numpy.linalg.LinAlgError):
             return await ctx.error("The given warp points are unsolvable.")
 
+        elif isinstance(error, requests.exceptions.ConnectionError):
+            return await ctx.error('A given link for the filter image was invalid.')
         # All other Errors not returned come here... And we can just print the default TraceBack + log
-        if len(''.join(traceback.format_tb(error.__traceback__))) > 1850:
-            await ctx.error(f"An exception occurred: {type(error)}\n{error}\n```{''.join(traceback.format_tb(error.__traceback__))[:1850]}... \n\n(Character limit reached!)```")
-        else:
-            await ctx.error(f"An exception occurred: {type(error)}\n{error}\n```{''.join(traceback.format_tb(error.__traceback__))}```")
+        emb = discord.Embed(
+            description='```'+''.join(traceback.format_tb(error.__traceback__))+'```',
+            color=15029051
+        )
+        await ctx.error(f"An exception occurred. {type(error)}\n{error}",embed=emb)
         await self.logger.send(embed=emb)
         print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)

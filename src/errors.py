@@ -1,6 +1,9 @@
 class BabaError(Exception):
     '''Base class for convenient catching'''
 
+class MiscError(Exception):
+    '''General information broadcasting in the form of an error'''
+    
 class SplittingException(BabaError):
     '''Couldn't split `text_a,b,c` ... somehow
     
@@ -56,6 +59,7 @@ class OverlayNotFound(Exception):
     
     extra args: tiling
     '''
+    
 
 class TileNotText(VariantError):
     '''Can't apply text variants on tiles'''
