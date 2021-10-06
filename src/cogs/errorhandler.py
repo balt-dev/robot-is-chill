@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import traceback
 from asyncio import create_task
@@ -156,7 +157,7 @@ class CommandErrorHandler(commands.Cog):
             return await ctx.error('A given link for the filter image was invalid.')
         # All other Errors not returned come here... And we can just print the default TraceBack + log
         emb = discord.Embed(
-            description='```'+''.join(traceback.format_tb(error.__traceback__))+'```',
+            description='```'+''.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")+'```',
             color=15029051
         )
         await ctx.error(f"An exception occurred. {type(error)}\n{error}",embed=emb)
