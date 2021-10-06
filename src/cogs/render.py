@@ -475,7 +475,6 @@ class Renderer:
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             if tile.filterimage != "":
-                '''
                 url=tile.filterimage
                 absolute = False
                 if url.startswith("abs"):
@@ -483,8 +482,6 @@ class Renderer:
                     absolute = True
                 ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
-                '''
-                raise errors.VariantError('\n\nFilters take 10 seconds per tile on average due to URL requests taking that long. \nI\'m not reenabling them until filterimage changes to \nnot use URLs or does something else to get the image quickly.\n\n','fi')
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
