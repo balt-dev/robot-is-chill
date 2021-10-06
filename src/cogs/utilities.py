@@ -10,6 +10,7 @@ import cv2
 
 from src.tile import RawTile
 from src.db import CustomLevelData, LevelData, TileData
+import zipfile 
 
 import time
 import discord
@@ -313,36 +314,52 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
-    async def show_palette(self, ctx: Context, palette: str = 'default'):
+    async def show_palette(self, ctx: Context, palette: str = 'default', raw: str = None):
         '''Displays palette image.
 
         This is useful for picking colors from the palette.'''
+        if palette == '-r' or palette == '--raw':
+            palette = 'default'
+            raw = '--raw'
         try:
             img = Image.open(f"data/palettes/{palette}.png")
         except FileNotFoundError:
             return await ctx.error(f"The palette `{palette}` could not be found.")
-        txtwid, txthgt = img.size
-        img = img.resize(
-            (img.width * constants.PALETTE_PIXEL_SIZE, img.height * constants.PALETTE_PIXEL_SIZE), 
-            resample=Image.NEAREST
-        )
-        font = ImageFont.truetype("data/04b03.ttf", 16)
-        draw = ImageDraw.Draw(img)
-        for y in range(txthgt):
-            for x in range(txtwid):
-                try:
-                    n = img.getpixel((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)))
-                    if (n[0]+n[1]+n[2])/3 > 128:
-                        draw.text((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)-2), str(x)+","+str(y), (1,1,1,255), font, layout_engine=ImageFont.LAYOUT_BASIC)
-                    else:
-                        draw.text((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)-2), str(x)+","+str(y), (255,255,255,255), font, layout_engine=ImageFont.LAYOUT_BASIC)
-                except:
-                    pass
-        buf = BytesIO()
-        img.save(buf, format="PNG")
-        buf.seek(0)
-        file = discord.File(buf, filename=f"palette_{palette}.png")
-        await ctx.reply(f"Palette `{palette}`:", file=file)
+        if raw and (raw == '-r' or raw == '--raw'):  
+            zipbuf = BytesIO()
+            file = zipfile.PyZipFile(zipbuf, "x")
+            palbuf = BytesIO()
+            img.save(palbuf, "PNG")
+            file.writestr(f"{palette}.png", palbuf.getvalue())
+            file.close()
+            zipbuf.seek(0)
+            palbuf.seek(0)
+            zipf = discord.File(zipbuf, filename=f"{palette}.zip")
+            palf = discord.File(palbuf, filename=f"{palette}.png")
+            await ctx.reply(f"Palette `{palette}`:", files=[palf,zipf])
+        else:
+            txtwid, txthgt = img.size
+            img = img.resize(
+                (img.width * constants.PALETTE_PIXEL_SIZE, img.height * constants.PALETTE_PIXEL_SIZE), 
+                resample=Image.NEAREST
+            )
+            font = ImageFont.truetype("data/04b03.ttf", 16)
+            draw = ImageDraw.Draw(img)
+            for y in range(txthgt):
+                for x in range(txtwid):
+                    try:
+                        n = img.getpixel((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)))
+                        if (n[0]+n[1]+n[2])/3 > 128:
+                            draw.text((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)-2), str(x)+","+str(y), (1,1,1,255), font, layout_engine=ImageFont.LAYOUT_BASIC)
+                        else:
+                            draw.text((x * constants.PALETTE_PIXEL_SIZE, (y * constants.PALETTE_PIXEL_SIZE)-2), str(x)+","+str(y), (255,255,255,255), font, layout_engine=ImageFont.LAYOUT_BASIC)
+                    except:
+                        pass
+            buf = BytesIO()
+            img.save(buf, format="PNG")
+            buf.seek(0)
+            file = discord.File(buf, filename=f"palette_{palette}.png")
+            await ctx.reply(f"Palette `{palette}`:", file=file)
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])
