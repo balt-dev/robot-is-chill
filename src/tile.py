@@ -111,7 +111,7 @@ class FullTile:
     blending: str = None
     gradientx: tuple[float,float,float,float] = (1,1,1,1)
     gradienty: tuple[float,float,float,float] = (1,1,1,1)
-    crop: tuple[int,int,int,int] = (0,0,24,24)
+    crop: tuple[int,int,int,int] = (0,0,0,0)
     filterimage: str = ""
     
     @classmethod

@@ -447,5 +447,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "hardhat",
+        "sprite": "hardhat",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

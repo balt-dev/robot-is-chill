@@ -20,9 +20,12 @@ from src.constants import DIRECTIONS
 from src.db import Database
 
 class Context(commands.Context):
-    async def error(self, msg: str) -> discord.Message:
+    async def error(self, msg: str, embed: discord.Embed | None = None) -> discord.Message:
         await self.message.add_reaction("\u26a0\ufe0f")
-        return await self.reply(msg)
+        if embed is not None:
+            return await self.reply(msg,embed=embed)
+        else:
+            return await self.reply(msg)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs) -> discord.Message:
         if len(content) > 2000:

@@ -4,11 +4,14 @@ import copy
 import math
 import random
 import zipfile
-from collections import Counter
+import collections
 from io import BytesIO
 from typing import TYPE_CHECKING, BinaryIO
 import cv2
 import time
+import config
+import asyncio
+from functools import reduce 
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -148,8 +151,7 @@ class Renderer:
                 return a.frames[0].height
             except: 
                 return 0
-        
-        padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid])),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid])))
+        padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
         padding = padding[0] if type(padding) == list else padding
         for frame in frames:
             width = len(grid[0])
@@ -330,7 +332,25 @@ class Renderer:
             if upscale:
                 img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
             outs.append(img)
-
+            
+        #/!\ PERFORMANCE DROP. ONLY USE WHEN NECESSARY. /!\
+        #if config.danger_mode:
+        #    def fire_and_forget(f):
+        #        def wrapped(*args, **kwargs):
+        #            return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
+        #
+        #        return wrapped
+        #    
+        #    @fire_and_forget
+        #    def printrendertoconsole():
+        #        q = ''
+        #        for vy in np.array(outs[-1]):
+        #            for vx in vy:
+        #                q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
+        #            q = q + '\n'
+        #        print(q)
+        #    
+        #    printrendertoconsole()
         self.save_frames(
             outs,
             out,
@@ -455,6 +475,7 @@ class Renderer:
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             if tile.filterimage != "":
+                '''
                 url=tile.filterimage
                 absolute = False
                 if url.startswith("abs"):
@@ -462,6 +483,8 @@ class Renderer:
                     absolute = True
                 ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
+                '''
+                raise errors.VariantError('\n\nFilters take 10 seconds per tile on average due to URL requests taking that long. \nI\'m not reenabling them until filterimage changes to \nnot use URLs or does something else to get the image quickly.\n\n','fi')
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
@@ -814,20 +837,19 @@ class Renderer:
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if "face" in filters:
+            im = np.array(sprite)
             colors = []
-            for x in range(sprite.size[0]):
-                for y in range(sprite.size[1]):
-                    if sprite.getchannel("A").getpixel((x,y)) > 0 :
-                        colors += [sprite.getpixel((x,y))]
-            colors = [item for items, c in Counter(colors).most_common() for item in [items] * c]
-            for x in range(sprite.size[0]):
-                for y in range(sprite.size[1]):
-                    r1,g1,b1,a1 = sprite.getpixel((x,y))
-                    r2,g2,b2,a2 = colors[-1]
-                    if r1 // 8 != r2 // 8 or g1 // 8 != g2 // 8 or b1 // 8 != b2 // 8 or a1 // 8 != a2 // 8 :
-                        sprite.putpixel((x,y),(0,0,0,0))
-                    else:
-                        sprite.putpixel((x,y),(r1,g1,b1,a1))
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                    if im[y,x,3] > 0 :
+                        colors.append(tuple(im[y,x]))
+            color = collections.Counter(colors).most_common()[-1][0]
+            out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                    if all(x == y for x, y in zip(tuple([n for n in im[y,x]]), color)):
+                        out[y,x] = im[y,x]
+            sprite = Image.fromarray(out)
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
@@ -1000,7 +1022,6 @@ class Renderer:
             )
             srcpoints = np.float32(srcpoints.tolist())
             dstpoints = np.float32(dstpoints.tolist())
-            print(str(srcpoints)+'\n\n'+str(dstpoints))
             Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
             spritenumpywarp = np.pad(spritenumpywarp,((paddedheight,paddedheight),(paddedwidth,paddedwidth),(0,0)), 'constant', constant_values=0)
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=(int((paddedwidth*2)+sprite.width), int((paddedheight*2)+sprite.height)), flags = cv2.INTER_NEAREST)
