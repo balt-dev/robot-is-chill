@@ -13,18 +13,16 @@ def apply_filterimage(img,fil,absolute):
 
 	out = np.zeros((npfil.shape[0],npfil.shape[1],npimg.shape[2]))
 
-	for y in range(npfil.shape[0]):
-		for x in range(npfil.shape[1]):
-			samplecoordinates = npfil[y,x,:2]-128
-			brightness = npfil[y,x,2]
-			alpha = npfil[y,x,3]
-			if alpha>0:
-				color = npimg[((samplecoordinates[1]+(y if not absolute else 0))%npimg.shape[1]),((samplecoordinates[0]+(x if not absolute else 0))%npimg.shape[0])]
-				color[:3]=(color[:3]*(brightness/255)).astype(int)
-				color[3]=int(color[3]*(alpha/255))
-			else:
-				color=(0,0,0,0)
-			out[y,x]=color
+	samplecoordinates = (npfil[:,:,:2]-128)
+	if not absolute:
+		samplecoordinates[:,:,0]+=np.arange(npimg.shape[0])
+		samplecoordinates[:,:,1]=(samplecoordinates[:,:,1].T+np.arange(npimg.shape[1])).T
+	samplecoordinates%=npimg.shape[:2]
+	brightness = npfil[:,:,2]
+	alpha = npfil[:,:,3]
+	out[alpha>0] = npimg[samplecoordinates[:,:,1],samplecoordinates[:,:,0]][alpha>0]
+	out[:,:,:3]*=(brightness/255).reshape(brightness.shape+(1,)).repeat(3,2)
+	out[:,:,3]*=(alpha/255)
 
 	img = Image.fromarray(out.astype("uint8"))
 
