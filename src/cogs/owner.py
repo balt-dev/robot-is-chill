@@ -183,6 +183,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         self.bot.loading = False
         return await ctx.send("Done. Loaded all tile data.")
 
+    @commands.command()
+    @commands.is_owner()
+    async def loadcustom(self, ctx: Context):
+        '''Reloads tile data from custom files.'''
+        self.bot.loading = True
+        await self.load_custom_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded custom tile data.")
+    
     async def load_initial_tiles(self):
         '''Loads tile data from `data/values.lua` and `.ld` files.'''
         # values.lua contains the data about which color (on the palette) is associated with each tile.
