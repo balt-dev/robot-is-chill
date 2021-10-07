@@ -7,7 +7,7 @@ import numpy as np
 #B Brightness
 #A Alpha
 
-def apply_filterimage(img,fil,absolute):
+def apply_filterimage(img: Image.Image,fil: Image.Image,absolute: bool):
 	npimg = np.array(img)
 	npfil = np.array(fil,dtype=int)
 
