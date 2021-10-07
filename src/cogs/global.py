@@ -13,6 +13,8 @@ from os import listdir
 from time import time
 from typing import Any, OrderedDict, TYPE_CHECKING
 
+import numpy as np
+
 import asyncio
 import aiohttp
 import discord
@@ -163,6 +165,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await self.trigger_typing(ctx)
         start = time()
         tiles = objects.lower().strip().replace("\\", "")
+        tiles = tiles.replace("ⓜ️",":m:").replace("🆙",":up:").replace("😷",":mask:").replace("👀",":eyes:")
         tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
@@ -751,6 +754,73 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
+
+    @commands.command(aliases=["filterimages","fi"])
+    @commands.cooldown(5, 8, commands.BucketType.channel)
+    async def filterimage(self, ctx: Context, *, query: str = ""):
+        '''Performs filterimage-related actions like template creation, conversion and accessing the (currently unimplemented) database.
+        '''
+        if query.startswith("convert "):
+            query=query.split(" ")
+            url=query[2]
+            if url.startswith("http://"):
+                url=url[7:]
+            if not url.startswith("https://"):
+                url="https://"+url
+            relative=False
+            ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
+            fil = np.array(ifilterimage)
+            if query[1] in ("relative","rel"):
+                relative = True
+            if relative:
+                fil[:,:,0]-=np.arange(fil.shape[0],dtype="uint8")
+                fil[:,:,1]=(fil[:,:,1].T-np.arange(fil.shape[1],dtype="uint8")).T
+            else:
+                fil[:,:,0]+=np.arange(fil.shape[0],dtype="uint8")
+                fil[:,:,1]=(fil[:,:,1].T+np.arange(fil.shape[1],dtype="uint8")).T
+            ifilterimage = Image.fromarray(fil)
+            out=BytesIO()
+            ifilterimage.save(out,format="png",optimize=False)
+            out.seek(0)
+            file = discord.File(out, filename="filterimage.png")
+            await ctx.reply(
+                f'Converted filterimage from {"absolute" if relative else "relative"} to {"relative" if relative else "absolute"}:',
+                file=file
+                )
+        elif query=="convert":
+            await ctx.reply("""Converts a filterimage to relative or absolute from the other type.
+Usage:
+```filterimage convert [<relative|rel|absolute|abs> <URL>]```
+URL can be supplied with or without http(s) in this command, since it's not limited by colon separation.""")
+        elif query.startswith("create "):
+            query=query.split(" ")
+            size=query[2].split(",")
+            size=int(size[0]),int(size[1])
+            relative=False
+            fil = np.zeros(size+(4,),dtype="uint8")
+            fil[:,:]=(128,128,255,255)
+            if query[1] in ("relative","rel"):
+                relative = True
+            if not relative:
+                fil[:,:,0]+=np.arange(fil.shape[0],dtype="uint8")
+                fil[:,:,1]=(fil[:,:,1].T+np.arange(fil.shape[1],dtype="uint8")).T
+            ifilterimage = Image.fromarray(fil)
+            out=BytesIO()
+            ifilterimage.save(out,format="png",optimize=False)
+            out.seek(0)
+            file = discord.File(out, filename="filterimage.png")
+            await ctx.reply(
+                f'Created filterimage template of size {size} in mode {"relative" if relative else "absolute"}:',
+                file=file
+                )
+        elif query=="create":
+            await ctx.reply("""Creates a filterimage template.
+Usage:
+```filterimage create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
+        else:
+            await ctx.reply("""Sub-commands:
+```convert [<relative|rel|absolute|abs> <URL>]
+create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
 
 def setup(bot: Bot):
     bot.add_cog(GlobalCog(bot))
