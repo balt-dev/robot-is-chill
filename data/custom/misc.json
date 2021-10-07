@@ -456,5 +456,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tileedge",
+        "sprite": "tileedge",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
