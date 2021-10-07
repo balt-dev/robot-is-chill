@@ -162,7 +162,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         #        print(t2)
         await self.trigger_typing(ctx)
         start = time()
-
         tiles = objects.lower().strip().replace("\\", "")
         tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
         # Determines if this should be a spoiler
