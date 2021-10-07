@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import traceback
 from asyncio import create_task
@@ -155,7 +156,7 @@ class CommandErrorHandler(commands.Cog):
             elif isinstance(error, requests.exceptions.ConnectionError):
                 return await ctx.error('A given link for the filter image was invalid.')
             # All other Errors not returned come here... And we can just print the default TraceBack + log
-            trace = '\n'.join(traceback.format_tb(error.__traceback__))
+            trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")
             footer = None
             if len(trace) > 4096:
                 footer = f'Message had to be shortened from {len(trace)} characters long'
