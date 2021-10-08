@@ -15,8 +15,8 @@ def apply_filterimage(img: Image.Image,fil: Image.Image,absolute: bool):
 
 	samplecoordinates = (npfil[:,:,:2]-128)
 	if not absolute:
-		samplecoordinates[:,:,0]+=np.arange(npimg.shape[0])
-		samplecoordinates[:,:,1]=(samplecoordinates[:,:,1].T+np.arange(npimg.shape[1])).T
+		samplecoordinates[:,:,0]+=np.arange(npfil.shape[0])
+		samplecoordinates[:,:,1]=(samplecoordinates[:,:,1].T+np.arange(npfil.shape[1])).T
 	samplecoordinates%=npimg.shape[:2]
 	brightness = npfil[:,:,2]
 	alpha = npfil[:,:,3]
