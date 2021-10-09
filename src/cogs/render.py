@@ -272,6 +272,21 @@ class Renderer:
                                     mask=sprite
                                 )
                                 imgs[frame+i] = Image.fromarray(cv2.max(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))  
+                            elif tile.blending == 'xor':
+                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp.paste(
+                                    sprite, 
+                                    (
+                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
+                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    ), 
+                                    mask=sprite
+                                )
+                                i1 = np.asarray(imgs[frame+i])
+                                i2 = np.asarray(imgtemp)
+                                rgb = (i1^i2)
+                                rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
+                                imgs[frame+i] = Image.fromarray(rgb)  
                             elif tile.blending == 'minimum':
                                 imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
                                 imgtemp.paste(
@@ -401,7 +416,9 @@ class Renderer:
                     wavey=tile.wavey,
                     gradientx=tile.gradientx,
                     gradienty=tile.gradienty,
-                    crop=tile.crop
+                    crop=tile.crop,
+                    fisheye=tile.fisheye,
+                    pad=tile.pad
                 )
             else:
                 if tile.name in ("icon",):
@@ -438,7 +455,9 @@ class Renderer:
                     wavey=tile.wavey,
                     gradientx=tile.gradientx,
                     gradienty=tile.gradienty,
-                    crop=tile.crop
+                    crop=tile.crop,
+                    fisheye=tile.fisheye,
+                    pad=tile.pad
                 )
             # Color conversion
             if tile.overlay == "":
@@ -463,9 +482,7 @@ class Renderer:
                 ovsprite=(ovsprite).astype("uint8")
                 sprite = Image.fromarray(ovsprite)
             if tile.negative:
-                inverted = 255-np.array(sprite)
-                inverted[:,:,3] = 255-inverted[:,:,3]
-                sprite = Image.fromarray(abs(inverted))
+                sprite = Image.fromarray(np.dstack((~np.array(sprite)[:,:,:3],np.array(sprite)[:,:,3])))
             if tile.hueshift != 0.0:
                 sprite = Image.fromarray(shift_hue(np.array(sprite,dtype="uint8"),tile.hueshift))
             if tile.brightness != 1:
@@ -530,7 +547,7 @@ class Renderer:
         blur: int,
         scale: tuple[float,float],
         angle: int,
-        glitch: int,
+        glitch: tuple[float,float],
         warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]],
         neon: float,
         opacity: float,
@@ -539,7 +556,9 @@ class Renderer:
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
         gradienty: tuple[float,float,float,float],
-        crop: tuple[int,int,int,int]
+        crop: tuple[int,int,int,int],
+        pad: tuple[int,int,int,int],
+        fisheye: float
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -743,7 +762,9 @@ class Renderer:
             wavey=wavey,
             gradientx=gradientx,
             gradienty=gradienty,
-            crop=crop
+            crop=crop,
+            fisheye=fisheye,
+            pad=pad
         )
 
     async def apply_options_name(
@@ -758,7 +779,7 @@ class Renderer:
         filters: list[str],
         blur: int,
         angle: int,
-        glitch: int,
+        glitch: tuple[float,float],
         warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]],
         neon: float,
         scale: tuple[float,float],
@@ -768,7 +789,9 @@ class Renderer:
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
         gradienty: tuple[float,float,float,float],
-        crop: tuple[int,int,int,int]
+        crop: tuple[int,int,int,int],
+        pad: tuple[int,int,int,int],
+        fisheye: float
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -800,7 +823,9 @@ class Renderer:
                 wavey=wavey,
                 gradientx=gradientx,
                 gradienty=gradienty,
-                crop=crop
+                crop=crop,
+                fisheye=fisheye,
+                pad=pad
             )
         except ValueError as e:
             size = e.args[0]
@@ -820,7 +845,7 @@ class Renderer:
         name: str,
         blur: int,
         angle: float,
-        glitch: int,
+        glitch: tuple[float,float],
         scale: tuple[float,float],
         warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]],
         neon: float,
@@ -830,9 +855,13 @@ class Renderer:
         wavey: tuple[float,float,float],
         gradientx: tuple[float,float,float,float],
         gradienty: tuple[float,float,float,float],
-        crop: tuple[int,int,int,int]
+        crop: tuple[int,int,int,int],
+        fisheye: float,
+        pad: tuple[int,int,int,int],
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
+        if scale != (1,1):
+            sprite = Image.fromarray(cv2.resize(np.array(sprite), dsize=(math.floor(sprite.size[1]*scale[0]),math.floor(sprite.size[0]*scale[1])), interpolation=cv2.INTER_NEAREST))
         if "face" in filters:
             im = np.array(sprite)
             colors = []
@@ -880,6 +909,10 @@ class Renderer:
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
             im.paste(cropped,(crop[0],crop[1]))
             sprite = im
+        if any(pad):
+            im = Image.new('RGBA',(sprite.width+sum([pad[0],pad[2]]),sprite.height+sum([pad[1],pad[3]])),(0,0,0,0))
+            im.paste(sprite,(pad[0],pad[1]))
+            sprite = im
         if "floodfill" in filters:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
@@ -893,19 +926,10 @@ class Renderer:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
             sprite = sprite.resize((wid,hgt), resample=Image.NEAREST)
-        if glitch != 0:
-            randlist = []
-            width, height = sprite.size
-            widthold, heightold = sprite.size
-            width *= 3
-            height *= 3
-            for _ in range(glitch):
-                a = random.randint(-180,180)
-                sprite = sprite.rotate(a, expand=True)
-                sprite = sprite.crop(((sprite.width - width)//2, (sprite.height - height)//2, (sprite.width + width)//2, (sprite.height + height)//2))
-                randlist.append(a)
-            sprite = sprite.rotate(-1*sum(randlist))
-            sprite = sprite.crop(((sprite.width - widthold)//2, (sprite.height - heightold)//2, (sprite.width + widthold)//2, (sprite.height + heightold)//2))
+        if glitch != (0.0,0.0):
+            clamp = lambda m,mn,mx: min(mx,max(mn,m))
+            filter = np.array([[[clamp(random.randint(128-glitch[0],128+glitch[0]),0,255),clamp(random.randint(128-glitch[0],128+glitch[0]),0,255),255,255] if glitch[1] > random.random() else [128,128,255,255] for _ in range(sprite.size[1])] for _ in range(sprite.size[0    ])], dtype=np.uint8)
+            sprite = filterimage.apply_filterimage(sprite,filter,absolute=False)
         def rotate(li, x):
             return li[-x % len(li):] + li[:-x % len(li)]
         if wavex[1]!=0:
@@ -940,16 +964,13 @@ class Renderer:
                 v=gradient(l,*(gradienty*np.array([24,24,1,1])))
                 numpysprite[l]=numpysprite[l]*(v,v,v,1)
             sprite = Image.fromarray(numpysprite)
-        if scale != (1,1):
-            wid = int(max(sprite.width*scale[0],sprite.width))
-            hgt = int(max(sprite.height*scale[1],sprite.height))
-            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST) 
         def scan(spritenumpyscan):
             for i in range(len(spritenumpyscan)):
                 if (i%2)==1:
                     spritenumpyscan[i]=0
             return spritenumpyscan
         for filter in filters:
+            im = np.array(sprite)
             if filter == "flipx":
                 sprite = ImageOps.mirror(sprite)
             if filter == "flipy":
@@ -957,19 +978,15 @@ class Renderer:
             if filter == "blank":
                 sprite = Image.composite(Image.new("RGBA", (sprite.width, sprite.height), (255,255,255,255)),sprite,sprite)
             if filter == "scanx":
-                spritenumpyscan = np.array(sprite)
-                sprite = Image.fromarray(scan(spritenumpyscan))
+                sprite = Image.fromarray(scan(im))
             if filter == "scany":
-                spritenumpyscan = np.array(sprite).swapaxes(0,1)
+                spritenumpyscan = im.swapaxes(0,1)
                 sprite = Image.fromarray(scan(spritenumpyscan).swapaxes(0,1))
             if filter == "invert":
-                inverted = 255-np.array(sprite)
-                inverted[:,:,3] = 255-inverted[:,:,3]
-                sprite = Image.fromarray(abs(inverted))
-            if filter == "fisheye":
-                spritefish = np.array(sprite)
-                spritefish = fish.fish(spritefish,0.5)
-                sprite = Image.fromarray(spritefish)
+                sprite = Image.fromarray(np.dstack((~im[:,:,:3],im[:,:,3])))
+        if fisheye != 0:
+            spritefish = fish.fish(np.array(sprite),fisheye)
+            sprite = Image.fromarray(spritefish)
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
@@ -1024,7 +1041,7 @@ class Renderer:
             warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=(int((paddedwidth*2)+sprite.width), int((paddedheight*2)+sprite.height)), flags = cv2.INTER_NEAREST)
             sprite = Image.fromarray(warped)
         if angle != 0:
-            sprite = sprite.rotate(-angle)
+            sprite = sprite.rotate(-angle,expand=True)
         if blur != 0:
             sprite = sprite.filter(ImageFilter.GaussianBlur(radius = blur))
         return sprite
