@@ -384,6 +384,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `--background=[...]` (`-B=[...]`): Enables background color. If no argument is given, defaults to black. The argument must be a palette index ("x/y").
         * `--raw` (`-R`): Enables raw mode. The sprites are sent in a ZIP file as well as normally. By default, sprites have no color.
         * `--letter` (`-L`): Enables letter mode. Custom text that has 2 letters in it will be rendered in "letter" mode.
+        * `--global=<...>` (`-global=<...>`, `-g=<...>`): Applies a set of variants to every tile.
+        * `--combine=[...]` (`-combine=[...]`, `-c=[...]`): Adds the output onto the end of another animation.
+        * `--frames=<...>` (`-frames=<...>`, `-f=<...>`): Only outputs frame X of the render.
         
         **Variants**
         * `:variant`: Append `:variant` to a tile to change color or sprite of a tile. See the `variants` command for more.
@@ -429,6 +432,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `--background=[...]` (`-B=[...]`): Enables background color. If no argument is given, defaults to black. The argument must be a palette index ("x/y").
         * `--raw` (`-R`): Enables raw mode. The sprites are sent in a ZIP file as well as normally. By default, sprites have no color.
         * `--letter` (`-L`): Enables letter mode. Custom text that has 2 letters in it will be rendered in "letter" mode.
+        * `--global=<...>` (`-global=<...>`, `-g=<...>`): Applies a set of variants to every tile.
+        * `--combine=[...]` (`-combine=[...]`, `-c=[...]`): Adds the output onto the end of another animation.
+        * `--frames=<...>` (`-frames=<...>`, `-f=<...>`): Only outputs frame X of the render.
 
         **Variants**
         * `:variant`: Append `:variant` to a tile to change color or sprite of a tile. See the `variants` command for more.
