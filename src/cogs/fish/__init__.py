@@ -14,9 +14,6 @@ def get_fish_xn_yn(source_x, source_y, radius, distortion):
     As distortion grows, pixels will be moved further from the center, and vice versa.
     """
 
-    if 1 - distortion*(radius**2) == 0:
-        return source_x, source_y
-
     return source_x / (1 - (distortion*(radius**2))), source_y / (1 - (distortion*(radius**2)))
 
 
@@ -67,49 +64,3 @@ def fish(img, distortion_coefficient):
                 dstimg[x][y] = img[xu][yu]
 
     return dstimg.astype(np.uint8)
-
-
-def parse_args(args=sys.argv[1:]):
-    """Parse arguments."""
-
-    parser = argparse.ArgumentParser(
-        description="Apply fish-eye effect to images.",
-        prog='python3 fish.py')
-
-    parser.add_argument("-i", "--image", help="path to image file."
-                        " If no input is given, the supplied example 'grid.jpg' will be used.",
-                        type=str, default="grid.jpg")
-
-    parser.add_argument("-o", "--outpath", help="file path to write output to."
-                        " format: <path>.<format(jpg,png,etc..)>",
-                        type=str, default="fish.png")
-
-    parser.add_argument("-d", "--distortion",
-                        help="The distoration coefficient. How much the move pixels from/to the center."
-                        " Recommended values are between -1 and 1."
-                        " The bigger the distortion, the further pixels will be moved outwars from the center (fisheye)."
-                        " The Smaller the distortion, the closer pixels will be move inwards toward the center (rectilinear)."
-                        " For example, to reverse the fisheye effect with --distoration 0.5,"
-                        " You can run with --distortion -0.3."
-                        " Note that due to double processing the result will be somewhat distorted.",
-                        type=float, default=0.5)
-
-    return parser.parse_args(args)
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    try:
-        imgobj = imageio.imread(args.image)
-    except Exception as e:
-        print(e)
-        sys.exit(1)
-    if os.path.exists(args.outpath):
-        ans = input(
-            args.outpath + " exists. File will be overridden. Continue? y/n: ")
-        if ans.lower() != 'y':
-            print("exiting")
-            sys.exit(0)
-    
-    output_img = fish(imgobj, args.distortion)
-    imageio.imwrite(args.outpath, output_img, format='png')
