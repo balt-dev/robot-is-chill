@@ -758,29 +758,26 @@ def setup(bot: Bot):
             }
     
     @handlers.handler(
-        pattern=r"fisheye",
-        variant_hints={"fisheye": "`fisheye` (Applies fisheye effect.)"},
+        pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
+        variant_hints={"fisheye": "`fisheye[n]` (Applies fisheye effect. n is intensity, defaulting to 0.5.)"},
         variant_group="Filters"
     )
     def fisheye(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["fisheye"]
-            }
-        except:
-            return{
-                "filters": ["fisheye"]
-            }
+        fish = ctx.groups[0] or 0.5
+        return {
+            "fisheye": float(fish) 
+        }
         
     @handlers.handler(
-        pattern=r"glitch(\d{1,3})|g(\d{1,3})",
-        variant_hints={"glitch": "`glitch<int>` (Displaces some pixels by abusing rotation inaccuracy.)"},
+        pattern=r"(?:glitch|g)(\d+(?:\.\d+)?)(?:\/(\d+(?:\.\d+)?))?",
+        variant_hints={"glitch": "`glitch<float>[/float]` (Displaces some pixels. With 123/.456, 123 is the max displacement distance, with a 45.6% chance of displacing a pixel.)"},
         variant_group="Filters"
     )
     def glitch(ctx: HandlerContext) -> TileFields:
         intensity = ctx.groups[0] or 0
+        chance = ctx.groups[1] or 100
         return {
-            "glitch": int(intensity) 
+            "glitch": (float(intensity),float(chance))
         }
     
     @handlers.handler(
@@ -815,6 +812,17 @@ def setup(bot: Bot):
         return {
             "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
         }
+        
+    @handlers.handler(
+        pattern=r"pad(\d)(?:\/(\d+))?",
+        variant_hints={"scale": "`scale<int>/[int]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
+        variant_group="Filters"
+    )
+    def scale(ctx: HandlerContext) -> TileFields:
+        n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
+        return {
+            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
+        }
 
     @handlers.handler(
         pattern=r"add",
@@ -824,6 +832,16 @@ def setup(bot: Bot):
     def add(ctx: HandlerContext) -> TileFields:
         return {
             "blending": 'add'
+        }
+        
+    @handlers.handler(
+        pattern=r"xor",
+        variant_hints={"xor": "`xor` (Makes the tile's RGB XOR with the tiles below.)"},
+        variant_group="Filters"
+    )
+    def xor(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'xor'
         }
     
     @handlers.handler(
@@ -1022,13 +1040,23 @@ def setup(bot: Bot):
         }
 
     @handlers.handler(
-        pattern=r"crop\((\d+?)\/(\d+?)\/(\d+?)\/(\d+?)\)",
+        pattern=r"crop\((-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)\)",
         variant_hints={"crop": "`crop(<x>/<y>/<width>/<height>)` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
         variant_group="Filters"
     )
     def crop(ctx: HandlerContext) -> TileFields:
         return{
             "crop": (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
+        }
+        
+    @handlers.handler(
+        pattern=r"pad\((\d+?)\/(\d+?)\/(\d+?)\/(\d+?)\)",
+        variant_hints={"pad": "`pad(<left>/<top>/<right>/<bottom>)` (Pads the sprite with transparency on each of its sides.)"},
+        variant_group="Filters"
+    )
+    def pad(ctx: HandlerContext) -> TileFields:
+        return{
+            "pad": (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
         }
         
     return handlers
