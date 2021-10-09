@@ -792,7 +792,7 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"rotate([\d\.]+)",
+        pattern=r"rotate(-{0,1}[\d\.]+)",
         variant_hints={"rotate": "`rotate<int>` (Rotates the sprite n degrees counterclockwise)"},
         variant_group="Filters"
     )
