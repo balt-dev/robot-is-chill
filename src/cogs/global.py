@@ -229,10 +229,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if letter_match:
                 default_to_letters = True
                 to_delete.append((x, y))
-            frames_match = re.fullmatch(r"-frames=([1,2,3]).*", flag)
+            frames_match = re.fullmatch(r"(?:--frames|-frames|-f)=(1|2|3).*", flag)
             if frames_match and frames_match.group(0):
                 frames = []
-                for n in re.finditer(r"[1,2,3]", flag[8:]):
+                for n in re.finditer(r"[123]", flag):
                     if n.group(0) in ['1','2','3']:
                         frames.append(int(n.group(0)))
                 to_delete.append((x, y))
@@ -257,7 +257,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 except:
                     speed = 200
                 to_delete.append((x, y))
-            global_match = re.fullmatch(r"-global=(.+)", flag)
+            global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
             if global_match:
                 global_variant = ':'+global_match.group(1)
                 to_delete.append((x, y))
