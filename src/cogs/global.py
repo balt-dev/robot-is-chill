@@ -257,7 +257,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 except:
                     speed = 200
                 to_delete.append((x, y))
-            global_match = re.fullmatch(r"-global=(.+)", flag)
+            global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
             if global_match:
                 global_variant = ':'+global_match.group(1)
                 to_delete.append((x, y))
