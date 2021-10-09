@@ -52,7 +52,7 @@ class TileFields(TypedDict, total=False):
     style_flip: bool
     angle: float
     blur_radius: int
-    glitch: int
+    glitch: tuple[float,float]
     filters: list[str]
     displace: tuple[int,int]
     scale: tuple[float,float]
@@ -72,7 +72,9 @@ class TileFields(TypedDict, total=False):
     gradientx: tuple[float,float,float,float]
     gradienty: tuple[float,float,float,float]
     crop: tuple[int,int,int,int]
+    pad: tuple[int,int,int,int]
     filterimage: str
+    fisheye: float  
 
 @dataclass
 class FullTile:
@@ -95,7 +97,7 @@ class FullTile:
     filters: list[str] = field(default_factory=list)
     angle: float = 0
     blur_radius: int = 0
-    glitch: int = 0
+    glitch: tuple[float,float] = (0,0)
     warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]] = ((0,0),(0,0),(0,0),(0,0))
     neon: float = 1
     opacity: float = 1
@@ -112,7 +114,9 @@ class FullTile:
     gradientx: tuple[float,float,float,float] = (1,1,1,1)
     gradienty: tuple[float,float,float,float] = (1,1,1,1)
     crop: tuple[int,int,int,int] = (0,0,0,0)
+    pad: tuple[int,int,int,int] = (0,0,0,0)
     filterimage: str = ""
+    fisheye: float = 0
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
