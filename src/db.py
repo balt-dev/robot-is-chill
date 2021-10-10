@@ -127,6 +127,16 @@ class Database:
                 );
                 '''
             )
+            await cur.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS filterimages (
+                    name TEXT UNIQUE PRIMARY KEY,
+                    relative BOOL,
+                    absolute BOOL,
+                    url TEXT
+                );
+                '''
+            )
 
     async def tile(self, name: str, *, maximum_version: int = 1000) -> TileData | None:
         '''Convenience method to fetch a single thing of tile data. Returns None on failure.'''
@@ -157,6 +167,19 @@ class Database:
                 row = await cur.fetchone()
                 if row is not None:
                     yield TileData.from_row(row)
+
+    async def filterimage(self, name: str, *, maximum_version: int = 1000) -> TileData | None:
+        '''Convenience method to fetch a single thing of tile data. Returns None on failure.'''
+        row = await self.conn.fetchone(
+            '''
+            SELECT name,relative,absolute,url FROM filterimages 
+            WHERE name == ?;
+            ''',
+            name
+        )
+        if row is None:
+            return None
+        return TileData.from_row(row)
     
     def plate(self, direction: int | None, wobble: int) -> tuple[Image.Image, tuple[int, int]]:
         '''Plate sprites. Raises FileNotFoundError on failure.'''
