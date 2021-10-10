@@ -827,6 +827,8 @@ Usage:
             embed=discord.Embed(title=f"Sub-commands",color=discord.Color(8421631)).set_author(name="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
             embed.add_field(name="Add a new filterimage to the database",value="filterimage database register <name> <relative> <absolute> <url>",inline=False)
             embed.add_field(name="Find a filterimage in the database",value="filterimage database get <name>",inline=False)
+            embed.add_field(name="Delete an entry from the database",value="filterimage database delete <name>",inline=False)
+            embed.add_field(name="Search the database",value="filterimage database search <query>",inline=False)
             await ctx.reply(embed=embed)
         elif query.startswith("db") or query.startswith("database"):
             query=query.split(" ")
@@ -837,7 +839,7 @@ Usage:
                 if len(query)<6:
                     await ctx.reply("ERROR: Not enough arguments (wrong command / syntax / forgot some arguments?)")
                     return
-                name=query[2]
+                name=query[2].lower()
                 truthy = ("yes","true","1")
                 relative=query[3].lower() in truthy
                 absolute=query[4].lower() in truthy
@@ -846,8 +848,16 @@ Usage:
                     url=url[7:]
                 if not url.startswith("https://"):
                     url="https://"+url
-                command="INSERT INTO filterimages VALUES (?, ?, ?, ?);"
-                args=(name,relative,absolute,url)
+                async with self.bot.db.conn.cursor() as cursor:
+                    command="SELECT name FROM filterimages WHERE url == ?;"
+                    args=(url,)
+                    await cursor.execute(command,args)
+                    dname=await cursor.fetchone()
+                    if dname:
+                        await ctx.reply(f"Filterimage already exists in the filterimage database with name `{dname}`!")
+                        return
+                command="INSERT INTO filterimages VALUES (?, ?, ?, ?, ?);"
+                args=(name,relative,absolute,url,ctx.author.id)
                 async with self.bot.db.conn.cursor() as cursor:
                     await cursor.execute(command,args)
                 await ctx.reply(f"Success! Registered filterimage `{name}` in the filterimage database!")
@@ -858,12 +868,16 @@ Usage:
                 if len(query)<3:
                     await ctx.reply("ERROR: No name provided.")
                     return
-                name=query[2]
+                name=query[2].lower()
                 command="SELECT * FROM filterimages WHERE name == ?;"
                 args=(name,)
                 async with self.bot.db.conn.cursor() as cursor:
                     await cursor.execute(command,args)
-                    name,relative,absolute,url = await cursor.fetchone()
+                    results=await cursor.fetchone()
+                    if results==None:
+                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
+                        return
+                    name,relative,absolute,url,userid = results
                 if url.startswith("http://"):
                     url=url[7:]
                 if not url.startswith("https://"):
@@ -872,12 +886,53 @@ Usage:
                 description = f"""(Right click to copy url!)
 Relative: {truefalseemoji[int(relative)]}
 Absolute: {truefalseemoji[int(absolute)]}"""
-                embed=discord.Embed(title=f"Name: {name}",color=discord.Color(8421631),description=description,url=url).set_image(url=url).set_author(name="Filterimage Database search results").set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                user=await self.bot.fetch_user(userid)
+                embed=discord.Embed(title=f"Name: {name}",color=discord.Color(8421631),description=description,url=url).set_image(url=url).set_author(name=user.name,icon_url=user.avatar_url).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                await ctx.reply(embed=embed)
+            elif query[1]=="delete":
+                if len(query)>3:
+                    await ctx.reply("ERROR: A name can't have spaces.")
+                    return
+                if len(query)<3:
+                    await ctx.reply("ERROR: No name provided.")
+                    return
+                name=query[2].lower()
+                command="SELECT * FROM filterimages WHERE name == ? AND creator == ?;"
+                args=(name,ctx.author.id)
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute(command,args)
+                    results=await cursor.fetchone()
+                    if results==None:
+                        await ctx.reply(f"Could not find filterimage `{name}` in the database! Does the entry exist, and did you create it?")
+                        return
+                command="DELETE FROM filterimages WHERE name == ? AND creator == ?;"
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute(command,args)
+                await ctx.reply("Success!")
+            elif query[1]=="search":
+                if len(query)>3:
+                    await ctx.reply("ERROR: A name can't have spaces.")
+                    return
+                if len(query)<3:
+                    await ctx.reply("ERROR: No name provided.")
+                    return
+                name=query[2].lower()
+                command="SELECT name FROM filterimages WHERE INSTR(name,?)<>0;"
+                args=(name,)
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute(command,args)
+                    results=await cursor.fetchall()
+                    if results==None:
+                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
+                        return
+                description = '\n'.join(''.join(str(value) for value in row) for row in results)
+                embed=discord.Embed(title=f"Filterimage Database search results",color=discord.Color(8421631),description=description).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
                 await ctx.reply(embed=embed)
         else:
             await ctx.reply("""Sub-commands:
 ```convert [<relative|rel|absolute|abs> <URL>]
-create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
+create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]
+database [...]```""")
 
 def setup(bot: Bot):
     bot.add_cog(GlobalCog(bot))
