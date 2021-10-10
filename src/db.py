@@ -127,6 +127,17 @@ class Database:
                 );
                 '''
             )
+            await cur.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS filterimages (
+                    name TEXT UNIQUE PRIMARY KEY,
+                    relative BOOL,
+                    absolute BOOL,
+                    url TEXT,
+                    creator INT
+                );
+                '''
+            )
 
     async def tile(self, name: str, *, maximum_version: int = 1000) -> TileData | None:
         '''Convenience method to fetch a single thing of tile data. Returns None on failure.'''

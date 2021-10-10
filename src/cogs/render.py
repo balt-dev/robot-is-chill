@@ -497,6 +497,17 @@ class Renderer:
                 if url.startswith("abs"):
                     url=url[3:]
                     absolute = True
+                if url.startswith("db!"):
+                    url=url[3:]
+                    command="SELECT url FROM filterimages WHERE name == ?;"
+                    args=(url,)
+                    async with self.bot.db.conn.cursor() as cursor:
+                        await cursor.execute(command,args)
+                        results=await cursor.fetchone()
+                        if results==None:
+                            raise requests.exceptions.ConnectionError
+                            return
+                        url=results[0]
                 ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
             numpysprite = np.array(sprite)

@@ -154,7 +154,7 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error("The given warp points are unsolvable.")
 
             elif isinstance(error, requests.exceptions.ConnectionError):
-                return await ctx.error('A given link for the filter image was invalid.')
+                return await ctx.error('A given link for the filterimage was invalid.')
             # All other Errors not returned come here... And we can just print the default TraceBack + log
             trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")
             footer = None
