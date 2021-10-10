@@ -823,6 +823,57 @@ URL can be supplied with or without http(s) in this command, since it's not limi
             await ctx.reply("""Creates a filterimage template.
 Usage:
 ```filterimage create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
+        elif query=="db" or query=="database":
+            embed=discord.Embed(title=f"Sub-commands",color=discord.Color(8421631)).set_author(name="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+            embed.add_field(name="Add a new filterimage to the database",value="filterimage database register <name> <relative> <absolute> <url>",inline=False)
+            embed.add_field(name="Find a filterimage in the database",value="filterimage database get <name>",inline=False)
+            await ctx.reply(embed=embed)
+        elif query.startswith("db") or query.startswith("database"):
+            query=query.split(" ")
+            if query[1]=="register":
+                if len(query)>6:
+                    await ctx.reply("ERROR: Too many arguments (wrong command / syntax / accidental space somewhere?)")
+                    return
+                if len(query)<6:
+                    await ctx.reply("ERROR: Not enough arguments (wrong command / syntax / forgot some arguments?)")
+                    return
+                name=query[2]
+                truthy = ("yes","true","1")
+                relative=query[3].lower() in truthy
+                absolute=query[4].lower() in truthy
+                url=query[5]
+                if url.startswith("http://"):
+                    url=url[7:]
+                if not url.startswith("https://"):
+                    url="https://"+url
+                command="INSERT INTO filterimages VALUES (?, ?, ?, ?);"
+                args=(name,relative,absolute,url)
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute(command,args)
+                await ctx.reply(f"Success! Registered filterimage `{name}` in the filterimage database!")
+            elif query[1]=="get":
+                if len(query)>3:
+                    await ctx.reply("ERROR: A name can't have spaces.")
+                    return
+                if len(query)<3:
+                    await ctx.reply("ERROR: No name provided.")
+                    return
+                name=query[2]
+                command="SELECT * FROM filterimages WHERE name == ?;"
+                args=(name,)
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute(command,args)
+                    name,relative,absolute,url = await cursor.fetchone()
+                if url.startswith("http://"):
+                    url=url[7:]
+                if not url.startswith("https://"):
+                    url="https://"+url
+                truefalseemoji=(":negative_squared_cross_mark:",":white_check_mark:")
+                description = f"""(Right click to copy url!)
+Relative: {truefalseemoji[int(relative)]}
+Absolute: {truefalseemoji[int(absolute)]}"""
+                embed=discord.Embed(title=f"Name: {name}",color=discord.Color(8421631),description=description,url=url).set_image(url=url).set_author(name="Filterimage Database search results").set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                await ctx.reply(embed=embed)
         else:
             await ctx.reply("""Sub-commands:
 ```convert [<relative|rel|absolute|abs> <URL>]
