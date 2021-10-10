@@ -1032,7 +1032,6 @@ def setup(bot: Bot):
     def filterimage(ctx: HandlerContext) -> TileFields:
         a = ctx.groups[0] if ctx.groups[0] else ""
         url = ctx.groups[1]
-        print(url)
         if url.startswith("db!"):
             return {
                 "filterimage": a+url
