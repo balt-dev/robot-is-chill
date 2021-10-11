@@ -829,6 +829,7 @@ Usage:
             embed.add_field(name="Find a filterimage in the database",value="filterimage database get <name>",inline=False)
             embed.add_field(name="Delete an entry from the database",value="filterimage database delete <name>",inline=False)
             embed.add_field(name="Search the database",value="filterimage database search <query>",inline=False)
+            embed.add_field(name="Count filterimages from the database",value="filterimage database count",inline=False)
             await ctx.reply(embed=embed)
         elif query.startswith("db") or query.startswith("database"):
             query=query.split(" ")
@@ -927,6 +928,19 @@ Absolute: {truefalseemoji[int(absolute)]}"""
                         return
                 description = '\n'.join(''.join(str(value) for value in row) for row in results)
                 embed=discord.Embed(title=f"Filterimage Database search results",color=discord.Color(8421631),description=description).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                await ctx.reply(embed=embed)
+            elif query[1]=="count":
+                async with self.bot.db.conn.cursor() as cursor:
+                    await cursor.execute("SELECT COUNT(*) FROM filterimages;")
+                    countall=(await cursor.fetchone())[0]
+                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE relative==1;")
+                    countrelative=(await cursor.fetchone())[0]
+                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE absolute==1;")
+                    countabsolute=(await cursor.fetchone())[0]
+                embed=discord.Embed(title=f"Filterimage Database numbers",color=discord.Color(8421631)).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                embed.add_field(name="Total filterimages",value=int(countall))
+                embed.add_field(name="Relative filterimages",value=int(countrelative))
+                embed.add_field(name="Absolute filterimages",value=int(countabsolute))
                 await ctx.reply(embed=embed)
         else:
             await ctx.reply("""Sub-commands:
