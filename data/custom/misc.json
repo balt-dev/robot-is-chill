@@ -465,5 +465,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "bababa",
+        "sprite": "bababa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_bababa",
+        "sprite": "text_bababa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
