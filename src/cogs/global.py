@@ -200,6 +200,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         frames = [1,2,3]
         speed = 200
         global_variant = ''
+        random_animations = True
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -261,6 +262,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if global_match:
                 global_variant = ':'+global_match.group(1)
                 to_delete.append((x, y))
+            con_match = re.fullmatch(r"(?:--consistent|-co)", flag)
+            if con_match:
+                random_animations = False
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         
@@ -317,7 +322,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=palette,
-                    random_animations=True
+                    random_animations=random_animations
                 ),
                 before_image=before_image,
                 palette=palette,
