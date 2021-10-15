@@ -285,7 +285,6 @@ class Renderer:
                                 i1 = np.asarray(imgs[frame+i])
                                 i2 = np.asarray(imgtemp)
                                 rgb = (i1^i2)
-                                rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
                                 imgs[frame+i] = Image.fromarray(rgb)  
                             elif tile.blending == 'minimum':
                                 imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
