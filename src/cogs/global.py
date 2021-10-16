@@ -362,12 +362,24 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             title = discord.Embed.Empty,
             description = discord.Embed.Empty
         )
+        def rendertime(v):
+            a=math.ceil(v*1000)
+            nice=False
+            if a == 69:
+                nice=True
+            if objects=="lag":
+                a*=100000
+            return str(a)+("(nice)" if nice else "")
+        totalrendertime = rendertime(delta)
+        activerendertime = rendertime(tiledelta)
+        averagerendertime = rendertime(avgdelta)
+        maxrendertime = rendertime(maxdelta)
         stats = f''' 
-        Total render time: {math.ceil(delta*1000)} ms
-        Active render time: {math.ceil(tiledelta*1000)} ms
+        Total render time: {totalrendertime} ms
+        Active render time: {activerendertime} ms
         Tiles rendered: {tilecount}
-        Average render time of all tiles: {math.ceil(avgdelta*1000)} ms
-        Maximum render time of any tile: {math.ceil(maxdelta*1000)} ms
+        Average render time of all tiles: {averagerendertime} ms
+        Maximum render time of any tile: {maxrendertime} ms
         '''
         
         embed.add_field(name="Render statistics", value=stats)
