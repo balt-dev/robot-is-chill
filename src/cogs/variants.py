@@ -827,17 +827,6 @@ def setup(bot: Bot):
         return {
             "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
         }
-        
-    @handlers.handler(
-        pattern=r"pad(\d)(?:\/(\d+))?",
-        variant_hints={"scale": "`scale<int>/[int]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
-        variant_group="Filters"
-    )
-    def scale(ctx: HandlerContext) -> TileFields:
-        n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
-        return {
-            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
-        }
 
     @handlers.handler(
         pattern=r"add",
