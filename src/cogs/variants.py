@@ -856,6 +856,16 @@ def setup(bot: Bot):
     )
     def xor(ctx: HandlerContext) -> TileFields:
         return {
+            "blending": 'xora'
+        }
+        
+    @handlers.handler(
+        pattern=r"xora",
+        variant_hints={"xora": "`xora` (Makes the tile's RGBA XOR with the tiles below.)"},
+        variant_group="Filters"
+    )
+    def xora(ctx: HandlerContext) -> TileFields:
+        return {
             "blending": 'xor'
         }
     
