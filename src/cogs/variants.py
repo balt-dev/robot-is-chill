@@ -666,6 +666,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["face"]
             }
+          
+    @handlers.handler(
+        pattern=r"main",
+        variant_hints={"main": "`main` (Removes all but the most used color.)"},
+        variant_group="Filters"
+    )
+    def main(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["main"]
+            }
+        except:
+            return{
+                "filters": ["main"]
+            }
     
     @handlers.handler(
         pattern=r"flipx",
