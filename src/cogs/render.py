@@ -938,9 +938,7 @@ class Renderer:
             im.paste(cropped,(crop[0],crop[1]))
             sprite = im
         if any(pad):
-            im = Image.new('RGBA',(sprite.width+sum([pad[0],pad[2]]),sprite.height+sum([pad[1],pad[3]])),(0,0,0,0))
-            im.paste(sprite,(pad[0],pad[1]))
-            sprite = im
+            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if "floodfill" in filters:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
