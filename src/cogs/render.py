@@ -272,7 +272,7 @@ class Renderer:
                                     mask=sprite
                                 )
                                 imgs[frame+i] = Image.fromarray(cv2.max(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))  
-                            elif tile.blending == 'xor':
+                            elif tile.blending and tile.blending.startswith('xor'):
                                 imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
@@ -285,8 +285,9 @@ class Renderer:
                                 i1 = np.asarray(imgs[frame+i])
                                 i2 = np.asarray(imgtemp)
                                 rgb = (i1^i2)
-                                rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
-                                imgs[frame+i] = Image.fromarray(rgb)  
+                                if tile.blending == 'xora':
+                                  rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
+                                imgs[frame+i] = Image.fromarray(rgb)   
                             elif tile.blending == 'minimum':
                                 imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
                                 imgtemp.paste(
@@ -887,6 +888,22 @@ class Renderer:
                     if all(x == y for x, y in zip(tuple([n for n in im[y,x]]), color)):
                         out[y,x] = im[y,x]
             sprite = Image.fromarray(out)
+        if "main" in filters:
+            im = np.array(sprite)
+            colors = []
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                    if im[y,x,3] > 0 :
+                        colors.append(tuple(im[y,x]))
+            color = collections.Counter(colors).most_common()
+            if not len(color) == 0:
+              color = color[0][0]
+              out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
+              for x in range(im.shape[1]):
+                  for y in range(im.shape[0]):
+                      if all(x == y for x, y in zip(tuple([n for n in im[y,x]]), color)):
+                          out[y,x] = im[y,x]
+              sprite = Image.fromarray(out)
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
@@ -921,9 +938,7 @@ class Renderer:
             im.paste(cropped,(crop[0],crop[1]))
             sprite = im
         if any(pad):
-            im = Image.new('RGBA',(sprite.width+sum([pad[0],pad[2]]),sprite.height+sum([pad[1],pad[3]])),(0,0,0,0))
-            im.paste(sprite,(pad[0],pad[1]))
-            sprite = im
+            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if "floodfill" in filters:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
