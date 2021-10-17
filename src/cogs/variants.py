@@ -1078,4 +1078,12 @@ def setup(bot: Bot):
             "pad": (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
         }
         
+    @handlers.handler(
+        pattern=r"nothing|none|n|-",
+        variant_hints={"nothing": "`nothing` (Literally does nothing.)"},
+        variant_group="Filters"
+    )
+    def nothing(ctx: HandlerContext) -> TileFields:
+        return{}
+        
     return handlers
