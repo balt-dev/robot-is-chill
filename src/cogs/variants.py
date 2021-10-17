@@ -666,6 +666,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["face"]
             }
+          
+    @handlers.handler(
+        pattern=r"main",
+        variant_hints={"main": "`main` (Removes all but the most used color.)"},
+        variant_group="Filters"
+    )
+    def main(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["main"]
+            }
+        except:
+            return{
+                "filters": ["main"]
+            }
     
     @handlers.handler(
         pattern=r"flipx",
@@ -812,17 +827,6 @@ def setup(bot: Bot):
         return {
             "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
         }
-        
-    @handlers.handler(
-        pattern=r"pad(\d)(?:\/(\d+))?",
-        variant_hints={"scale": "`scale<int>/[int]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
-        variant_group="Filters"
-    )
-    def scale(ctx: HandlerContext) -> TileFields:
-        n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
-        return {
-            "scale": (max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01))
-        }
 
     @handlers.handler(
         pattern=r"add",
@@ -840,6 +844,16 @@ def setup(bot: Bot):
         variant_group="Filters"
     )
     def xor(ctx: HandlerContext) -> TileFields:
+        return {
+            "blending": 'xora'
+        }
+        
+    @handlers.handler(
+        pattern=r"xora",
+        variant_hints={"xora": "`xora` (Makes the tile's RGBA XOR with the tiles below.)"},
+        variant_group="Filters"
+    )
+    def xora(ctx: HandlerContext) -> TileFields:
         return {
             "blending": 'xor'
         }

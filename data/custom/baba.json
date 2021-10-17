@@ -19,6 +19,15 @@
     "tiling": "2"
   },
   {
+    "sprite": "text_anni",
+    "name": "text_anni",
+    "color": [
+      "6",
+      "2"
+    ],
+    "tiling": "2"
+  },
+  {
     "name": "text_violet",
     "sprite": "text_violet",
     "tiling": "-1",
