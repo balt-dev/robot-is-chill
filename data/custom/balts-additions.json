@@ -424,7 +424,7 @@
     },
     {
         "name": "text_>",
-        "sprite": "text_lessthan",
+        "sprite": "text_greaterthan",
         "color": [
             "0",
             "3"
@@ -433,7 +433,7 @@
     },
     {
         "name": "text_<",
-        "sprite": "text_greaterthan",
+        "sprite": "text_lessthan",
         "color": [
             "0",
             "3"
