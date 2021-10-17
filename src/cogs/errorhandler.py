@@ -156,7 +156,10 @@ class CommandErrorHandler(commands.Cog):
             elif isinstance(error, requests.exceptions.ConnectionError):
                 return await ctx.error('A given link for the filterimage was invalid.')
             # All other Errors not returned come here... And we can just print the default TraceBack + log
-            trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")
+            if os.name=="nt":
+                trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")
+            else:
+                trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir)
             footer = None
             if len(trace) > 4096:
                 footer = f'Message had to be shortened from {len(trace)} characters long'
