@@ -171,7 +171,7 @@ class Renderer:
                 img = Image.new("RGBA", (img_width, img_height), color=palette_color)
             # neither
             else: 
-                img = Image.new("RGBA", (img_width, img_height))
+                img = Image.new("RGBA", (img_width, img_height), color=(0,0,0,0))
             imgs.append(img)
         
         # keeping track of the amount of padding we can slice off
@@ -874,6 +874,13 @@ class Renderer:
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
             sprite = Image.fromarray(cv2.resize(np.array(sprite), dsize=(math.floor(sprite.size[1]*scale[0]),math.floor(sprite.size[0]*scale[1])), interpolation=cv2.INTER_NEAREST))
+        if any(crop):
+            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[0]+crop[3]))
+            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
+            im.paste(cropped,(crop[0],crop[1]))
+            sprite = im
+        if any(pad):
+            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if "face" in filters:
             im = np.array(sprite)
             colors = []
@@ -932,13 +939,6 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
-        if any(crop):
-            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[0]+crop[3]))
-            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
-            im.paste(cropped,(crop[0],crop[1]))
-            sprite = im
-        if any(pad):
-            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if "floodfill" in filters:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
