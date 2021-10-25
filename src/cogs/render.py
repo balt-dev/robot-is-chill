@@ -111,7 +111,8 @@ class Renderer:
         extra_out: str | BinaryIO | None = None,
         extra_name: str | None = None,
         frames: list[int] = [1,2,3],
-        speed: int = 200
+        speed: int = 200,
+        gridol: bool = False
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -343,10 +344,20 @@ class Renderer:
         n = 0
         for img in imgs:
             n += 1
-            if n > i:
-               img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
             if upscale:
                 img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
+            if gridol:
+                defsize=constants.DEFAULT_SPRITE_SIZE
+                img = np.array(img,dtype=np.uint8)
+                for col in range(img.shape[0]//(defsize*2)):
+                    img[col*defsize*2,:,:] = ~img[col*defsize*2,:,:]
+                    img[col*defsize*2,:,3] = 255
+                for row in range(img.shape[1]//(defsize*2)):
+                    img[:,row*defsize*2,:] = ~img[:,row*defsize*2,:]
+                    img[:,row*defsize*2,3] = 255
+                img = Image.fromarray(img)
+            if n > i:
+               img = img.crop(((padding - pad_l)*2, (padding - pad_u)*2, (img.width//2 - padding + pad_r)*2, (img.height//2 - padding + pad_d)*2))
             outs.append(img)
             
         #/!\ PERFORMANCE DROP. ONLY USE WHEN NECESSARY. /!\

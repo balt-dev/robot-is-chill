@@ -266,6 +266,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if con_match:
                 random_animations = False
                 to_delete.append((x, y))
+            gridovmatch = re.fullmatch(r"(?:--grid|-gr)", flag)
+            if gridovmatch:
+                gridol = True
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         
@@ -332,7 +336,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 extra_out=extra_buffer,
                 extra_name=raw_name if raw_output else None, # type: ignore
                 frames=frames,
-                speed=speed
+                speed=speed,
+                gridol=gridol
             )
         except errors.TileNotFound as e:
             word = e.args[0]
