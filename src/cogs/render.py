@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from discord.ext import commands
 import copy
 import math
 import random
@@ -112,7 +113,8 @@ class Renderer:
         extra_name: str | None = None,
         frames: list[int] = [1,2,3],
         speed: int = 200,
-        gridol: bool = False
+        gridol: tuple[int] = None,
+        scaleddef: float = 1
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -127,39 +129,36 @@ class Renderer:
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
         sprite_cache: dict[str, Image.Image] = {}
         imgs = []
-        img_width_raw = len(grid[0]) * constants.DEFAULT_SPRITE_SIZE
-        img_height_raw =  len(grid) * constants.DEFAULT_SPRITE_SIZE
+        times = []
+        width = len(grid[0][0])
+        height = len(grid[0])
+        img_width_raw = int(width * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
+        img_height_raw =  int(height * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
+        def wl(a): 
+            try: 
+                return int(a.frames[0].width * scaleddef)
+            except: 
+                return 0
+        def hl(a): 
+            try: 
+                return int(a.frames[0].height * scaleddef)
+            except: 
+                return 0
+        padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
+        padding = padding[0] if type(padding) == list else padding
+        padding -= int(constants.DEFAULT_SPRITE_SIZE*(scaleddef**2))
+        img_width = int(img_width_raw + (2 * padding))
+        img_height = int(img_height_raw + (2 * padding))
         i = 0
         if before_image:
             for frame in ImageSequence.Iterator(before_image):
                 i += 1
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
-                newImage = Image.new('RGBA', (img_width_raw, img_height_raw), (255, 255, 255, 0))
+                newImage = Image.new('RGBA', (im.width,im.height), (255, 255, 255, 0))
                 newImage.paste(im, (0, 0))
                 frame = newImage
                 imgs.append(frame)
-        
-
-        # "This is appropriate padding, no sprites can go beyond it" -RocketRace, 201X
-        # Guess you were wrong there :)
-        def wl(a): 
-            try: 
-                return a.frames[0].width
-            except: 
-                return 0
-        def hl(a): 
-            try: 
-                return a.frames[0].height
-            except: 
-                return 0
-        padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
-        padding = padding[0] if type(padding) == list else padding
-        for frame in frames:
-            width = len(grid[0])
-            height = len(grid)
-            img_width = width * constants.DEFAULT_SPRITE_SIZE + 2 * padding 
-            img_height = height * constants.DEFAULT_SPRITE_SIZE + 2 * padding
-
+        for l, frame in enumerate(frames):
             if images and image_source is not None:
                 img = Image.new("RGBA", (img_width, img_height))
                 # for loop in case multiple background images are used (i.e. baba's world map)
@@ -177,12 +176,9 @@ class Renderer:
         
         # keeping track of the amount of padding we can slice off
         pad_r=pad_u=pad_l=pad_d=0
-        width = len(grid[0])
-        height = len(grid)
-        times = []
-        for y, row in enumerate(grid):
-            for x, stack in enumerate(row):
-                for tile in stack:
+        for layer in grid:
+            for y, row in enumerate(layer):
+                for x, tile in enumerate(row):
                     t = time.time()
                     if tile.frames is None:
                         continue
@@ -190,10 +186,10 @@ class Renderer:
                     for f in frames:
                         tframes.append(tile.frames[f-1])
                     for frame, sprite in enumerate(tframes[:len(frames)]):
-                        x_offset = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 )
-                        y_offset = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 )
-                        x_offset_disp = ((sprite.width - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[0]
-                        y_offset_disp = ((sprite.height - constants.DEFAULT_SPRITE_SIZE ) // 2 ) + tile.displace[1]
+                        x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
+                        y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
+                        x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0])
+                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1])
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -213,8 +209,8 @@ class Renderer:
                             imgs[frame+i].paste(
                                 sprite, 
                                 (
-                                    x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                    y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                    int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                    int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                 ), 
                                 alpha
                             ) 
@@ -223,8 +219,8 @@ class Renderer:
                                 imgs[frame+i].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)), 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     alpha
                                 )
@@ -232,8 +228,8 @@ class Renderer:
                                 imgs[frame+i].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height)), 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     alpha
                                 )
@@ -243,8 +239,8 @@ class Renderer:
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -254,8 +250,8 @@ class Renderer:
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -267,8 +263,8 @@ class Renderer:
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -278,8 +274,8 @@ class Renderer:
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -287,15 +283,15 @@ class Renderer:
                                 i2 = np.asarray(imgtemp)
                                 rgb = (i1^i2)
                                 if tile.blending == 'xora':
-                                  rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
+                                    rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
                                 imgs[frame+i] = Image.fromarray(rgb)   
                             elif tile.blending == 'minimum':
                                 imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -314,8 +310,8 @@ class Renderer:
                                 imgtemp.paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
@@ -333,31 +329,30 @@ class Renderer:
                                 imgs[frame+i].paste(
                                     sprite, 
                                     (
-                                        x * constants.DEFAULT_SPRITE_SIZE + padding - x_offset_disp,
-                                        y * constants.DEFAULT_SPRITE_SIZE + padding - y_offset_disp
+                                        int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+                                        int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
                                     ), 
                                     mask=sprite
                                 )
-                    times.append(tile.delta + (time.time() - t))
+                        times.append(tile.delta + (time.time() - t))
         
         outs = []
         n = 0
         for img in imgs:
             n += 1
-            if upscale:
-                img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
-            if gridol:
-                defsize=constants.DEFAULT_SPRITE_SIZE
+            if type(gridol) != type(None):
                 img = np.array(img,dtype=np.uint8)
-                for col in range(img.shape[0]//(defsize*2)):
-                    img[col*defsize*2,:,:] = ~img[col*defsize*2,:,:]
-                    img[col*defsize*2,:,3] = 255
-                for row in range(img.shape[1]//(defsize*2)):
-                    img[:,row*defsize*2,:] = ~img[:,row*defsize*2,:]
-                    img[:,row*defsize*2,3] = 255
+                for col in range(img.shape[0]//(gridol[0]*2)):
+                    img[col*gridol[0]*2,:,:] = ~img[col*gridol[0]*2,:,:]
+                    img[col*gridol[0]*2,:,3] = 255
+                for row in range(img.shape[1]//(gridol[1]*2)):
+                    img[:,row*gridol[1]*2,:] = ~img[:,row*gridol[1]*2,:]
+                    img[:,row*gridol[1]*2,3] = 255
                 img = Image.fromarray(img)
             if n > i:
-               img = img.crop(((padding - pad_l)*2, (padding - pad_u)*2, (img.width//2 - padding + pad_r)*2, (img.height//2 - padding + pad_d)*2))
+                img = img.crop(((padding - pad_l)*2, (padding - pad_u)*2, (img.width//2 - (padding + pad_r))*2, (img.height//2 - (padding + pad_d))*2))
+            if upscale:
+                img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
             outs.append(img)
             
         #/!\ PERFORMANCE DROP. ONLY USE WHEN NECESSARY. /!\
@@ -378,6 +373,7 @@ class Renderer:
         #        print(q)
         #    
         #    printrendertoconsole()
+        
         self.save_frames(
             outs,
             out,
@@ -396,9 +392,11 @@ class Renderer:
         position: tuple[int, int],
         palette_img: Image.Image,
         random_animations: bool = False,
-        sprite_cache: dict[str, Image.Image]
+        sprite_cache: dict[str, Image.Image],
+        gscale: float = 1
     ) -> ReadyTile:
         '''woohoo'''
+
         t = time.time()
         if tile.empty:
             return ReadyTile(None)
@@ -430,7 +428,8 @@ class Renderer:
                     gradienty=tile.gradienty,
                     crop=tile.crop,
                     fisheye=tile.fisheye,
-                    pad=tile.pad
+                    pad=tile.pad,
+                    gscale=gscale
                 )
             else:
                 if tile.name in ("icon",):
@@ -446,7 +445,7 @@ class Renderer:
                     source, sprite_name = tile.sprite
                     path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
                 sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
-                
+                sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
                 sprite = await self.apply_options_name(
                     tile.name,
                     sprite,
@@ -471,7 +470,7 @@ class Renderer:
                     fisheye=tile.fisheye,
                     pad=tile.pad
                 )
-            # Color conversion
+            # Color augmentation
             if tile.overlay == "":
                 if tile.palette=="":
                     rgb = tile.color_rgb if tile.color_rgb is not None else palette_img.getpixel(tile.color_index)
@@ -480,7 +479,7 @@ class Renderer:
                 sprite = self.recolor(sprite, rgb)
             else:
                 try: 
-                    overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA")
+                    overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA").resize((int(constants.DEFAULT_SPRITE_SIZE*gscale),int(constants.DEFAULT_SPRITE_SIZE*gscale)),Image.NEAREST)
                     if overlay.width < sprite.width or overlay.height < sprite.height:
                         width = math.ceil(sprite.width/overlay.width)
                         height = math.ceil(sprite.height/overlay.height)
@@ -520,12 +519,24 @@ class Renderer:
                             raise requests.exceptions.ConnectionError
                             return
                         url=results[0]
-                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
+                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA").resize((int(constants.DEFAULT_SPRITE_SIZE*gscale),int(constants.DEFAULT_SPRITE_SIZE*gscale)),Image.NEAREST)
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
+        if "land" in tile.filters:
+            lowestlist = []
+            for f in out:
+                h=f.height-int(constants.DEFAULT_SPRITE_SIZE*gscale)
+                framelowest = -h
+                nf=np.array(f)
+                for i,row in enumerate(nf):
+                    if any(row[:,3]):
+                        framelowest=i+1+math.ceil(h/2)
+                lowestlist.append(framelowest)
+            lowestlist.sort()
+            tile.displace = (tile.displace[0],tile.displace[1]-(out[0].height-int(lowestlist[0])))
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale, tile.blending, time.time()-t)
 
@@ -534,26 +545,30 @@ class Renderer:
         grid: list[list[list[FullTile]]],
         *,
         palette: str = "default",
-        random_animations: bool = False
+        random_animations: bool = False,
+        gscale: float = 1
     ) -> list[list[list[ReadyTile]]]:
         '''Final individual tile processing step'''
         sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
 
         a = []
-        for y, row in enumerate(grid):
+        for layer in grid:
             b = []
-            for x, stack in enumerate(row):
-                b.append([
-                    await self.render_full_tile(
-                        tile,
-                        position=(x, y),
-                        palette_img=palette_img,
-                        random_animations=random_animations,
-                        sprite_cache=sprite_cache
+            for y, row in enumerate(layer):
+                c = []
+                for x, tile in enumerate(row):
+                    c.append(
+                        await self.render_full_tile(
+                            tile,
+                            position=(x, y),
+                            palette_img=palette_img,
+                            random_animations=random_animations,
+                            sprite_cache=sprite_cache,
+                            gscale=gscale
+                        )
                     )
-                    for tile in stack
-                ])
+                b.append(c)
             a.append(b)
         return a
 
@@ -581,7 +596,8 @@ class Renderer:
         gradienty: tuple[float,float,float,float],
         crop: tuple[int,int,int,int],
         pad: tuple[int,int,int,int],
-        fisheye: float
+        fisheye: float,
+        gscale: float
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -763,6 +779,7 @@ class Renderer:
                     x += gaps[i + 1]
             
         sprite = Image.merge("RGBA", (sprite, sprite, sprite, sprite))
+        sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
         return self.apply_options(
             sprite, 
             original_style="noun",
@@ -884,7 +901,7 @@ class Renderer:
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
-            sprite = Image.fromarray(cv2.resize(np.array(sprite), dsize=(math.floor(sprite.size[1]*scale[0]),math.floor(sprite.size[0]*scale[1])), interpolation=cv2.INTER_NEAREST))
+            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if any(crop):
             cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[0]+crop[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
@@ -1038,14 +1055,14 @@ class Renderer:
                             if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
                                 neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
                             else:
-                                neighbors += 1
+                                neighbors += int(not name.startswith('text_'))
                         if neighbors >= 4:
                             spritenp2[y,x,3] //= neon
                         for xo,yo in [[-1,-1],[-1,1],[1,-1],[1,1]]:
                             if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
                                 neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
                             else:
-                                neighbors += 1
+                                neighbors += int(not name.startswith('text_'))
                         if neighbors >= 8:
                             spritenp2[y,x,3] //= neon
             sprite = Image.fromarray(spritenp2)
@@ -1145,3 +1162,4 @@ class Renderer:
 
 def setup(bot: Bot):
     bot.renderer = Renderer(bot)
+

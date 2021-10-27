@@ -34,9 +34,9 @@ class ContextBase:
         '''Tile is next to a joining tile'''
         x, y = coordinate
         joining_tiles = (self.tile.name, "level")
-        if x < 0 or y < 0 or y >= len(self.grid) or x >= len(self.grid[0]):
+        if x < 0 or y < 0 or any([y >= len(a) for a in self.grid]) or any([x >= len(a[0]) for a in self.grid]):
             return bool(self.flags.get("tile_borders"))
-        return any(t.name in joining_tiles for t in self.grid[y][x])
+        return any([a[y][x].name in joining_tiles for a in self.grid])
 
 class HandlerContext(ContextBase):
     '''The context that the handler was invoked in.'''
@@ -273,7 +273,7 @@ def setup(bot: Bot):
         if tile_data is not None:
             color = tile_data.active_color
             if tile_data.tiling in constants.AUTO_TILINGS:
-                x, y, _ = ctx.index
+                y, _, x = ctx.index
                 variant = (
                     + 1 * ctx.is_adjacent((x + 1, y))
                     + 2 * ctx.is_adjacent((x, y - 1))
@@ -680,6 +680,21 @@ def setup(bot: Bot):
         except:
             return{
                 "filters": ["main"]
+            }
+            
+    @handlers.handler(
+        pattern=r"land",
+        variant_hints={"land": "`land` (Displaces the sprite to the floor.)"},
+        variant_group="Filters"
+    )
+    def main(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["land"]
+            }
+        except:
+            return{
+                "filters": ["land"]
             }
     
     @handlers.handler(

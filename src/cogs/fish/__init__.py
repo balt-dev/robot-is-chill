@@ -13,8 +13,10 @@ def get_fish_xn_yn(source_x, source_y, radius, distortion):
     :param distortion: Amount in which to move pixels from/to center.
     As distortion grows, pixels will be moved further from the center, and vice versa.
     """
-
-    return source_x / (1 - (distortion*(radius**2))), source_y / (1 - (distortion*(radius**2)))
+    try:
+        return source_x / (1 - (distortion*(radius**2))), source_y / (1 - (distortion*(radius**2)))
+    except ZeroDivisionError:
+        return np.Infinity,np.Infinity
 
 
 def fish(img, distortion_coefficient):
@@ -57,10 +59,13 @@ def fish(img, distortion_coefficient):
             xdu, ydu = get_fish_xn_yn(xnd, ynd, rd, distortion_coefficient)
 
             # convert the normalized distorted xdn and ydn back to image pixels
-            xu, yu = int(((xdu + 1)*w)/2), int(((ydu + 1)*h)/2)
+            try:
+                xu, yu = int(((xdu + 1)*w)/2), int(((ydu + 1)*h)/2)
 
-            # if new pixel is in bounds copy from source pixel to destination pixel
-            if 0 <= xu and xu < img.shape[0] and 0 <= yu and yu < img.shape[1]:
-                dstimg[x][y] = img[xu][yu]
+                # if new pixel is in bounds copy from source pixel to destination pixel
+                if 0 <= xu and xu < img.shape[0] and 0 <= yu and yu < img.shape[1]:
+                    dstimg[x][y] = img[xu][yu]
+            except OverflowError:
+                pass
 
     return dstimg.astype(np.uint8)
