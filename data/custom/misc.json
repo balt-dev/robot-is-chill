@@ -573,5 +573,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "page",
+        "sprite": "page",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

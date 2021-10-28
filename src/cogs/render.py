@@ -903,7 +903,7 @@ class Renderer:
         if scale != (1,1):
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if any(crop):
-            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[0]+crop[3]))
+            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
             im.paste(cropped,(crop[0],crop[1]))
             sprite = im
