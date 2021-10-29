@@ -921,8 +921,11 @@ class Renderer:
                 for y in range(im.shape[0]):
                     if im[y,x,3] > 0 :
                         colors.append(tuple(im[y,x]))
-            if type(colslice) == int:
-                color = np.array([collections.Counter(colors).most_common()[colslice][0]])
+            if len(colslice) == 1:
+                try:
+                    color = np.array([collections.Counter(colors).most_common()[colslice[0]][0]])
+                except:
+                    color = [(0,0,0,0)]
             else:
                 try:
                     color = np.array([n[0] for n in collections.Counter(colors).most_common()[colslice[0]:colslice[1]]])
