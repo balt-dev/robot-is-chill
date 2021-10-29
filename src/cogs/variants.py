@@ -669,7 +669,7 @@ def setup(bot: Bot):
     )
     def face(ctx: HandlerContext) -> TileFields:
         return{
-            "colslice": -1
+            "colslice": [-1]
         }
           
     @handlers.handler(
@@ -679,7 +679,7 @@ def setup(bot: Bot):
     )
     def main(ctx: HandlerContext) -> TileFields:
         return{
-            "colslice": 0
+            "colslice": [0]
         }
             
     @handlers.handler(
@@ -934,16 +934,6 @@ def setup(bot: Bot):
         }
     
     @handlers.handler(
-        pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
-        variant_hints={"warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, top right, bottom right, bottom left. \n Values are the offset of the point, as (right/down)."},
-        variant_group="Filters"
-    )
-    def warp(ctx: HandlerContext) -> TileFields:
-        return {
-            "warp": ((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7])))
-        }
-    
-    @handlers.handler(
         pattern=r"freeze",
         variant_hints={"freeze": "`freeze` (Freezes the first wobble frame of the tile.)"},
         variant_group="Filters"
@@ -1108,7 +1098,7 @@ def setup(bot: Bot):
     )
     def color(ctx: HandlerContext) -> TileFields:
         return{
-            "colslice": tuple([int(n) for n in ctx.groups]) 
+            "colslice": tuple([int(n) for n in ctx.groups if type(n) != type(None)]) 
             if len(ctx.groups) == 2 
             else int(ctx.groups[0])
         }
