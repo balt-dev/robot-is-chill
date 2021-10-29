@@ -75,6 +75,7 @@ class TileFields(TypedDict, total=False):
     pad: tuple[int,int,int,int]
     filterimage: str
     fisheye: float  
+    colslice: tuple[int,int] | int | None
 
 @dataclass
 class FullTile:
@@ -117,7 +118,7 @@ class FullTile:
     pad: tuple[int,int,int,int] = (0,0,0,0)
     filterimage: str = ""
     fisheye: float = 0
-    
+    colslice: tuple[int,int] | int | None = None
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
         '''Create a FullTile from a RawTile and TileFields'''

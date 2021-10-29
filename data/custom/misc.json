@@ -582,5 +582,23 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "slommy",
+        "sprite": "slommy",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tbridge",
+        "sprite": "tbridge",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
