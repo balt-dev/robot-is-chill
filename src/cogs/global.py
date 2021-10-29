@@ -178,25 +178,24 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Check flags
         potential_flags = []
         potential_count = 0
-        try:
-            for y, row in enumerate(word_grid):
-                for x, word in enumerate(row):
-                    if potential_count == 6:
-                        raise Exception
-                    potential_flags.append((word, x, y))
-                    potential_count += 1
-        except Exception: pass
+        for y, row in enumerate(word_grid):
+            for x, word in enumerate(row):
+                potential_flags.append((word, x, y))
+                potential_count += 1
         background = None
         palette = "default"
         to_delete = []
         raw_output = False
         default_to_letters = False
         frames = [1,2,3]
+        layers = []
         speed = 200
         global_variant = ''
         gscale = 1
+        swap = False
         gridol = None
         random_animations = True
+        tborders = False
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -217,14 +216,22 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 to_delete.append((x, y))
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
-                raw_name = raw_match.groups()[0] if raw_match.groups()[0] else None
+                raw_name = raw_match.group(0) if raw_match.group(0) else None
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 
                 to_delete.append((x, y))
-            letter_match = re.fullmatch(r"--letter|-l", flag)
+            letter_match = re.fullmatch(r"--letter", flag)
             if letter_match:
                 default_to_letters = True
+                to_delete.append((x, y))
+            tbmatch = re.fullmatch(r"--tileborder|-tb", flag)
+            if tbmatch:
+                tborders = True
+                to_delete.append((x, y))
+            layermatch = re.fullmatch(r"(?:-l|--layers)=(-?\d+)(?:\/(-?\d+))?", flag)
+            if layermatch:
+                layers = [n for n in layermatch.groups() if type(n) != type(None)]
                 to_delete.append((x, y))
             frames_match = re.fullmatch(r"(?:--frames|-frames|-f)=(1|2|3).*", flag)
             if frames_match and frames_match.group(0):
@@ -270,6 +277,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if gsmatch:
                 gscale = float(gsmatch.group(1))
                 to_delete.append((x, y))
+            swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
+            if swapmatch:
+                swap = True
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         
@@ -287,7 +298,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         for row in comma_grid:
             for stack in row:
                 maxstack = max(maxstack,len(stack.split("&")))
-        layer_grid = [[['-' for _ in range(len(comma_grid[0]))] for _ in range(len(comma_grid))] for _ in range(maxstack)]
+        layer_grid = [[['-' for _ in range(max([len(comma_grid[n]) for n in range(len(comma_grid))]))] for _ in range(len(comma_grid))] for _ in range(maxstack)]
         if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
             return await ctx.error(f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
         # Splits "&"-joined words into stacks
@@ -295,9 +306,19 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for x, stack in enumerate(row):
                 for l, tile in enumerate(stack.split('&')):
                     tilecount+=1 if tile != '-' else 0
-                    layer_grid[l][y][x] = (tile.replace('rule_','text_') + (global_variant if tile != '-' else ''))
+                    try:
+                        layer_grid[l][y][x] = (tile.replace('rule_','text_') + (global_variant if tile != '-' else ''))
+                    except:
+                        layer_grid[l][y].append('-')
+        if layers:
+            try:
+                layer_grid = [layer_grid[int(layers[0]):int(layers[1])] if len(layers) == 2 else layer_grid[int(layers[0])]]
+            except ValueError as e:
+                return await ctx.error('Invalid layer slice!')
+        if swap:
+            layer_grid = np.ndarray.tolist(np.rot90(np.array(layer_grid),axes=(0,2)))
         # Get the dimensions of the grid
-        width = max(len(row) for row in layer_grid[0])
+        width = max([max([len(row) for row in plane]) for plane in layer_grid])
         height = len(layer_grid[0])
 
         # Don't proceed if the request is too large.
@@ -308,17 +329,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"Can't render nothing.")
 
         # Pad the word rows from the end to fit the dimensions
-        for stacked_grid in layer_grid:
-            for row in stacked_grid:
-                row.extend([["-"]] * (width - len(row)))
+        for l in range(len(layer_grid)):
+            for y in range(len(layer_grid[0])):
+                layer_grid[l][y].extend(["-"] * (width - (len(layer_grid[l][y]))))
         try:
-            grid = self.parse_raw(layer_grid, rule=rule)
+            try:
+                grid = self.parse_raw(layer_grid, rule=rule)
+            except TypeError as e:
+                return await ctx.error('Invalid layer slice!')
             print('\n\n\n'.join(['\n'.join([' '.join([tile.name for tile in row]) for row in layer]) for layer in grid]))
             # Handles variants based on `:` affixes
             buffer = BytesIO()
             extra_buffer = BytesIO() if raw_output else None
             extra_names = [] if raw_output else None
-            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names, default_to_letters=default_to_letters)
+            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names, default_to_letters=default_to_letters, tile_borders=tborders)
             try:
                 before_image=before_image
             except:

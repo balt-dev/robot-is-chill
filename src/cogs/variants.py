@@ -30,13 +30,13 @@ class ContextBase:
         '''Associated tile data'''
         return self.tile_data_cache.get(self.tile.name)
     
-    def is_adjacent(self, coordinate: tuple[int, int],) -> bool:
+    def is_adjacent(self, coordinate: tuple[int, int, int],) -> bool:
         '''Tile is next to a joining tile'''
-        x, y = coordinate
+        l, x, y = coordinate
         joining_tiles = (self.tile.name, "level")
-        if x < 0 or y < 0 or any([y >= len(a) for a in self.grid]) or any([x >= len(a[0]) for a in self.grid]):
+        if x < 0 or y < 0 or y >= len(self.grid[l]) or x >= len(self.grid[l][0]):
             return bool(self.flags.get("tile_borders"))
-        return any([a[y][x].name in joining_tiles for a in self.grid])
+        return self.grid[l][y][x].name in joining_tiles
 
 class HandlerContext(ContextBase):
     '''The context that the handler was invoked in.'''
@@ -273,12 +273,12 @@ def setup(bot: Bot):
         if tile_data is not None:
             color = tile_data.active_color
             if tile_data.tiling in constants.AUTO_TILINGS:
-                y, _, x = ctx.index
+                y, l, x = ctx.index
                 variant = (
-                    + 1 * ctx.is_adjacent((x + 1, y))
-                    + 2 * ctx.is_adjacent((x, y - 1))
-                    + 4 * ctx.is_adjacent((x - 1, y))
-                    + 8 * ctx.is_adjacent((x, y + 1))
+                    + 1 * ctx.is_adjacent((l, x + 1, y))
+                    + 2 * ctx.is_adjacent((l, x, y - 1))
+                    + 4 * ctx.is_adjacent((l, x - 1, y))
+                    + 8 * ctx.is_adjacent((l, x, y + 1))
                 )
             if ctx.flags.get("raw_output"):
                 color = (0, 3)
@@ -431,6 +431,16 @@ def setup(bot: Bot):
                 "variant_number": -1
             }
 
+    @handlers.handler(
+        pattern=r"|".join(constants.COLOR_NAMES),
+        variant_hints=constants.COLOR_REPRESENTATION_VARIANTS,
+        variant_group="Colors"
+    )
+    def color_name(ctx: HandlerContext) -> TileFields:
+        return {
+            "color_index": constants.COLOR_NAMES[ctx.variant]
+        }
+        
     @handlers.handler(
         pattern=r"|".join(constants.COLOR_NAMES),
         variant_hints=constants.COLOR_REPRESENTATION_VARIANTS,
@@ -658,14 +668,9 @@ def setup(bot: Bot):
         variant_group="Filters"
     )
     def face(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["face"]
-            }
-        except:
-            return{
-                "filters": ["face"]
-            }
+        return{
+            "colslice": -1
+        }
           
     @handlers.handler(
         pattern=r"main",
@@ -673,14 +678,9 @@ def setup(bot: Bot):
         variant_group="Filters"
     )
     def main(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["main"]
-            }
-        except:
-            return{
-                "filters": ["main"]
-            }
+        return{
+            "colslice": 0
+        }
             
     @handlers.handler(
         pattern=r"land",
@@ -1100,5 +1100,17 @@ def setup(bot: Bot):
     )
     def nothing(ctx: HandlerContext) -> TileFields:
         return{}
+    
+    @handlers.handler(
+        pattern=r"(?:color|col|c)(-?\d+)(?:\/(-?\d+))?",
+        variant_hints={"color": "`color<n>[/<n>]` (Cuts all but the specified color or range of colors from the image. First number is inclusive, second is exclusive.)"},
+        variant_group="Filters"
+    )
+    def color(ctx: HandlerContext) -> TileFields:
+        return{
+            "colslice": tuple([int(n) for n in ctx.groups]) 
+            if len(ctx.groups) == 2 
+            else int(ctx.groups[0])
+        }
         
     return handlers

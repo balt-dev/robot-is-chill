@@ -189,7 +189,7 @@ class Renderer:
                         x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
                         y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
                         x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0])
-                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1])
+                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]) 
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -337,9 +337,7 @@ class Renderer:
                         times.append(tile.delta + (time.time() - t))
         
         outs = []
-        n = 0
         for img in imgs:
-            n += 1
             if type(gridol) != type(None):
                 img = np.array(img,dtype=np.uint8)
                 for col in range(img.shape[0]//(gridol[0]*2)):
@@ -349,8 +347,7 @@ class Renderer:
                     img[:,row*gridol[1]*2,:] = ~img[:,row*gridol[1]*2,:]
                     img[:,row*gridol[1]*2,3] = 255
                 img = Image.fromarray(img)
-            if n > i:
-                img = img.crop(((padding - pad_l)*2, (padding - pad_u)*2, (img.width//2 - (padding + pad_r))*2, (img.height//2 - (padding + pad_d))*2))
+            img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
             if upscale:
                 img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
             outs.append(img)
@@ -429,7 +426,9 @@ class Renderer:
                     crop=tile.crop,
                     fisheye=tile.fisheye,
                     pad=tile.pad,
-                    gscale=gscale
+                    gscale=gscale,
+                    colslice=tile.colslice,
+                    seed=0 if tile.freeze else None
                 )
             else:
                 if tile.name in ("icon",):
@@ -458,7 +457,7 @@ class Renderer:
                     angle=tile.angle,
                     glitch=tile.glitch,
                     scale=tile.scale,
-                    warp=tile.warp,
+                    warp=tile.warp,   #at this point why not just pass the entire tile as a parameter
                     neon=tile.neon,
                     opacity=tile.opacity,
                     pixelate=tile.pixelate,
@@ -468,7 +467,8 @@ class Renderer:
                     gradienty=tile.gradienty,
                     crop=tile.crop,
                     fisheye=tile.fisheye,
-                    pad=tile.pad
+                    pad=tile.pad,
+                    colslice=tile.colslice
                 )
             # Color augmentation
             if tile.overlay == "":
@@ -597,7 +597,8 @@ class Renderer:
         crop: tuple[int,int,int,int],
         pad: tuple[int,int,int,int],
         fisheye: float,
-        gscale: float
+        gscale: float,
+        colslice: tuple[int,int] | int |None
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -686,7 +687,7 @@ class Renderer:
         # If allowed, shift the index to make the arrangement valid
         index = check_or_adjust(widths, index)
 
-        # Wxpand widths where possible
+        # Expand widths where possible
         stable = [False for _ in range(len(widths))]
         while not all(stable):
             old_width, i = min((w, i) for i, w in enumerate(widths) if not stable[i])
@@ -804,7 +805,8 @@ class Renderer:
             gradienty=gradienty,
             crop=crop,
             fisheye=fisheye,
-            pad=pad
+            pad=pad,
+            colslice=colslice
         )
 
     async def apply_options_name(
@@ -831,7 +833,8 @@ class Renderer:
         gradienty: tuple[float,float,float,float],
         crop: tuple[int,int,int,int],
         pad: tuple[int,int,int,int],
-        fisheye: float
+        fisheye: float,
+        colslice: tuple[int,int] | int |None
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -865,7 +868,8 @@ class Renderer:
                 gradienty=gradienty,
                 crop=crop,
                 fisheye=fisheye,
-                pad=pad
+                pad=pad,
+                colslice=colslice
             )
         except ValueError as e:
             size = e.args[0]
@@ -898,6 +902,7 @@ class Renderer:
         crop: tuple[int,int,int,int],
         fisheye: float,
         pad: tuple[int,int,int,int],
+        colslice: tuple[int,int] | int | None
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
@@ -909,36 +914,27 @@ class Renderer:
             sprite = im
         if any(pad):
             sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
-        if "face" in filters:
+        if type(colslice) != type(None):
             im = np.array(sprite)
             colors = []
             for x in range(im.shape[1]):
                 for y in range(im.shape[0]):
                     if im[y,x,3] > 0 :
                         colors.append(tuple(im[y,x]))
-            color = collections.Counter(colors).most_common()[-1][0]
+            if type(colslice) == int:
+                color = np.array([collections.Counter(colors).most_common()[colslice][0]])
+            else:
+                try:
+                    color = np.array([n[0] for n in collections.Counter(colors).most_common()[colslice[0]:colslice[1]]])
+                except:
+                    pass
             out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
             for x in range(im.shape[1]):
                 for y in range(im.shape[0]):
-                    if all(x == y for x, y in zip(tuple([n for n in im[y,x]]), color)):
+                    if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
                         out[y,x] = im[y,x]
+                            
             sprite = Image.fromarray(out)
-        if "main" in filters:
-            im = np.array(sprite)
-            colors = []
-            for x in range(im.shape[1]):
-                for y in range(im.shape[0]):
-                    if im[y,x,3] > 0 :
-                        colors.append(tuple(im[y,x]))
-            color = collections.Counter(colors).most_common()
-            if not len(color) == 0:
-              color = color[0][0]
-              out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-              for x in range(im.shape[1]):
-                  for y in range(im.shape[0]):
-                      if all(x == y for x, y in zip(tuple([n for n in im[y,x]]), color)):
-                          out[y,x] = im[y,x]
-              sprite = Image.fromarray(out)
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
