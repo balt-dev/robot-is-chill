@@ -201,6 +201,7 @@ word_names =
 	lockeddown = "locked (down)",
 	besideright = "beside (right)",
 	besideleft = "beside (left)",
+	nextto = "next to",
 }
 
 decor_offsets =

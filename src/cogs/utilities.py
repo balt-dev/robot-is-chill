@@ -106,6 +106,36 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 elif n != 0:
                     n += 1
         await ctx.send('Removed last message.', delete_after=3.0)
+    
+    @commands.command()
+    @commands.cooldown(4, 8, type=commands.BucketType.channel)
+    async def flags(self, ctx: Context, *, query: str = False):
+        '''Gets help on a render flag.'''
+        #i wish i could update this manually but alas i can't without some EXTREME jank.
+        flaglist = (("-b[=x/y]","Sets the background to the palette index specified, or 0/0 if not.")
+                    ,("-p=string","Sets the palette to the specified palette. (Try `=search type:palette`?)")
+                    ,("-r[=name]","Outputs the render as a raw file, ready to put in Baba Is You. If you specify a name, the tile will be called said name.")
+                    ,("--letter","Makes text smaller than 3 long render as big letters by default.")
+                    ,("--comment=anything","Just a comment. Does nothing.")
+                    ,("-f=(comma separated values in [1,2,3])","Chooses which wobble frames to display.")
+                    ,("-c[=url]","Prepends the image in the URL with the image rendered, or the last message sent in the channel if there is none.")
+                    ,("-speed=float","Multiplies the frame delta of the image by the reciprocal of the specified number.")
+                    ,("-g=string","Applies the specified string as a variant to every tile in the image")
+                    ,("-co","Disables randomization of tile wobble.")
+                    ,("-gr=int/int","Adds a grid overlay, dimensions being the specified numbers.")
+                    ,("-s=float","Upscales the image pre-processing.")
+                    ,("-sw","Rotates the stack axis along the x axis. May be useful for debugging large stacks.")
+                    ,("-l=int[/int]","Shows only the stack layer or range of stack layers specified. First is inclusive, second is exclusive.")
+                    ,("-tb","Makes tiles connect with the edge of the image.")
+                    #,("","")
+        )
+                   
+        emb = discord.Embed(
+            title=f"Flag list",
+            colour=self.bot.embed_color,
+            description="\n".join([f'`{a}`: {b}' for a,b in flaglist]))
+        return await ctx.reply(embed=emb, mention_author=False)
+            
         
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)

@@ -92,36 +92,39 @@ class Grid:
             return Image.fromarray(arr.astype('uint8'))
         
         sprite_cache = {}
-        grid = []
+        maxstack = 1
         palette_img = Image.open(f"data/palettes/{self.palette}.png").convert("RGB")
         for y in range(self.height):
-            row = []
             for x in range(self.width):
-                stack = []
-                for item in sorted(self.cells[y * self.width + x], key=lambda item: item.layer):
-                    item: Item
-                    if item.tiling in constants.DIRECTION_TILINGS:
-                        variant = item.direction * 8
-                    elif item.tiling in constants.AUTO_TILINGS:
-                        variant = (
-                            is_adjacent(item.sprite, x + 1, y) * 1 +
-                            is_adjacent(item.sprite, x, y - 1) * 2 +
-                            is_adjacent(item.sprite, x - 1, y) * 4 +
-                            is_adjacent(item.sprite, x, y + 1) * 8
+                maxstack = max(maxstack,len(self.cells[y * self.width + x]))
+        layer_grid = [[[ReadyTile(None) for _ in range(max([self.width for n in range(self.height)]))] for _ in range(self.height)] for _ in range(maxstack)]
+        for i in range(maxstack):
+            for y in range(self.height):
+                for x in range(self.width):
+                    try:
+                        item = sorted(self.cells[y * self.width + x], key=lambda item: item.layer)[i]
+                        item: Item
+                        if item.tiling in constants.DIRECTION_TILINGS:
+                            variant = item.direction * 8
+                        elif item.tiling in constants.AUTO_TILINGS:
+                            variant = (
+                                is_adjacent(item.sprite, x + 1, y) * 1 +
+                                is_adjacent(item.sprite, x, y - 1) * 2 +
+                                is_adjacent(item.sprite, x - 1, y) * 4 +
+                                is_adjacent(item.sprite, x, y + 1) * 8
+                            )
+                        else:
+                            variant = 0
+                        color = palette_img.getpixel(item.color)
+                        frames = (
+                            recolor(open_sprite(self.world, item.sprite, variant, 1, cache=sprite_cache), color),
+                            recolor(open_sprite(self.world, item.sprite, variant, 2, cache=sprite_cache), color),
+                            recolor(open_sprite(self.world, item.sprite, variant, 3, cache=sprite_cache), color),
                         )
-                    else:
-                        variant = 0
-                    color = palette_img.getpixel(item.color)
-                    frames = (
-                        recolor(open_sprite(self.world, item.sprite, variant, 1, cache=sprite_cache), color),
-                        recolor(open_sprite(self.world, item.sprite, variant, 2, cache=sprite_cache), color),
-                        recolor(open_sprite(self.world, item.sprite, variant, 3, cache=sprite_cache), color),
-                    )
-                    stack.append(ReadyTile(frames))
-                row.append(stack)
-            grid.append(row)
-
-        return grid
+                        layer_grid[i][y][x] = ReadyTile(frames)
+                    except:
+                        pass
+        return layer_grid
 
 @dataclass
 class Item:
@@ -199,11 +202,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         objects = grid.ready_grid()
         # Strips the borders from the render
         # (last must be popped before first to preserve order)
-        objects.pop(grid.height - 1)
-        objects.pop(0)
-        for row in objects:
-            row.pop(grid.width - 1)
-            row.pop(0)
+        for layer in objects:
+            layer.pop(grid.height - 1)
+            layer.pop(0)
+            for row in layer:
+                row.pop(grid.width - 1)
+                row.pop(0)
         out = f"target/renders/levels/{code}.gif"
         await self.bot.renderer.render(objects, palette=grid.palette, background=(0, 4), out=out)
         
@@ -239,11 +243,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
         # Shave off the borders:
         if remove_borders:
-            objects.pop(grid.height - 1)
-            objects.pop(0)
-            for row in objects:
-                row.pop(grid.width - 1)
-                row.pop(0)
+            for layer in objects:
+                layer.pop(grid.height - 1)
+                layer.pop(0)
+                for row in layer:
+                    row.pop(grid.width - 1)
+                    row.pop(0)
 
         # (0,4) is the color index for level backgrounds
         background = (0,4) if keep_background else None
@@ -344,7 +349,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                     pass
             metadatas[level] = metadata
             await asyncio.sleep(0)
-            if i and i % 50 == 0:
+            if i and i % 10 == 0:
                 await ctx.send(f"{i}/{total}")
         await ctx.send(f"{total}/{total} maps loaded.")
         await self.clean_metadata(metadatas)
