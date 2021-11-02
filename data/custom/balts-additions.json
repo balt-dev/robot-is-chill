@@ -448,5 +448,23 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "bridge",
+        "sprite": "bridge",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "seamoon",
+        "sprite": "seamoon",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

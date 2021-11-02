@@ -134,19 +134,19 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     def parse_raw(self, grid: list[list[list[str]]], *, rule: bool) -> RawGrid:
         '''Parses a string grid into a RawTile grid'''
         return [
-            [
-                [
-                    RawTile.from_str(
-                        "-" if tile == "-" else tile[5:] if tile.startswith("tile_") else f"text_{tile}"
-                    ) if rule else RawTile.from_str(
-                        "-" if tile == "text_-" else tile
-                    )
-                    for tile in stack
+                    [
+                        [
+                            RawTile.from_str(
+                                ("-" if tile == "-" else (tile[5:] if tile.startswith("tile_") else f"text_{tile}"))
+                            ) if rule else RawTile.from_str(
+                                ("-" if tile == "text_-" else tile)
+                            )
+                            for tile in row
+                        ]
+                        for row in layer
+                    ]
+                    for layer in grid
                 ]
-                for stack in row
-            ]
-            for row in grid
-        ]
 
     async def trigger_typing(self, ctx: Context):
         try: await ctx.trigger_typing()
@@ -156,12 +156,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         '''Performs the bulk work for both `tile` and `rule` commands.'''
-        #for t in re.finditer(r'\"(.*?)\":([^ &]+)',objects):
-        #    await ctx.send(re.sub(r'([^ &]+)', f'\\1:{re.escape(t.group(2))}', objects[t.span()[0]+1:t.span()[1]-2-len(t.group(2))]))
-
-        #for t in re.findall(r'\"((?:[\w\(\)\/\#]+[\W]?)+)+\"', objects):
-        #    for t2 in re.findall(r'[\w\(\)\/\:\.\-\#]+', t):
-        #        print(t2)
         await self.trigger_typing(ctx)
         start = time()
         tiles = objects.lower().strip().replace("\\", "")
@@ -184,23 +178,24 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Check flags
         potential_flags = []
         potential_count = 0
-        try:
-            for y, row in enumerate(word_grid):
-                for x, word in enumerate(row):
-                    if potential_count == 6:
-                        raise Exception
-                    potential_flags.append((word, x, y))
-                    potential_count += 1
-        except Exception: pass
+        for y, row in enumerate(word_grid):
+            for x, word in enumerate(row):
+                potential_flags.append((word, x, y))
+                potential_count += 1
         background = None
         palette = "default"
         to_delete = []
         raw_output = False
         default_to_letters = False
         frames = [1,2,3]
+        layers = []
         speed = 200
         global_variant = ''
+        gscale = 1
+        swap = False
+        gridol = None
         random_animations = True
+        tborders = False
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
             if bg_match:
@@ -221,14 +216,22 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 to_delete.append((x, y))
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
-                raw_name = raw_match.groups()[0] if raw_match.groups()[0] else None
+                raw_name = raw_match.group(0) if raw_match.group(0) else None
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 
                 to_delete.append((x, y))
-            letter_match = re.fullmatch(r"--letter|-l", flag)
+            letter_match = re.fullmatch(r"--letter", flag)
             if letter_match:
                 default_to_letters = True
+                to_delete.append((x, y))
+            tbmatch = re.fullmatch(r"--tileborder|-tb", flag)
+            if tbmatch:
+                tborders = True
+                to_delete.append((x, y))
+            layermatch = re.fullmatch(r"(?:-l|--layers)=(-?\d+)(?:\/(-?\d+))?", flag)
+            if layermatch:
+                layers = [n for n in layermatch.groups() if type(n) != type(None)]
                 to_delete.append((x, y))
             frames_match = re.fullmatch(r"(?:--frames|-frames|-f)=(1|2|3).*", flag)
             if frames_match and frames_match.group(0):
@@ -266,9 +269,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if con_match:
                 random_animations = False
                 to_delete.append((x, y))
-            gridovmatch = re.fullmatch(r"(?:--grid|-gr)", flag)
+            gridovmatch = re.fullmatch(r"(?:--grid|-gr)=(\d+)\/(\d+)", flag)
             if gridovmatch:
-                gridol = True
+                gridol = (int(gridovmatch.group(1)),int(gridovmatch.group(2)))
+                to_delete.append((x, y))
+            gsmatch = re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag)
+            if gsmatch:
+                gscale = float(gsmatch.group(1))
+                to_delete.append((x, y))
+            swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
+            if swapmatch:
+                swap = True
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
@@ -283,23 +294,32 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
 
         tilecount = 0
-        # Splits "&"-joined words into stacks
-        stacked_grid: list[list[list[str]]] = []
+        maxstack = 1
         for row in comma_grid:
-            stacked_row: list[list[str]] = []
             for stack in row:
-                split = stack.split("&")
-                for n in range(len(split)):
-                    tilecount+=1
-                    split[n] = split[n].replace('rule_','text_') + global_variant
-                stacked_row.append(split)
-                if len(split) > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
-                    return await ctx.error(f"Stack too high ({len(split)}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
-            stacked_grid.append(stacked_row)
-
+                maxstack = max(maxstack,len(stack.split("&")))
+        layer_grid = [[['-' for _ in range(max([len(comma_grid[n]) for n in range(len(comma_grid))]))] for _ in range(len(comma_grid))] for _ in range(maxstack)]
+        if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
+            return await ctx.error(f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
+        # Splits "&"-joined words into stacks
+        for y, row in enumerate(comma_grid):
+            for x, stack in enumerate(row):
+                for l, tile in enumerate(stack.split('&')):
+                    tilecount+=1 if tile != '-' else 0
+                    try:
+                        layer_grid[l][y][x] = (tile.replace('rule_','text_') + (global_variant if tile != '-' else ''))
+                    except:
+                        layer_grid[l][y].append('-')
+        if layers:
+            try:
+                layer_grid = [layer_grid[int(layers[0]):int(layers[1])] if len(layers) == 2 else layer_grid[int(layers[0])]]
+            except ValueError as e:
+                return await ctx.error('Invalid layer slice!')
+        if swap:
+            layer_grid = np.ndarray.tolist(np.rot90(np.array(layer_grid),axes=(0,2)))
         # Get the dimensions of the grid
-        width = max(len(row) for row in stacked_grid)
-        height = len(stacked_grid)
+        width = max([max([len(row) for row in plane]) for plane in layer_grid])
+        height = len(layer_grid[0])
 
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000 character limit)
@@ -309,15 +329,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"Can't render nothing.")
 
         # Pad the word rows from the end to fit the dimensions
-        for row in stacked_grid:
-            row.extend([["-"]] * (width - len(row)))
+        for l in range(len(layer_grid)):
+            for y in range(len(layer_grid[0])):
+                layer_grid[l][y].extend(["-"] * (width - (len(layer_grid[l][y]))))
         try:
-            grid = self.parse_raw(stacked_grid, rule=rule)
+            try:
+                grid = self.parse_raw(layer_grid, rule=rule)
+            except TypeError as e:
+                return await ctx.error('Invalid layer slice!')
+            print('\n\n\n'.join(['\n'.join([' '.join([tile.name for tile in row]) for row in layer]) for layer in grid]))
             # Handles variants based on `:` affixes
             buffer = BytesIO()
             extra_buffer = BytesIO() if raw_output else None
             extra_names = [] if raw_output else None
-            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names, default_to_letters=default_to_letters)
+            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names, default_to_letters=default_to_letters, tile_borders=tborders)
             try:
                 before_image=before_image
             except:
@@ -326,7 +351,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=palette,
-                    random_animations=random_animations
+                    random_animations=random_animations,
+                    gscale=gscale
                 ),
                 before_image=before_image,
                 palette=palette,
@@ -337,7 +363,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 extra_name=raw_name if raw_output else None, # type: ignore
                 frames=frames,
                 speed=speed,
-                gridol=gridol
+                gridol=gridol,
+                scaleddef=gscale
             )
         except errors.TileNotFound as e:
             word = e.args[0]
@@ -705,7 +732,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         data = await resp.json()
                         if data["data"]["exists"]:
                             try:
-                                custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                                custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query) 
                             except ValueError as e:
                                 size = e.args[0]
                                 return await ctx.error(f"The level code is valid, but the level's width, height or area is too big. ({size})")
@@ -751,7 +778,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             else:
                 gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
         else:
-            gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+            try:
+                gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+            except FileNotFoundError:
+                await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
             path = level.unique()
             display = level.name
             rows = [
@@ -782,7 +813,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
-
+    
     @commands.command(aliases=["filterimages","fi"])
     @commands.cooldown(5, 8, commands.BucketType.channel)
     async def filterimage(self, ctx: Context, *, query: str = ""):

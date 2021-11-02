@@ -18,6 +18,7 @@ cogs = [
     "src.cogs.render",
     "src.cogs.variants",
     "src.cogs.utilities",
+    "src.cogs.misc",
     "jishaku"
 ]
 danger_mode = False
