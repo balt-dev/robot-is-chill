@@ -132,7 +132,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             if name.startswith("txt_"):
                 name="text_"+name[4:]
         for i in range(3):
-            with open(f"data/sprites/{pack_name}/{name}_0_{i}", "wb") as f:
+            with open(f"data/sprites/{pack_name}/{name}_0_{i+1}.png", "wb") as f:
                 f.write(sprite)
         with open(f"data/custom/{pack_name}.json", "r") as f:
             sprite_data = json.load(f)
