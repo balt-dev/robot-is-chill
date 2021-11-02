@@ -813,7 +813,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
-
+    
     @commands.command(aliases=["filterimages","fi"])
     @commands.cooldown(5, 8, commands.BucketType.channel)
     async def filterimage(self, ctx: Context, *, query: str = ""):
