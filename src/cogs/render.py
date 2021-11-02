@@ -155,7 +155,7 @@ class Renderer:
                 i += 1
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
                 newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
-                newImage.paste(im, ((newImage.width-im.width)//2,(newImage.height-im.height)//2),mask=im)
+                newImage.paste(im, (0,0),mask=im)
                 frame = newImage
                 imgs.append(frame)
         for l, frame in enumerate(frames):
