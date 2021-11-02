@@ -8,6 +8,8 @@ from src.db import TileData
 from .. import constants, errors
 from ..tile import FullTile, RawTile, TileFields
 
+import random as rand
+
 if TYPE_CHECKING:
     from ...ROBOT import Bot
     from ..tile import FullGrid, GridIndex, RawGrid
@@ -440,16 +442,6 @@ def setup(bot: Bot):
         return {
             "color_index": constants.COLOR_NAMES[ctx.variant]
         }
-        
-    @handlers.handler(
-        pattern=r"|".join(constants.COLOR_NAMES),
-        variant_hints=constants.COLOR_REPRESENTATION_VARIANTS,
-        variant_group="Colors"
-    )
-    def color_name(ctx: HandlerContext) -> TileFields:
-        return {
-            "color_index": constants.COLOR_NAMES[ctx.variant]
-        }
 
     @handlers.handler(
         pattern=r"(\d)/(\d)",
@@ -477,7 +469,27 @@ def setup(bot: Bot):
         return {
             "color_rgb": (red, green, blue)
         }
-
+        
+    @handlers.handler(
+        pattern='|'.join(constants.CUSTOM_COLOR_NAMES),
+        variant_hints=constants.CUSTOM_COLOR_REPRESENTATION_VARIANTS,
+        variant_group="Custom Colors"
+    )
+    def color_rgb(ctx: HandlerContext) -> TileFields:
+        return {
+            "color_rgb": constants.CUSTOM_COLOR_NAMES[ctx.variant]
+        }
+    
+    @handlers.handler(
+        pattern=r"random",
+        variant_hints={"random": "`random` (Recolors the sprite to a random color.)"},
+        variant_group="Custom Colors"
+    )
+    def random(ctx: HandlerContext) -> TileFields:
+        return {
+            "color_rgb": [rand.randint(0,255) for _ in range(3)]
+        }
+        
     @handlers.handler(
         pattern=r"inactive|in",
         variant_hints={"in": "`inactive` / `in` (Inactive text color)"},
@@ -773,7 +785,7 @@ def setup(bot: Bot):
             }
             
     @handlers.handler(
-        pattern=r"floodfill|flood",
+        pattern=r"floodfill|flood|fill",
         variant_hints={"floodfill": "`floodfill` (Fills in all open pockets in the sprite.)"},
         variant_group="Filters"
     )
