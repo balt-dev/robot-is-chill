@@ -732,7 +732,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         data = await resp.json()
                         if data["data"]["exists"]:
                             try:
-                                custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                                custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query) 
                             except ValueError as e:
                                 size = e.args[0]
                                 return await ctx.error(f"The level code is valid, but the level's width, height or area is too big. ({size})")
@@ -778,7 +778,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             else:
                 gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
         else:
-            gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+            try:
+                gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+            except FileNotFoundError:
+                await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
             path = level.unique()
             display = level.name
             rows = [
