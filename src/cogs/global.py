@@ -945,7 +945,7 @@ Absolute: {truefalseemoji[int(absolute)]}"""
                 try:
                     embed.set_author(name=user.name,icon_url=user.avatar_url)
                 except AttributeError:
-                    embed.set_author(name="[Icon unavailable] "+user.name,icon_url=user.avatar_url)
+                    embed.set_author(name="[Icon unavailable] "+user.name)
                 await ctx.reply(embed=embed)
             elif query[1]=="delete":
                 if len(query)>3:
