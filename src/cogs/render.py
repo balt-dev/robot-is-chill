@@ -189,8 +189,8 @@ class Renderer:
                     for frame, sprite in enumerate(tframes[:len(frames)]):
                         x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
                         y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
-                        x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0])
-                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]) 
+                        x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0]*scaleddef)
+                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]*scaleddef) 
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -520,8 +520,8 @@ class Renderer:
                             raise requests.exceptions.ConnectionError
                             return
                         url=results[0]
-                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA").resize((int(constants.DEFAULT_SPRITE_SIZE*gscale),int(constants.DEFAULT_SPRITE_SIZE*gscale)),Image.NEAREST)
-                sprite = filterimage.apply_filterimage(sprite,ifilterimage,absolute)
+                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
+                sprite = filterimage.apply_filterimage(sprite,ifilterimage.resize((int(ifilterimage.width*gscale),int(ifilterimage.height*gscale)),Image.NEAREST),absolute)
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
