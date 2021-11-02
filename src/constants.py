@@ -1,4 +1,5 @@
 from __future__ import annotations
+import random as rand
 
 # limits
 MAX_STACK = 2584
@@ -104,8 +105,28 @@ COLOR_NAMES: dict[str, tuple[int, int]] = {
     "brown":  (6, 1),
 }
 
+CUSTOM_COLOR_NAMES: dict[str,tuple[int,int,int]] = {
+    "mint": [0x00,0xee,0x8a],
+    "blueberry": [0x8f,0x94,0xc5],
+    "night": [0x13,0x14,0x57],
+    "haten": [0x43,0x3b,0xff],
+    "apple": [0xb1,0x3e,0x53],
+    "lemon": [0xff,0xcd,0x75], 
+    "grape": [0x5d,0x27,0x5d],
+    "magenta": [0xff,0x00,0xff],
+    "cherry": [0xFF,0x47,0x50],
+    "rose": [0xFF,0x84,0xB9],
+    "azure": [0x00,0x7f,0xff],
+    "mud": [0x5C,0x47,0x42],
+    "dreamvoyager": [0xdf,0x4f,0xe1],
+    "cobalt": [0x20,0x66,0x94]
+}
 COLOR_REPRESENTATION_VARIANTS = {
-    "red": ", ".join(f"`{color}`" for color in COLOR_NAMES) + " (Color names)"
+    "foobarbaz": ", ".join(f"{color}" for color in COLOR_NAMES) + " (Color names)"
+}
+
+CUSTOM_COLOR_REPRESENTATION_VARIANTS = {
+    "cum": "\n".join(f"{color}: #{''.join([hex(h)[2:].zfill(2) for h in hx])}" for color,hx in list(CUSTOM_COLOR_NAMES.items())) + "\n(Custom color names)"
 }
 
 INACTIVE_COLORS: dict[tuple[int, int], tuple[int, int]] = {

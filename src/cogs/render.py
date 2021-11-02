@@ -154,8 +154,8 @@ class Renderer:
             for frame in ImageSequence.Iterator(before_image):
                 i += 1
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
-                newImage = Image.new('RGBA', (im.width,im.height), (255, 255, 255, 0))
-                newImage.paste(im, (0, 0))
+                newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
+                newImage.paste(im, ((newImage.width-im.width)//2,(newImage.height-im.height)//2),mask=im)
                 frame = newImage
                 imgs.append(frame)
         for l, frame in enumerate(frames):
@@ -175,6 +175,7 @@ class Renderer:
             imgs.append(img)
         
         # keeping track of the amount of padding we can slice off
+        print(img_width,img_height)
         pad_r=pad_u=pad_l=pad_d=0
         for layer in grid:
             for y, row in enumerate(layer):
