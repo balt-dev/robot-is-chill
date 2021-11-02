@@ -941,7 +941,11 @@ Usage:
 Relative: {truefalseemoji[int(relative)]}
 Absolute: {truefalseemoji[int(absolute)]}"""
                 user=await self.bot.fetch_user(userid)
-                embed=discord.Embed(title=f"Name: {name}",color=discord.Color(8421631),description=description,url=url).set_image(url=url).set_author(name=user.name,icon_url=user.avatar_url).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                embed=discord.Embed(title=f"Name: {name}",color=discord.Color(8421631),description=description,url=url).set_image(url=url).set_footer(text="Filterimage Database",icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
+                try:
+                    embed.set_author(name=user.name,icon_url=user.avatar_url)
+                except AttributeError:
+                    embed.set_author(name="[Icon unavailable] "+user.name,icon_url=user.avatar_url)
                 await ctx.reply(embed=embed)
             elif query[1]=="delete":
                 if len(query)>3:
