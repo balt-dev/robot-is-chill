@@ -148,7 +148,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         with open(f"data/custom/{pack_name}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
-        await ctx.send(f"Added {sprite_name} from bab.")
+        await ctx.send(f"Added {name} from bab.")
         
 
         
