@@ -128,7 +128,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         sprite=requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
         # if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
         #     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
-        pilsprite = Image.frombytes("RGBA", (32,32), sprite, decoder_name='PNG').resize((24,24),Image.NEAREST)
+        pilsprite = Image.open(io.BytesIO(sprite)).resize((24,24),Image.NEAREST)
         if transform_txt_text:
             if name.startswith("txt_"):
                 name="text_"+name[4:]
