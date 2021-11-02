@@ -111,6 +111,44 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
         await ctx.send(f"Added {sprite_name}.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def importbab(self, ctx: Context, name: str, color_x: int = 0, color_y: int = 3, transform_txt_text: bool = True):
+        '''Auto-import a bab sprite'''
+        pack_name = "bab" #yup
+        tiling = -1 #yupyup
+        await ctx.send(f"Hold on, cen be scan bab...")
+        def scanforname(name):
+            for jsonfilename in ["characters","devs","special","thingify","ui","unsorted"]:
+                for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/objects/{jsonfilename}.json").json():
+                    if babdata["name"]==name:
+                        return babdata
+        babdata = scanforname(name)
+        sprite=requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata["sprite"][0]}.png").content
+        # if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
+        #     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
+        if transform_txt_text:
+            if name.startswith("txt_"):
+                name="text_"+name[4:]
+        for i in range(3):
+            with open(f"data/sprites/{pack_name}/{name}_0_{i}", "wb") as f:
+                f.write(sprite)
+        with open(f"data/custom/{pack_name}.json", "r") as f:
+            sprite_data = json.load(f)
+        sprite_data.append({
+            "name": name,
+            "sprite": name,
+            "color": [
+                str(color_x),
+                str(color_y)
+            ],
+            "tiling": str(tiling)
+        })
+        with open(f"data/custom/{pack_name}.json", "w") as f:
+            json.dump(sprite_data, f, indent=4)
+        await self.load_custom_tiles()
+        await ctx.send(f"Added {sprite_name} from bab.")
         
 
         
@@ -120,7 +158,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def restart(self, ctx: Context):
         '''Restarts the bot process.'''
         await ctx.send("Restarting bot process...")
-        await self.bot.change_presence(status=discord.Status.idle)
         self.bot.exit_code = 1
         await self.bot.close()
 
