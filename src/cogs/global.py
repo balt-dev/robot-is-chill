@@ -832,11 +832,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 url=url[7:]
             if not url.startswith("https://"):
                 url="https://"+url
-            relative=False
+            relative=(query[1] in ("relative","rel"))
             ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
             fil = np.array(ifilterimage)
-            if query[1] in ("relative","rel"):
-                relative = True
             if relative:
                 fil[:,:,0]-=np.arange(fil.shape[0],dtype="uint8")
                 fil[:,:,1]=(fil[:,:,1].T-np.arange(fil.shape[1],dtype="uint8")).T
@@ -861,11 +859,9 @@ URL can be supplied with or without http(s) in this command, since it's not limi
             query=query.split(" ")
             size=query[2].split(",")
             size=int(size[0]),int(size[1])
-            relative=False
+            relative=(query[1] in ("relative","rel"))
             fil = np.zeros(size+(4,),dtype="uint8")
             fil[:,:]=(128,128,255,255)
-            if query[1] in ("relative","rel"):
-                relative = True
             if not relative:
                 fil[:,:,0]+=np.arange(fil.shape[0],dtype="uint8")
                 fil[:,:,1]=(fil[:,:,1].T+np.arange(fil.shape[1],dtype="uint8")).T
