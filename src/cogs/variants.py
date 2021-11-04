@@ -627,7 +627,7 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"neon(?:([\d\.]+))?",
+        pattern=r"neon(?:(-?\d+(?:\.\d+)?))?",
         variant_hints={"neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.)"},
         variant_group="Filters"
     )

@@ -667,6 +667,16 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 except IndexError:
                     # huh?
                     break
+                
+    #@commands.command(name="printlevel")
+    #@commands.is_owner()
+    #async def print_map(self, ctx: Context, source: str, filename: str):
+    #    '''Loads a world and parses it as a command.'''
+    #    grid = self.read_map(filename, source=source)
+    #    grid = await self.read_metadata(grid, initialize_level_tree=True)
+    #    gridl = np.ndarray.tolist(np.array([[f"{c.sprite}:{'/'.join([str(a) for a in c.color])}" for c in b] for b in grid.cells],dtype=list).reshape(grid.height,grid.width))
+    #    nl='\n'
+    #    await ctx.send(f"```=tile -p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridl[1:-1]])}```")
 
 def setup(bot: Bot):
     bot.add_cog(Reader(bot))

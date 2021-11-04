@@ -197,10 +197,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         random_animations = True
         tborders = False
         for flag, x, y in potential_flags:
-            bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
+            bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
-                if bg_match.group(3) is not None:
-                    tx, ty = int(bg_match.group(3)), int(bg_match.group(4))
+                if bg_match.group(1) is not None:
+                    tx, ty = int(bg_match.group(1)), int(bg_match.group(2))
                     if not (0 <= tx <= 7 and 0 <= ty <= 5):
                         return await ctx.error("The provided background color is invalid.")
                     background = tx, ty
@@ -208,15 +208,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     background = (0, 4)
                 to_delete.append((x, y))
                 continue
-            flag_match = re.fullmatch(r"(--palette=|-p=|palette:)(\w+)", flag)
+            bg_match2 = re.fullmatch(r"(?:--background|-b)=#([\da-fA-F]{6})", flag)
+            if bg_match2:
+                if bg_match2.group(1) is not None:
+                    background = bg_match2.group(1)
+                to_delete.append((x, y))
+                continue
+            flag_match = re.fullmatch(r"(?:--palette=|-p=|palette:)(\w+)", flag)
             if flag_match:
-                palette = flag_match.group(2)
+                palette = flag_match.group(1)
                 if palette + ".png" not in listdir("data/palettes"):
                     return await ctx.error(f"Could not find a palette with name \"{palette}\".")
                 to_delete.append((x, y))
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
-                raw_name = raw_match.group(0) if raw_match.group(0) else None
+                raw_name = raw_match.group(1) if raw_match.group(1) else None
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 

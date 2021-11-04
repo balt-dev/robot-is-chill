@@ -107,7 +107,7 @@ class Renderer:
         images: list[str] | None = None,
         image_source: str = constants.BABA_WORLD,
         out: str | BinaryIO = "target/renders/render.gif",
-        background: tuple[int, int] | None = None,
+        background: tuple[int, int] | str | None = None,
         upscale: bool = True,
         extra_out: str | BinaryIO | None = None,
         extra_name: str | None = None,
@@ -166,9 +166,12 @@ class Renderer:
                     overlap = Image.open(f"data/images/{image_source}/{image}_{frame}.png")
                     img.paste(overlap, (padding, padding), mask=overlap)
             # bg color
-            elif background is not None:
+            elif type(background) == tuple:
                 palette_color = palette_img.getpixel(background)
                 img = Image.new("RGBA", (img_width, img_height), color=palette_color)
+            elif type(background) == str:
+                print(list(background))
+                img = Image.new("RGBA", (img_width, img_height), color=tuple([int(a+b,16) for a,b in np.reshape(list(background),(3,2))]))
             # neither
             else: 
                 img = Image.new("RGBA", (img_width, img_height), color=(0,0,0,0))
@@ -1044,7 +1047,7 @@ class Renderer:
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
-        if neon > 1:
+        if abs(neon) > 1:
             spritenp = np.array(sprite)
             spritenp2 = copy.deepcopy(spritenp)
             for x in range(spritenp.shape[1]):
@@ -1057,14 +1060,16 @@ class Renderer:
                             else:
                                 neighbors += int(not name.startswith('text_'))
                         if neighbors >= 4:
-                            spritenp2[y,x,3] //= neon
+                            spritenp2[y,x,3] //= abs(neon)
                         for xo,yo in [[-1,-1],[-1,1],[1,-1],[1,1]]:
                             if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
                                 neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
                             else:
                                 neighbors += int(not name.startswith('text_'))
                         if neighbors >= 8:
-                            spritenp2[y,x,3] //= neon
+                            spritenp2[y,x,3] //= abs(neon)
+            if neon < 0:
+                spritenp2 = np.array([[[r,g,b,(255-a if a != 0 else 0)] for r,g,b,a in row] for row in spritenp2],dtype=np.uint8)
             sprite = Image.fromarray(spritenp2)
         if warp != ((0,0),(0,0),(0,0),(0,0)):
             widwarp = [-1*min(warp[0][0],warp[3][0],0),max((warp[2][0]),(warp[1][0]),0)]
