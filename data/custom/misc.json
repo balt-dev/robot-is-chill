@@ -600,5 +600,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_ae",
+        "sprite": "ae",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

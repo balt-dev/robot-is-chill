@@ -84,13 +84,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
-    async def addsprite(self, ctx: Context, pack_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
+    async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
         '''Adds sprites to a specified sprite pack'''
         zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
         dir = zip.namelist()[0]
-        sprite_name = re.match(r'(?:.+/)?(.+?)(?:\_\d)*\.png', dir).groups()[0]   
-        if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
-            return await ctx.error(f"Pack {pack_name} doesn't exist.")
+        file_name = re.match(r'(?:.+/)?(.+?)(?:\_\d)*\.png', dir).groups()[0]   
         for name in zip.namelist():
             sprite = zip.read(name)
             path = name.split("/")[-1]
@@ -100,7 +98,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             sprite_data = json.load(f)
         sprite_data.append({
             "name": sprite_name,
-            "sprite": sprite_name,
+            "sprite": file_name,
             "color": [
                 str(color_x),
                 str(color_y)
@@ -111,7 +109,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
         await ctx.send(f"Added {sprite_name}.")
-        
+         
 
         
 
