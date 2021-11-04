@@ -466,5 +466,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_colon",
+        "sprite": "text_colon",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_summun",
+        "sprite": "text_summun",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
