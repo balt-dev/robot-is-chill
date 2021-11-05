@@ -785,20 +785,15 @@ def setup(bot: Bot):
             }
             
     @handlers.handler(
-        pattern=r"floodfill|flood|fill",
+        pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
         variant_hints={"floodfill": "`floodfill` (Fills in all open pockets in the sprite.)"},
         variant_group="Filters"
     )
     def floodfill(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["floodfill"]
-            }
-        except:
-            return{
-                "filters": ["floodfill"]
-            }
-    
+        return{
+            "floodfill": float(ctx.groups[0] or 0)
+        }
+
     @handlers.handler(
         pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
         variant_hints={"fisheye": "`fisheye[n]` (Applies fisheye effect. n is intensity, defaulting to 0.5.)"},

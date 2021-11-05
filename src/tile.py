@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
+from cv2 import floodFill
 from src.constants import BABA_WORLD
 from typing import TYPE_CHECKING, Literal, TypedDict
 
@@ -76,6 +78,7 @@ class TileFields(TypedDict, total=False):
     filterimage: str
     fisheye: float  
     colslice: tuple[int,int] | int | None
+    floodfill: float | None
 
 @dataclass
 class FullTile:
@@ -118,6 +121,7 @@ class FullTile:
     pad: tuple[int,int,int,int] = (0,0,0,0)
     filterimage: str = ""
     fisheye: float = 0
+    floodfill: float | None = None
     colslice: tuple[int,int] | int | None = None
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
