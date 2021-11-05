@@ -432,6 +432,7 @@ class Renderer:
                     pad=tile.pad,
                     gscale=gscale,
                     colslice=tile.colslice,
+                    floodfill=tile.floodfill,
                     seed=0 if tile.freeze else None
                 )
             else:
@@ -472,7 +473,8 @@ class Renderer:
                     crop=tile.crop,
                     fisheye=tile.fisheye,
                     pad=tile.pad,
-                    colslice=tile.colslice
+                    floodfill=tile.floodfill,
+                    colslice=tile.colslice,
                 )
             # Color augmentation
             if tile.overlay == "":
@@ -602,7 +604,8 @@ class Renderer:
         pad: tuple[int,int,int,int],
         fisheye: float,
         gscale: float,
-        colslice: tuple[int,int] | int |None
+        colslice: tuple[int,int] | int |None,
+        floodfill: float | None
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -810,7 +813,8 @@ class Renderer:
             crop=crop,
             fisheye=fisheye,
             pad=pad,
-            colslice=colslice
+            colslice=colslice,
+            floodfill=floodfill
         )
 
     async def apply_options_name(
@@ -838,7 +842,8 @@ class Renderer:
         crop: tuple[int,int,int,int],
         pad: tuple[int,int,int,int],
         fisheye: float,
-        colslice: tuple[int,int] | int |None
+        colslice: tuple[int,int] | int |None,
+        floodfill: float | None
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -873,7 +878,8 @@ class Renderer:
                 crop=crop,
                 fisheye=fisheye,
                 pad=pad,
-                colslice=colslice
+                colslice=colslice,
+                floodfill=floodfill
             )
         except ValueError as e:
             size = e.args[0]
@@ -906,7 +912,8 @@ class Renderer:
         crop: tuple[int,int,int,int],
         fisheye: float,
         pad: tuple[int,int,int,int],
-        colslice: tuple[int,int] | int | None
+        colslice: tuple[int,int] | int | None,
+        floodfill: float | None
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
@@ -970,7 +977,7 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
-        if "floodfill" in filters:
+        if type(floodfill) == float:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
             im = np.array(sprite)
@@ -978,6 +985,11 @@ class Renderer:
             ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
             imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima, np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
             im[:,:,3] = imf[1:-1,1:-1]
+            for y in range(len(im)):
+                for x in range(len(im[0])):
+                    if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
+                        im[y,x,:] = np.array([round(floodfill*255),round(floodfill*255),round(floodfill*255),255])  #somehow this doesn't fuck up anywhere
+            print(''.join([str(x) for x in im]))
             sprite = Image.fromarray(np.array(im))
         if pixelate > 1:
             wid,hgt = sprite.size
@@ -1047,7 +1059,7 @@ class Renderer:
         if opacity < 1:
             r,g,b,a = sprite.split()
             sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * opacity)))
-        if abs(neon) > 1:
+        if neon != 1:
             spritenp = np.array(sprite)
             spritenp2 = copy.deepcopy(spritenp)
             for x in range(spritenp.shape[1]):
