@@ -484,5 +484,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_bibad",
+        "sprite": "render",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mrld",
+        "sprite": "mrld",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]
