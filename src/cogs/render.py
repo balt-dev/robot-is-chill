@@ -918,37 +918,6 @@ class Renderer:
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
-        if any(crop):
-            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
-            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
-            im.paste(cropped,(crop[0],crop[1]))
-            sprite = im
-        if any(pad):
-            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
-        if type(colslice) != type(None):
-            im = np.array(sprite)
-            colors = []
-            for x in range(im.shape[1]):
-                for y in range(im.shape[0]):
-                    if im[y,x,3] > 0 :
-                        colors.append(tuple(im[y,x]))
-            if len(colslice) == 1:
-                try:
-                    color = np.array([collections.Counter(colors).most_common()[colslice[0]][0]])
-                except:
-                    color = [(0,0,0,0)]
-            else:
-                try:
-                    color = np.array([n[0] for n in collections.Counter(colors).most_common()[colslice[0]:colslice[1]]])
-                except:
-                    pass
-            out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-            for x in range(im.shape[1]):
-                for y in range(im.shape[0]):
-                    if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
-                        out[y,x] = im[y,x]
-                            
-            sprite = Image.fromarray(out)
         if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
             if original_style == "property":
                 # box: position of upper-left coordinate of "inner text" in the larger text tile
@@ -977,6 +946,13 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        if any(crop):
+            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
+            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
+            im.paste(cropped,(crop[0],crop[1]))
+            sprite = im
+        if any(pad):
+            sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if type(floodfill) == float:
             f = lambda x: 420 if x > 0 else 0
             g = lambda x: 0 if x == 69 else 255
@@ -991,6 +967,29 @@ class Renderer:
                         im[y,x,:] = np.array([round(floodfill*255),round(floodfill*255),round(floodfill*255),255])  #somehow this doesn't fuck up anywhere
             print(''.join([str(x) for x in im]))
             sprite = Image.fromarray(np.array(im))
+        if type(colslice) != type(None):
+            im = np.array(sprite)
+            colors = []
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                    if im[y,x,3] > 0 :
+                        colors.append(tuple(im[y,x]))
+            if len(colslice) == 1:
+                try:
+                    color = np.array([collections.Counter(colors).most_common()[colslice[0]][0]])
+                except:
+                    color = [(0,0,0,0)]
+            else:
+                try:
+                    color = np.array([n[0] for n in collections.Counter(colors).most_common()[colslice[0]:colslice[1]]])
+                except:
+                    pass
+            out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                    if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
+                        out[y,x] = im[y,x]       
+            sprite = Image.fromarray(out)
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
