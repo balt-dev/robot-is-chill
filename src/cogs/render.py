@@ -146,7 +146,6 @@ class Renderer:
                 return 0
         padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
         padding = padding[0] if type(padding) == list else padding
-        padding -= int(constants.DEFAULT_SPRITE_SIZE*(scaleddef**2))
         img_width = int(img_width_raw + (2 * padding))
         img_height = int(img_height_raw + (2 * padding))
         i = 0
@@ -170,7 +169,6 @@ class Renderer:
                 palette_color = palette_img.getpixel(background)
                 img = Image.new("RGBA", (img_width, img_height), color=palette_color)
             elif type(background) == str:
-                print(list(background))
                 img = Image.new("RGBA", (img_width, img_height), color=tuple([int(a+b,16) for a,b in np.reshape(list(background),(3,2))]))
             # neither
             else: 
@@ -178,7 +176,6 @@ class Renderer:
             imgs.append(img)
         
         # keeping track of the amount of padding we can slice off
-        print(img_width,img_height)
         pad_r=pad_u=pad_l=pad_d=0
         for layer in grid:
             for y, row in enumerate(layer):
@@ -918,13 +915,21 @@ class Renderer:
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
-        if any(crop):
-            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
-            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
-            im.paste(cropped,(crop[0],crop[1]))
-            sprite = im
         if any(pad):
             sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
+        if type(floodfill) == float:
+            f = lambda x: 420 if x > 0 else 0
+            g = lambda x: 0 if x == 69 else 255
+            im = np.array(sprite)
+            ima = im[:,:,3]
+            ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
+            imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima, np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
+            im[:,:,3] = imf[1:-1,1:-1]
+            for y in range(len(im)):
+                for x in range(len(im[0])):
+                    if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
+                        im[y,x,:] = np.array([round(floodfill*255),round(floodfill*255),round(floodfill*255),255])  #somehow this doesn't fuck up anywhere
+            sprite = Image.fromarray(np.array(im))
         if type(colslice) != type(None):
             im = np.array(sprite)
             colors = []
@@ -977,20 +982,11 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
-        if type(floodfill) == float:
-            f = lambda x: 420 if x > 0 else 0
-            g = lambda x: 0 if x == 69 else 255
-            im = np.array(sprite)
-            ima = im[:,:,3]
-            ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
-            imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima, np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
-            im[:,:,3] = imf[1:-1,1:-1]
-            for y in range(len(im)):
-                for x in range(len(im[0])):
-                    if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
-                        im[y,x,:] = np.array([round(floodfill*255),round(floodfill*255),round(floodfill*255),255])  #somehow this doesn't fuck up anywhere
-            print(''.join([str(x) for x in im]))
-            sprite = Image.fromarray(np.array(im))
+        if any(crop):
+            cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
+            im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
+            im.paste(cropped,(crop[0],crop[1]))
+            sprite = im
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
