@@ -86,7 +86,7 @@ AUTO_VARIANTS = {
 # colors
 COLOR_NAMES: dict[str, tuple[int, int]] = {
     "maroon": (2, 1), # Not actually a word in the game
-    "gold": (6, 2), # Not actually a word in the game
+    "gold":   (6, 2), # Not actually a word in the game
     "red":    (2, 2),
     "orange": (2, 3),
     "yellow": (2, 4),
@@ -106,24 +106,25 @@ COLOR_NAMES: dict[str, tuple[int, int]] = {
 }
 
 CUSTOM_COLOR_NAMES: dict[str,tuple[int,int,int]] = {
-    "mint": [0x00,0xee,0x8a],
-    "blueberry": [0x8f,0x94,0xc5],
-    "night": [0x13,0x14,0x57],
-    "haten": [0x43,0x3b,0xff],
-    "apple": [0xb1,0x3e,0x53],
-    "lemon": [0xff,0xcd,0x75], 
-    "grape": [0x5d,0x27,0x5d],
-    "magenta": [0xff,0x00,0xff],
-    "cherry": [0xFF,0x47,0x50],
-    "rose": [0xFF,0x84,0xB9],
-    "azure": [0x00,0x7f,0xff],
-    "mud": [0x5C,0x47,0x42],
+    "mint":         [0x00,0xee,0x8a],
+    "blueberry":    [0x8f,0x94,0xc5],
+    "night":        [0x13,0x14,0x57],
+    "haten":        [0x43,0x3b,0xff],
+    "apple":        [0xb1,0x3e,0x53],
+    "lemon":        [0xff,0xcd,0x75], 
+    "grape":        [0x5d,0x27,0x5d],
+    "magenta":      [0xff,0x00,0xff],
+    "cherry":       [0xFF,0x47,0x50],
+    "rose":         [0xFF,0x84,0xB9],
+    "azure":        [0x00,0x7f,0xff],
+    "mud":          [0x5C,0x47,0x42],
     "dreamvoyager": [0xdf,0x4f,0xe1],
-    "cobalt": [0x20,0x66,0x94],
-    "digin": [0x4C,0xFF,0x00],
-    "adr": [0xFC,0xEC,0x94],
-    "fullest": [0x00,0xC0,0x00],
-    "mrld": [0x82,0xFF,0x97]
+    "cobalt":       [0x20,0x66,0x94],
+    "digin":        [0x4C,0xFF,0x00],
+    "adr":          [0xFC,0xEC,0x94],
+    "fullest":      [0x00,0xC0,0x00],
+    "mrld":         [0x82,0xFF,0x97],
+    "ping":         [0xED,0x42,0x45]
 }
 
 COLOR_REPRESENTATION_VARIANTS = {
@@ -131,7 +132,7 @@ COLOR_REPRESENTATION_VARIANTS = {
 }
 
 CUSTOM_COLOR_REPRESENTATION_VARIANTS = {
-    "cum": "\n".join(f"{color}: #{''.join([hex(h)[2:].zfill(2) for h in hx])}" for color,hx in list(CUSTOM_COLOR_NAMES.items())) + "\n(Custom color names)"
+    "coom": "\n".join(f"{color}: #{''.join([hex(h)[2:].zfill(2) for h in hx])}" for color,hx in list(CUSTOM_COLOR_NAMES.items())) + "\n(Custom color names)"
 }
 
 INACTIVE_COLORS: dict[tuple[int, int], tuple[int, int]] = {
