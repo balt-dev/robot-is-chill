@@ -618,5 +618,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_hd",
+        "sprite": "text_hd",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nook",
+        "sprite": "nook",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_debt",
+        "sprite": "text_debt",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
