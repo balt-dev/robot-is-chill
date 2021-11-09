@@ -612,9 +612,9 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         grid.height = int.from_bytes(buffer, byteorder="little")
         
         size = grid.width * grid.height
-        if grid.width > 2730:
+        if grid.width > 1365:
             raise ValueError(grid.width,"width")
-        if grid.height > 2730:
+        if grid.height > 1365:
             raise ValueError(grid.height,"height")
         if len(grid.cells) == 0:
             for _ in range(size):
