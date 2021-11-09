@@ -614,10 +614,6 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         size = grid.width * grid.height
         if size > 10000:
             raise ValueError(size)
-        if grid.width > 1000:
-            raise ValueError(size)
-        if grid.height > 1000:
-            raise ValueError(size)
         if len(grid.cells) == 0:
             for _ in range(size):
                 grid.cells.append([])
