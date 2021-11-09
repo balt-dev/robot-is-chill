@@ -114,7 +114,8 @@ class Renderer:
         frames: list[int] = [1,2,3],
         speed: int = 200,
         gridol: tuple[int] = None,
-        scaleddef: float = 1
+        scaleddef: float = 1,
+        printme: bool = False
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -154,9 +155,8 @@ class Renderer:
                 i += 1
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
                 newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
-                newImage.paste(im, (0,0),mask=im)
-                frame = newImage
-                imgs.append(frame)
+                newImage.paste(im, (padding,padding),mask=im)
+                imgs.append(newImage)
         for l, frame in enumerate(frames):
             if images and image_source is not None:
                 img = Image.new("RGBA", (img_width, img_height))
@@ -174,7 +174,6 @@ class Renderer:
             else: 
                 img = Image.new("RGBA", (img_width, img_height), color=(0,0,0,0))
             imgs.append(img)
-        
         # keeping track of the amount of padding we can slice off
         pad_r=pad_u=pad_l=pad_d=0
         for layer in grid:
@@ -337,6 +336,15 @@ class Renderer:
                                 )
                         times.append(tile.delta + (time.time() - t))
         
+        if printme:
+            q = ''
+            for i in imgs:
+                for vy in np.array(i):
+                    for vx in vy:
+                        q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
+                    q = q + '\n'
+            print(q)
+        
         outs = []
         for img in imgs:
             if type(gridol) != type(None):
@@ -352,26 +360,7 @@ class Renderer:
             if upscale:
                 img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
             outs.append(img)
-            
-        #/!\ PERFORMANCE DROP. ONLY USE WHEN NECESSARY. /!\
-        #if config.danger_mode:
-        #    def fire_and_forget(f):
-        #        def wrapped(*args, **kwargs):
-        #            return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
-        #
-        #        return wrapped
-        #    
-        #    @fire_and_forget
-        #    def printrendertoconsole():
-        #        q = ''
-        #        for vy in np.array(outs[-1]):
-        #            for vx in vy:
-        #                q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
-        #            q = q + '\n'
-        #        print(q)
-        #    
-        #    printrendertoconsole()
-        
+    
         self.save_frames(
             outs,
             out,
