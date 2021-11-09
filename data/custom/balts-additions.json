@@ -502,5 +502,41 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "digin",
+        "sprite": "digin",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ghostcat",
+        "sprite": "dreamvoyager",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "furret",
+        "sprite": "furret",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fullest",
+        "sprite": "fullest",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
