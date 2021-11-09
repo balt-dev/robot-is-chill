@@ -196,6 +196,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         gridol = None
         random_animations = True
         tborders = False
+        printme = False
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -270,6 +271,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
             if global_match:
                 global_variant = ':'+global_match.group(1)
+                to_delete.append((x, y))
+            printme_match = re.fullmatch(r"--printme|-printme", flag)
+            if printme_match and await ctx.bot.is_owner(ctx.author):
+                printme = True
                 to_delete.append((x, y))
             con_match = re.fullmatch(r"(?:--consistent|-co)", flag)
             if con_match:
@@ -370,7 +375,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 frames=frames,
                 speed=speed,
                 gridol=gridol,
-                scaleddef=gscale
+                scaleddef=gscale,
+                printme=printme
             )
         except errors.TileNotFound as e:
             word = e.args[0]
