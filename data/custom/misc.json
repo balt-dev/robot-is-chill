@@ -609,5 +609,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "jony",
+        "sprite": "jony",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
