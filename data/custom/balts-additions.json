@@ -538,5 +538,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "adoballs",
+        "sprite": "adoballs",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
     }
 ]
