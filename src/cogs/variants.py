@@ -723,6 +723,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["flipx"]
             }
+
+    @handlers.handler(
+        pattern=r"reverse",
+        variant_hints={"reverse|rev": "`reverse` (Swaps a sprite's colors based off of frequency.)"},
+        variant_group="Filters"
+    )
+    def flipx(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["reverse"]
+            }
+        except:
+            return{
+                "filters": ["reverse"]
+            }
             
     @handlers.handler(
         pattern=r"flipy",
