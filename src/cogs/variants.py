@@ -783,6 +783,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["invert"]
             }
+        
+    @handlers.handler(
+        pattern=r"grayscale|gscale",
+        variant_hints={"grayscale": "`grayscale` (Forces raw sprite to be grayscale.)"},
+        variant_group="Filters"
+    )
+    def grayscale(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["grayscale"]
+            }
+        except:
+            return{
+                "filters": ["grayscale"]
+            }
             
     @handlers.handler(
         pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
@@ -1091,8 +1106,18 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
+        pattern=r"3oo(\d+(?:\.\d+)?)",
+        variant_hints={"3oo": "`3oo<n>` (Applies content aware scale to the sprite. The size of the sprite is divided by n, then upscaled to what it was originally was.)"},
+        variant_group="Filters"
+    )
+    def pad(ctx: HandlerContext) -> TileFields:
+        return{
+            "threeoo": float(ctx.groups[0])
+        }
+        
+    @handlers.handler(
         pattern=r"nothing|none|n|-",
-        variant_hints={"nothing": "`nothing` (Literally does nothing.)"},
+        variant_hints={"nothing": "`nothing` (Does nothing.)"},
         variant_group="Filters"
     )
     def nothing(ctx: HandlerContext) -> TileFields:

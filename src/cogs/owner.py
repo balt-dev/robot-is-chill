@@ -109,9 +109,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
         await ctx.send(f"Added {sprite_name}.")
-         
-
-        
 
     @commands.command(aliases=["reboot"])
     @commands.is_owner()
@@ -516,7 +513,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
         await ctx.send(f"All hidden commands:\n{cmds}")
 
-    @commands.command()
+    @commands.command(aliases=['clear','cls'])
     @commands.is_owner()
     async def clearconsole(self, ctx: Context):
         os.system('cls||clear')

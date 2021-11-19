@@ -197,6 +197,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         random_animations = True
         tborders = False
         printme = False
+        crop = None
+        upscale = 2
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -224,6 +226,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
                 raw_name = raw_match.group(1) if raw_match.group(1) else None
+                upscale = 1
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 
@@ -284,9 +287,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if gridovmatch:
                 gridol = (int(gridovmatch.group(1)),int(gridovmatch.group(2)))
                 to_delete.append((x, y))
+            cropmatch = re.fullmatch(r"(?:--|-)crop=(\d+)\/(\d+)\/(\d+)\/(\d+)", flag)
+            if cropmatch:
+                crop = tuple([*[int(x) for x in cropmatch.groups()]])
+                to_delete.append((x, y))
             gsmatch = re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag)
             if gsmatch:
                 gscale = float(gsmatch.group(1))
+                to_delete.append((x, y))
+            spmatch = re.fullmatch(r"(?:--multiplier|-m)=(-?[01234]?(?:\.\d+)?)", flag)
+            if spmatch:
+                upscale = float(spmatch.group(1))
                 to_delete.append((x, y))
             swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
             if swapmatch:
@@ -369,14 +380,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 palette=palette,
                 background=background, 
                 out=buffer,
-                upscale=not raw_output,
+                upscale=upscale,
                 extra_out=extra_buffer,
                 extra_name=raw_name if raw_output else None, # type: ignore
                 frames=frames,
                 speed=speed,
                 gridol=gridol,
                 scaleddef=gscale,
-                printme=printme
+                printme=printme,
+                crop=crop
             )
         except errors.TileNotFound as e:
             word = e.args[0]

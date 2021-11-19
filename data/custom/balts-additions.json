@@ -547,5 +547,32 @@
             "3"
         ],
         "tiling": "4"
+    },
+    {
+        "name": "cent",
+        "sprite": "CenT",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "baddy",
+        "sprite": "baddy",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bilt",
+        "sprite": "bilt",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]

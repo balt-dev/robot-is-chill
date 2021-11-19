@@ -102,11 +102,12 @@ class MiscCog(commands.Cog, name="Miscellaneous Commands"):
   @commands.cooldown(5, 8, type=commands.BucketType.channel)
   async def misc(self, ctx: Context, subcommand: str = None, *, args: str):
     '''Does a variety of different miscellaneous things. Subcommands:
-`sudoku` - Solve a sudoku. Inputs are formatted as space-separated numbers, or a dash for blank. 
-Example:
-`1 - 3 - 5 - 7 - 9`
-`4 - - 7 - - 1 - -`
-         `⁝`'''
+| `sudoku` - Solve a sudoku. Inputs are formatted as space-separated numbers, or a dash for blank. 
+| Example:
+| `1 - 3 - 5 - 7 - 9`
+| `4 - - 7 - - 1 - -`
+|        `⁝`
+| (Gonna be honest I don't remember why I added this alskjgflaskgfj)'''
     if not subcommand:
       return await ctx.error('Subcommand not specified!')
     await ctx.trigger_typing()

@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 import src.cogs.fish as fish
 import src.cogs.filterimage as filterimage
-
+import src.cogs.seamcarving as seamcarving
 import requests
 
 def rgb_to_hsv(rgb):
@@ -108,14 +108,15 @@ class Renderer:
         image_source: str = constants.BABA_WORLD,
         out: str | BinaryIO = "target/renders/render.gif",
         background: tuple[int, int] | str | None = None,
-        upscale: bool = True,
+        upscale: int = 1,
         extra_out: str | BinaryIO | None = None,
         extra_name: str | None = None,
         frames: list[int] = [1,2,3],
         speed: int = 200,
         gridol: tuple[int] = None,
         scaleddef: float = 1,
-        printme: bool = False
+        printme: bool = False,
+        crop: tuple[int,int,int,int] | None = None
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -150,13 +151,6 @@ class Renderer:
         img_width = int(img_width_raw + (2 * padding))
         img_height = int(img_height_raw + (2 * padding))
         i = 0
-        if before_image:
-            for frame in ImageSequence.Iterator(before_image):
-                i += 1
-                im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
-                newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
-                newImage.paste(im, (padding,padding),mask=im)
-                imgs.append(newImage)
         for l, frame in enumerate(frames):
             if images and image_source is not None:
                 img = Image.new("RGBA", (img_width, img_height))
@@ -206,7 +200,7 @@ class Renderer:
                             else:
                                 palette_color = (0,0,0,0)
                             sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
-                            imgs[frame+i].paste(
+                            imgs[frame].paste(
                                 sprite, 
                                 (
                                     int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -216,7 +210,7 @@ class Renderer:
                             ) 
                         elif tile.cut_alpha:
                             if background is not None: 
-                                imgs[frame+i].paste(
+                                imgs[frame].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)), 
                                     (
                                         int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -225,7 +219,7 @@ class Renderer:
                                     alpha
                                 )
                             else:
-                                imgs[frame+i].paste(
+                                imgs[frame].paste(
                                     Image.new("RGBA", (sprite.width, sprite.height)), 
                                     (
                                         int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -235,7 +229,7 @@ class Renderer:
                                 )
                         else:
                             if tile.blending == 'add':
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -244,9 +238,9 @@ class Renderer:
                                     ), 
                                     mask=sprite
                                 )
-                                imgs[frame+i] = Image.fromarray(cv2.add(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))
+                                imgs[frame] = Image.fromarray(cv2.add(np.asarray(imgs[frame]),np.asarray(imgtemp)))
                             elif tile.blending == 'subtract':
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -257,9 +251,9 @@ class Renderer:
                                 )
                                 inmp = np.asarray(imgtemp)
                                 inmp[:,:,3] = 0
-                                imgs[frame+i] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame+i]),inmp))  
+                                imgs[frame] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame]),inmp))  
                             elif tile.blending == 'maximum':
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -268,9 +262,9 @@ class Renderer:
                                     ), 
                                     mask=sprite
                                 )
-                                imgs[frame+i] = Image.fromarray(cv2.max(np.asarray(imgs[frame+i]),np.asarray(imgtemp)))  
+                                imgs[frame] = Image.fromarray(cv2.max(np.asarray(imgs[frame]),np.asarray(imgtemp)))  
                             elif tile.blending and tile.blending.startswith('xor'):
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -279,14 +273,14 @@ class Renderer:
                                     ), 
                                     mask=sprite
                                 )
-                                i1 = np.asarray(imgs[frame+i])
+                                i1 = np.asarray(imgs[frame])
                                 i2 = np.asarray(imgtemp)
                                 rgb = (i1^i2)
                                 if tile.blending == 'xora':
                                     rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
-                                imgs[frame+i] = Image.fromarray(rgb)   
+                                imgs[frame] = Image.fromarray(rgb)   
                             elif tile.blending == 'minimum':
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -296,9 +290,9 @@ class Renderer:
                                     mask=sprite
                                 )
                                 imgtempar = np.asarray(imgtemp)
-                                imgtempar[:,:,3] = np.asarray(imgs[frame+i])[:,:,3]
-                                imgs[frame+i].paste(
-                                    Image.fromarray(cv2.min(np.asarray(imgs[frame+i]),imgtempar)),
+                                imgtempar[:,:,3] = np.asarray(imgs[frame])[:,:,3]
+                                imgs[frame].paste(
+                                    Image.fromarray(cv2.min(np.asarray(imgs[frame]),imgtempar)),
                                     (
                                         0,
                                         0
@@ -306,7 +300,7 @@ class Renderer:
                                     mask=imgtemp
                                 )
                             elif tile.blending == 'multiply':
-                                imgtemp=Image.new('RGBA',imgs[frame+i].size,(0,0,0,0))
+                                imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
                                 imgtemp.paste(
                                     sprite, 
                                     (
@@ -317,8 +311,8 @@ class Renderer:
                                 )
                                 imgtempar = np.asarray(imgtemp)
                                 imgtempar[:,:,3] = 1
-                                imgs[frame+i].paste(
-                                    Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame+i]),np.asarray(imgtemp))),
+                                imgs[frame].paste(
+                                    Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame]),np.asarray(imgtemp))),
                                     (
                                         0,
                                         0
@@ -326,7 +320,7 @@ class Renderer:
                                     mask=imgtemp
                                 )
                             else:
-                                imgs[frame+i].paste(
+                                imgs[frame].paste(
                                     sprite, 
                                     (
                                         int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -344,7 +338,14 @@ class Renderer:
                         q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
                     q = q + '\n'
             print(q)
-        
+        if before_image:
+            bfr=0
+            for frame in ImageSequence.Iterator(before_image):
+                im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
+                newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
+                newImage.paste(im, (padding-pad_l,padding-pad_r),mask=im)
+                imgs.insert(bfr,newImage) 
+                bfr += 1 #i dont wanna use an enumerate on an iterator
         outs = []
         for img in imgs:
             if type(gridol) != type(None):
@@ -357,8 +358,10 @@ class Renderer:
                     img[:,row*gridol[1]*2,3] = 255
                 img = Image.fromarray(img)
             img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
-            if upscale:
-                img = img.resize((2 * img.width, 2 * img.height), resample=Image.NEAREST)
+            if crop != None:
+                img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
+            if upscale != 1:
+                img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
             outs.append(img)
     
         self.save_frames(
@@ -419,7 +422,9 @@ class Renderer:
                     gscale=gscale,
                     colslice=tile.colslice,
                     floodfill=tile.floodfill,
-                    seed=0 if tile.freeze else None
+                    seed=0 if tile.freeze else None,
+                    threeoo=tile.threeoo,
+                    position=(x,y)
                 )
             else:
                 if tile.name in ("icon",):
@@ -461,6 +466,7 @@ class Renderer:
                     pad=tile.pad,
                     floodfill=tile.floodfill,
                     colslice=tile.colslice,
+                    threeoo=tile.threeoo
                 )
             # Color augmentation
             if tile.overlay == "":
@@ -511,8 +517,13 @@ class Renderer:
                             raise requests.exceptions.ConnectionError
                             return
                         url=results[0]
-                ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
+                p = requests.get(url, stream=True).raw.read()
+                print(''.join([chr(c) for c in bytearray(p)]))
+                #try:
+                ifilterimage = Image.open(BytesIO(p)).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage.resize((int(ifilterimage.width*gscale),int(ifilterimage.height*gscale)),Image.NEAREST),absolute)
+                #except OSError:
+                #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
             sprite = Image.fromarray(numpysprite)
@@ -591,7 +602,9 @@ class Renderer:
         fisheye: float,
         gscale: float,
         colslice: tuple[int,int] | int |None,
-        floodfill: float | None
+        floodfill: float | None,
+        threeoo: float | None,
+        position: tuple[int,int]
     ) -> Image.Image:
         '''Generates a custom text sprite'''
         text = text[5:]
@@ -599,7 +612,7 @@ class Renderer:
         newline_count = text.count("/")
 
         if seed is None:
-            seed = random.randint(0, 8 ** len(raw))
+            seed = int((7+position[0])/(3+position[1])*100000000)
         seed_digits = [(seed >> 8 * i ) | 0b11111111 for i in range(len(raw))]
         
         # Get mode and split status
@@ -800,7 +813,8 @@ class Renderer:
             fisheye=fisheye,
             pad=pad,
             colslice=colslice,
-            floodfill=floodfill
+            floodfill=floodfill,
+            threeoo=threeoo
         )
 
     async def apply_options_name(
@@ -829,7 +843,8 @@ class Renderer:
         pad: tuple[int,int,int,int],
         fisheye: float,
         colslice: tuple[int,int] | int |None,
-        floodfill: float | None
+        floodfill: float | None,
+        threeoo: float | None
     ) -> Image.Image:
         '''Takes an image, taking tile data from its name, and applies the given options to it.'''
         tile_data = await self.bot.db.tile(name)
@@ -865,7 +880,8 @@ class Renderer:
                 fisheye=fisheye,
                 pad=pad,
                 colslice=colslice,
-                floodfill=floodfill
+                floodfill=floodfill,
+                threeoo=threeoo
             )
         except ValueError as e:
             size = e.args[0]
@@ -899,11 +915,17 @@ class Renderer:
         fisheye: float,
         pad: tuple[int,int,int,int],
         colslice: tuple[int,int] | int | None,
-        floodfill: float | None
+        floodfill: float | None,
+        threeoo: float | None
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
         if scale != (1,1):
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
+        if threeoo != None:
+            sprite = np.array(sprite,dtype=np.uint8)
+            h,w,_ = sprite.shape
+            assert h <= 24 and w <= 24, 'Image too large for 3oo filter!'
+            sprite = Image.fromarray(seamcarving.seam_carve(sprite,(sprite.shape[0]//threeoo,sprite.shape[1]//threeoo))).resize((w,h),Image.NEAREST)
         if any(pad):
             sprite = Image.fromarray(np.pad(np.array(sprite),((pad[1],pad[3]),(pad[0],pad[2]),(0,0))))
         if type(floodfill) == float:
@@ -1038,6 +1060,8 @@ class Renderer:
                 sprite = Image.fromarray(scan(spritenumpyscan).swapaxes(0,1))
             if filter == "invert":
                 sprite = Image.fromarray(np.dstack((~im[:,:,:3],im[:,:,3])))
+            if filter == "grayscale":
+                sprite = ImageOps.grayscale(sprite).convert("RGBA")
         if fisheye != 0:
             spritefish = fish.fish(np.array(sprite),fisheye)
             sprite = Image.fromarray(spritefish)
