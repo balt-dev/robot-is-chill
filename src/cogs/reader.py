@@ -6,6 +6,7 @@ import configparser
 import io
 import re
 import zlib
+import discord
 from dataclasses import dataclass
 from os import listdir
 from typing import Any, BinaryIO, TextIO
@@ -666,15 +667,19 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                     # huh?
                     break
                 
-    #@commands.command(name="printlevel")
-    #@commands.is_owner()
-    #async def print_map(self, ctx: Context, source: str, filename: str):
-    #    '''Loads a world and parses it as a command.'''
-    #    grid = self.read_map(filename, source=source)
-    #    grid = await self.read_metadata(grid, initialize_level_tree=True)
-    #    gridl = np.ndarray.tolist(np.array([[f"{c.sprite}:{'/'.join([str(a) for a in c.color])}" for c in b] for b in grid.cells],dtype=list).reshape(grid.height,grid.width))
-    #    nl='\n'
-    #    await ctx.send(f"```=tile -p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridl[1:-1]])}```")
+    @commands.command(name="printlevel")
+    @commands.cooldown(1, 7, type=commands.BucketType.channel)
+    async def print_map(self, ctx: Context, source: str, filename: str):
+        '''Loads a world and parses it as a command.
+           This command isn't fully functional yet, so be wary of that.'''
+        grid = self.read_map(filename, source=source)
+        grid = await self.read_metadata(grid, initialize_level_tree=True)
+        gridl = np.ndarray.tolist(np.array([[f"{c.sprite}:{'/'.join([str(a) for a in c.color])}" for c in b] for b in grid.cells],dtype=list).reshape(grid.height,grid.width))
+        nl='\n'
+        with io.BytesIO() as b:
+            b.write(bytes(f"=tile -p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridl[1:-1]])}",encoding='utf-8'))
+            b.seek(0)
+            await ctx.send(file=discord.File(b,filename=f'{filename}.txt'))
 
 def setup(bot: Bot):
     bot.add_cog(Reader(bot))

@@ -13,9 +13,9 @@ from . import errors
 
 if TYPE_CHECKING:
     # @ps-ignore
-    RawGrid = list[list[list['RawTile']]]
-    FullGrid = list[list[list['FullTile']]]
-    GridIndex = tuple[int, int, int]
+    RawGrid = list(list(list('RawTile')))
+    FullGrid = list(list(list('FullTile')))
+    GridIndex = tuple(int, int, int)
 
 @dataclass
 class RawTile:
@@ -79,6 +79,7 @@ class TileFields(TypedDict, total=False):
     fisheye: float  
     colslice: tuple[int,int] | int | None
     floodfill: float | None
+    threeoo: float
 
 @dataclass
 class FullTile:
@@ -123,6 +124,7 @@ class FullTile:
     fisheye: float = 0
     floodfill: float | None = None
     colslice: tuple[int,int] | int | None = None
+    threeoo: float = None
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
         '''Create a FullTile from a RawTile and TileFields'''

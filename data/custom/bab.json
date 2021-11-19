@@ -269,15 +269,6 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "text_n’t",
-        "sprite": "text_n’t",
-        "color": [
-            "2",
-            "2"
-        ],
-        "tiling": "-1"
-    },
     {
         "name": "til",
         "sprite": "til",
@@ -584,9 +575,9 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "n’tsuf",
-        "sprite": "n’tsuf",
+    {
+        "name": "ntsuf",
+        "sprite": "ntsuf",
         "color": [
             "2",
             "2"
@@ -594,11 +585,29 @@
         "tiling": "-1"
     },
     {
-        "name": "ntsuf",
-        "sprite": "ntsuf",
+        "name": "skul",
+        "sprite": "skul",
         "color": [
             "2",
-            "2"
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_skul",
+        "sprite": "text_skul",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "skul",
+        "sprite": "skul",
+        "color": [
+            "2",
+            "1"
         ],
         "tiling": "-1"
     }

@@ -645,5 +645,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "snomba",
+        "sprite": "snomba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_snomba",
+        "sprite": "text_snomba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
