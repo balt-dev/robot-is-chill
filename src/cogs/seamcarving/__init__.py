@@ -43,10 +43,10 @@ def do_carving(img):
 def seam_carve(img: np.ndarray, size: tuple):
   '''Content-aware scales an image to a given box.'''
   assert size[0] <= img.shape[0] and size[1] <= img.shape[1], "Bounding box too big!"
-  while img.shape[1] > size[1]:
+  for _ in range(int(img.shape[1]-size[1])):
     img = do_carving(img)
   img = np.swapaxes(img,0,1)
-  while img.shape[1] > size[1]:
+  for _ in range(int(img.shape[1]-size[0])):
     img = do_carving(img)
   img = np.swapaxes(img,0,1)
   return img

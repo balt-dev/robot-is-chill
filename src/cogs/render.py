@@ -3,6 +3,7 @@ from __future__ import annotations
 from discord.ext import commands
 import copy
 import math
+import os
 import random
 import zipfile
 import collections
@@ -343,7 +344,7 @@ class Renderer:
             for frame in ImageSequence.Iterator(before_image):
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
                 newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
-                newImage.paste(im, (padding-pad_l,padding-pad_r),mask=im)
+                newImage.paste(im, (padding-pad_l,padding-pad_u),mask=im)
                 imgs.insert(bfr,newImage) 
                 bfr += 1 #i dont wanna use an enumerate on an iterator
         outs = []
@@ -359,6 +360,7 @@ class Renderer:
                 img = Image.fromarray(img)
             img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
             if crop != None:
+                print(crop)
                 img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
             if upscale != 1:
                 img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
@@ -919,8 +921,6 @@ class Renderer:
         threeoo: float | None
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
-        if scale != (1,1):
-            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if threeoo != None:
             sprite = np.array(sprite,dtype=np.uint8)
             h,w,_ = sprite.shape
@@ -993,6 +993,8 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
+        if scale != (1,1):
+            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if any(crop):
             cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
