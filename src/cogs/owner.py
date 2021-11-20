@@ -535,6 +535,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             rows = await cur.fetchall()
         formatted = '\n'.join('|'.join(str(value) for value in row) for row in rows)
         out = f"Output:\n```\n{formatted}\n```"
+        print(out)
         await ctx.send(out)
 
     @commands.command()

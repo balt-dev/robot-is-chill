@@ -8,7 +8,7 @@ import re
 import zlib
 import discord
 from dataclasses import dataclass
-from os import listdir
+from os import listdir, mkdir, path
 from typing import Any, BinaryIO, TextIO
 
 import aiohttp
@@ -324,9 +324,13 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         Cuts off borders from rendered levels unless otherwise specified.
         '''
         levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
-
+        
         # Parse and render the level map
         await ctx.send("Loading maps...")
+        if not path.exists(f'target/renders/{world}'):
+            mkdir(f'target/renders/{world}')
+        if not path.exists(f'data/images/{world}'):
+            mkdir(f'data/images/{world}')
         metadatas = {}
         total = len(levels)
         for i,level in enumerate(levels):
