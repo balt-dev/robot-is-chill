@@ -1063,6 +1063,20 @@ class Renderer:
                 sprite = Image.fromarray(np.dstack((~im[:,:,:3],im[:,:,3])))
             if filter == "grayscale":
                 sprite = ImageOps.grayscale(sprite).convert("RGBA")
+            if filter == "reverse":
+                im = np.array(sprite)
+                colors = []
+                for x in range(im.shape[1]):
+                    for y in range(im.shape[0]):
+                        if im[y,x,3] > 0 :
+                            colors.append(tuple(im[y,x]))
+                colorssort = np.array([n[0] for n in collections.Counter(colors).most_common()])
+                out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
+                for x in range(im.shape[1]):
+                    for y in range(im.shape[0]):
+                        if im[y,x] in colorssort:
+                            out[y,x] = colorssort[::-1][colorssort.index(im[y,x])]
+                sprite = Image.fromarray(out)
         if fisheye != 0:
             spritefish = fish.fish(np.array(sprite),fisheye)
             sprite = Image.fromarray(spritefish)
