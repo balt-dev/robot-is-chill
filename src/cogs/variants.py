@@ -194,7 +194,7 @@ class VariantHandlers:
         full = FullTile.from_tile_fields(tile, fields)
         self.finalizer(full, **flags)
         return full
-
+    
     async def handle_grid(self, grid: RawGrid, **flags: Any) -> FullGrid:
         '''Apply variants to a full grid of raw tiles'''
         tile_data_cache = {

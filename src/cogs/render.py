@@ -520,7 +520,6 @@ class Renderer:
                             return
                         url=results[0]
                 p = requests.get(url, stream=True).raw.read()
-                print(''.join([chr(c) for c in bytearray(p)]))
                 #try:
                 ifilterimage = Image.open(BytesIO(p)).convert("RGBA")
                 sprite = filterimage.apply_filterimage(sprite,ifilterimage.resize((int(ifilterimage.width*gscale),int(ifilterimage.height*gscale)),Image.NEAREST),absolute)
@@ -993,13 +992,13 @@ class Renderer:
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
             else:
                 sprite = self.make_meta(sprite, meta_level)
-        if scale != (1,1):
-            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if any(crop):
             cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
             im.paste(cropped,(crop[0],crop[1]))
             sprite = im
+        if scale != (1,1):
+            sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)
