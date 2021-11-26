@@ -31,7 +31,9 @@ class RawTile:
         '''Parse from user input'''
         parts = re.split('[\;,\:]', string)
         if any(len(part) == 0 for part in parts):
-            raise errors.EmptyVariant(parts[0])
+            if string != '':
+                raise errors.EmptyVariant(parts[0])
+            return RawTile('-',[])
         return RawTile(parts[0], parts[1:])
     
     @property
