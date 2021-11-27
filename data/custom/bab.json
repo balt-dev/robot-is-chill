@@ -270,6 +270,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n\u2019t",
+        "sprite": "text_n\u2019t",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "til",
         "sprite": "til",
         "color": [
@@ -576,8 +585,8 @@
         "tiling": "-1"
     },
     {
-        "name": "ntsuf",
-        "sprite": "ntsuf",
+        "name": "n\u2019tsuf",
+        "sprite": "n\u2019tsuf",
         "color": [
             "2",
             "2"
