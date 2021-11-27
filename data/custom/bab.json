@@ -269,9 +269,9 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "text_n’t",
-        "sprite": "text_n’t",
+    {
+        "name": "text_n\u2019t",
+        "sprite": "text_n\u2019t",
         "color": [
             "2",
             "2"
@@ -584,9 +584,9 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "n’tsuf",
-        "sprite": "n’tsuf",
+    {
+        "name": "n\u2019tsuf",
+        "sprite": "n\u2019tsuf",
         "color": [
             "2",
             "2"
