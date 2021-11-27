@@ -160,6 +160,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def restart(self, ctx: Context):
         '''Restarts the bot process.'''
         await ctx.send("Restarting bot process...")
+        await self.bot.change_presence(status=discord.Status.idle)
         self.bot.exit_code = 1
         await self.bot.close()
 
