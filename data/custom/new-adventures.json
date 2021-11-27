@@ -1,0 +1,47 @@
+[
+    {
+        "name": "mpipe",
+        "sprite": "pipe",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_equal",
+        "sprite": "text_equal",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_plus",
+        "sprite": "text_plus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mblock",
+        "sprite": "mblock",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "cube",
+        "sprite": "cube",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

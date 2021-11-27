@@ -1,0 +1,9 @@
+[general]
+name=museum
+author=hempuli
+start=85level
+firstlevel=101level
+clear_max=3
+[levels]
+levelid=112
+rolling_levelid=4

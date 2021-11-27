@@ -1,0 +1,171 @@
+$4,1#world_museum
+2019
+ 
+#credits_designetc #by $1,4Arvi Teikari
+ 
+#credits_audio #by $1,4Arvi Teikari
+ 
+#credits_porting #by $1,4MP2 Games
+ 
+#credits_testers
+$4,2Aaron Dobbe $4,0-$4,2 Aaron Steed $4,0-$4,2 Alan Hazelden
+$4,2Alejandro Cairols $4,0-$4,2 Alistair Buxton
+$4,2Anna Tarkov $4,0-$4,2 Antti Tiihonen $4,0-$4,2 at
+$4,2Bagenzo $4,0-$4,2 Bateleur $4,0-$4,2 BlasphemousRoar
+$4,2Blookerstein $4,0-$4,2 Chris 'SysL' H
+$4,2CenTdemeern1 $4,0-$4,2 Corey Martin $4,0-$4,2 D Fast
+$4,2Dan Ho $4,0-$4,2 Dario Zubovic $4,0-$4,2 Devness
+$4,2Dieting Hippo $4,0-$4,2 Droqen $4,0-$4,2 Endurion
+$4,2Ethan Clark $4,0-$4,2 Exuno $4,0-$4,2 Farbs
+$4,2GreenZSaber $4,0-$4,2 Guilherme Töws
+$4,2Hayden Scott-Baron $4,0-$4,2 Henrique de Lima
+$4,2Ian MacLarty $4,0-$4,2 Ian Snyder $4,0-$4,2 Jack Kutilek
+$4,2Jake Eakle $4,0-$4,2 Jan Willem Nijman $4,0-$4,2 Joel Fox
+$4,2Jonah $4,0-$4,2 Jonathan Blow $4,0-$4,2 Jonathan Thomas
+$4,2Jussi-Pekka Neilikka $4,0-$4,2 Kevin Simmons
+$4,2knexator $4,0-$4,2 Leon Arnott $4,0-$4,2 Lukas Meller
+$4,2Lyndsey Jane Moulds $4,0-$4,2 Marcos Donnantuoni
+$4,2Mathias Kærlev $4,0-$4,2 Matthew VanDevander
+$4,2Mattias Dittrich $4,0-$4,2 Michael Todd
+$4,2Mischka Kamener $4,0-$4,2 Mokesmoe
+$4,2Nathan "ncrecc" Recchia $4,0-$4,2 Nick Vaccaro
+$4,2Nicklas Nygren $4,0-$4,2 Niels Bross
+$4,2NotAJumbleOfNumbers $4,0-$4,2 Olivia Palmu
+$4,2Patrick Traynor $4,0-$4,2 Pedro PSI $4,0-$4,2 Randomnine
+$4,2Rico $4,0-$4,2 Robert Pfeiffer $4,0-$4,2 Robert Yang
+$4,2Ryan Gerstein $4,0-$4,2 Sampumon $4,0-$4,2 silverhawke
+$4,2SirNiko $4,0-$4,2 Skalmantas Šimėnas $4,0-$4,2 Snowquill
+$4,2Stephen Lavelle $4,0-$4,2 Tara Heather Kelly
+$4,2Terry Cavanagh $4,0-$4,2 TetraxZ $4,0-$4,2 Thomas Goos 
+$4,2Tijmen Tio $4,0-$4,2 Tyriq Plummer $4,0-$4,2 UltraLuigi
+$4,2Valen Kostich $4,0-$4,2 Victor Selnæs Breum
+$4,2winterbeak $4,0-$4,2 Zaphos
+ 
+#credits_audioconsult
+$1,4Aaro Teikari
+$1,4Martin Kvale
+$1,4Niilo Takalainen
+ 
+#credits_translation
+$1,4Traditional Chinese$0,3 $0,4-$4,2 Active Gaming Media
+$1,4Čeština$0,3 $4,0-$4,2 Eva Jany
+$1,4中文 (简体 )$0,3 $4,0-$4,2 User670 $4,0&$4,2 旋律星萤
+$1,4Deutsch$0,3 $4,0-$4,2 pepperonisecret & Tobias Gut
+$1,4Esperanto$0,3 $4,0-$4,2 REESE RIVERS (M.Z.A.)
+$1,4Español$0,3 $4,0-$4,2 Álex Hernández-Puertas
+$1,4Français$0,3 $4,0-$4,2 Naomi Kodo
+$1,4Italiano$0,3 $4,0-$4,2 Sara Cascianelli
+$1,4日本語$0,3 $4,0-$4,2 Hiago Kanomata
+$1,4Korean$0,3 $4,0-$4,2 Hoyeon Ryu & Elisa
+$1,4Nederlands$0,3 $4,0-$4,2 Zeno van Ditzhuijzen
+$1,4Norsk$0,3 $4,0-$4,2 Aurora Robb Kristiansen
+$1,4Polski$0,3 $4,0-$4,2 Jędrzej Haracewiat
+$1,4Português$0,3 $4,0-$4,2 Luca Macedo
+$1,4Português (BR)$0,3 $4,0-$4,2 Vile Lasagna
+$1,4Thai$0,3 $4,0-$4,2 Tanakorn Tantisitikul
+& $4,2Active Gaming Media
+$1,4Turkish$0,3 $4,0-$4,2 Doruk Balcı & Beste Balcı
+$1,4Vietnamese$0,3 $4,0-$4,2 Nguyen Vu Hai Long
+ 
+#credits_help
+$4,2capsulehero $4,0-$4,2 BearishMushroom
+$4,2Darling $4,0-$4,2 DogeisCut $4,0-$4,2 eneb
+$4,2ForeDaMole $4,0-$4,2 FungusDude42
+$4,2Jmickle $4,0-$4,2 kadykunde $4,0-$4,2 Portponky
+$4,2twerps3 $4,0-$4,2 unsinnlos $4,0-$4,2 ZantGuy
+ 
+#credits_words
+$4,2lilybeevee $4,0-$0,3 Feeling
+ 
+#credits_thanks
+$4,2Nordic Game Jam
+$4,2#credits_gamejams
+$4,2Rami Ismail
+$4,2Stephen's Sausage Roll
+$4,2Snakebird $4,0-$4,2 $4,2Corrypt
+$4,2Puzzlescript
+$4,2TIGsource $4,0-$4,2 $4,2Clickteam
+$4,2#credits_indies
+$4,2#credits_dogs
+$4,2#credits_dogs2
+ 
+#credits_specialthanks
+ 
+$2,4Anni Leskelä
+$2,3#credits_anni1
+$2,3#credits_anni2
+ 
+$2,4Lukas Meller
+$2,3#credits_lukas1
+$2,3#credits_lukas2
+ 
+$2,4Mokesmoe
+$2,3#credits_mokesmoe1
+$2,3#credits_mokesmoe2
+ 
+$2,4Alan Hazelden
+$2,3#credits_alan1
+$2,3#credits_alan2
+ 
+#credits_music
+$1,4OpenMPT
+#pluralby
+$4,2Johannes Schultz $4,0-$4,2 Joern Heusipp
+$4,2Ahti Leppänen $4,0-$4,2 Robin Fernandes
+$4,2Sergiy Pylypenko $4,0-$4,2 Eric Chavanon
+$4,2Trevor Nunes $4,0-$4,2 Olivier Lapicque
+ 
+#credits_sound
+$1,4SFXR$0,3 #by $4,2DrPetter
+&
+$1,4OpenMPT
+&
+$1,4Audacity$0,3 #by $4,2#credits_audacity
+&
+$1,4Sonatina Symphonic Orchestra
+#by $4,2Mattias Westlund
+ 
+#credits_freesound
+$2,3drum07$0,3 #by $4,2zajo
+$2,3gui-drum-bd-soft$0,3 #by $4,2menegass
+$2,3rick-drum-bd-soft$0,3 #by $4,2menegass
+$2,3snare$0,3 #by $4,2hanbaal
+$2,3snare-dnb-1$0,3 #by $4,2kaonaya
+$2,3hihat-dnb-1$0,3 #by $4,2kaonaya
+$2,3hat-04$0,3 #by $4,2cbeeching
+$2,3hi-hat-hit$0,3 #by $4,2sajmund
+$2,3fireplace$0,3 #by $4,2leosalom
+$2,3cymbal$0,3 #by $4,2irjames
+$2,3snare-2$0,3 #by $4,2hookhead
+$2,3skibacustomhihats1145top1215bot-
+$2,3tomfullopentip$0,3 #by $4,2pjcohen
+$2,3bubbling$0,3 #by $4,2infernus2
+$2,3acousticy-snare$0,3 #by $4,2walter-odington
+$2,314chh$0,3 #by $4,2vacuumfan7072
+$2,3kick-drum-e-1$0,3 #by $4,2rob10
+$2,3night-ambience-01-aug-2-
+$2,32013-back-yard$0,3 #by $4,2rgbrobot
+$2,3rain$0,3 #by $4,2idomusics
+$2,3guinot02$0,3 #by $4,2komponist
+$2,3piano-reverse$0,3 #by $4,2alayan
+$2,3fiddling-tenor-sax-bip$0,3 #by $4,2zinzan-101
+ 
+#credits_extensions
+$2,3Tile Map $2,1-$2,3 Tile Map Viewport
+$2,3 Surface $2,1-$2,3 Sound Player
+$2,3Joy To Key
+$0,3#by $4,2Lukas Meller
+ 
+$2,3String Parser 2$0,3 #by $4,23EE
+$2,3Create By Name$0,3 #by $4,2Anders Riggelsen
+$2,3ForEach$0,3 #by $4,2Ross Pickett
+$2,3Xlua$0,3 #by $4,2Justin Aquadro
+$2,3Ultimate Fullscreen
+#by $4,2Sebastian Janisz
+$2,3MT Random Object$0,3 #by $4,2Chris Branch
+$2,3Keyboard Object
+#by $4,2James McLaughlin
+ 
+#credits_madeusing
+$1,4Multimedia Fusion 2
+#singularby $4,2Clickteam

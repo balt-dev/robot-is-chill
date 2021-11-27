@@ -194,7 +194,7 @@ class VariantHandlers:
         full = FullTile.from_tile_fields(tile, fields)
         self.finalizer(full, **flags)
         return full
-
+    
     async def handle_grid(self, grid: RawGrid, **flags: Any) -> FullGrid:
         '''Apply variants to a full grid of raw tiles'''
         tile_data_cache = {
@@ -627,7 +627,7 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
-        pattern=r"neon(?:([\d\.]+))?",
+        pattern=r"neon(?:(-?\d+(?:\.\d+)?))?",
         variant_hints={"neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.)"},
         variant_group="Filters"
     )
@@ -723,6 +723,21 @@ def setup(bot: Bot):
             return{
                 "filters": ["flipx"]
             }
+
+    @handlers.handler(
+        pattern=r"reverse",
+        variant_hints={"reverse|rev": "`reverse` (Swaps a sprite's colors based off of frequency.)"},
+        variant_group="Filters"
+    )
+    def flipx(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["reverse"]
+            }
+        except:
+            return{
+                "filters": ["reverse"]
+            }
             
     @handlers.handler(
         pattern=r"flipy",
@@ -783,22 +798,32 @@ def setup(bot: Bot):
             return{
                 "filters": ["invert"]
             }
+        
+    @handlers.handler(
+        pattern=r"grayscale|gscale",
+        variant_hints={"grayscale": "`grayscale` (Forces raw sprite to be grayscale.)"},
+        variant_group="Filters"
+    )
+    def grayscale(ctx: HandlerContext) -> TileFields:
+        try:
+            return{
+                "filters": ctx.fields.get("filters") + ["grayscale"]
+            }
+        except:
+            return{
+                "filters": ["grayscale"]
+            }
             
     @handlers.handler(
-        pattern=r"floodfill|flood|fill",
+        pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
         variant_hints={"floodfill": "`floodfill` (Fills in all open pockets in the sprite.)"},
         variant_group="Filters"
     )
     def floodfill(ctx: HandlerContext) -> TileFields:
-        try:
-            return{
-                "filters": ctx.fields.get("filters") + ["floodfill"]
-            }
-        except:
-            return{
-                "filters": ["floodfill"]
-            }
-    
+        return{
+            "floodfill": float(ctx.groups[0] or 0)
+        }
+
     @handlers.handler(
         pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
         variant_hints={"fisheye": "`fisheye[n]` (Applies fisheye effect. n is intensity, defaulting to 0.5.)"},
@@ -1096,8 +1121,18 @@ def setup(bot: Bot):
         }
         
     @handlers.handler(
+        pattern=r"3oo(\d+(?:\.\d+)?)",
+        variant_hints={"3oo": "`3oo<n>` (Applies content aware scale to the sprite. The size of the sprite is divided by n, then upscaled to what it was originally was.)"},
+        variant_group="Filters"
+    )
+    def pad(ctx: HandlerContext) -> TileFields:
+        return{
+            "threeoo": float(ctx.groups[0])
+        }
+        
+    @handlers.handler(
         pattern=r"nothing|none|n|-",
-        variant_hints={"nothing": "`nothing` (Literally does nothing.)"},
+        variant_hints={"nothing": "`nothing` (Does nothing.)"},
         variant_group="Filters"
     )
     def nothing(ctx: HandlerContext) -> TileFields:

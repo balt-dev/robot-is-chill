@@ -1,0 +1,8 @@
+[general]
+name=new adventures
+start=41level
+firstlevel=42level
+author=hempuli
+[levels]
+levelid=199
+rolling_levelid=100

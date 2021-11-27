@@ -600,5 +600,68 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_ae",
+        "sprite": "ae",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jony",
+        "sprite": "jony",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hd",
+        "sprite": "text_hd",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nook",
+        "sprite": "nook",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_debt",
+        "sprite": "text_debt",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "snomba",
+        "sprite": "snomba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_snomba",
+        "sprite": "text_snomba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
