@@ -83,13 +83,12 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="undo")
-    async def undo(self, ctx: Context):
+    async def undo(self, ctx: Context, id: int = None):
         '''Deletes the last message sent from the bot.'''
-        if isinstance(ctx.channel, discord.channel.DMChannel):
-            async for m in ctx.channel.history(limit=100):
-                if m.author.id == self.bot.user.id:
-                    await m.delete()
-                    break
+        if id != None:
+            m = ctx.fetch_message(id)
+            if m.author.id == self.bot.user.id:
+                await m.delete()
         else:
             async for m in ctx.channel.history(limit=1):
                 await m.delete()
@@ -105,7 +104,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     break
                 elif n != 0:
                     n += 1
-        await ctx.send('Removed last message.', delete_after=3.0)
+        await ctx.send('Removed message.', delete_after=3.0)
     
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
@@ -124,9 +123,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     ,("-co","Disables randomization of tile wobble.")
                     ,("-gr=int/int","Adds a grid overlay, dimensions being the specified numbers.")
                     ,("-s=float","Upscales the image pre-processing.")
+                    ,("-m=float","Upscales the image post-processing.")
                     ,("-sw","Rotates the stack axis along the x axis. May be useful for debugging large stacks.")
                     ,("-l=int[/int]","Shows only the stack layer or range of stack layers specified. First is inclusive, second is exclusive.")
                     ,("-tb","Makes tiles connect with the edge of the image.")
+                    ,("-crop=int/int/int/int","Crops the render to the specified pixels.")
                     #,("","")
         )
                    

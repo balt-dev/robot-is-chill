@@ -6,8 +6,9 @@ import configparser
 import io
 import re
 import zlib
+import discord
 from dataclasses import dataclass
-from os import listdir
+from os import listdir, mkdir, path
 from typing import Any, BinaryIO, TextIO
 
 import aiohttp
@@ -323,9 +324,13 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         Cuts off borders from rendered levels unless otherwise specified.
         '''
         levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
-
+        
         # Parse and render the level map
         await ctx.send("Loading maps...")
+        if not path.exists(f'target/renders/{world}'):
+            mkdir(f'target/renders/{world}')
+        if not path.exists(f'data/images/{world}'):
+            mkdir(f'data/images/{world}')
         metadatas = {}
         total = len(levels)
         for i,level in enumerate(levels):
@@ -612,12 +617,10 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         grid.height = int.from_bytes(buffer, byteorder="little")
         
         size = grid.width * grid.height
-        if size > 10000:
-            raise ValueError(size)
-        if grid.width > 1000:
-            raise ValueError(size)
-        if grid.height > 1000:
-            raise ValueError(size)
+        if grid.width > 1365:
+            raise ValueError(grid.width,"width")
+        if grid.height > 1365:
+            raise ValueError(grid.height,"height")
         if len(grid.cells) == 0:
             for _ in range(size):
                 grid.cells.append([])
@@ -667,6 +670,70 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 except IndexError:
                     # huh?
                     break
+                
+                
+
+    @commands.command(name="printlevel")
+    @commands.cooldown(1, 7, type=commands.BucketType.channel)
+    async def print_map(self, ctx: Context, source: str, filename: str):
+        '''Loads a level and parses it as a command.'''
+        grid = self.read_map(filename, source=source)
+        grid = await self.read_metadata(grid, initialize_level_tree=True)
+        layers = set()
+        for y, row in enumerate(grid.cells):
+            for x, cell in enumerate(row):
+                layers.add(cell.layer)
+        layers = list(layers)
+        layers.sort()
+        layers = dict([(v,i) for i,v in enumerate(layers)])
+        gridf = [[['' for _ in range(max(layers.values())+1)] for _ in range(grid.width)] for _ in range(grid.height)] #Numpy requires strings to be a fixed length so can't use it
+        def is_adjacent(sprite: str, x: int, y: int) -> bool:
+            valid = (sprite, "edge", "level")
+            if x == 0 or x == grid.width - 1:
+                return True
+            if y == 0 or y == grid.height - 1:
+                return True
+            return any(item.sprite in valid for item in grid.cells[y * grid.width + x])
+        #print(self.bot.handlers.default_fields())
+        #please help how in the fuck do i use this
+        for y, row in enumerate(np.array(grid.cells,dtype=Item).reshape(grid.height,grid.width)):
+            for x, cell in enumerate(row):
+                if not all([len(tile.sprite) == '' for tile in cell]):
+                    for tile in cell:
+                        if tile.tiling in constants.DIRECTION_TILINGS:
+                            variant = tile.direction * 8
+                        elif tile.tiling in constants.AUTO_TILINGS:
+                            variant = (
+                                is_adjacent(tile.sprite, x + 1, y) * 1 +
+                                is_adjacent(tile.sprite, x, y - 1) * 2 +
+                                is_adjacent(tile.sprite, x - 1, y) * 4 +
+                                is_adjacent(tile.sprite, x, y + 1) * 8
+                            )
+                        else:
+                            variant = 0
+                        gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(variant) if variant != 0 else '')
+                        #gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(tile.color) if tile.color != default.color else '') + (";"+str(variant) if variant != 0 else '')
+                else:
+                    gridf[y][x] = ['-']
+        for r, row in enumerate(gridf):
+            b=True
+            if b:
+                for i,cell in enumerate(row):
+                    if all([cell==['-'] for cell in row[i:]]):
+                        gridf[r] = row[:i+1]
+                        b=False
+                        break
+                    for j in range(len(cell)):
+                        if all([tile=='' for tile in cell[j:]]):
+                            gridf[r][i] = cell[:j] if j != 0 else ['-']
+                            break
+            else:
+                continue
+        nl='\n'
+        with io.BytesIO() as b:
+            b.write(bytes(f"-p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridf[1:-1]])}",encoding='utf-8'))
+            b.seek(0)
+            await ctx.send(file=discord.File(b,filename=f'{filename}.txt'))
 
 def setup(bot: Bot):
     bot.add_cog(Reader(bot))

@@ -18,7 +18,7 @@ cogs = [
     "src.cogs.render",
     "src.cogs.variants",
     "src.cogs.utilities",
-    "src.cogs.misc",
+    "src.cogs.level",
     "jishaku"
 ]
 danger_mode = False

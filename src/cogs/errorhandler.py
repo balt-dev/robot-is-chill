@@ -128,6 +128,10 @@ class CommandErrorHandler(commands.Cog):
                 await self.logger.send(embed=emb)
                 return await ctx.error("Invalid function arguments provided. Check the help command for the proper format.")
             
+            elif isinstance(error, AssertionError):
+                await self.logger.send(embed=emb)
+                return await ctx.error(error.args[0])
+            
             elif isinstance(error, commands.BadArgument):
                 await self.logger.send(embed=emb)
                 return await ctx.error(f"Invalid argument provided. Check the help command for the proper format.\nOriginal error:\n{error.args[0]}")

@@ -196,11 +196,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         gridol = None
         random_animations = True
         tborders = False
+        printme = False
+        crop = None
+        upscale = 2
         for flag, x, y in potential_flags:
-            bg_match = re.fullmatch(r"(--background|-b)(=(\d)/(\d))?", flag)
+            bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
-                if bg_match.group(3) is not None:
-                    tx, ty = int(bg_match.group(3)), int(bg_match.group(4))
+                if bg_match.group(1) is not None:
+                    tx, ty = int(bg_match.group(1)), int(bg_match.group(2))
                     if not (0 <= tx <= 7 and 0 <= ty <= 5):
                         return await ctx.error("The provided background color is invalid.")
                     background = tx, ty
@@ -208,15 +211,22 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     background = (0, 4)
                 to_delete.append((x, y))
                 continue
-            flag_match = re.fullmatch(r"(--palette=|-p=|palette:)(\w+)", flag)
+            bg_match2 = re.fullmatch(r"(?:--background|-b)=#([\da-fA-F]{6})", flag)
+            if bg_match2:
+                if bg_match2.group(1) is not None:
+                    background = bg_match2.group(1)
+                to_delete.append((x, y))
+                continue
+            flag_match = re.fullmatch(r"(?:--palette=|-p=|palette:)(\w+)", flag)
             if flag_match:
-                palette = flag_match.group(2)
+                palette = flag_match.group(1)
                 if palette + ".png" not in listdir("data/palettes"):
                     return await ctx.error(f"Could not find a palette with name \"{palette}\".")
                 to_delete.append((x, y))
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
             if raw_match:
-                raw_name = raw_match.group(0) if raw_match.group(0) else None
+                raw_name = raw_match.group(1) if raw_match.group(1) else None
+                upscale = 1
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment(.*)", flag): 
@@ -265,6 +275,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if global_match:
                 global_variant = ':'+global_match.group(1)
                 to_delete.append((x, y))
+            printme_match = re.fullmatch(r"--printme|-printme", flag)
+            if printme_match and await ctx.bot.is_owner(ctx.author):
+                printme = True
+                to_delete.append((x, y))
             con_match = re.fullmatch(r"(?:--consistent|-co)", flag)
             if con_match:
                 random_animations = False
@@ -273,9 +287,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if gridovmatch:
                 gridol = (int(gridovmatch.group(1)),int(gridovmatch.group(2)))
                 to_delete.append((x, y))
+            cropmatch = re.fullmatch(r"(?:--|-)crop=(\d+)\/(\d+)\/(\d+)\/(\d+)", flag)
+            if cropmatch:
+                crop = tuple([*[int(x) for x in cropmatch.groups()]])
+                to_delete.append((x, y))
             gsmatch = re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag)
             if gsmatch:
                 gscale = float(gsmatch.group(1))
+                to_delete.append((x, y))
+            spmatch = re.fullmatch(r"(?:--multiplier|-m)=(-?[01234]?(?:\.\d+)?)", flag)
+            if spmatch:
+                upscale = float(spmatch.group(1))
                 to_delete.append((x, y))
             swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
             if swapmatch:
@@ -358,13 +380,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 palette=palette,
                 background=background, 
                 out=buffer,
-                upscale=not raw_output,
+                upscale=upscale,
                 extra_out=extra_buffer,
                 extra_name=raw_name if raw_output else None, # type: ignore
                 frames=frames,
                 speed=speed,
                 gridol=gridol,
-                scaleddef=gscale
+                scaleddef=gscale,
+                printme=printme,
+                crop=crop
             )
         except errors.TileNotFound as e:
             word = e.args[0]
@@ -734,8 +758,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                             try:
                                 custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query) 
                             except ValueError as e:
-                                size = e.args[0]
-                                return await ctx.error(f"The level code is valid, but the level's width, height or area is too big. ({size})")
+                                return await ctx.error(f"The level code is valid, but the level's {e.args[1]} is too big to fit in a GIF. ({e.args[0]*48} > 65535)")
                             except aiohttp.ClientResponseError as e:
                                 return await ctx.error(f"The Baba Is Bookmark site returned a bad response. Try again later.")
         if custom_level is None:
@@ -826,11 +849,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 url=url[7:]
             if not url.startswith("https://"):
                 url="https://"+url
-            relative=False
+            relative=(query[1] in ("relative","rel"))
             ifilterimage = Image.open(requests.get(url, stream=True).raw).convert("RGBA")
             fil = np.array(ifilterimage)
-            if query[1] in ("relative","rel"):
-                relative = True
             if relative:
                 fil[:,:,0]-=np.arange(fil.shape[0],dtype="uint8")
                 fil[:,:,1]=(fil[:,:,1].T-np.arange(fil.shape[1],dtype="uint8")).T
@@ -855,11 +876,9 @@ URL can be supplied with or without http(s) in this command, since it's not limi
             query=query.split(" ")
             size=query[2].split(",")
             size=int(size[0]),int(size[1])
-            relative=False
+            relative=(query[1] in ("relative","rel"))
             fil = np.zeros(size+(4,),dtype="uint8")
             fil[:,:]=(128,128,255,255)
-            if query[1] in ("relative","rel"):
-                relative = True
             if not relative:
                 fil[:,:,0]+=np.arange(fil.shape[0],dtype="uint8")
                 fil[:,:,1]=(fil[:,:,1].T+np.arange(fil.shape[1],dtype="uint8")).T

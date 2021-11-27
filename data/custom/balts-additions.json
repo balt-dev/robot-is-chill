@@ -466,5 +466,122 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_colon",
+        "sprite": "text_colon",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_summun",
+        "sprite": "text_summun",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bibad",
+        "sprite": "render",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mrld",
+        "sprite": "mrld",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "digin",
+        "sprite": "digin",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ghostcat",
+        "sprite": "dreamvoyager",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "furret",
+        "sprite": "furret",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fullest",
+        "sprite": "fullest",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "adoballs",
+        "sprite": "adoballs",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "cent",
+        "sprite": "CenT",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "baddy",
+        "sprite": "baddy",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bilt",
+        "sprite": "bilt",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "yougold",
+        "sprite": "yougold",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

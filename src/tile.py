@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
+from cv2 import floodFill
 from src.constants import BABA_WORLD
 from typing import TYPE_CHECKING, Literal, TypedDict
 
@@ -11,9 +13,9 @@ from . import errors
 
 if TYPE_CHECKING:
     # @ps-ignore
-    RawGrid = list[list[list['RawTile']]]
-    FullGrid = list[list[list['FullTile']]]
-    GridIndex = tuple[int, int, int]
+    RawGrid = list(list(list('RawTile')))
+    FullGrid = list(list(list('FullTile')))
+    GridIndex = tuple(int, int, int)
 
 @dataclass
 class RawTile:
@@ -29,7 +31,9 @@ class RawTile:
         '''Parse from user input'''
         parts = re.split('[\;,\:]', string)
         if any(len(part) == 0 for part in parts):
-            raise errors.EmptyVariant(parts[0])
+            if string != '':
+                raise errors.EmptyVariant(parts[0])
+            return RawTile('-',[])
         return RawTile(parts[0], parts[1:])
     
     @property
@@ -76,6 +80,8 @@ class TileFields(TypedDict, total=False):
     filterimage: str
     fisheye: float  
     colslice: tuple[int,int] | int | None
+    floodfill: float | None
+    threeoo: float
 
 @dataclass
 class FullTile:
@@ -118,7 +124,9 @@ class FullTile:
     pad: tuple[int,int,int,int] = (0,0,0,0)
     filterimage: str = ""
     fisheye: float = 0
+    floodfill: float | None = None
     colslice: tuple[int,int] | int | None = None
+    threeoo: float = None
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
         '''Create a FullTile from a RawTile and TileFields'''
