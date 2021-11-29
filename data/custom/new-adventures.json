@@ -1,14 +1,5 @@
 [
     {
-        "name": "mpipe",
-        "sprite": "pipe",
-        "color": [
-            "5",
-            "4"
-        ],
-        "tiling": "1"
-    },
-    {
         "name": "text_equal",
         "sprite": "text_equal",
         "color": [
@@ -43,5 +34,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "mpipe",
+        "sprite": "mpipe",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "1"
     }
 ]
