@@ -91,7 +91,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
       btio.seek(0)
       return btio
   
-  @commands.command()
+  @commands.command(aliases=['char'])
   @commands.cooldown(4, 8, type=commands.BucketType.channel)
   async def character(self, ctx: Context, *, seed: str = None):
     '''Generates a random character. (These are bad but I'm not a good spriter lol)'''
