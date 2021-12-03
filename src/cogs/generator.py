@@ -100,6 +100,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
       seed = int(seed)
     except ValueError:
       seed = int.from_bytes(bytes(seed,'utf-8'),'big')
+    except TypeError:
+      seed = None
     rand.seed(seed)
     ears = rand.randint(0,2)
     legs = rand.randint(0,4)
