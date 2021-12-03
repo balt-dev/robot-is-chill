@@ -583,5 +583,23 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "hat",
+        "sprite": "hat",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "crewmate",
+        "sprite": "crewmate",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

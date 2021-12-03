@@ -1,0 +1,56 @@
+[
+    {
+        "name": "this_cursor",
+        "sprite": "this_cursor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "this_cursor_blocked",
+        "sprite": "this_cursor_blocked",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "this_cursor_pass",
+        "sprite": "this_cursor_pass",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_this",
+        "sprite": "text_this",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_block",
+        "sprite": "text_block",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pass2",
+        "sprite": "text_pass",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    }
+]
