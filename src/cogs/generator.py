@@ -93,9 +93,13 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
   
   @commands.command()
   @commands.cooldown(4, 8, type=commands.BucketType.channel)
-  async def character(self, ctx: Context, seed: int = None):
+  async def character(self, ctx: Context, seed = None):
     '''Generates a random character. (These are bad but I'm not a good spriter lol)'''
     rand = self.Random()
+    try:
+      seed = int(seed)
+    except ValueError:
+      seed = int.from_bytes(bytes(seed,'utf-8'),'big')
     rand.seed(seed)
     ears = rand.randint(0,2)
     legs = rand.randint(0,4)
@@ -103,15 +107,15 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
     mouth = bool(rand.randint(0,1))
     color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])
     variant = rand.choice(['smooth','fuzzy','fluffy','polygonal','skinny','belt'])
-    type = rand.choice(['long','tall','curved','round'])
+    typ = rand.choice(['long','tall','curved','round'])
     name = (''.join([rand.choice(['b','c','k','d','f','g','r','p','k','m','n','i','x','l']),(rand.choice(['b','c','k','d','f','g','r','p','k','m','n','i','x','l']) if rand.randint(0,1) else ''),rand.choice(['a','e','i','o','u','y'])])*rand.randint(1,2)).title()
     embed = discord.Embed(
             color = self.bot.embed_color,
             title = name,
-            description = f"{name} is a __**{color}**__, __**{variant}**__, __**{type}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__, and' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
+            description = f"{name} is a __**{color}**__, __**{variant}**__, __**{typ}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__, and' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
         )
     embed.set_footer(text=f'Seed: {rand.get_seed()}')
-    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,type,rand),filename='generated.png')
+    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename='generated.png')
     await ctx.send(embed=embed,file=file)
   
 def setup(bot: Bot):
