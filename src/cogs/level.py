@@ -8,7 +8,7 @@ from io import BytesIO
 from discord.ext import commands
 from ..types import Bot, Context
 
-class LevelCog(commands.Cog, name="Level Manipulation Commands"):
+class LevelCog(commands.Cog, name="Generation Commands"):
   def __init__(self, bot: Bot):
     self.bot = bot
   @commands.command()
