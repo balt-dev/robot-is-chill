@@ -29,7 +29,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                 a = int.from_bytes(_urandom(8), 'big')
               except NotImplementedError:
                 import time
-                a = int(time.time() * 256)%(2^64) # use fractional seconds
+                a = int(time.time() * 256)%(2**64) # use fractional seconds
           self._current_seed = a
           super().seed(a)
       def get_seed(self):
@@ -93,13 +93,13 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
   
   @commands.command()
   @commands.cooldown(4, 8, type=commands.BucketType.channel)
-  async def character(self, ctx: Context, seed = None):
+  async def character(self, ctx: Context, *, seed: str = None):
     '''Generates a random character. (These are bad but I'm not a good spriter lol)'''
     rand = self.Random()
     try:
       seed = int(seed)
     except ValueError:
-      seed = int.from_bytes(bytes(seed,'utf-8'),'big')
+      seed = int.from_bytes(bytes(seed,'utf-8'),'big')%(2**64)
     except TypeError:
       seed = None
     rand.seed(seed)
@@ -117,7 +117,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             description = f"{name} is a __**{color}**__, __**{variant}**__, __**{typ}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__, and' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
         )
     embed.set_footer(text=f'Seed: {rand.get_seed()}')
-    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename='generated.png')
+    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename=f'{name}-{seed}.png')
     await ctx.send(embed=embed,file=file)
   
 def setup(bot: Bot):
