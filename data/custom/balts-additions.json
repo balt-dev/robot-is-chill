@@ -601,5 +601,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "fbufbu",
+        "sprite": "fbufbu",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

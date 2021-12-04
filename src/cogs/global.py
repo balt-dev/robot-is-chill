@@ -412,7 +412,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
-        description=ctx.message.content
+        description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','')}`{'||' if spoiler else ''}"
         embed = discord.Embed(
             color = self.bot.embed_color,
             title = discord.Embed.Empty,
@@ -441,9 +441,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         embed.add_field(name="Render statistics", value=stats)
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
-            await ctx.reply(f'`{description[:1998]}`', embed=embed, files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
+            await ctx.reply(description[:2000], embed=embed, files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
         else:
-            await ctx.reply(f'`{description[:1998]}`', embed=embed, file=image)
+            await ctx.reply(description[:2000], embed=embed, file=image)
         
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
