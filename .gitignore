@@ -10,3 +10,4 @@ robot.db-shm
 run.sh
 **/__pycache__/**
 src/cogs/secret.py
+webhooks.py
