@@ -44,7 +44,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         self.resumes = []
         # Are assets loading?
         self.bot.loading = False
-            
+    
     @commands.command()
     @commands.is_owner()
     async def danger(self, ctx: Context, cog: str = ""):

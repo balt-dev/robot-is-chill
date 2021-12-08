@@ -103,18 +103,22 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
     except TypeError:
       seed = None
     rand.seed(seed)
-    ears = rand.randint(0,2)
-    legs = rand.randint(0,4)
-    eyes = rand.randint(0,6)
-    mouth = bool(rand.randint(0,1))
+    ears = rand.choice([0,0,0,1,2,2,2,2])
+    legs = rand.choice([0,0,1,2,2,2,3])
+    eyes = rand.choice([0,0,1,2,2,2,2,2,3,4,5,6])
+    mouth = rand.random() > 0.75
     color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])
     variant = rand.choice(['smooth','fuzzy','fluffy','polygonal','skinny','belt'])
     typ = rand.choice(['long','tall','curved','round'])
-    name = (''.join([rand.choice(['b','c','k','d','f','g','r','p','k','m','n','i','x','l']),(rand.choice(['b','c','k','d','f','g','r','p','k','m','n','i','x','l']) if rand.randint(0,1) else ''),rand.choice(['a','e','i','o','u','y'])])*rand.randint(1,2)).title()
+    a = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','th','ph','cr','gr','tr','br','dr','pr','bl','sl','pl','cl','gl','fl','sk','sp','st','sn','sm','sw'])
+    b = rand.choice(['a','e','i','o','u','ei','oi','ea','ou','ai','au','bu'])
+    c = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
+
+    name = rand.choice([a+b+a+b,a+b,a+b+c,b+c,a+c+b,a+c+b+a+c+b,b+c+b+c,a+b+c+a+b+c,b+a]).title()
     embed = discord.Embed(
             color = self.bot.embed_color,
             title = name,
-            description = f"{name} is a __**{color}**__, __**{variant}**__, __**{typ}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__, and' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
+            description = f"{name} is a __**{color}**__, __**{variant}**__, __**{typ}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
         )
     embed.set_footer(text=f'Seed: {rand.get_seed()}')
     file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename=f'{name}-{seed}.png')

@@ -610,5 +610,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "nope",
+        "sprite": "nope",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

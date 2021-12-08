@@ -16,6 +16,7 @@ from PIL import Image
 
 import auth
 import config
+import webhooks
 from src.constants import DIRECTIONS
 from src.db import Database
 
@@ -77,7 +78,7 @@ class Bot(commands.Bot):
     async def on_ready(self) -> None:
         await self.db.connect(self.db_path)
         print(f"Logged in as {self.user}!")
-        await self.bot.change_presence(status=discord.Status.online)
+        await self.change_presence(status=discord.Status.online)
 
 logging.basicConfig(filename=config.log_file, level=logging.WARNING)
 
@@ -102,10 +103,22 @@ bot = Bot(
     # custom fields
     cogs=config.cogs,
     embed_color=config.embed_color,
-    webhook_id=config.webhook_id,
+    webhook_id=webhooks.webhook_id,
     prefixes=config.prefixes,
     db_path=config.db_path
 )
+
+@bot.event
+async def on_command(ctx):
+    webhook = await bot.fetch_webhook(webhooks.logging_id)
+    embed = discord.Embed(
+        title = discord.Embed.Empty,
+        description = (ctx.message.content),
+        color=0xffffff
+    )
+    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', url=discord.Embed.Empty, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text=str(ctx.author.id))
+    await webhook.send(embed=embed)
 
 bot.run(auth.token)
 sys.exit(bot.exit_code)
