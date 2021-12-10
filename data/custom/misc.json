@@ -663,5 +663,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "cowke",
+        "sprite": "cowke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "3"
     }
 ]
