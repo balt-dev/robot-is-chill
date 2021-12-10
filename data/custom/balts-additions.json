@@ -619,5 +619,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "platform",
+        "sprite": "platform",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
