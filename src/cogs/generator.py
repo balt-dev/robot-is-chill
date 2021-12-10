@@ -113,7 +113,6 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
     a = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','th','ph','cr','gr','tr','br','dr','pr','bl','sl','pl','cl','gl','fl','sk','sp','st','sn','sm','sw'])
     b = rand.choice(['a','e','i','o','u','ei','oi','ea','ou','ai','au','bu'])
     c = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
-
     name = rand.choice([a+b+a+b,a+b,a+b+c,b+c,a+c+b,a+c+b+a+c+b,b+c+b+c,a+b+c+a+b+c,b+a]).title()
     embed = discord.Embed(
             color = self.bot.embed_color,
@@ -121,7 +120,9 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             description = f"{name} is a __**{color}**__, __**{variant}**__, __**{typ}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
         )
     embed.set_footer(text=f'Seed: {rand.get_seed()}')
-    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename=f'{name}-{seed}.png')
+    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,typ,rand),filename=f'{name}-{rand.get_seed()}.png')
+    embed.set_image(url=f'attachment://{name}-{rand.get_seed()}.png')
+    #note to self: it's literally this easy what are you doing
     await ctx.send(embed=embed,file=file)
   
 def setup(bot: Bot):
