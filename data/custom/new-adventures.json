@@ -43,5 +43,14 @@
             "4"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "mbaba",
+        "sprite": "mbaba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

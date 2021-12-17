@@ -11,7 +11,7 @@ from discord.ext import commands
 import requests 
 
 from ..types import Bot, Context
-
+from .. import errors
 
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot: Bot):
@@ -134,7 +134,7 @@ class CommandErrorHandler(commands.Cog):
             
             elif isinstance(error, commands.BadArgument):
                 await self.logger.send(embed=emb)
-                return await ctx.error(f"Invalid argument provided. Check the help command for the proper format.\nOriginal error:\n{error.args[0]}")
+                return await ctx.error(f"Invalid argument provided. Check the help command for the proper format.")
 
             elif isinstance(error, commands.ArgumentParsingError):
                 await self.logger.send(embed=emb)
@@ -159,6 +159,8 @@ class CommandErrorHandler(commands.Cog):
 
             elif isinstance(error, requests.exceptions.ConnectionError):
                 return await ctx.error('A given link for the filterimage was invalid.')
+            elif isinstance(error, errors.OverlayNotFound):
+                return await ctx.error(f'The overlay `{error}` does not exist.')
             # All other Errors not returned come here... And we can just print the default TraceBack + log
             if os.name=="nt":
                 trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")

@@ -673,7 +673,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 
                 
 
-    @commands.command(name="printlevel")
+    @commands.command(name="printlevel",hidden=False)
     @commands.cooldown(1, 7, type=commands.BucketType.channel)
     async def print_map(self, ctx: Context, source: str, filename: str):
         '''Loads a level and parses it as a command.'''
@@ -716,19 +716,13 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 else:
                     gridf[y][x] = ['-']
         for r, row in enumerate(gridf):
-            b=True
-            if b:
-                for i,cell in enumerate(row):
-                    if all([cell==['-'] for cell in row[i:]]):
-                        gridf[r] = row[:i+1]
-                        b=False
+            for i,cell in enumerate(row):
+                if all([cell==['-'] for cell in row[i:]]) and r != 0:
+                    gridf[r] = row[:i+1]
+                for j in range(len(cell)):
+                    if all([tile=='' for tile in cell[j:]]):
+                        gridf[r][i] = cell[:j] if j != 0 else ['-']
                         break
-                    for j in range(len(cell)):
-                        if all([tile=='' for tile in cell[j:]]):
-                            gridf[r][i] = cell[:j] if j != 0 else ['-']
-                            break
-            else:
-                continue
         nl='\n'
         with io.BytesIO() as b:
             b.write(bytes(f"-p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridf[1:-1]])}",encoding='utf-8'))

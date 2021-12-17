@@ -487,7 +487,7 @@ class Renderer:
                     else:
                         rgb = np.array(overlay)/255
                 except FileNotFoundError:
-                    raise errors.OverlayNotFound("Couldn't apply overlay: overlay not found")
+                    raise errors.OverlayNotFound(tile.overlay)
                 ovsprite = np.array(sprite).astype("float64")
                 ovsprite*=rgb[:ovsprite.shape[0],:ovsprite.shape[1]]
                 ovsprite=(ovsprite).astype("uint8")
@@ -964,34 +964,38 @@ class Renderer:
                         out[y,x] = im[y,x]
                             
             sprite = Image.fromarray(out)
-        if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
-            if original_style == "property":
-                # box: position of upper-left coordinate of "inner text" in the larger text tile
-                plate, box = self.bot.db.plate(original_direction, wobble)
-                plate_alpha = ImageChops.invert(plate.getchannel("A"))
-                sprite_alpha = ImageChops.invert(sprite.getchannel("A"))
-                alpha = ImageChops.subtract(sprite_alpha, plate_alpha)
-                sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
-                sprite = sprite.crop((box[0], box[1], constants.DEFAULT_SPRITE_SIZE + box[0], constants.DEFAULT_SPRITE_SIZE + box[1]))
-            if style == "property":
-                plate, box = self.bot.db.plate(direction, wobble)
-                if scale != (1,1):
-                    plate = plate.resize((int(math.floor(plate.width*scale[0])),int(math.floor(plate.height*scale[1]))), resample=Image.NEAREST) 
-                plate = self.make_meta(plate, meta_level)
-                plate_alpha = plate.getchannel("A")
-                sprite_alpha = sprite.getchannel("A").crop(
-                    (-meta_level, -meta_level, sprite.width + meta_level, sprite.height + meta_level)
-                )
-                sprite_alpha = sprite_alpha.crop(
-                    (-box[0], -box[0], sprite_alpha.width + box[0], sprite_alpha.height + box[1])
-                )
-                if meta_level % 2 == 0:
-                    alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
+        def meta():
+            nonlocal meta_level,original_style,style,direction,original_direction,sprite
+            if meta_level != 0 or original_style != style or (style == "property" and original_direction != direction):
+                if original_style == "property":
+                    # box: position of upper-left coordinate of "inner text" in the larger text tile
+                    plate, box = self.bot.db.plate(original_direction, wobble)
+                    plate_alpha = ImageChops.invert(plate.getchannel("A"))
+                    sprite_alpha = ImageChops.invert(sprite.getchannel("A"))
+                    alpha = ImageChops.subtract(sprite_alpha, plate_alpha)
+                    sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
+                    sprite = sprite.crop((box[0], box[1], constants.DEFAULT_SPRITE_SIZE + box[0], constants.DEFAULT_SPRITE_SIZE + box[1]))
+                if style == "property":
+                    plate, box = self.bot.db.plate(direction, wobble)
+                    if scale != (1,1):
+                        plate = plate.resize((int(math.floor(plate.width*scale[0])),int(math.floor(plate.height*scale[1]))), resample=Image.NEAREST) 
+                    plate = self.make_meta(plate, meta_level)
+                    plate_alpha = plate.getchannel("A")
+                    sprite_alpha = sprite.getchannel("A").crop(
+                        (-meta_level, -meta_level, sprite.width + meta_level, sprite.height + meta_level)
+                    )
+                    sprite_alpha = sprite_alpha.crop(
+                        (-box[0], -box[0], sprite_alpha.width + box[0], sprite_alpha.height + box[1])
+                    )
+                    if meta_level % 2 == 0:
+                        alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
+                    else:
+                        alpha = ImageChops.add(plate_alpha, sprite_alpha)
+                    sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
                 else:
-                    alpha = ImageChops.add(plate_alpha, sprite_alpha)
-                sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
-            else:
-                sprite = self.make_meta(sprite, meta_level)
+                    sprite = self.make_meta(sprite, meta_level)
+        if not any([x<1 for x in scale]):
+            meta()
         if any(crop):
             cropped = sprite.crop((crop[0],crop[1],crop[0]+crop[2],crop[1]+crop[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
@@ -999,6 +1003,8 @@ class Renderer:
             sprite = im
         if scale != (1,1):
             sprite = sprite.resize((math.floor(sprite.width*scale[0]),math.floor(sprite.height*scale[1])), resample=Image.NEAREST)
+        if any([x<1 for x in scale]):
+            meta()
         if pixelate > 1:
             wid,hgt = sprite.size
             sprite = sprite.resize((math.floor(sprite.width/pixelate),math.floor(sprite.height/pixelate)), resample=Image.NEAREST)

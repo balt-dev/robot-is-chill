@@ -628,5 +628,32 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "fbufbu_old",
+        "sprite": "oldfbufbu",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "beba",
+        "sprite": "beba",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus",
+        "sprite": "cactus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
