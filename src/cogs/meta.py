@@ -131,7 +131,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
                 "\n**Credits**\n> Original written by RocketRace#0798\n> Maintained and modded by balt#6423\n> More advanced stuff by CenTdemeern1#3610"
             ])
         )
-        about_embed.add_field(name="Links", value="[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n"
+        about_embed.add_field(name="Links", value="[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n[Support guild](https://discord.gg/3DsEJgWQhd)"
         )
         ut = datetime.utcnow() - self.bot.started
         stats = "".join([
@@ -164,7 +164,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def invite(self, ctx: Context):
         '''Links for the bot support server'''
-        msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite.](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)"
+        msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite.](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)\n*__Don't invite the bot to a private server only you're in.\nJust DM the bot!__*"
         )
         await ctx.send(embed=msg)
     

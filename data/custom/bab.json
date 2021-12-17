@@ -619,5 +619,50 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "metl",
+        "sprite": "metl",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "prop",
+        "sprite": "prop",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "robobot",
+        "sprite": "robobot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "infloop",
+        "sprite": "infloop",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "plsdont",
+        "sprite": "plsdont",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

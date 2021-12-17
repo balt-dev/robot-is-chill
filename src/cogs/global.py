@@ -295,9 +295,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if gsmatch:
                 gscale = float(gsmatch.group(1))
                 to_delete.append((x, y))
-            spmatch = re.fullmatch(r"(?:--multiplier|-m)=(-?[01234]?(?:\.\d+)?)", flag)
+            spmatch = re.fullmatch(r"(?:(?:--multiplier)|(?:-m))=((?:\d?)?(?:\.\d+)?)", flag)
             if spmatch:
-                upscale = float(spmatch.group(1))
+                upscale = max(float(spmatch.group(1)),5)
                 to_delete.append((x, y))
             swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
             if swapmatch:

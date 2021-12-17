@@ -1,0 +1,47 @@
+[
+    {
+        "name": "text_%",
+        "sprite": "text_percent",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pressdown",
+        "sprite": "text_pressdown",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pressleft",
+        "sprite": "text_pressleft",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pressright",
+        "sprite": "text_pressright",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pressup",
+        "sprite": "text_pressup",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

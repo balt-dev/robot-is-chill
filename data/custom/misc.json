@@ -224,7 +224,7 @@
         ]
     },
     {
-        "name": "cactus",
+        "name": "cactus2",
         "sprite": "cactus",
         "tiling": "-1",
         "color": [
@@ -672,5 +672,14 @@
             "3"
         ],
         "tiling": "3"
+    },
+    {
+        "name": "text_oe",
+        "sprite": "text_oe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
