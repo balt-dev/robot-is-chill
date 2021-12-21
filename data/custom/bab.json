@@ -664,5 +664,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kva",
+        "sprite": "kva",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

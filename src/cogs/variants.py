@@ -823,7 +823,7 @@ def setup(bot: Bot):
         return{
             "floodfill": float(ctx.groups[0] or 0)
         }
-
+    
     @handlers.handler(
         pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
         variant_hints={"fisheye": "`fisheye[n]` (Applies fisheye effect. n is intensity, defaulting to 0.5.)"},
