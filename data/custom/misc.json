@@ -681,5 +681,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ingot",
+        "sprite": "ingot",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

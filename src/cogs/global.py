@@ -98,7 +98,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             )
         elif isinstance(err, errors.UnknownVariant):
             return await ctx.error(
-                f"The variant `{variant}` is not valid."
+                f"There isn't a variant called `{variant}`."
             )
         else:
             return await ctx.error(f"{msg}.")

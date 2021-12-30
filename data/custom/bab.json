@@ -669,6 +669,42 @@
         "name": "kva",
         "sprite": "kva",
         "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "colld",
+        "sprite": "colld",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_colld",
+        "sprite": "text_colld",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "therealbabdictator",
+        "sprite": "therealbabdictator",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ditto",
+        "sprite": "ditto",
+        "color": [
             "0",
             "3"
         ],

@@ -16,5 +16,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "arrow2",
+        "sprite": "arrow2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
