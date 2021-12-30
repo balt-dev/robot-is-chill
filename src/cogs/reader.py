@@ -326,7 +326,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
         
         # Parse and render the level map
-        await ctx.send("Loading maps...")
+        message = await ctx.reply("Loading maps...")
         if not path.exists(f'target/renders/{world}'):
             mkdir(f'target/renders/{world}')
         if not path.exists(f'data/images/{world}'):
@@ -355,10 +355,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             metadatas[level] = metadata
             await asyncio.sleep(0)
             if i and i % 10 == 0:
-                await ctx.send(f"{i}/{total}")
-        await ctx.send(f"{total}/{total} maps loaded.")
+                percent = int((i/total)*100)
+                loadbar = '[' + ('#'*int((percent//2.5))) + (' '*(40-int(percent//2.5))) + ']'
+                await message.edit(content=f"Loading maps... {i}/{total}\n`{loadbar}` ({percent}% done)")
+        await message.edit(content=f"All maps loaded.\nUpdating database...")
         await self.clean_metadata(metadatas)
-        await ctx.send(f"{ctx.author.mention} Database updated. Done.")
+        await message.reply(content=f"{ctx.author.mention} Database updated. Done.",mention_author=False)
 
     def read_objects(self) -> None:
         '''Inner function that parses the contents of the data/values.lua file.
