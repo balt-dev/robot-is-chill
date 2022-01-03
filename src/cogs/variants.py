@@ -747,12 +747,12 @@ def setup(bot: Bot):
     return add(ctx,'invert',True)
     
   @handlers.handler(
-    pattern=r"grayscale|gscale",
+    pattern=r"(?:grayscale|gscale)(?:([\d\.]+))?",
     variant_hints={"grayscale": "`grayscale` (Forces raw sprite to be grayscale.)"},
     variant_group="Filters"
   )
   def grayscale(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'grayscale',True)
+    return {'grayscale': float(ctx.groups[0] or 0)}
       
   @handlers.handler(
     pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",

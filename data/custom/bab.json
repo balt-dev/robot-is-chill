@@ -709,5 +709,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bup",
+        "sprite": "bup",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "temmi",
+        "sprite": "temmi",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

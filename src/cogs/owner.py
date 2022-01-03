@@ -84,16 +84,40 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
+    async def editsprite(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
+        if attribute not in ['sprite','tiling','color']:
+            return await ctx.error('You specified an invalid attribute.')
+        if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
+            return await ctx.error('You specified an invalid value.')
+        if attribute == 'color':
+            value = [value,value2]
+        with open(f"data/custom/{pack_name}.json", "r") as f:
+            sprite_data = json.load(f)
+        for i in range(len(sprite_data)):
+            if sprite_data[i]['name'] == sprite_name: #this is dumb
+                sprite_data[i][attribute] = value
+        with open(f"data/custom/{pack_name}.json", "w") as f:
+            json.dump(sprite_data, f, indent=4)
+        return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
+        
+    @commands.command()
+    @commands.is_owner()
     async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
         '''Adds sprites to a specified sprite pack'''
-        zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
+        try:
+            zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
+        except IndexError:
+            return await ctx.error('You forgot to attach a zip.')
         dir = zip.namelist()[0]
-        file_name = re.match(r'(?:.+/)?(.+?)(?:\_\d)*\.png', dir).groups()[0]   
+        file_name = re.match(r'(.+?)_\d+?_\d\.png', dir).groups()[0]   
         for name in zip.namelist():
             sprite = zip.read(name)
             path = name.split("/")[-1]
-            with open(f"data/sprites/{pack_name}/{path}", "wb") as f:
-                f.write(sprite)
+            try:
+                with open(f"data/sprites/{pack_name}/{path}", "wb") as f:
+                    f.write(sprite)
+            except FileNotFoundError:
+                return await ctx.error('That isn\'t a valid sprite directory.')
         with open(f"data/custom/{pack_name}.json", "r") as f:
             sprite_data = json.load(f)
         sprite_data.append({

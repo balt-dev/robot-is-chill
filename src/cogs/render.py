@@ -466,6 +466,10 @@ class Renderer:
                 bsprite[bsprite>255]=255
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
+            if tile.grayscale != 0:
+                sprite_g = np.array(sprite.convert('LA').convert("RGBA"),dtype=np.uint8)
+                sprite_n = np.array(sprite,dtype=np.uint8)
+                sprite = Image.fromarray(np.array(np.round((sprite_g*tile.grayscale) + (sprite_n*(1-tile.grayscale))),dtype=np.uint8))
             if tile.filterimage != "":
                 url=tile.filterimage
                 absolute = False
@@ -946,8 +950,6 @@ class Renderer:
             sprite = Image.fromarray(scan(np.array(sprite).swapaxes(0,1),filter[1]).swapaxes(0,1))
         elif filter[0] == 'invert':
             sprite = Image.fromarray(np.dstack((~np.array(sprite)[:,:,:3],np.array(sprite)[:,:,3])))
-        elif filter[0] == 'grayscale':
-            sprite = sprite.convert('LA').convert("RGBA")
         elif filter[0] == 'reverse':
             raise AssertionError('> `:reverse`\ni\'m too tired to implement this now i\'ll do it later -balt')
         #    im = np.array(sprite)

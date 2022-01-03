@@ -61,6 +61,7 @@ class TileFields(TypedDict, total=False):
 		negative: bool
 		hueshift: float
 		brightness: float
+		grayscale: float
 		filterimage: str
 		displace: tuple
 		'''
@@ -108,6 +109,7 @@ class FullTile:
 		blending: str = None
 		palette: str = ""
 		overlay: str = ""
+		grayscale: float = 0
 		filters: dict = field(default_factory = dict)
 		negative: bool = False
 		hueshift: float = 0
