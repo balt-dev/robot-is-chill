@@ -1,4 +1,4 @@
-# Robot is chill
+# Robot Is Chill
 
 ---
 
@@ -12,3 +12,6 @@ https://github.com/RocketRace/robot-is-you#readme
 * More sprites!
 * More filters!
 * More commands!
+
+
+(i tend to put the literal least significant changes in the commit messages so keep that in mind)
