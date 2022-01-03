@@ -690,5 +690,32 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "billiam",
+        "sprite": "billiam",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "mage",
+        "sprite": "mage",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_billiam",
+        "sprite": "text_billiam",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
