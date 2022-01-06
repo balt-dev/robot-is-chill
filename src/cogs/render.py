@@ -966,7 +966,8 @@ class Renderer:
             im_inverted = np.zeros(im.shape,dtype=np.uint8)
             for y, row in enumerate(im):
                 for x, pixel in enumerate(row):
-                    im_inverted[y,x] = inttocolor(colors[colors_inverted.index(colortoint(pixel))])
+                    if pixel[3] != 0:
+                        im_inverted[y,x] = inttocolor(colors[colors_inverted.index(colortoint(pixel))])
             sprite = Image.fromarray(im_inverted)
         elif filter[0] == 'fisheye' and filter[1] != 0:
             spritefish = fish.fish(np.array(sprite),filter[1])
