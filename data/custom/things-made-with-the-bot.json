@@ -52,5 +52,14 @@
             "3"
         ],
         "tiling": 0
+    },
+    {
+        "name": "hfofo",
+        "sprite": "hfofo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

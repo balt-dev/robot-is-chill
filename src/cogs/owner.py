@@ -98,6 +98,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 sprite_data[i][attribute] = value
         with open(f"data/custom/{pack_name}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)
+        await self.load_custom_tiles()
         return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
         
     @commands.command()

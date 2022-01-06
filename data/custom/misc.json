@@ -717,5 +717,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_bridge",
+        "sprite": "render",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

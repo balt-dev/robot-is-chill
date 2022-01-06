@@ -179,7 +179,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "happyerror",
         "sprite": "errorhappy",
         "tiling": "-1",
@@ -673,5 +673,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "line2",
+        "sprite": "line2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
