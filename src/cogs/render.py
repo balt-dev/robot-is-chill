@@ -818,6 +818,8 @@ class Renderer:
             if ((i+off)%(inv+vis))>=vis:
                 spritenumpyscan[i]=0
         return spritenumpyscan
+      def avg(*args):
+          return sum(args)/len(args)
       if style == 'property': #properties are so weird 
         print(original_style)
         if original_style != "property":
@@ -852,6 +854,22 @@ class Renderer:
             h,w,_ = sprite.shape
             assert h <= 24 and w <= 24, 'Image too large for 3oo filter!'
             sprite = Image.fromarray(seamcarving.seam_carve(sprite,(sprite.shape[0]//filter[1],sprite.shape[1]//filter[1]))).resize((w,h),Image.NEAREST)
+        elif filter[0] == 'normalize':
+            sprite = np.array(sprite,dtype=np.uint8)
+            minx, miny = sprite.shape[:2]
+            maxx, maxy = (0,0)
+            for y, row in enumerate(sprite):
+                for x, cell in enumerate(row):
+                    if cell[3] != 0:
+                        minx = min(x,minx)
+                        miny = min(y,miny)
+                        maxx = max(x,maxx)
+                        maxy = max(y,maxy)
+            center = (int(avg(miny,maxy)),int(avg(minx,maxx)))
+            absolute_center = [n//2 for n in sprite.shape[:2]]
+            displacement = [(a-b)-1 for a,b in zip(absolute_center,center)]
+            print(displacement,absolute_center,center,(miny,minx),(maxy,maxx))
+            sprite = Image.fromarray(np.roll(sprite,displacement[::-1],(1,0))) 
         elif filter[0] == 'pad' and any(filter[1]):
             sprite = Image.fromarray(np.pad(np.array(sprite),((filter[1][1],filter[1][3]),(filter[1][0],filter[1][2]),(0,0))))
         elif filter[0] == 'floodfill' and type(filter[1]) == float:

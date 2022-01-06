@@ -834,8 +834,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Only the author should be mentioned
         mentions = discord.AllowedMentions(everyone=False, users=[ctx.author], roles=False)
 
+        # Embed the level
+        embed = discord.Embed(
+            color = self.bot.embed_color,
+            title = discord.Embed.Empty,
+            description = formatted
+        )
+        embed.set_image(url=f'attachment://{gif.filename}')
         # Send the result
-        await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
+        await ctx.reply(file=gif, embed=embed, allowed_mentions=mentions)
     
     @commands.command(aliases=["filterimages","fi"])
     @commands.cooldown(5, 8, commands.BucketType.channel)

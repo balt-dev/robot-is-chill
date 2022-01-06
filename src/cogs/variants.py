@@ -745,6 +745,14 @@ def setup(bot: Bot):
   )
   def invert(ctx: HandlerContext) -> TileFields:
     return add(ctx,'invert',True)
+
+  @handlers.handler(
+    pattern=r"normalize|norm",
+    variant_hints={"norm": "`norm` (Moves the sprite to the center of its bounding box.)"},
+    variant_group="Filters"
+  )
+  def normalize(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'normalize',True)
     
   @handlers.handler(
     pattern=r"(?:grayscale|gscale)(?:([\d\.]+))?",
@@ -752,7 +760,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def grayscale(ctx: HandlerContext) -> TileFields:
-    return {'grayscale': float(ctx.groups[0] or 0)}
+    return {'grayscale': float(ctx.groups[0] or 1)}
       
   @handlers.handler(
     pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
