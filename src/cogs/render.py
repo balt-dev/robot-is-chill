@@ -951,20 +951,23 @@ class Renderer:
         elif filter[0] == 'invert':
             sprite = Image.fromarray(np.dstack((~np.array(sprite)[:,:,:3],np.array(sprite)[:,:,3])))
         elif filter[0] == 'reverse':
-            raise AssertionError('> `:reverse`\ni\'m too tired to implement this now i\'ll do it later -balt')
-        #    im = np.array(sprite)
-        #    colors = []
-        #    for x in range(im.shape[1]):
-        #        for y in range(im.shape[0]):
-        #            if im[y,x,3] > 0 :
-        #                colors.append(tuple(im[y,x]))
-        #    colorssort = [n[0] for n in collections.Counter(colors).most_common()]
-        #    out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-        #    for x in range(im.shape[1]):
-        #        for y in range(im.shape[0]):
-        #            if tuple(im[y,x]) in colorssort:
-        #                out[y,x] = colorssort[::-1][colorssort.index(im[y,x])]
-        #    sprite = Image.fromarray(out)
+            im = np.array(sprite.convert('RGBA'),dtype=np.uint8)
+            def colortoint(a):
+                return int.from_bytes(bytearray(a),byteorder='big')
+            def inttocolor(a):
+                return np.array(tuple(a.to_bytes(byteorder='big',length=4)))
+            colors = []
+            for y, row in enumerate(im):
+                for x, pixel in enumerate(row):
+                    if pixel[3] != 0:
+                        colors.append(colortoint(pixel))
+            colors = [a for a,_ in Counter(colors).most_common()]
+            colors_inverted = colors[::-1]
+            im_inverted = np.zeros(im.shape,dtype=np.uint8)
+            for y, row in enumerate(im):
+                for x, pixel in enumerate(row):
+                    im_inverted[y,x] = inttocolor(colors[colors_inverted.index(colortoint(pixel))])
+            sprite = Image.fromarray(im_inverted)
         elif filter[0] == 'fisheye' and filter[1] != 0:
             spritefish = fish.fish(np.array(sprite),filter[1])
             sprite = Image.fromarray(spritefish)
