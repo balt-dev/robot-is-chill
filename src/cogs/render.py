@@ -911,9 +911,7 @@ class Renderer:
               if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
                 out[y,x] = im[y,x]    
           sprite = Image.fromarray(out)
-        elif filter[0] == 'meta_level':
-            print('aaaaaaa')
-            if filter[1] != 0:
+        elif filter[0] == 'meta_level' and filter[1] != 0:
                 sprite = self.make_meta(sprite, filter[1])
         elif filter[0] == 'crop' and any(filter[1]):
             cropped = sprite.crop((filter[1][0],filter[1][1],filter[1][0]+filter[1][2],filter[1][1]+filter[1][3]))
@@ -979,7 +977,7 @@ class Renderer:
                 for x, pixel in enumerate(row):
                     if pixel[3] != 0:
                         colors.append(colortoint(pixel))
-            colors = [a for a,_ in Counter(colors).most_common()]
+            colors = [a for a,_ in collections.Counter(colors).most_common()]
             colors_inverted = colors[::-1]
             im_inverted = np.zeros(im.shape,dtype=np.uint8)
             for y, row in enumerate(im):
