@@ -96,14 +96,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             h = ctx.channel.history(limit=100)
             async for m in h:
                 if m.author.id == self.bot.user.id or n != 0:
-                    await m.delete()
+                    try:
+                        await m.delete()
+                    except:
+                        pass
                     time.sleep(0.1)
-                    if n == 0:
-                        n += 1
+                    n += 1
                 if n == 2:
                     break
-                elif n != 0:
-                    n += 1
         await ctx.send('Removed message.', delete_after=3.0)
     
     @commands.command()
