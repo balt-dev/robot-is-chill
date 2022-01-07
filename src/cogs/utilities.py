@@ -91,7 +91,10 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 await m.delete()
         else:
             async for m in ctx.channel.history(limit=1):
-                await m.delete()
+                try:
+                    await m.delete()
+                except:
+                    pass
             n = 0
             h = ctx.channel.history(limit=100)
             async for m in h:
