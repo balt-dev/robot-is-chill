@@ -611,25 +611,33 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def loadletters(self, ctx: Context):
         '''Scrapes individual letters from vanilla sprites.'''
         ignored = json.load(open("config/letterignore.json"))
-        for row in await self.bot.db.conn.fetchall(
+        fetch = await self.bot.db.conn.fetchall(
             f'''
             SELECT * FROM tiles
             WHERE sprite LIKE "text\\___%" ESCAPE "\\"
                 AND source == {repr(constants.BABA_WORLD)}
                 AND text_direction IS NULL;
             '''
-        ):
+        )
+        for i, row in enumerate(fetch):
             data = TileData.from_row(row)
             if data.sprite not in ignored:
                 await self.load_letter(
                     data.sprite, 
                     data.text_type # type: ignore
                 )
+            print(i/len(fetch))
 
         await self.load_ready_letters()
 
         await ctx.send("Letters loaded.")
 
+    @commands.command()
+    @commands.is_owner()
+    async def loadreadyletters(self, ctx: Context):
+        await self.load_ready_letters()
+        await ctx.send("Ready letters loaded.")
+        
     async def load_letter(self, word: str, tile_type: int):
         '''Scrapes letters from a sprite.'''
         chars = word[5:] # Strip "text_" prefix
