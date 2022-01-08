@@ -1033,5 +1033,3 @@ database [...]```""")
 
 def setup(bot: Bot):
     bot.add_cog(GlobalCog(bot))
-
-#testing webhook

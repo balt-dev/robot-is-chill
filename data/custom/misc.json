@@ -718,11 +718,11 @@
         ],
         "tiling": "-1"
     },
-    {
-        "name": "text_bridge",
-        "sprite": "render",
+	{
+        "name": "🔰",
+        "sprite": "🔰",
         "color": [
-            "2",
+            "0",
             "3"
         ],
         "tiling": "-1"

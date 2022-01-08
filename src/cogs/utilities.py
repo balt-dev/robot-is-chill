@@ -140,7 +140,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             description="\n".join([f'`{a}`: {b}' for a,b in flaglist]))
         return await ctx.reply(embed=emb, mention_author=False)
             
-        
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def search(self, ctx: Context, *, query: str):
@@ -336,6 +335,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             ),
             clear_reactions_after=True
         ).start(ctx)
+    @commands.command()
+    @commands.cooldown(4, 8, type=commands.BucketType.channel)
+    async def variants(self, ctx: Context):
+        '''Alias for =search type:variant'''
+        await self.search(ctx,query='type:variant')
         
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="overlays")
