@@ -354,7 +354,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     try:
                         tile = tile.replace('rule_','text_')
                         layer_grid[l][y][x] = re.sub(
-                            r'(.+?)(:.+| )(?!:ng|:noglobal)',
+                            r'(.+?)((?:\:.+)| )(?!:ng|:noglobal)',
                             r'\1'
                                 +(global_variant if tile != '-' else '')
                                 +r'\2',
