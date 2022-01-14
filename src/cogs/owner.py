@@ -764,7 +764,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         data = []
         for path in pathlib.Path("data/letters").glob("*/*/*/*_0.png"):
             _, _, mode, char, w, name = path.parts
-            char = char.replace("asterisk", "*")
+            replacelist = [('asterisk',    '*'),
+                           ('questionmark','?'),
+                           ('period',      '.')]
+            for original, substitute in replacelist:
+                char = char.replace(original,substitute)
             width = int(w)
             prefix = name[:-6]
             # mo ch w h

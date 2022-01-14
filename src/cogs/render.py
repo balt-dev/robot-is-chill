@@ -82,6 +82,12 @@ def shift_hue(arr,hueshift):
     rgb=hsv_to_rgb(hsv)
     return rgb
 
+def grayscale(arr,influence):
+    hsv=rgb_to_hsv(arr)
+    hsv[...,1] = np.clip(hsv[...,1]*1-influence,[0],[1])
+    rgb=hsv_to_rgb(hsv)
+    return rgb
+
 class Renderer:
     '''This class exposes various image rendering methods. 
     Some of them require metadata from the bot to function properly.
@@ -467,9 +473,7 @@ class Renderer:
                 bsprite[bsprite<0]=0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             if tile.grayscale != 0:
-                sprite_g = np.array(sprite.convert('LA').convert("RGBA"),dtype=np.uint8)
-                sprite_n = np.array(sprite,dtype=np.uint8)
-                sprite = Image.fromarray(np.array(np.round((sprite_g*tile.grayscale) + (sprite_n*(1-tile.grayscale))),dtype=np.uint8))
+                sprite = Image.fromarray(grayscale(np.array(sprite),tile.grayscale))
             if tile.filterimage != "":
                 url=tile.filterimage
                 absolute = False
@@ -501,14 +505,14 @@ class Renderer:
             lowestlist = []
             for f in out:
                 h=f.height-int(constants.DEFAULT_SPRITE_SIZE*gscale)
-                framelowest = -h
+                framelowest = 0
                 nf=np.array(f)
                 for i,row in enumerate(nf):
                     if any(row[:,3]):
                         framelowest=i+1+math.ceil(h/2)
                 lowestlist.append(framelowest)
             lowestlist.sort()
-            tile.displace = (tile.displace[0],tile.displace[1]-(out[0].height-int(lowestlist[0])))
+            tile.displace = (tile.displace[0],(tile.displace[1]+int(lowestlist[0]*(gscale**-1)))-int(out[0].height//gscale))
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.blending, time.time()-t)
 
@@ -566,6 +570,8 @@ class Renderer:
             seed = int((7+position[0])/(3+position[1])*100000000)
         seed_digits = [(seed >> 8 * i ) | 0b11111111 for i in range(len(raw))]
         
+        if len(text) == 1:
+            style = "letter"
         # Get mode and split status
         if newline_count > 1:
             raise errors.TooManyLines(text, newline_count)
@@ -579,7 +585,7 @@ class Renderer:
             index = -1
             if len(raw) >= 4:
                 mode = "small"
-                index = len(raw) - len(raw) // 2
+                index = len(raw) - math.ceil(len(raw) / 2)
     
         if style == "letter":
             if mode == "big":

@@ -2630,6 +2630,22 @@ particletypes =
 				unit.values[YVEL] = 80 + math.random(0,10) * 0.1
 			end,
 	},
+	world =
+	{
+		amount = 40,
+		animation = 13,
+		colour = {4, 0},
+		extra = 
+			function(unitid)
+				local unit = mmf.newObject(unitid)
+				local scale = 0.2 + math.random(0,400) * 0.01
+				
+				unit.scaleX = scale
+				unit.scaleY = scale
+				
+				unit.values[DIR] = ((math.random(0,1) * 2) - 1) * (2 - scale * 0.5)
+			end,
+	},
 }
 
 namegivingtitles =
@@ -2721,7 +2737,7 @@ lookup_table =
 	-- capital letters a-z
 	65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 59, 34,
 	-- capitalized umlauts etc
-	197, 201, 217, 223, 7838, 284, 348, 346, 379, 171, 187,
+	197, 201, 217, 223, 7838, 284, 348, 346, 379, 171, 187, 124
 }
 
 play_data =

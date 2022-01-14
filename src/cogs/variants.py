@@ -755,7 +755,7 @@ def setup(bot: Bot):
     return add(ctx,'normalize',True)
     
   @handlers.handler(
-    pattern=r"(?:grayscale|gscale)(?:([\d\.]+))?",
+    pattern=r"(?:grayscale|gscale)(?:(-?[\d\.]+))?",
     variant_hints={"grayscale": "`grayscale` (Forces raw sprite to be grayscale.)"},
     variant_group="Filters"
   )
@@ -799,13 +799,21 @@ def setup(bot: Bot):
     return add(ctx,'blur_radius',float(radius))
     
   @handlers.handler(
-    pattern=r"rotate(-{0,1}[\d\.]+)",
-    variant_hints={"rotate": "`rotate<int>` (Rotates the sprite n degrees counterclockwise)"},
+    pattern=r"rotate(-?\d+(?:\.\d+)?)",
+    variant_hints={"rotate": "`rotate<float>` (Rotates the sprite n degrees counterclockwise)"},
     variant_group="Filters"
   )
   def rotate(ctx: HandlerContext) -> TileFields:
-    angle = ctx.groups[0] or 0
-    return add(ctx,'angle',int(angle))
+    angle = ctx.groups[0] or 0.0
+    return add(ctx,'angle',float(angle))
+
+  @handlers.handler(
+    pattern=r"rotaterand",
+    variant_hints={"rotaterand": "`rotaterand` (Rotates the sprite a random number of degrees counterclockwise)"},
+    variant_group="Filters"
+  )
+  def rotate(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'angle',rand.random()*360)
 
   @handlers.handler(
     pattern=r"scale([\d\.]+)(?:\/([\d\.]+))?",
