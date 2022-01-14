@@ -747,6 +747,14 @@ def setup(bot: Bot):
     return add(ctx,'invert',True)
 
   @handlers.handler(
+    pattern=r"ng|noglobal",
+    variant_hints={"noglobal": "`noglobal` (Removes this tile from the scope of the -global flag.)"},
+    variant_group="Filters"
+  )
+  def noglobal(ctx: HandlerContext) -> TileFields:
+    return
+
+  @handlers.handler(
     pattern=r"normalize|norm",
     variant_hints={"norm": "`norm` (Moves the sprite to the center of its bounding box.)"},
     variant_group="Filters"
