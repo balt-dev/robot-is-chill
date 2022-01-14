@@ -752,7 +752,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def noglobal(ctx: HandlerContext) -> TileFields:
-    return
+    return {}
 
   @handlers.handler(
     pattern=r"normalize|norm",
@@ -1072,7 +1072,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def nothing(ctx: HandlerContext) -> TileFields:
-    return
+    return {}
   
   @handlers.handler(
     pattern=r"(?:color|col|c)(-?\d+)(?:\/(-?\d+))?",
