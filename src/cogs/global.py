@@ -351,13 +351,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for x, stack in enumerate(row):
                 for l, tile in enumerate(stack.split('&')):
                     tilecount+=1 if tile != '-' else 0
-                    try:
-                        tile = tile.replace('rule_','text_')
-                        if re.match(r':ng|:noglobal') == None:
-                            tile = re.sub('(.+?)(:.+|$)',r'\1'+(global_variant if tile != '-' else '')+r'\2',tile)
-                        layer_grid[l][y][x] = tile
-                    except:
-                        layer_grid[l][y].append('-')
+                    tile = tile.replace('rule_','text_')
+                    if re.match(r':ng|:noglobal') == None:
+                        tile = re.sub('(.+?)(:.+|$)',r'\1'+(global_variant if tile != '-' else '')+r'\2',tile)
+                    layer_grid[l][y][x] = tile
         if layers:
             try:
                 layer_grid = [layer_grid[int(layers[0]):int(layers[1])] if len(layers) == 2 else layer_grid[int(layers[0])]]
