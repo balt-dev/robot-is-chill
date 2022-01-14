@@ -353,8 +353,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     tilecount+=1 if tile != '-' else 0
                     try:
                         tile = tile.replace('rule_','text_')
-                        layer_grid[l][y][x] = re.sub(r'(.+?)(:.+)',r'\1'+(global_variant if tile != '-' else '')+r'\2',(tile.replace('rule_','text_')))
-                        print(layer_grid[l][y][x])
+                        layer_grid[l][y][x] = re.sub(
+                            r'(.+?)(:.+| )(?!:ng|:noglobal)',
+                            r'\1'
+                                +(global_variant if tile != '-' else '')
+                                +r'\2',
+                                (
+                                    tile.replace('rule_','text_')
+                                )
+                            )
+                        #print(layer_grid[l][y][x])
                     except:
                         layer_grid[l][y].append('-')
         if layers:
