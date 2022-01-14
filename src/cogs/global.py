@@ -14,6 +14,7 @@ from time import time
 from typing import Any, OrderedDict, TYPE_CHECKING
 
 import numpy as np
+import emoji
 
 import asyncio
 import aiohttp
@@ -158,9 +159,31 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         '''Performs the bulk work for both `tile` and `rule` commands.'''
         await self.trigger_typing(ctx)
         start = time()
+            
         tiles = objects.lower().strip().replace("\\", "")
-        tiles = tiles.replace("ⓜ️",":m:").replace("🆙",":up:").replace("😷",":mask:").replace("👀",":eyes:")
-        tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
+
+        # Replace some phrases    
+        tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles) 
+        tiles = emoji.demojize(tiles, use_aliases=True)   
+        replace_list = [
+            ['а','a'],
+            ['в','b'],
+            ['е','e'],
+            ['з','3'],
+            ['к','k'],
+            ['м','m'],
+            ['н','h'],
+            ['о','o'],
+            ['р','p'],
+            ['с','c'],
+            ['т','t'],
+            ['х','x'],
+            ['ⓜ',':m:']
+        ]
+        for src,dst in replace_list:
+            tiles = tiles.replace(src,dst)
+        
+        
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
         tiles = tiles.replace("|", "")
@@ -168,7 +191,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Check for empty input
         if not tiles:
             return await ctx.error("Input cannot be blank.")
-
+            
         # Split input into lines
         word_rows = tiles.splitlines()
         
@@ -329,7 +352,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for l, tile in enumerate(stack.split('&')):
                     tilecount+=1 if tile != '-' else 0
                     try:
-                        layer_grid[l][y][x] = (tile.replace('rule_','text_') + (global_variant if tile != '-' else ''))
+                        tile = tile.replace('rule_','text_')
+                        layer_grid[l][y][x] = re.sub(r'(.+?)(:.+)',r'\1'+(global_variant if tile != '-' else '')+r'\2',(tile.replace('rule_','text_')))
+                        print(layer_grid[l][y][x])
                     except:
                         layer_grid[l][y].append('-')
         if layers:

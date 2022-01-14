@@ -682,5 +682,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "text_tilde",
+        "sprite": "text_tilde",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kobad",
+        "sprite": "kobad",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

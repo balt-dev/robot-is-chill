@@ -701,7 +701,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "therealbabdictatorhd",
         "sprite": "therealbabdictatorhd",
         "color": [
@@ -731,6 +731,42 @@
     {
         "name": "temmi",
         "sprite": "temmi",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "no1",
+        "sprite": "no1",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "press",
+        "sprite": "press",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "snek",
+        "sprite": "snek",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zsoob",
+        "sprite": "zsoob",
         "color": [
             "0",
             "3"
