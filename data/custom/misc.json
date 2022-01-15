@@ -762,5 +762,14 @@
             "3"
         ],
         "tiling": "3"
+    },
+    {
+        "name": "derfis",
+        "sprite": "derfis",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

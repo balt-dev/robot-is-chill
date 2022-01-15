@@ -407,7 +407,7 @@ class Renderer:
             if tile.custom:
                 sprite = await self.generate_sprite(
                     tile.name,
-                    style=tile.custom_style or "noun",
+                    style=tile.custom_style or ("noun" if len(tile.name) < 1 else "letter"),
                     direction=tile.custom_direction,
                     meta_level=tile.meta_level,
                     wobble=wobble,
@@ -569,9 +569,6 @@ class Renderer:
         if seed is None:
             seed = int((7+position[0])/(3+position[1])*100000000)
         seed_digits = [(seed >> 8 * i ) | 0b11111111 for i in range(len(raw))]
-        
-        if len(text) == 1:
-            style = "letter"
         # Get mode and split status
         if newline_count > 1:
             raise errors.TooManyLines(text, newline_count)

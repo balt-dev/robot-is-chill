@@ -469,7 +469,7 @@ def setup(bot: Bot):
     }
   
   @handlers.handler(
-    pattern=r"#([0-9a-fA-F]{1,6})",
+    pattern=r"#([0-9a-fA-F]{6})",
     variant_hints={"#ffffff": "`#hex_code` (Color hex code, e.g. `#f055ee`)"},
     variant_group="Colors"
   )
@@ -481,7 +481,17 @@ def setup(bot: Bot):
     return {
       "color_rgb": (red, green, blue)
     }
-    
+  
+  @handlers.handler(
+    pattern=r"#([0-9a-fA-F]{3})",
+    variant_hints={"#fff": "`#hex_code` (Color hex code, e.g. `#f5e`)"},
+    variant_group="Colors"
+  )
+  def color_rgb(ctx: HandlerContext) -> TileFields:
+    red,green,blue = [int(n+n,base=16) for n in ctx.groups[0]]
+    return {
+      "color_rgb": (red, green, blue)
+    }
   @handlers.handler(
     pattern='|'.join(constants.CUSTOM_COLOR_NAMES),
     variant_hints=constants.CUSTOM_COLOR_REPRESENTATION_VARIANTS,
