@@ -772,5 +772,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "beeee",
+        "sprite": "beeee",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_beeee",
+        "sprite": "text_beeee",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

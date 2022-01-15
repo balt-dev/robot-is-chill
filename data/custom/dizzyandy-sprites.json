@@ -25,5 +25,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "camera",
+        "sprite": "camerawithflash",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
