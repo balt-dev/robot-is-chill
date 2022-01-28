@@ -13,7 +13,7 @@ def crackseed(ears:int = False,legs:int = False,eyes:int = False,mouth:bool = No
     n = rand.randint(0,2**64)
     rand.seed(n)
     r_ears = rand.choice([0,0,0,1,2,2,2,2])
-    r_legs = rand.choice([0,0,1,2,2,2,3])
+    r_legs = rand.choice([0,0,1,2,2,2,3,4,4,4])
     r_eyes = rand.choice([0,0,1,2,2,2,2,2,3,4,5,6])
     r_mouth = rand.random() > 0.75
     r_color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])
@@ -36,7 +36,7 @@ def crackseed(ears:int = False,legs:int = False,eyes:int = False,mouth:bool = No
       n = rand.randint(0,2**64)
       rand.seed(n)
       r_ears = rand.choice([0,0,0,1,2,2,2,2])
-      r_legs = rand.choice([0,0,1,2,2,2,3])
+      r_legs = rand.choice([0,0,1,2,2,2,3,4,4,4])
       r_eyes = rand.choice([0,0,1,2,2,2,2,2,3,4,5,6])
       r_mouth = rand.random() > 0.75
       r_color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])

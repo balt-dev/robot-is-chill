@@ -1,0 +1,11 @@
+[
+    {
+        "name": "sink",
+        "sprite": "sink",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

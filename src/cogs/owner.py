@@ -110,7 +110,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         except IndexError:
             return await ctx.error('You forgot to attach a zip.')
         dir = zip.namelist()[0]
-        file_name = re.match(r'(.+?)_\d+?_\d\.png', dir).groups()[0]   
+        file_name = re.sub(r'.+?\/(.+)',r'\1',re.match(r'(.+?)_\d+?_\d\.png', dir).groups()[0])
         for name in zip.namelist():
             sprite = zip.read(name)
             path = name.split("/")[-1]
@@ -637,6 +637,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def loadreadyletters(self, ctx: Context):
         await self.load_ready_letters()
         await ctx.send("Ready letters loaded.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def makedir(self, ctx: Context, name: str):
+        '''Makes a directory for sprites to go in.'''
+        os.mkdir(f'data/sprites/{name}')
+        with open(f'data/custom/{name}.json',mode='x') as f:
+            f.write('[]')
+        await ctx.send(f"Made directory `{name}`.")
         
     async def load_letter(self, word: str, tile_type: int):
         '''Scrapes letters from a sprite.'''

@@ -350,6 +350,12 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             colour=self.bot.embed_color,
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
+    @commands.command(name="seedcracker", aliases=['cracker'])
+    async def send_seedcracker(self, ctx: Context):
+        '''Sends the seedcracker program as a file.'''
+        with open('src/seedcracker.py',mode='rb') as f:
+            await ctx.reply(file=discord.File(f,filename='seedcracker.py'))
+
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
     async def show_palette(self, ctx: Context, palette: str = 'default', raw: str = None):

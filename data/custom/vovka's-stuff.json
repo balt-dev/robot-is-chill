@@ -1,92 +1,92 @@
 [
-   {
-      "name": "lili",
-      "sprite": "lili",
-      "tiling": "0",
-      "color": [
-         "4",
-         "2"
-      ]
-   },
-   {
-      "name": "text_lili",
-      "sprite": "text_lili",
-      "color": [
-         "4",
-         "2"
-      ],
-      "tiling": "-1"
-   },
-  {
-      "name": "flafla",
-      "sprite": "flafla",
-      "tiling": "2",
-      "color": [
-         "2",
-         "4"
-      ]
-   },
-   {
-      "name": "text_flafla",
-      "sprite": "text_flafla",
-      "color": [
-         "2",
-         "4"
-      ],
-      "tiling": "-1"
-   },
-  {
-      "name": "unocardrev",
-      "sprite": "unocardrev",
-      "tiling": "0",
-      "color": [
-         "0",
-         "3"
-      ]
-   },
-   {
-      "name": "text_unocardrev",
-      "sprite": "text_unocardrev",
-      "color": [
-         "0",
-         "3"
-      ],
-      "tiling": "-1"
-   },
-     {
-      "name": "unocard",
-      "sprite": "unocard",
-      "tiling": "0",
-      "color": [
-         "0",
-         "3"
-      ]
-   },
-   {
-      "name": "text_unocard",
-      "sprite": "text_unocard",
-      "color": [
-         "0",
-         "3"
-      ],
-      "tiling": "-1"
-   },
-	{
-	"name": "skele",
-      "sprite": "skele",
-      "tiling": "2",
-      "color": [
-         "0",
-         "3"
-      ]
-   },
-   	{
-	"name": "text_skele",
-      "sprite": "text_skele",
-      "tiling": "-1",
-      "color": [
-         "0",
-         "3"
-      ]
-   }
+    {
+        "name": "lili",
+        "sprite": "lili",
+        "tiling": "2",
+        "color": [
+            "4",
+            "2"
+        ]
+    },
+    {
+        "name": "text_lili",
+        "sprite": "text_lili",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flafla",
+        "sprite": "flafla",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_flafla",
+        "sprite": "text_flafla",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "unocardrev",
+        "sprite": "unocardrev",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_unocardrev",
+        "sprite": "text_unocardrev",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "unocard",
+        "sprite": "unocard",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_unocard",
+        "sprite": "text_unocard",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "skele",
+        "sprite": "skele",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_skele",
+        "sprite": "text_skele",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    }
 ]

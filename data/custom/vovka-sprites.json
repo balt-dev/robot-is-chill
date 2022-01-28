@@ -51,5 +51,23 @@
             "2",
             "2"
         ]
+    },
+    {
+        "name": "2",
+        "sprite": "sflafla",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sflafla",
+        "sprite": "sflafla",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

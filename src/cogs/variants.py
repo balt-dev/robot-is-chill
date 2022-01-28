@@ -318,15 +318,15 @@ def setup(bot: Bot):
         tile.custom_style = "noun"
 
   def add(ctx,dst,var = True):
+    d = {dst: var}
     try:
       f = ctx.fields.get("filters")
-      d = {dst: var}
       return{
-        "filters": {**f, **d}
+        "filters": f + list(d.items())
       }
-    except TypeError:
+    except TypeError as e:
       return{
-        "filters": {dst: var}
+        "filters": list(d.items())
       }
       
   @handlers.handler(
@@ -997,7 +997,7 @@ def setup(bot: Bot):
     return add(ctx,"wavex",(float(ctx.groups[0]),float(ctx.groups[1]),float(ctx.groups[2])))
 
   @handlers.handler(
-    pattern=r"wrap\((\-?\d{1,3})\/(\-?\d{1,3})\)",
+    pattern=r"wrap(\-?\d{1,3})\/(\-?\d{1,3})",
     variant_hints={"wrap": "`wrap<int>/<int>` (Displace the sprite by x pixels to the right and y pixels downwards, and wrap the pixels around the sprite's borders.)"},
     variant_group="Filters"
   )
@@ -1047,8 +1047,8 @@ def setup(bot: Bot):
       return {'filterimage': a+"https://"+url}
 
   @handlers.handler(
-    pattern=r"crop\((-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)\)",
-    variant_hints={"crop": "`crop(<x>/<y>/<width>/<height>)` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
+    pattern=r"crop(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)",
+    variant_hints={"crop": "`crop<x>/<y>/<width>/<height>` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
     variant_group="Filters"
   )
   def crop(ctx: HandlerContext) -> TileFields:
@@ -1057,8 +1057,8 @@ def setup(bot: Bot):
     )
     
   @handlers.handler(
-    pattern=r"pad\((\d+?)\/(\d+?)\/(\d+?)\/(\d+?)\)",
-    variant_hints={"pad": "`pad(<left>/<top>/<right>/<bottom>)` (Pads the sprite with transparency on each of its sides.)"},
+    pattern=r"pad(\d+?)\/(\d+?)\/(\d+?)\/(\d+?)",
+    variant_hints={"pad": "`pad<left>/<top>/<right>/<bottom>` (Pads the sprite with transparency on each of its sides.)"},
     variant_group="Filters"
   )
   def pad(ctx: HandlerContext) -> TileFields:
