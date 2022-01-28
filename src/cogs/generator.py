@@ -5,6 +5,7 @@ import numpy as np
 import json
 import random
 import time
+import re
 
 from io import BytesIO
 from discord.ext import commands
@@ -91,6 +92,36 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
       btio.seek(0)
       return btio
   
+  @commands.command(aliases=['customchar','cc'])
+  @commands.cooldown(4, 8, type=commands.BucketType.channel)
+  async def customcharacter(self, ctx: Context, ears: int, legs: int, eyes: int, mouth: bool, color: str, variant: str, type: str, name: str):
+    '''Generates a specified character.'''
+    try:
+      assert ears in range(3), 'Invalid face! Ears has to be between `0` and `2`.'
+      assert legs in range(5), 'Invalid face! Legs has to be between `0` and `4`.'
+      assert eyes in range(7), 'Invalid face! Eyes has to be between `0` and `6`.'
+      assert int(mouth) in range(2), 'Invalid face! Mouth has to be `0` or `1`.'
+      assert color in ['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'], 'Invalid color!\nColor must be one of `pink, red, maroon, yellow, orange, gold, brown, lime, green, cyan, blue, purple, white, silver, grey`.'
+      assert variant in ['smooth','fuzzy','fluffy','polygonal','skinny','belt'], 'Invalid variant!\nVariant must be one of `smooth, fuzzy, fluffy, polygonal, skinny, belt`.'
+      assert type in ['long','tall','curved','round'], 'Invalid type!\nType must be one of `long, tall, curved, round`.'
+      assert re.fullmatch(r'((?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])(?:(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])?|(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])(?:[aeiou]|[aeo]i|ea|[abo]u))|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt]))\1?|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])',
+                          name.lower()), 'Invalid name!\nThe naming scheme is pretty complex, just trial and error it, sorry ¯\_(ツ)_/¯'
+      #shoutouts to jony for doing the regex here
+      #tysm <3
+    except AssertionError as e:
+      return await ctx.error(e.args[0])
+    name = name.title()
+    embed = discord.Embed(
+            color = self.bot.embed_color,
+            title = name,
+            description = f"{name} is a __**{color}**__, __**{variant}**__, __**{type}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
+        )
+    embed.set_footer(text=f'Custom-generated, no seed for you!')
+    file = discord.File(self.generate_image(ears,legs,eyes,mouth,color,variant,type,self.Random()),filename=f'{name}-custom.png')
+    embed.set_image(url=f'attachment://{name}-custom.png')
+    #note to self: it's literally this easy what are you doing
+    await ctx.send(embed=embed,file=file)
+    
   @commands.command(aliases=['char'])
   @commands.cooldown(4, 8, type=commands.BucketType.channel)
   async def character(self, ctx: Context, *, seed: str = None):
@@ -104,7 +135,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
       seed = None
     rand.seed(seed)
     ears = rand.choice([0,0,0,1,2,2,2,2])
-    legs = rand.choice([0,0,1,2,2,2,3])
+    legs = rand.choice([0,0,1,2,2,2,3,4,4,4])
     eyes = rand.choice([0,0,1,2,2,2,2,2,3,4,5,6])
     mouth = rand.random() > 0.75
     color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])

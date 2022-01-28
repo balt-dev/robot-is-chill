@@ -54,7 +54,7 @@ class TileFields(TypedDict, total=False):
 		custom_style: Literal["noun", "property", "letter"]
 		custom: bool
 		style_flip: bool
-		filters: dict
+		filters: list
 		blending: str
 		palette: str
 		overlay: str
@@ -110,7 +110,7 @@ class FullTile:
 		palette: str = ""
 		overlay: str = ""
 		grayscale: float = 0
-		filters: dict = field(default_factory = dict)
+		filters: list = field(default_factory = list)
 		negative: bool = False
 		hueshift: float = 0
 		brightness: float = 1
