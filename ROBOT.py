@@ -108,5 +108,15 @@ bot = Bot(
     db_path=config.db_path
 )
 
+@bot.check
+async def check_commands(ctx):
+    for sub, id in [('channel',ctx.channel.id),('user',ctx.author.id)]:
+        async with bot.db.conn.cursor() as cur:
+            await cur.execute(f'''SELECT DISTINCT * 
+    FROM BLACKLISTED{sub}S
+    WHERE id = {id}''')
+            if len(await cur.fetchall()):
+                return False
+    return True
 bot.run(auth.token)
 sys.exit(bot.exit_code)

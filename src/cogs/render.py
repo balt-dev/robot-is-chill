@@ -366,7 +366,6 @@ class Renderer:
                 img = Image.fromarray(img)
             img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
             if crop != None:
-                print(crop)
                 img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
             if upscale != 1:
                 img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
@@ -819,7 +818,6 @@ class Renderer:
         return spritenumpyscan
       def avg(*args):
           return sum(args)/len(args)
-      print(style,original_style)
       if (
           (
               original_style != style and 
@@ -847,7 +845,6 @@ class Renderer:
               )
               alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
               sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
-      print(filters)
       for name, value in filters:
         if name == 'threeoo' and value != None:
             sprite = np.array(sprite,dtype=np.uint8)
@@ -868,7 +865,6 @@ class Renderer:
             center = (int(avg(miny,maxy)),int(avg(minx,maxx)))
             absolute_center = [n//2 for n in sprite.shape[:2]]
             displacement = [(a-b)-1 for a,b in zip(absolute_center,center)]
-            print(displacement,absolute_center,center,(miny,minx),(maxy,maxx))
             sprite = Image.fromarray(np.roll(sprite,displacement[::-1],(1,0))) 
         elif name == 'pad' and any(value):
             sprite = Image.fromarray(np.pad(np.array(sprite),((value[1],value[3]),(value[0],value[2]),(0,0))))
