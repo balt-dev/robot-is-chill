@@ -437,9 +437,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         async with self.bot.db.conn.cursor() as cur:
             if mode == 'add':
                 await cur.execute(f'''INSERT INTO blacklisted{sub_command}s
-                                VALUES ({id})''') #i mean it works but oh god this fucking sucks
-            await cur.execute(f'''''')
-        await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
+                                VALUES ({id})''')
+                await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
+            elif mode == 'remove':
+                await cur.execute(f'''DELETE FROM blacklisted{sub_command}s
+                                WHERE id={id}''')
+                await ctx.reply(f'Removed `{sub_command}` of id `{id}` from the blacklist.')
+        
                 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])
