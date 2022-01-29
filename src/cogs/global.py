@@ -65,7 +65,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         with open("config/leveltileoverride.json") as f:
             j = load(f)
             self.level_tile_override = j
-
+        
     # Check if the bot is loading
     async def cog_check(self, ctx):
         '''Only if the bot is not loading assets'''

@@ -81,7 +81,7 @@ class Bot(commands.Bot):
         await self.change_presence(status=discord.Status.online)
 
 logging.basicConfig(filename=config.log_file, level=logging.WARNING)
-
+    
 # Establishes the bot
 bot = Bot(
     # Prefixes

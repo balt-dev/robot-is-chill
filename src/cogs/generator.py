@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 import discord
 import numpy as np
 import json
@@ -94,20 +96,32 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
   
   @commands.command(aliases=['customchar','cc'])
   @commands.cooldown(4, 8, type=commands.BucketType.channel)
-  async def customcharacter(self, ctx: Context, ears: int, legs: int, eyes: int, mouth: bool, color: str, variant: str, type: str, name: str):
+  async def customcharacter(self, ctx: Context, ears: str, legs: str, eyes: str, mouth: str, color: str, variant: str, type: str, name: str):
     '''Generates a specified character.'''
     try:
-      assert ears in range(3), 'Invalid face! Ears has to be between `0` and `2`.'
-      assert legs in range(5), 'Invalid face! Legs has to be between `0` and `4`.'
-      assert eyes in range(7), 'Invalid face! Eyes has to be between `0` and `6`.'
-      assert int(mouth) in range(2), 'Invalid face! Mouth has to be `0` or `1`.'
-      assert color in ['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'], 'Invalid color!\nColor must be one of `pink, red, maroon, yellow, orange, gold, brown, lime, green, cyan, blue, purple, white, silver, grey`.'
-      assert variant in ['smooth','fuzzy','fluffy','polygonal','skinny','belt'], 'Invalid variant!\nVariant must be one of `smooth, fuzzy, fluffy, polygonal, skinny, belt`.'
-      assert type in ['long','tall','curved','round'], 'Invalid type!\nType must be one of `long, tall, curved, round`.'
-      assert re.fullmatch(r'((?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])(?:(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])?|(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])(?:[aeiou]|[aeo]i|ea|[abo]u))|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt]))\1?|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])',
+      assert ears == '*' or (int(ears) in range(3)), 'Invalid face! Ears has to be between `0` and `2`.'
+      assert legs == '*' or (int(legs) in range(5)), 'Invalid face! Legs has to be between `0` and `4`.'
+      assert eyes == '*' or (int(eyes) in range(7)), 'Invalid face! Eyes has to be between `0` and `6`.'
+      assert mouth == '*' or (int(mouth) in range(2)), 'Invalid face! Mouth has to be `0` or `1`.'
+      assert color == '*' or color in ['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'], 'Invalid color!\nColor must be one of `pink, red, maroon, yellow, orange, gold, brown, lime, green, cyan, blue, purple, white, silver, grey`.'
+      assert variant == '*' or variant in ['smooth','fuzzy','fluffy','polygonal','skinny','belt'], 'Invalid variant!\nVariant must be one of `smooth, fuzzy, fluffy, polygonal, skinny, belt`.'
+      assert type == '*' or type in ['long','tall','curved','round'], 'Invalid type!\nType must be one of `long, tall, curved, round`.'
+      assert name == '*' or re.fullmatch(r'((?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])(?:(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])?|(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])(?:[aeiou]|[aeo]i|ea|[abo]u))|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt]))\1?|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])',
                           name.lower()), 'Invalid name!\nThe naming scheme is pretty complex, just trial and error it, sorry ¯\_(ツ)_/¯'
       #shoutouts to jony for doing the regex here
       #tysm <3
+      ears = random.choice([0,0,0,1,2,2,2,2]) if ears == '*' else int(ears)
+      legs = random.choice([0,0,1,2,2,2,3,4,4,4]) if legs == '*' else int(legs)
+      eyes = random.choice([0,0,1,2,2,2,2,2,3,4,5,6]) if eyes == '*' else int(eyes)
+      mouth = random.random() > 0.75 if mouth == '*' else int(mouth)
+      color = random.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey']) if color == '*' else color
+      variant = random.choice(['smooth','fuzzy','fluffy','polygonal','skinny','belt']) if variant == '*' else variant
+      type = random.choice(['long','tall','curved','round']) if type == '*' else type
+      if name == '*':
+        a = random.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','th','ph','cr','gr','tr','br','dr','pr','bl','sl','pl','cl','gl','fl','sk','sp','st','sn','sm','sw'])
+        b = random.choice(['a','e','i','o','u','ei','oi','ea','ou','ai','au','bu'])
+        c = random.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
+        name = random.choice([a+b+a+b,a+b,a+b+c,b+c,a+c+b,a+c+b+a+c+b,b+c+b+c,a+b+c+a+b+c,b+a])
     except AssertionError as e:
       return await ctx.error(e.args[0])
     name = name.title()

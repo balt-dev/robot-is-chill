@@ -4,7 +4,7 @@ from pathlib import Path
 
 import re
 from os import listdir
-from typing import Any, Sequence
+from typing import Any, Sequence, Literal
 import numpy as np
 import cv2
 
@@ -405,6 +405,42 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             file = discord.File(buf, filename=f"palette_{palette}.png")
             await ctx.reply(f"Palette `{palette}`:", file=file)
 
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    @commands.command(name="blacklist")
+    @commands.has_permissions(administrator=True)
+    async def blacklist(self, ctx: Context, *, args: str):
+        '''Set up a blacklist of channels or users. Channels are server moderator only, users are bot owner only.
+        (This isn't implemented yet.)'''
+        try:
+            sub_command, mode, id = args.split(' ')
+        except ValueError:
+            assert False, 'Error! Not enough arguments'
+        channels = []
+        for channel in ctx.channel.guild.channels:
+            if str(channel.type) == 'text':
+                channels.append(channel.id)
+        assert sub_command in ['channel','user'], 'Error! `sub-command` needs to be one of `channel,user`'
+        assert mode in ['add','remove'], 'Error! `move` needs to be one of `add,remove`'
+        try:
+            id = int(id)
+        except:
+            assert False, 'Error! `id` needs to be of type `int`'
+        print(channels)
+        assert (
+            sub_command == 'user' and 
+            commands.is_owner()
+        ) or (
+            sub_command == 'channel' and 
+            id in channels
+        ), 'You\'re not authorized to do that.'
+        d = {}
+        async with self.bot.db.conn.cursor() as cur:
+            if mode == 'add':
+                await cur.execute(f'''INSERT INTO blacklisted{sub_command}s
+                                VALUES ({id})''') #i mean it works but oh god this fucking sucks
+            await cur.execute(f'''''')
+        await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
+                
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])
     async def show_hint(self, ctx: Context, *, level_query: str):
