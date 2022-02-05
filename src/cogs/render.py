@@ -75,7 +75,6 @@ def hsv_to_rgb(hsv):
     rgb[..., 2] = np.select(conditions, [v, p, t, v, v, q], default=p)
     return rgb.astype('uint8')
 
-
 def shift_hue(arr,hueshift):
     hsv=rgb_to_hsv(arr)
     hsv[...,0]= (hsv[...,0] + (hueshift/360)) % 1
@@ -83,10 +82,13 @@ def shift_hue(arr,hueshift):
     return rgb
 
 def grayscale(arr,influence):
-    hsv=rgb_to_hsv(arr)
-    hsv[...,1] = np.clip(hsv[...,1]*1-influence,[0],[1])
-    rgb=hsv_to_rgb(hsv)
-    return rgb
+    arr = np.array(arr,dtype=np.float64)
+    gray_arr = np.copy(arr)
+    for y in range(arr.shape[0]):
+        for x in range(arr.shape[1]):
+            gray_arr[y,x,0:3] = sum(gray_arr[y,x,0:3])/4
+    result = ((gray_arr*influence) + (arr*(1-influence)))
+    return np.array(result,dtype=np.uint8)
 
 class Renderer:
     '''This class exposes various image rendering methods. 
