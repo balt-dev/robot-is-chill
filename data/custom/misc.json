@@ -771,5 +771,32 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "bribri",
+        "sprite": "bribri",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "heptagon",
+        "sprite": "heptagon",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pentagon",
+        "sprite": "pentagon",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

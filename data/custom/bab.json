@@ -790,5 +790,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "chain",
+        "sprite": "chain",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jail",
+        "sprite": "jail",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

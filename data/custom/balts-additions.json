@@ -709,5 +709,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "octagon",
+        "sprite": "octagon",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
