@@ -92,7 +92,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             if m.author.id == self.bot.user.id:
                 try:
                     reply = await ctx.channel.fetch_message(m.reference.message_id)
-                    if reply.author = ctx.message.author:
+                    if reply.author == ctx.message.author:
                         await reply.delete()
                         await m.delete()
                         await ctx.send('Removed message.', delete_after=3.0)
@@ -419,7 +419,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             id = int(id)
         except:
             assert False, 'Error! `id` needs to be of type `int`'
-        print(channels)
         assert (
             sub_command == 'user' and 
             commands.is_owner()
