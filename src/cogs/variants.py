@@ -929,12 +929,20 @@ def setup(bot: Bot):
     return add(ctx,'warp',((float(ctx.groups[0]),float(ctx.groups[1])),(float(ctx.groups[2]),float(ctx.groups[3])),(float(ctx.groups[4]),float(ctx.groups[5])),(float(ctx.groups[6]),float(ctx.groups[7]))))
   
   @handlers.handler(
-    pattern=r"freeze",
-    variant_hints={"freeze": "`freeze` (Freezes the first wobble frame of the tile.)"},
+    pattern=r"freeze([1,2,3])?",
+    variant_hints={"freeze": "`freeze[1,2,3]` (Freezes the specified wobble frame of the tile, defaulting to the first.)"},
     variant_group="Filters"
   )
   def freeze(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'freeze')
+    return add(ctx,'freeze',int(ctx.groups[0]) if ctx.groups[0] else 1)
+  
+  @handlers.handler(
+    pattern=r"melt",
+    variant_hints={"melt": "`melt` (\"Melts\" the tile by displacing every column to the bottom of the sprite.)"},
+    variant_group="Filters"
+  )
+  def melt(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'melt')
 
   @handlers.handler(
     pattern=r"negative|neg",

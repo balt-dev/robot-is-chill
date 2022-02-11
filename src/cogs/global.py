@@ -228,6 +228,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         printme = False
         crop = None
         upscale = 2
+        pad = (0,0,0,0)
+        do_embed = False
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -281,14 +283,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 to_delete.append((x, y))
             combine_match = re.fullmatch(r"-combine", flag) or re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
             if combine_match:
-                async for m in ctx.channel.history(limit=100):
-                    if m.attachments and m.content != '=file':
-                        try:
-                            before_image = Image.open(requests.get(m.attachments[0].url, stream=True).raw)
-                            break
-                        except:
-                            pass
                 to_delete.append((x, y))
+                try:
+                    msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+                except:
+                    async for m in ctx.channel.history(limit=100):
+                        if m.attachments and m.content != '=file':
+                            msg = m
+                            break
+                finally:
+                    try:
+                        before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
+                        break
+                    except:
+                        pass
             combine_match2 = re.fullmatch(r"-combine=(.+)", flag) or re.fullmatch(r"-c=(.+)", flag) or re.fullmatch(r"--combine=(.+)", flag)
             if combine_match2:
                 before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
@@ -320,6 +328,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if cropmatch:
                 crop = tuple([*[int(x) for x in cropmatch.groups()]])
                 to_delete.append((x, y))
+            padmatch = re.fullmatch(r"(?:--|-)pad=(\d+)\/(\d+)\/(\d+)\/(\d+)", flag)
+            if padmatch:
+                pad = tuple([*[int(x) for x in padmatch.groups()]])
+                to_delete.append((x, y))
             gsmatch = re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag)
             if gsmatch:
                 gscale = min(float(gsmatch.group(1)),8)
@@ -331,6 +343,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             swapmatch = re.fullmatch(r"(?:--swap|-sw)", flag)
             if swapmatch:
                 swap = True
+                to_delete.append((x, y))
+            embedmatch = re.fullmatch(r'(?:--verbose|-v)',flag)
+            if embedmatch:
+                do_embed = True
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
@@ -418,7 +434,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 gridol=gridol,
                 scaleddef=gscale,
                 printme=printme,
-                crop=crop
+                crop=crop,
+                pad=pad
             )
         except errors.TileNotFound as e:
             word = e.args[0]
@@ -443,32 +460,35 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         delta = time() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
         description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','')}`{'||' if spoiler else ''}"
-        embed = discord.Embed(
-            color = self.bot.embed_color,
-            title = discord.Embed.Empty,
-            description = discord.Embed.Empty
-        )
-        def rendertime(v):
-            a=math.ceil(v*1000)
-            nice=False
-            if a == 69:
-                nice=True
-            if objects=="lag":
-                a*=100000
-            return str(a)+("(nice)" if nice else "")
-        totalrendertime = rendertime(delta)
-        activerendertime = rendertime(tiledelta)
-        averagerendertime = rendertime(avgdelta)
-        maxrendertime = rendertime(maxdelta)
-        stats = f''' 
-        Total render time: {totalrendertime} ms
-        Active render time: {activerendertime} ms
-        Tiles rendered: {tilecount}
-        Average render time of all tiles: {averagerendertime} ms
-        Maximum render time of any tile: {maxrendertime} ms
-        '''
-        
-        embed.add_field(name="Render statistics", value=stats)
+        if do_embed:
+            embed = discord.Embed(
+                color = self.bot.embed_color,
+                title = discord.Embed.Empty,
+                description = discord.Embed.Empty
+            )
+            def rendertime(v):
+                a=math.ceil(v*1000)
+                nice=False
+                if a == 69:
+                    nice=True
+                if objects=="lag":
+                    a*=100000
+                return str(a)+("(nice)" if nice else "")
+            totalrendertime = rendertime(delta)
+            activerendertime = rendertime(tiledelta)
+            averagerendertime = rendertime(avgdelta)
+            maxrendertime = rendertime(maxdelta)
+            stats = f''' 
+            Total render time: {totalrendertime} ms
+            Active render time: {activerendertime} ms
+            Tiles rendered: {tilecount}
+            Average render time of all tiles: {averagerendertime} ms
+            Maximum render time of any tile: {maxrendertime} ms
+            '''
+            
+            embed.add_field(name="Render statistics", value=stats)
+        else:
+            embed = None
         if extra_buffer is not None and extra_names is not None:
             extra_buffer.seek(0)
             await ctx.reply(description[:2000], embed=embed, files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"),image])
