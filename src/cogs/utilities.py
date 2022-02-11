@@ -83,31 +83,24 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="undo")
-    async def undo(self, ctx: Context, id: int = None):
+    async def undo(self, ctx: Context):
         '''Deletes the last message sent from the bot.'''
-        if id != None:
-            m = ctx.fetch_message(id)
+        ctx.message.delete()
+        n = 0
+        h = ctx.channel.history(limit=100)
+        async for m in h:
             if m.author.id == self.bot.user.id:
-                await m.delete()
-        else:
-            async for m in ctx.channel.history(limit=1):
                 try:
-                    await m.delete()
+                    reply = await ctx.channel.fetch_message(m.reference.message_id)
+                    if reply.author = ctx.message.author:
+                        await reply.delete()
+                        await m.delete()
+                        await ctx.send('Removed message.', delete_after=3.0)
+                        return
                 except:
                     pass
-            n = 0
-            h = ctx.channel.history(limit=1)
-            async for m in h:
-                if m.author.id == self.bot.user.id:
-                    try:
-                        reply = await ctx.channel.fetch_message(m.reference.message_id)
-                        await reply.delete()
-                    except:
-                        pass
-                    finally:
-                        await m.delete()
-        await ctx.send('Removed message.', delete_after=3.0)
-    
+        await ctx.error('None of your commands were found in the last `100` messages.')
+
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def flags(self, ctx: Context, *, query: str = False):
