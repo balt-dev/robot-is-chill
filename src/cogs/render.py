@@ -125,7 +125,8 @@ class Renderer:
         gridol: tuple[int] = None,
         scaleddef: float = 1,
         printme: bool = False,
-        crop: tuple[int,int,int,int] | None = None
+        crop: tuple[int,int,int,int] | None = None,
+        pad: tuple[int,int,int,int] | None = (0,0,0,0)
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -157,8 +158,8 @@ class Renderer:
                 return 0
         padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
         padding = padding[0] if type(padding) == list else padding
-        img_width = int(img_width_raw + (2 * padding))
-        img_height = int(img_height_raw + (2 * padding))
+        img_width = int(img_width_raw + (2 * padding) + pad[0] + pad[2])
+        img_height = int(img_height_raw + (2 * padding) + pad[1] + pad[3])
         i = 0
         for l, frame in enumerate(frames):
             if images and image_source is not None:
@@ -192,7 +193,7 @@ class Renderer:
                         x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
                         y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
                         x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0]*scaleddef)
-                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]*scaleddef) 
+                        y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]*scaleddef)
                         if x == 0:
                             pad_l = max(pad_l, x_offset)
                         if x == width - 1:
@@ -202,6 +203,8 @@ class Renderer:
                         if y == height - 1:
                             pad_d = max(pad_d, y_offset)
                         alpha = sprite.getchannel("A")
+                        x_offset_disp -= pad[0]
+                        y_offset_disp -= pad[1]
                         if tile.mask_alpha:
                             alpha = ImageChops.invert(alpha)
                             if background is not None: 
@@ -403,8 +406,9 @@ class Renderer:
         x, y = position
         for frame in range(3):
             wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
-            if 'freeze' in [a[0] for a in tile.filters]:
-                wobble=0
+            for a in tile.filters:
+                if a[0] == 'freeze':  
+                    wobble = a[1]-1
             if tile.custom:
                 sprite = await self.generate_sprite(
                     tile.name,
@@ -926,8 +930,8 @@ class Renderer:
             sprite = sprite.resize((wid,hgt), resample=Image.NEAREST)
         elif name == 'glitch' and all([x!=0.0 for x in value]):
             clamp = lambda m,mn,mx: min(mx,max(mn,m))
-            filter = np.array([[[clamp(random.randint(128-value[0],128+value[0]),0,255),clamp(random.randint(128-value[0],128+value[0]),0,255),255,255] if value[1] > random.random() else [128,128,255,255] for _ in range(sprite.size[1])] for _ in range(sprite.size[0    ])], dtype=np.uint8)
-            sprite = filterimage.apply_filterimage(sprite,filter,absolute=False)
+            fil = np.array([[[clamp(random.randint(128-value[0],128+value[0]),0,255),clamp(random.randint(128-value[0],128+value[0]),0,255),255,255] if value[1] > random.random() else [128,128,255,255] for _ in range(sprite.size[1])] for _ in range(sprite.size[0    ])], dtype=np.uint8)
+            sprite = filterimage.apply_filterimage(sprite,fil,absolute=False)
         elif name == 'wavex' and value[1]!=0:
             numpysprite = np.array(sprite)
             for l in range(len(numpysprite)):
@@ -964,6 +968,15 @@ class Renderer:
             sprite = Image.fromarray(scan(np.array(sprite).swapaxes(0,1),value).swapaxes(0,1))
         elif name == 'invert':
             sprite = Image.fromarray(np.dstack((~np.array(sprite)[:,:,:3],np.array(sprite)[:,:,3])))
+        elif name == 'melt':
+            sprite_arr = list(np.array(sprite,dtype=np.uint8).swapaxes(0,1))
+            for i, col in enumerate(sprite_arr):
+                l = col
+                col_removed = list(filter(lambda a: tuple(a) != (0,0,0,0), col))
+                while len(col_removed) < len(col):
+                    col_removed.insert(0,(0,0,0,0))
+                sprite_arr[i]=col_removed
+            sprite = Image.fromarray(np.array(sprite_arr,dtype=np.uint8).swapaxes(0,1))
         elif name == 'reverse':
             im = np.array(sprite.convert('RGBA'),dtype=np.uint8)
             def colortoint(a):

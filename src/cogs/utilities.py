@@ -96,17 +96,16 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 except:
                     pass
             n = 0
-            h = ctx.channel.history(limit=100)
+            h = ctx.channel.history(limit=1)
             async for m in h:
-                if m.author.id == self.bot.user.id or n != 0:
+                if m.author.id == self.bot.user.id:
                     try:
-                        await m.delete()
+                        reply = await ctx.channel.fetch_message(m.reference.message_id)
+                        await reply.delete()
                     except:
                         pass
-                    time.sleep(0.1)
-                    n += 1
-                if n == 2:
-                    break
+                    finally:
+                        await m.delete()
         await ctx.send('Removed message.', delete_after=3.0)
     
     @commands.command()
@@ -131,6 +130,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     ,("-l=int[/int]","Shows only the stack layer or range of stack layers specified. First is inclusive, second is exclusive.")
                     ,("-tb","Makes tiles connect with the edge of the image.")
                     ,("-crop=int/int/int/int","Crops the render to the specified pixels.")
+                    ,("-pad=int/int/int/int","Pads the render with the specified pixels.")
+                    ,("-v","Gives more information about the render.")
                     #,("","")
         )
                    
