@@ -281,23 +281,28 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     if n.group(0) in ['1','2','3']:
                         frames.append(int(n.group(0)))
                 to_delete.append((x, y))
-            combine_match = re.fullmatch(r"-combine", flag) or re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
+            combine_match = re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
             if combine_match:
                 to_delete.append((x, y))
+                msg = None
                 try:
                     msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+                    if not msg.attachments:
+                        return await ctx.error('The replied message doesn\'t have an attached image.')
                 except:
-                    async for m in ctx.channel.history(limit=100):
-                        if m.attachments and m.content != '=file':
+                    async for m in ctx.channel.history(limit=20):
+                        if m.author.id == self.bot.user.id:
                             msg = m
                             break
+                    if msg == None:
+                        return await ctx.error('No commands were found in the last `20` messages.')
                 finally:
                     try:
                         before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
                         break
                     except:
                         pass
-            combine_match2 = re.fullmatch(r"-combine=(.+)", flag) or re.fullmatch(r"-c=(.+)", flag) or re.fullmatch(r"--combine=(.+)", flag)
+            combine_match2 = re.fullmatch(r"-c=([^ ]+)", flag) or re.fullmatch(r"--combine=([^ ]+)", flag)
             if combine_match2:
                 before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
                 to_delete.append((x, y))
