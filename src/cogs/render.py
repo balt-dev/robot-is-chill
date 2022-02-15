@@ -341,15 +341,6 @@ class Renderer:
                                     mask=sprite
                                 )
                         times.append(tile.delta + (time.time() - t))
-        
-        if printme:
-            q = ''
-            for i in imgs:
-                for vy in np.array(i):
-                    for vx in vy:
-                        q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
-                    q = q + '\n'
-            print(q)
         if before_image:
             bfr=0
             for frame in ImageSequence.Iterator(before_image):
@@ -374,6 +365,15 @@ class Renderer:
                 img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
             if upscale != 1:
                 img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
+            '''if printme:
+                q = ''
+                im_np = np.array(img)
+                flat = im_np.flatten()
+                for i, cell in flat:
+                    if flat[]
+                    q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
+                    q = q + '\n'
+                print(q)'''
             outs.append(img)
     
         self.save_frames(

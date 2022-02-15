@@ -192,7 +192,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         if not tiles:
             return await ctx.error("Input cannot be blank.")
             
-        print(tiles)
         if rule:
             tiles = tiles.replace('$','tile_')
         else:
@@ -374,7 +373,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for l, tile in enumerate(stack.split('&')):
                     tilecount+=1 if tile != '-' else 0
                     tile = tile.replace('rule_','text_')
-                    print('>>>',tile.find(':ng'))
                     if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
                         tile = re.sub('(.+?)(:.+|$)',r'\1'+(global_variant if tile != '-' else '')+r'\2',tile)
                     layer_grid[l][y][x] = tile
@@ -405,7 +403,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 grid = self.parse_raw(layer_grid, rule=rule)
             except TypeError as e:
                 return await ctx.error('Invalid layer slice!')
-            print('\n\n\n'.join(['\n'.join([' '.join([tile.name for tile in row]) for row in layer]) for layer in grid]))
             # Handles variants based on `:` affixes
             buffer = BytesIO()
             extra_buffer = BytesIO() if raw_output else None

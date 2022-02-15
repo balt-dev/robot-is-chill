@@ -403,8 +403,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command(name="blacklist")
     @commands.has_permissions(administrator=True)
     async def blacklist(self, ctx: Context, *, args: str):
-        '''Set up a blacklist of channels or users. Channels are server moderator only, users are bot owner only.
-        (This isn't implemented yet.)'''
+        '''Set up a blacklist of channels or users. Channels are server moderator only, users are bot owner only.'''
         try:
             sub_command, mode, id = args.split(' ')
         except ValueError:
@@ -426,7 +425,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             sub_command == 'channel' and 
             id in channels
         ), 'You\'re not authorized to do that.'
-        d = {}
         async with self.bot.db.conn.cursor() as cur:
             if mode == 'add':
                 await cur.execute(f'''INSERT INTO blacklisted{sub_command}s

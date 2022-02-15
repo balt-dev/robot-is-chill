@@ -118,5 +118,6 @@ async def check_commands(ctx):
             if len(await cur.fetchall()):
                 return False
     return True
+
 bot.run(auth.token)
 sys.exit(bot.exit_code)
