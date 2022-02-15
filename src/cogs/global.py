@@ -290,7 +290,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         return await ctx.error('The replied message doesn\'t have an attached image.')
                 except:
                     async for m in ctx.channel.history(limit=20):
-                        if m.author.id == self.bot.user.id:
+                        if m.author.id == self.bot.user.id and m.attachments:
                             msg = m
                             break
                     if msg == None:
