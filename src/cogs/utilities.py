@@ -85,9 +85,9 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command(name="undo")
     async def undo(self, ctx: Context):
         '''Deletes the last message sent from the bot.'''
+        await self.trigger_typing(ctx)
         ctx.message.delete()
-        n = 0
-        h = ctx.channel.history(limit=100)
+        h = ctx.channel.history(limit=20)
         async for m in h:
             if m.author.id == self.bot.user.id:
                 try:
@@ -99,7 +99,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                         return
                 except:
                     pass
-        await ctx.error('None of your commands were found in the last `100` messages.')
+        await ctx.error('None of your commands were found in the last `20` messages.')
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
