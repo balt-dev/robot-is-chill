@@ -502,31 +502,25 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def rule(self, ctx: Context, *, objects: str = ""):
         '''Renders the text tiles provided. 
         
-        If not found, the bot tries to auto-generate them! (See the `make` command for more.)
+        If not found, the bot tries to auto-generate them!
 
         **Flags**
-        * `--palette=<...>` (`-P=<...>`): Recolors the output gif. See `search type:palettes` command for palettes.
-        * `--background=[...]` (`-B=[...]`): Enables background color. If no argument is given, defaults to black. The argument must be a palette index ("x/y").
-        * `--raw` (`-R`): Enables raw mode. The sprites are sent in a ZIP file as well as normally. By default, sprites have no color.
-        * `--letter` (`-L`): Enables letter mode. Custom text that has 2 letters in it will be rendered in "letter" mode.
-        * `--global=<...>` (`-global=<...>`, `-g=<...>`): Applies a set of variants to every tile.
-        * `--combine=[...]` (`-combine=[...]`, `-c=[...]`): Adds the output onto the end of another animation.
-        * `--frames=<...>` (`-frames=<...>`, `-f=<...>`): Only outputs frame X of the render.
+        * See the `flags` commands for all the valid flags.
         
         **Variants**
-        * `:variant`: Append `:variant` to a tile to change color or sprite of a tile. See the `variants` command for more.
+        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
 
         **Useful tips:**
         * `-` : Shortcut for an empty tile. 
-        * `&` : Stacks tiles on top of each other.
+        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
         * `tile_` : `tile_object` renders regular objects.
         * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
         * `||` : Marks the output gif as a spoiler. 
         
         **Example commands:**
         `rule baba is you`
-        `rule -B rock is ||push||`
-        `rule -P=test tile_baba on baba is word`
+        `rule -b rock is ||push||`
+        `rule -p=test tile_baba on baba is word`
         `rule baba eat baba - tile_baba tile_baba:l`
         '''
         if config.danger_mode:
@@ -552,23 +546,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def tile(self, ctx: Context, *, objects: str = ""):
         '''Renders the tiles provided.
 
-       **Flags**
-        * `--palette=<...>` (`-P=<...>`): Recolors the output gif. See `search type:palettes` command for palettes.
-        * `--background=[...]` (`-B=[...]`): Enables background color. If no argument is given, defaults to black. The argument must be a palette index ("x/y").
-        * `--raw` (`-R`): Enables raw mode. The sprites are sent in a ZIP file as well as normally. By default, sprites have no color.
-        * `--letter` (`-L`): Enables letter mode. Custom text that has 2 letters in it will be rendered in "letter" mode.
-        * `--global=<...>` (`-global=<...>`, `-g=<...>`): Applies a set of variants to every tile.
-        * `--combine=[...]` (`-combine=[...]`, `-c=[...]`): Adds the output onto the end of another animation.
-        * `--frames=<...>` (`-frames=<...>`, `-f=<...>`): Only outputs frame X of the render.
-
+        **Flags**
+        * See the `flags` commands for all the valid flags.
+        
         **Variants**
-        * `:variant`: Append `:variant` to a tile to change color or sprite of a tile. See the `variants` command for more.
+        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
 
         **Useful tips:**
         * `-` : Shortcut for an empty tile. 
-        * `&` : Stacks tiles on top of each other.
-        * `text_` : `text_object` renders text objects.
-        * `,` : `text_x,y,...` is expanded into `text_x text_y...`
+        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
+        * `tile_` : `tile_object` renders regular objects.
+        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
         * `||` : Marks the output gif as a spoiler. 
         
         **Example commands:**
