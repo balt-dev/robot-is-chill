@@ -1,6 +1,6 @@
 [
     {
-        "name": "bishop",
+        "name": "jonybishop",
         "sprite": "bishop",
         "tiling": "-1",
         "color": [
@@ -9,7 +9,7 @@
         ]
     },
     {
-        "name": "king",
+        "name": "jonyking",
         "sprite": "king",
         "tiling": "-1",
         "color": [
@@ -18,7 +18,7 @@
         ]
     },
     {
-        "name": "knight",
+        "name": "jonyknight",
         "sprite": "knight",
         "tiling": "-1",
         "color": [
@@ -27,7 +27,7 @@
         ]
     },
     {
-        "name": "pawn",
+        "name": "jonypawn",
         "sprite": "pawn",
         "tiling": "-1",
         "color": [
@@ -36,7 +36,7 @@
         ]
     },
     {
-        "name": "queen",
+        "name": "jonyqueen",
         "sprite": "queen",
         "tiling": "-1",
         "color": [
@@ -45,7 +45,7 @@
         ]
     },
     {
-        "name": "rook",
+        "name": "jonyrook",
         "sprite": "rook",
         "tiling": "-1",
         "color": [

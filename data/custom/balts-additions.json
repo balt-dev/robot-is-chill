@@ -718,5 +718,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "hazelstorm",
+        "sprite": "hazelstorm",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
