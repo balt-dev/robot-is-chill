@@ -85,11 +85,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command(name="undo")
     async def undo(self, ctx: Context):
         '''Deletes the last message sent from the bot.'''
-        await self.trigger_typing(ctx)
-        ctx.message.delete()
+        await ctx.trigger_typing()
+        await ctx.message.delete()
         h = ctx.channel.history(limit=20)
         async for m in h:
-            if m.author.id == self.bot.user.id:
+            if m.author.id == self.bot.user.id and m.attachments:
                 try:
                     reply = await ctx.channel.fetch_message(m.reference.message_id)
                     if reply.author == ctx.message.author:
