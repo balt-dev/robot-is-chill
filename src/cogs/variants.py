@@ -651,13 +651,13 @@ def setup(bot: Bot):
     return add(ctx,'neon',float(neon))
   
   @handlers.handler(
-    pattern=r"pixelate(?:([\d]+))?",
-    variant_hints={"pixelate": "`pixelate<int>` (Pixelates the sprite with a radius of n.)"},
+    pattern=r"pixelate([\d]+)(?:\/([\d]+))?",
+    variant_hints={"pixelate": "`pixelate<int>[/<int>]` (Pixelates the sprite with a radius of n.)"},
     variant_group="Filters"
   )
   def pixelate(ctx: HandlerContext) -> TileFields:
-    pixelate = ctx.groups[0]
-    return add(ctx,'pixelate',int(pixelate))
+    pixelate = [max(int(ctx.groups[0]),1), max(int(ctx.groups[1]),1) if ctx.groups[1] != None else max(int(ctx.groups[0]),1)]
+    return add(ctx,'pixelate',pixelate)
   
   @handlers.handler(
     pattern=r"opacity(?:([\d\.]+))?",
