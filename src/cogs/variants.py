@@ -969,11 +969,12 @@ def setup(bot: Bot):
     return {'hueshift':float(ctx.groups[0])}
 
   @handlers.handler(
-    pattern=r"(?:palette\/|p\!)(\w+)",
+    pattern=r"(?:palette\/|p\!)(.+)",
     variant_hints={"palette": "`palette/<palettename>` (Applies a different color palette to the tile.)"},
     variant_group="Filters"
   )
   def palette(ctx: HandlerContext) -> TileFields:
+    assert ctx.groups[0].find('/') != -1 and ctx.groups[0].find('\\') != -1, 'No backdoors into the host\'s computer, thank you very much.'
     return{
       "palette": ctx.groups[0]
     }
