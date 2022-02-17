@@ -924,9 +924,10 @@ class Renderer:
             sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
         elif name == 'wrap' and any([x!=0 for x in value]):
             sprite = Image.fromarray(np.roll(np.array(sprite),value,(1,0)))
-        elif name == 'pixelate' and value > 1:
+        elif name == 'pixelate':
             wid,hgt = sprite.size
-            sprite = sprite.resize((math.floor(sprite.width/value),math.floor(sprite.height/value)), resample=Image.NEAREST)
+            mx,my = value if len(value) == 2 else (value[0],value[0])
+            sprite = sprite.resize((math.floor(sprite.width/value[0]),math.floor(sprite.height/value[1])), resample=Image.NEAREST)
             sprite = sprite.resize((wid,hgt), resample=Image.NEAREST)
         elif name == 'glitch' and all([x!=0.0 for x in value]):
             clamp = lambda m,mn,mx: min(mx,max(mn,m))

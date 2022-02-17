@@ -301,10 +301,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         break
                     except:
                         pass
-            combine_match2 = re.fullmatch(r"-c=([^ ]+)", flag) or re.fullmatch(r"--combine=([^ ]+)", flag)
-            if combine_match2:
-                before_image = Image.open(requests.get(combine_match2.group(1), stream=True).raw)
-                to_delete.append((x, y))
             speed_match = re.fullmatch(r"-speed=([\d\.]+)", flag)
             if speed_match:
                 try:
@@ -354,7 +350,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
-        
         try:
             if rule:
                 comma_grid = split_commas(word_grid, "tile_")

@@ -727,5 +727,50 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "kelt",
+        "sprite": "kelt",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "meelt",
+        "sprite": "meelt",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "folt",
+        "sprite": "folt",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "jilt",
+        "sprite": "jilt",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ilt",
+        "sprite": "ilt",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
