@@ -974,7 +974,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def palette(ctx: HandlerContext) -> TileFields:
-    assert ctx.groups[0].find('/') != -1 and ctx.groups[0].find('\\') != -1, 'No backdoors into the host\'s computer, thank you very much.'
+    assert ctx.groups[0].find('/') == -1 and ctx.groups[0].find('\\') == -1, 'No backdoors into the host\'s computer, thank you very much.'
     return{
       "palette": ctx.groups[0]
     }
@@ -985,7 +985,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def overlay(ctx: HandlerContext) -> TileFields:
-    assert ctx.groups[0].find('/') != -1 and ctx.groups[0].find('\\') != -1, 'No backdoors into the host\'s computer, thank you very much.'
+    assert ctx.groups[0].find('/') == -1 and ctx.groups[0].find('\\') == -1, 'No backdoors into the host\'s computer, thank you very much.'
     return{
       "overlay": ctx.groups[0]
     }
