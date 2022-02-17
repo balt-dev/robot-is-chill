@@ -979,11 +979,12 @@ def setup(bot: Bot):
     }
 
   @handlers.handler(
-    pattern=r"(?:overlay\/|o\!)(\w+)",
+    pattern=r"(?:overlay\/|o\!)([^ ]+)",
     variant_hints={"overlay": "`(o!|overlay/)<overlayname>` (Applies an overlay on the tile.)"},
     variant_group="Filters"
   )
   def overlay(ctx: HandlerContext) -> TileFields:
+    assert ctx.groups[0].find('/') != -1 and ctx.groups[0].find('\\') != -1, 'No backdoors into the host\'s computer, thank you very much.'
     return{
       "overlay": ctx.groups[0]
     }
