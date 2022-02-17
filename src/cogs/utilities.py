@@ -359,7 +359,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         if palette == '-r' or palette == '--raw':
             palette = 'default'
             raw = '--raw'
-        assert palette.find('/') != -1 and palette.find('\\') != -1, 'No backdoors into the host\'s computer, thank you very much.'
+        assert palette.find('/') == -1 and palette.find('\\') == -1, 'No backdoors into the host\'s computer, thank you very much.'
         try:
             img = Image.open(f"data/palettes/{palette}.png")
         except FileNotFoundError:
