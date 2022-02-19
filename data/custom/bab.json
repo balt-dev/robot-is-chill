@@ -808,5 +808,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "lin",
+        "sprite": "lin",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hol",
+        "sprite": "hol",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

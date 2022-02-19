@@ -679,6 +679,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.cooldown(1, 7, type=commands.BucketType.channel)
     async def print_map(self, ctx: Context, source: str, filename: str):
         '''Loads a level and parses it as a command.'''
+        assert filename.find('/') == -1 and filename.find('\\') == -1 and source.find('/') == -1 and source.find('\\') == -1, 'No looking at the host\'s hard drive, thank you very much.'
         grid = self.read_map(filename, source=source)
         grid = await self.read_metadata(grid, initialize_level_tree=True)
         layers = set()

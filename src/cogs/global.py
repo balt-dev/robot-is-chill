@@ -456,7 +456,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
         delta = time() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
-        description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','')}`{'||' if spoiler else ''}"
+        description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','').replace('`', '')}`{'||' if spoiler else ''}"
         if do_embed:
             embed = discord.Embed(
                 color = self.bot.embed_color,
