@@ -112,7 +112,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     ,("--letter","Makes text smaller than 3 long render as big letters by default.")
                     ,("--comment=anything","Just a comment. Does nothing.")
                     ,("-f=(comma separated values in [1,2,3])","Chooses which wobble frames to display.")
-                    ,("-c[=url]","Prepends the image in the URL with the image rendered, or the last message sent in the channel if there is none.")
+                    ,("-c","Prepends the render in the message you replied to in the render, or the last message you sent in the channel if there is none.")
                     ,("-speed=float","Multiplies the frame delta of the image by the reciprocal of the specified number.")
                     ,("-g=string","Applies the specified string as a variant to every tile in the image")
                     ,("-co","Disables randomization of tile wobble.")

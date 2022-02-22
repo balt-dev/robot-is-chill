@@ -945,6 +945,14 @@ def setup(bot: Bot):
     return add(ctx,'melt')
 
   @handlers.handler(
+    pattern=r"lockhue(\d+)",
+    variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
+    variant_group="Filters"
+  )
+  def lockhue(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'lockhue',int(ctx.groups[0]))
+
+  @handlers.handler(
     pattern=r"negative|neg",
     variant_hints={"negative": "`negative` (RGB color inversion.)"},
     variant_group="Filters"
