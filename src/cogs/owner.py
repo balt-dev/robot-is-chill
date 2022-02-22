@@ -599,13 +599,21 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.is_owner()
     async def sql(self, ctx: Context, *, query: str):
         '''Run some sql'''
+        filemode = False
+        if query[:3] == '-f ':
+            query = query[3:] #hardcode but whatever
+            filemode = True
         async with self.bot.db.conn.cursor() as cur:
             await cur.execute(query)
             rows = await cur.fetchall()
         formatted = '\n'.join('|'.join(str(value) for value in row) for row in rows)
+        if filemode:
+            out = BytesIO()
+            with open(out,mode='w') as f:
+                f.write(formatted)
+                await ctx.send('Output:',file=discord.File())
         out = f"Output:\n```\n{formatted}\n```"
-        print(out)
-        await ctx.send(out)
+        
 
     @commands.command()
     @commands.is_owner()

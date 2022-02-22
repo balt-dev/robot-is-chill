@@ -81,6 +81,12 @@ def shift_hue(arr,hueshift):
     rgb=hsv_to_rgb(hsv)
     return rgb
 
+def lock_hue(arr,huelock):
+    hsv=rgb_to_hsv(arr)
+    hsv[...,0]= huelock
+    rgb=hsv_to_rgb(hsv)
+    return rgb
+
 def grayscale(arr,influence):
     arr = np.array(arr,dtype=np.float64)
     gray_arr = np.copy(arr)
@@ -945,6 +951,8 @@ class Renderer:
                 off = np.sin(((l/numpysprite.shape[0])*value[2]*np.pi*2)+(value[0]/numpysprite.shape[0]*np.pi*2))*-value[1]
                 numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
             sprite = Image.fromarray(numpysprite.swapaxes(0,1))
+        elif name == 'lockhue' and value != None:
+            sprite = Image.fromarray(lock_hue(np.array(sprite,dtype="uint8"),value))
         elif name == 'gradientx' and value!=(1,1,1,1):
             numpysprite = np.array(sprite).swapaxes(0,1)
             for l in range(len(numpysprite)):
@@ -973,7 +981,7 @@ class Renderer:
             sprite_arr = list(np.array(sprite,dtype=np.uint8).swapaxes(0,1))
             for i, col in enumerate(sprite_arr):
                 l = col
-                col_removed = list(filter(lambda a: tuple(a) != (0,0,0,0), col))
+                col_removed = list(filter(lambda a: a[3] != 0, col))
                 while len(col_removed) < len(col):
                     col_removed.insert(0,(0,0,0,0))
                 sprite_arr[i]=col_removed

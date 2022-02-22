@@ -707,7 +707,7 @@
             "2",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "text_billiam",
@@ -807,5 +807,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "knife",
+        "sprite": "knife",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

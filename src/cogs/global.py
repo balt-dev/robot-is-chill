@@ -289,12 +289,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     if not msg.attachments:
                         return await ctx.error('The replied message doesn\'t have an attached image.')
                 except:
-                    async for m in ctx.channel.history(limit=20):
+                    async for m in ctx.channel.history(limit=10):
                         if m.author.id == self.bot.user.id and m.attachments:
-                            msg = m
-                            break
+                            try:
+                                reply = await ctx.channel.fetch_message(m.reference.message_id)
+                                if reply.author == ctx.message.author:
+                                    msg = m
+                                    break
+                            except:
+                                pass
                     if msg == None:
-                        return await ctx.error('No commands were found in the last `20` messages.')
+                        return await ctx.error('None of your commands were found in the last `10` messages.')
                 finally:
                     try:
                         before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
@@ -375,6 +380,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     tile = tile.replace('rule_','text_')
                     if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
                         tile = re.sub('(.+?)(:.+|$)',r'\1'+(global_variant if tile != '-' else '')+r'\2',tile)
+                    r = re.fullmatch(r'(.+?)(?::.*)?',tile)
+                    if r != None and not rule and r.groups()[0] == '2': #hardcoded easter egg
+                        async with self.bot.db.conn.cursor() as cur:
+                            await cur.execute('''SELECT name FROM tiles WHERE tiling LIKE 2 ORDER BY RANDOM() LIMIT 1''')
+                            t = await cur.fetchall()
+                            tile = re.sub('(.+?)(:.+|$)',r'\1'+':4/2:lockhue0'+r'\2',t[0][0])
                     layer_grid[l][y][x] = tile
         if layers:
             try:
@@ -535,6 +546,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         for attachment_url in urls:
             file_request = requests.get(attachment_url)
             await self.render_tiles(ctx, objects=file_request.content.decode(), rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
+            
     # Generates an animated gif of the tiles provided, using the default palette
     @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)

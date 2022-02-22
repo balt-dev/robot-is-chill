@@ -119,5 +119,17 @@ async def check_commands(ctx):
                 return False
     return True
 
+@bot.event
+async def on_command(ctx):
+    webhook = await bot.fetch_webhook(webhooks.logging_id)
+    embed = discord.Embed(
+        title = discord.Embed.Empty,
+        description = (ctx.message.content),
+        color=0xffffff
+    )
+    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=discord.Embed.Empty, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text=str(ctx.author.id))
+    await webhook.send(embed=embed)
+
 bot.run(auth.token)
 sys.exit(bot.exit_code)
