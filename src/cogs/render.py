@@ -576,7 +576,7 @@ class Renderer:
         text = text[5:]
         raw = text.replace("/", "")
         newline_count = text.count("/")
-
+        assert len(text) <= 64, 'Text has a maximum length of `64` characters.'
         if seed is None:
             seed = int((7+position[0])/(3+position[1])*100000000)
         seed_digits = [(seed >> 8 * i ) | 0b11111111 for i in range(len(raw))]
