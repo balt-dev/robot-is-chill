@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 import sys
 import traceback
 from asyncio import create_task
@@ -156,7 +157,8 @@ class CommandErrorHandler(commands.Cog):
             
             elif isinstance(error, numpy.linalg.LinAlgError):
                 return await ctx.error("The given warp points are unsolvable.")
-
+            elif isinstance(error, sqlite3.OperationalError):
+                return await ctx.error(f"There was an error in your SQL.\n`{error}`")
             elif isinstance(error, requests.exceptions.ConnectionError):
                 return await ctx.error('A given link for the filterimage was invalid.')
             elif isinstance(error, errors.OverlayNotFound):

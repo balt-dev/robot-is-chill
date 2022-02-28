@@ -1,0 +1,20 @@
+[
+    {
+        "name": "abab",
+        "sprite": "abab",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_abab",
+        "sprite": "text_abab",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

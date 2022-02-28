@@ -6,6 +6,7 @@ import json
 import zipfile
 import pathlib
 import re
+import pandas
 import requests
 import itertools
 import collections
@@ -604,15 +605,18 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             query = query[3:] #hardcode but whatever
             filemode = True
         async with self.bot.db.conn.cursor() as cur:
-            await cur.execute(query)
-            rows = await cur.fetchall()
-        formatted = '\n'.join('|'.join(str(value) for value in row) for row in rows)
+            result = await cur.execute(query)
+            try:
+                formatted = pandas.DataFrame.from_records(data = await result.fetchall(), columns = [column[0] for column in result.get_cursor().description]).to_markdown(index=False, tablefmt="presto")
+            except TypeError:
+                return await ctx.send(f"No output.")
         if filemode:
+            await ctx.send('Writing file...',delete_after=5)
             out = BytesIO()
-            with open(out,mode='w') as f:
-                f.write(formatted)
-                await ctx.send('Output:',file=discord.File())
-        out = f"Output:\n```\n{formatted}\n```"
+            out.write(bytes(formatted,'utf-8'))
+            out.seek(0)
+            return await ctx.send('Output:',file=discord.File(out,filename='sql-output.txt'))
+        return await ctx.send(f"Output:\n```\n{formatted}\n```")
         
 
     @commands.command()

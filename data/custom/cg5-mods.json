@@ -20,7 +20,7 @@
     {
         "name": "text_those",
         "sprite": "text_those",
-        "tiling": "2",
+        "tiling": "0",
         "color": [
             "3",
             "3"
@@ -29,7 +29,7 @@
     {
         "name": "text_here",
         "sprite": "text_here",
-        "tiling": "2",
+        "tiling": "0",
         "color": [
             "3",
             "3"
@@ -38,7 +38,7 @@
     {
         "name": "text_there",
         "sprite": "text_there",
-        "tiling": "2",
+        "tiling": "0",
         "color": [
             "1",
             "4"

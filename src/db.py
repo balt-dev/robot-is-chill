@@ -21,7 +21,7 @@ class Database:
         '''Startup'''
         with open(f"data/hints/{BABA_WORLD}.json") as fp:
             self.level_hints = json.load(fp)
-        self.conn = await asqlite.connect(db) # type: ignore
+        self.conn = await asqlite.connect(db, check_same_thread=False) # not checking for same thread probably is a terrible idea but whateverrr
         print("Initialized database connection.")
         await self.create_tables()
         print("Verified database tables.")
