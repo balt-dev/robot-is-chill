@@ -104,5 +104,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "coob",
+        "sprite": "cube",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

@@ -160,7 +160,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await self.trigger_typing(ctx)
         start = time()
             
-        tiles = objects.lower().strip().replace("\\", "")
+        tiles = objects.lower().strip().replace("\\", "").replace("`", "")
 
         # Replace some phrases    
         tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles) 
@@ -383,9 +383,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     r = re.fullmatch(r'(.+?)(?::.*)?',tile)
                     if r != None and not rule and r.groups()[0] == '2': #hardcoded easter egg
                         async with self.bot.db.conn.cursor() as cur:
-                            await cur.execute('''SELECT name FROM tiles WHERE tiling LIKE 2 ORDER BY RANDOM() LIMIT 1''')
+                            await cur.execute('''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
                             t = await cur.fetchall()
-                            tile = re.sub('(.+?)(:.+|$)',r'\1'+':4/2:lockhue0'+r'\2',t[0][0])
+                            tile = re.sub('(.+?)(:.+|$)',t[0][0]+':4/2:lockhue0'+r'\2',tile)
                     layer_grid[l][y][x] = tile
         if layers:
             try:
@@ -402,8 +402,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # (It shouldn't be that long to begin with because of Discord's 2000 character limit)
         if tilecount > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id): 
             return await ctx.error(f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
-        elif tilecount == 0:
-            return await ctx.error(f"Can't render nothing.")
 
         # Pad the word rows from the end to fit the dimensions
         for l in range(len(layer_grid)):

@@ -926,6 +926,12 @@ class Renderer:
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
             im.paste(cropped,(value[0],value[1]))
             sprite = im
+        elif name == 'snip' and any(value):
+            im = np.array(sprite,dtype=np.uint8)
+            h,w,_ = im.shape
+            im = np.pad(im,((0,1),(0,1),(0,0)))
+            im[max(0,value[1]):min(value[1]+value[3],h),max(value[0],0):min(value[0]+value[2],w)] = [0,0,0,0]
+            sprite = Image.fromarray(im[:-1,:-1])
         elif name == 'scale' and any([x!=1 for x in value]):
             sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
         elif name == 'wrap' and any([x!=0 for x in value]):

@@ -690,30 +690,17 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         layers.sort()
         layers = dict([(v,i) for i,v in enumerate(layers)])
         gridf = [[['' for _ in range(max(layers.values())+1)] for _ in range(grid.width)] for _ in range(grid.height)] #Numpy requires strings to be a fixed length so can't use it
-        def is_adjacent(sprite: str, x: int, y: int) -> bool:
-            valid = (sprite, "edge", "level")
-            if x == 0 or x == grid.width - 1:
-                return True
-            if y == 0 or y == grid.height - 1:
-                return True
-            return any(item.sprite in valid for item in grid.cells[y * grid.width + x])
-        #print(self.bot.handlers.default_fields())
-        #please help how in the fuck do i use this
         for y, row in enumerate(np.array(grid.cells,dtype=Item).reshape(grid.height,grid.width)):
             for x, cell in enumerate(row):
                 if not all([len(tile.sprite) == '' for tile in cell]):
                     for tile in cell:
                         if tile.tiling in constants.DIRECTION_TILINGS:
                             variant = tile.direction * 8
-                        elif tile.tiling in constants.AUTO_TILINGS:
-                            variant = (
-                                is_adjacent(tile.sprite, x + 1, y) * 1 +
-                                is_adjacent(tile.sprite, x, y - 1) * 2 +
-                                is_adjacent(tile.sprite, x - 1, y) * 4 +
-                                is_adjacent(tile.sprite, x, y + 1) * 8
-                            )
                         else:
                             variant = 0
+                            async with self.bot.db.conn.cursor() as cur:
+                                await cur.execute(query)
+                                rows = await cur.fetchall()
                         gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(variant) if variant != 0 else '')
                         #gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(tile.color) if tile.color != default.color else '') + (";"+str(variant) if variant != 0 else '')
                 else:
@@ -728,7 +715,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                         break
         nl='\n'
         with io.BytesIO() as b:
-            b.write(bytes(f"-p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridf[1:-1]])}",encoding='utf-8'))
+            b.write(bytes(f"-tb -p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridf[1:-1]])}",encoding='utf-8'))
             b.seek(0)
             await ctx.send(file=discord.File(b,filename=f'{filename}.txt'))
 

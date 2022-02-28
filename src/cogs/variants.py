@@ -817,8 +817,8 @@ def setup(bot: Bot):
     return add(ctx,'blur_radius',float(radius))
     
   @handlers.handler(
-    pattern=r"rotate(-?\d+(?:\.\d+)?)",
-    variant_hints={"rotate": "`rotate<float>` (Rotates the sprite n degrees counterclockwise)"},
+    pattern=r"rot(?:ate)?(-?\d+(?:\.\d+)?)",
+    variant_hints={"rotate": "`rot|rotate<float>` (Rotates the sprite n degrees counterclockwise)"},
     variant_group="Filters"
   )
   def rotate(ctx: HandlerContext) -> TileFields:
@@ -1072,6 +1072,16 @@ def setup(bot: Bot):
   def crop(ctx: HandlerContext) -> TileFields:
     return add(ctx,
       "crop", (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
+    )
+  
+  @handlers.handler(
+    pattern=r"snip(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)",
+    variant_hints={"snip": "`snip<x>/<y>/<width>/<height>` (Removes a rectangle from the sprite, which is defined as n3 in width, n4 in height, with the point at n1/n2 being its top-left corner)"},
+    variant_group="Filters"
+  )
+  def snip(ctx: HandlerContext) -> TileFields:
+    return add(ctx,
+      "snip", (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
     )
     
   @handlers.handler(
