@@ -895,26 +895,25 @@ class Renderer:
                         im[y,x,:] = np.array([round(value*255),round(value*255),round(value*255),255])  #somehow this doesn't fuck up anywhere
             sprite = Image.fromarray(np.array(im))
         elif name == 'colselect' and value != None:
-          im = np.array(sprite)
-          colors = []
-          for x in range(im.shape[1]):
-            for y in range(im.shape[0]):
-              if im[y,x,3] > 0 :
-                colors.append(tuple(im[y,x]))
-          color = []
-          for n in value:
-            try:
-              color.append(collections.Counter(colors).most_common()[value[0]][n])
-            except:
-              color.append((0,0,0,0))
-          out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-          for x in range(im.shape[1]):
-            for y in range(im.shape[0]):
-              if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
-                out[y,x] = im[y,x]    
-          sprite = Image.fromarray(out)
-        elif name == 'meta_level' and value != 0:
-                sprite = self.make_meta(sprite, value)
+            im = np.array(sprite)
+            colors = []
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                if im[y,x,3] > 0 :
+                    colors.append(tuple(im[y,x]))
+            color = []
+            for n in value:
+                try:
+                color.append(collections.Counter(colors).most_common()[value[0]][n])
+                except:
+                color.append((0,0,0,0))
+            out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
+            for x in range(im.shape[1]):
+                for y in range(im.shape[0]):
+                if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
+                    out[y,x] = im[y,x]    
+            sprite = Image.fromarray(out)!= 0:
+                    sprite = self.make_meta(sprite, value)
         elif name == 'crop' and any(value):
             cropped = sprite.crop((value[0],value[1],value[0]+value[2],value[1]+value[3]))
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))

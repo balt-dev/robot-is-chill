@@ -682,7 +682,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def face(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'colslice',[-1])
+    return add(ctx,'colselect',[-1])
       
   @handlers.handler(
     pattern=r"main",
@@ -690,7 +690,7 @@ def setup(bot: Bot):
     variant_group="Filters"
   )
   def main(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'colslice',[0])
+    return add(ctx,'colselect',[0])
       
   @handlers.handler(
     pattern=r"land",
@@ -1122,7 +1122,7 @@ def setup(bot: Bot):
   
   @handlers.handler(
     pattern=r"(?:color|col|c)(-?\d+)\/(-?\d+)",
-    variant_hints={"color": "`color<n>[/<n>]` (Cuts all but the specified color or range of colors from the image. First number is inclusive, second is exclusive.)"},
+    variant_hints={"color": "`color<n>/<n>` (Cuts all but the specified range of colors from the image. First number is inclusive, second is exclusive.)"},
     variant_group="Filters"
   )
   def color(ctx: HandlerContext) -> TileFields:
@@ -1132,13 +1132,13 @@ def setup(bot: Bot):
 
     
   @handlers.handler(
-    pattern=r"(?:color|col|c)((?:-?\d+\|?)+)",
-    variant_hints={"color": "`color<n>[/<n>]` (Cuts all but the specified color or range of colors from the image. First number is inclusive, second is exclusive.)"},
+    pattern=r"(?:color|col|c)((?:-?\d+\+?)+)",
+    variant_hints={"color": "`color<n>[+<n>[+<n>...]]` (Cuts all but the specified colors from the image.)"},
     variant_group="Filters"
   )
   def color(ctx: HandlerContext) -> TileFields:
     return add(ctx,
-      "colselect", tuple([int(n) for n in ctx.groups[0].split('|')])
+      "colselect", tuple([int(n) for n in ctx.groups[0].split('+')])
     )
     
   return handlers
