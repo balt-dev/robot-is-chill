@@ -893,26 +893,19 @@ class Renderer:
                     if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
                         im[y,x,:] = np.array([round(value*255),round(value*255),round(value*255),255])  #somehow this doesn't fuck up anywhere
             sprite = Image.fromarray(np.array(im))
-        elif name == 'colslice' and value != None:
+        elif name == 'colselect' and value != None:
           im = np.array(sprite)
           colors = []
           for x in range(im.shape[1]):
             for y in range(im.shape[0]):
               if im[y,x,3] > 0 :
                 colors.append(tuple(im[y,x]))
-          if len(value) == 1:
+          color = []
+          for n in value:
             try:
-              color = np.array([collections.Counter(colors).most_common()[value[0]][0]])
+              color.append(collections.Counter(colors).most_common()[value[0]][n])
             except:
-              color = [(0,0,0,0)]
-          elif len(value) in (2,3):
-            try:
-                if len(value) == 2:
-                    color = np.array([n[0] for n in collections.Counter(colors).most_common()[value[0]:value[1]]])
-                else:
-                    color = np.array([n[0] for n in collections.Counter(colors).most_common()[value[0]:value[1]:value[2]]])
-            except:
-                pass
+              color.append((0,0,0,0))
           out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
           for x in range(im.shape[1]):
             for y in range(im.shape[0]):
