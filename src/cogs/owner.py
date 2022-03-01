@@ -483,7 +483,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             objects
         )
 
-    async def load_custom_tiles(self):
+    async def load_custom_tiles(self,file = '*'):
         '''Loads custom tile data from `data/custom/*.json`'''
         def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
             '''From config format to db format'''
@@ -504,11 +504,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             return d
 
         async with self.bot.db.conn.cursor() as cur:
-            for path in pathlib.Path("data/custom").glob("*.json"):
+            for path in pathlib.Path("data/custom").glob(f"{file}.json"):
                 source = path.parts[-1].split(".")[0]
                 with open(path) as fp:
                     objects = [prepare(source, obj) for obj in json.load(fp)]
-                
                 await cur.executemany(
                     '''
                     INSERT INTO tiles

@@ -513,8 +513,8 @@ def setup(bot: Bot):
     }
     
   @handlers.handler(
-    pattern=r"inactive|in",
-    variant_hints={"in": "`inactive` / `in` (Inactive text color)"},
+    pattern=r"inactive|in|off",
+    variant_hints={"in": "`inactive` / `in` / `off` (Inactive text color)"},
     variant_group="Colors"
   )
   def inactive(ctx: HandlerContext) -> TileFields:
@@ -765,12 +765,12 @@ def setup(bot: Bot):
     return {}
 
   @handlers.handler(
-    pattern=r"normalize|norm",
-    variant_hints={"norm": "`norm` (Moves the sprite to the center of its bounding box.)"},
+    pattern=r"normalize|norm([xy])?",
+    variant_hints={"norm": "`norm[x/y]` (Moves the sprite to the center of its bounding box.)"},
     variant_group="Filters"
   )
   def normalize(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'normalize',True)
+    return add(ctx,'normalize',(ctx.groups[0] != 'x',ctx.groups[0] != 'y'))
     
   @handlers.handler(
     pattern=r"(?:grayscale|gscale)(?:(-?[\d\.]+))?",
@@ -782,7 +782,7 @@ def setup(bot: Bot):
       
   @handlers.handler(
     pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
-    variant_hints={"floodfill": "`floodfill` (Fills in all open pockets in the sprite.)"},
+    variant_hints={"floodfill": "`floodfill[n]` (Fills in all open pockets in the sprite. An optional number specifies how bright the fill will be.)"},
     variant_group="Filters"
   )
   def floodfill(ctx: HandlerContext) -> TileFields:
@@ -945,13 +945,21 @@ def setup(bot: Bot):
     return add(ctx,'melt')
 
   @handlers.handler(
-    pattern=r"lockhue(\d+)",
+    pattern=r"(?:lockhue|huelock)(\d+)",
     variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
     variant_group="Filters"
   )
   def lockhue(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'lockhue',int(ctx.groups[0]))
+    return add(ctx,'lockhue',int(ctx.groups[0])/360)
 
+  @handlers.handler(
+    pattern=r"(?:locksat|satlock)(\d+)",
+    variant_hints={"locksat": "`locksat` (Locks the saturation of the sprite's pixels to the specified amount.)"},
+    variant_group="Filters"
+  )
+  def locksat(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'locksat',int(ctx.groups[0])/100)
+  
   @handlers.handler(
     pattern=r"negative|neg",
     variant_hints={"negative": "`negative` (RGB color inversion.)"},
