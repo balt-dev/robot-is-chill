@@ -1103,13 +1103,24 @@ def setup(bot: Bot):
     return {}
   
   @handlers.handler(
-    pattern=r"(?:color|col|c)(-?\d+)(?:\/(-?\d+))?",
+    pattern=r"(?:color|col|c)(-?\d+)\/(-?\d+)",
     variant_hints={"color": "`color<n>[/<n>]` (Cuts all but the specified color or range of colors from the image. First number is inclusive, second is exclusive.)"},
     variant_group="Filters"
   )
   def color(ctx: HandlerContext) -> TileFields:
     return add(ctx,
-      "colslice", tuple([int(n) for n in ctx.groups if type(n) != type(None)]) if len(ctx.groups) == 2 else int(ctx.groups[0])
+      "colselect", tuple([*range(*[int(n) for n in ctx.groups])])
+    )
+
+    
+  @handlers.handler(
+    pattern=r"(?:color|col|c)((?:-?\d+\|?)+)",
+    variant_hints={"color": "`color<n>[/<n>]` (Cuts all but the specified color or range of colors from the image. First number is inclusive, second is exclusive.)"},
+    variant_group="Filters"
+  )
+  def color(ctx: HandlerContext) -> TileFields:
+    return add(ctx,
+      "colselect", tuple([int(n) for n in ctx.groups[0].split('|')])
     )
     
   return handlers
