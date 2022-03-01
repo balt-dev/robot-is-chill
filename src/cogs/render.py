@@ -81,9 +81,9 @@ def shift_hue(arr,hueshift):
     rgb=hsv_to_rgb(hsv)
     return rgb
 
-def lock_hue(arr,huelock):
+def lock(t,arr,lock):
     hsv=rgb_to_hsv(arr)
-    hsv[...,0]= huelock
+    hsv[...,t]= lock
     rgb=hsv_to_rgb(hsv)
     return rgb
 
@@ -877,6 +877,7 @@ class Renderer:
             center = (int(avg(miny,maxy)),int(avg(minx,maxx)))
             absolute_center = [n//2 for n in sprite.shape[:2]]
             displacement = [(a-b)-1 for a,b in zip(absolute_center,center)]
+            displacement = [displacement[0] if value[0] else 0, displacement[1] if value[1] else 0]
             sprite = Image.fromarray(np.roll(sprite,displacement[::-1],(1,0))) 
         elif name == 'pad' and any(value):
             sprite = Image.fromarray(np.pad(np.array(sprite),((value[1],value[3]),(value[0],value[2]),(0,0))))
@@ -958,7 +959,9 @@ class Renderer:
                 numpysprite[l]=rotate(numpysprite[l].tolist(),int(off+0.5))
             sprite = Image.fromarray(numpysprite.swapaxes(0,1))
         elif name == 'lockhue' and value != None:
-            sprite = Image.fromarray(lock_hue(np.array(sprite,dtype="uint8"),value))
+            sprite = Image.fromarray(lock(0,np.array(sprite,dtype="uint8"),value))
+        elif name == 'locksat' and value != None:
+            sprite = Image.fromarray(lock(1,np.array(sprite,dtype="uint8"),value))
         elif name == 'gradientx' and value!=(1,1,1,1):
             numpysprite = np.array(sprite).swapaxes(0,1)
             for l in range(len(numpysprite)):

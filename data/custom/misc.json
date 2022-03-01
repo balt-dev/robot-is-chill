@@ -603,7 +603,7 @@
     },
     {
         "name": "text_ae",
-        "sprite": "ae",
+        "sprite": "text_ae",
         "color": [
             "0",
             "3"

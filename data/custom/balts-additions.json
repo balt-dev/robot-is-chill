@@ -772,5 +772,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_fbufbu",
+        "sprite": "text_fbufbu",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ouch",
+        "sprite": "render",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

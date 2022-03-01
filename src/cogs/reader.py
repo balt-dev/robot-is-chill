@@ -698,11 +698,10 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                             variant = tile.direction * 8
                         else:
                             variant = 0
-                            async with self.bot.db.conn.cursor() as cur:
-                                await cur.execute(query)
-                                rows = await cur.fetchall()
-                        gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(variant) if variant != 0 else '')
-                        #gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+str(tile.color) if tile.color != default.color else '') + (";"+str(variant) if variant != 0 else '')
+                        async with self.bot.db.conn.cursor() as cur:
+                            await cur.execute(f'SELECT active_color_x, active_color_y FROM tiles WHERE name LIKE \'{tile.sprite}\'')
+                            default_colors = tuple(dict(await cur.fetchone()).values())
+                        gridf[y][x][layers[tile.layer]] = tile.sprite + (";"+'/'.join([str(n) for n in tile.color]) if tile.color != default_colors else '') + (";"+str(variant) if variant != 0 and tile.tiling != 1 else '')
                 else:
                     gridf[y][x] = ['-']
         for r, row in enumerate(gridf):
