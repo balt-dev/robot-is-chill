@@ -930,16 +930,17 @@ class Renderer:
             type[1] = 1 if type[1] else -1
             np_img = np.array(sprite,dtype=np.uint8)
             midpoint = [n//2 for n in np_img.shape[:2]]
+            offset = [n%2 for n in np_img.shape[:2]]
             if type[0]:
               try:
-                np_img[:,:midpoint[1]:type[1]] = np_img[:,midpoint[1]::type[1]][:,::-1]
+                np_img[:,:midpoint[1]+offset[1]:type[1]] = np_img[:,midpoint[1]::type[1]][:,::-1]
               except:
-                np_img[:,:midpoint[1]-1:type[1]] = np_img[:,midpoint[1]-1::type[1]][:,::-1]
+                np_img[:,:midpoint[1]-1+offset[1]:type[1]] = np_img[:,midpoint[1]-1::type[1]][:,::-1]
             else:
               try:
-                np_img[:midpoint[1]:type[1],:] = np_img[midpoint[1]::type[1],:][::-1]
+                np_img[:midpoint[0]+offset[0]:type[1],:] = np_img[midpoint[0]::type[1]][::-1]
               except:
-                np_img[:midpoint[1]-1:type[1],:] = np_img[midpoint[1]-1::type[1],:][::-1]
+                np_img[:midpoint[0]-1+offset[0]:type[1],:] = np_img[midpoint[0]-1::type[1]][::-1]
             sprite = Image.fromarray(np_img)
         elif name == 'scale' and any([x!=1 for x in value]):
             sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
