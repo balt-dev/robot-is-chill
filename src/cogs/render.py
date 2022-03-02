@@ -904,7 +904,7 @@ class Renderer:
             color = []
             for n in value:
                 try:
-                    color.append(collections.Counter(colors).most_common()[value[0]][n])
+                    color.append(collections.Counter(colors).most_common()[n][0])
                 except:
                     color.append((0,0,0,0))
             out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
