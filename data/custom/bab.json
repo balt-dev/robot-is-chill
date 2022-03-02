@@ -826,5 +826,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sine",
+        "sprite": "sine",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
