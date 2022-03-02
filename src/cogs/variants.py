@@ -1091,6 +1091,14 @@ def setup(bot: Bot):
     return add(ctx,
       "snip", (int(ctx.groups[0]),int(ctx.groups[1]),int(ctx.groups[2]),int(ctx.groups[3]))
     )
+
+  @handlers.handler(
+    pattern=r"mirror\/([xy])\/(front|back)",
+    variant_hints={"mirror": "`mirror/<x|y>/<front|back>` (Mirrors the specified part of the sprite over the specified axis.)"},
+    variant_group="Filters"
+  )
+  def mirror(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'mirror',(ctx.groups[0]=='x', ctx.groups[1]=='front'))
     
   @handlers.handler(
     pattern=r"pad(\d+?)\/(\d+?)\/(\d+?)\/(\d+?)",
@@ -1129,7 +1137,6 @@ def setup(bot: Bot):
     return add(ctx,
       "colselect", tuple([*range(*[int(n) for n in ctx.groups])])
     )
-
     
   @handlers.handler(
     pattern=r"(?:color|col|c)((?:-?\d+\+?)+)",

@@ -925,6 +925,22 @@ class Renderer:
             im = np.pad(im,((0,1),(0,1),(0,0)))
             im[max(0,value[1]):min(value[1]+value[3],h),max(value[0],0):min(value[0]+value[2],w)] = [0,0,0,0]
             sprite = Image.fromarray(im[:-1,:-1])
+        elif name == 'mirror':
+            type = list(value)
+            type[1] = 1 if type[1] else -1
+            np_img = np.array(sprite,dtype=np.uint8)
+            midpoint = [n//2 for n in np_img.shape[:2]]
+            if type[0]:
+              try:
+                np_img[:,:midpoint[1]:type[1]] = np_img[:,midpoint[1]::type[1]][:,::-1]
+              except:
+                np_img[:,:midpoint[1]-1:type[1]] = np_img[:,midpoint[1]-1::type[1]][:,::-1]
+            else:
+              try:
+                np_img[:midpoint[1]:type[1],:] = np_img[midpoint[1]::type[1],:][::-1]
+              except:
+                np_img[:midpoint[1]-1:type[1],:] = np_img[midpoint[1]-1::type[1],:][::-1]
+            sprite = Image.fromarray(np_img)
         elif name == 'scale' and any([x!=1 for x in value]):
             sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
         elif name == 'wrap' and any([x!=0 for x in value]):
