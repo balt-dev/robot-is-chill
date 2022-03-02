@@ -858,7 +858,9 @@ class Renderer:
               alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
               sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
       for name, value in filters:
-        if name == 'threeoo' and value != None:
+        if name == 'meta_level' and value != 0:
+                sprite = self.make_meta(sprite, value)
+        elif name == 'threeoo' and value != None:
             sprite = np.array(sprite,dtype=np.uint8)
             h,w,_ = sprite.shape
             assert h <= 24 and w <= 24, 'Image too large for 3oo filter!'
@@ -925,21 +927,21 @@ class Renderer:
             im[max(0,value[1]):min(value[1]+value[3],h),max(value[0],0):min(value[0]+value[2],w)] = [0,0,0,0]
             sprite = Image.fromarray(im[:-1,:-1])
         elif name == 'mirror':
-            type = list(value)
-            type[1] = 1 if type[1] else -1
+            value = list(value)
+            value[1] = 1 if value[1] else -1
             np_img = np.array(sprite,dtype=np.uint8)
             midpoint = [n//2 for n in np_img.shape[:2]]
             offset = [n%2 for n in np_img.shape[:2]]
-            if type[0]:
+            if value[0]:
               try:
-                np_img[:,:midpoint[1]+offset[1]:type[1]] = np_img[:,midpoint[1]::type[1]][:,::-1]
+                np_img[:,:midpoint[1]+offset[1]:value[1]] = np_img[:,midpoint[1]::value[1]][:,::-1]
               except:
-                np_img[:,:midpoint[1]-1+offset[1]:type[1]] = np_img[:,midpoint[1]-1::type[1]][:,::-1]
+                np_img[:,:midpoint[1]-1+offset[1]:value[1]] = np_img[:,midpoint[1]-1::value[1]][:,::-1]
             else:
               try:
-                np_img[:midpoint[0]+offset[0]:type[1],:] = np_img[midpoint[0]::type[1]][::-1]
+                np_img[:midpoint[0]+offset[0]:value[1],:] = np_img[midpoint[0]::value[1]][::-1]
               except:
-                np_img[:midpoint[0]-1+offset[0]:type[1],:] = np_img[midpoint[0]-1::type[1]][::-1]
+                np_img[:midpoint[0]-1+offset[0]:value[1],:] = np_img[midpoint[0]-1::value[1]][::-1]
             sprite = Image.fromarray(np_img)
         elif name == 'scale' and any([x!=1 for x in value]):
             sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
