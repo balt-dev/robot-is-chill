@@ -924,7 +924,10 @@ class Renderer:
           im_np = np.array(sprite,dtype=np.uint8)
           out_np = np.zeros(im_np.shape,dtype=np.uint8)
           for i, n in enumerate(value):
-            out_np[:,:,i] = im_np[:,:,n]
+            if math.abs(value) != value: #no sign function in python :(
+              out_np[:,:,i] = -(1+value)
+            else:
+              out_np[:,:,i] = im_np[:,:,n]
           sprite = Image.fromarray(out_np)
         elif name == 'snip' and any(value):
             im = np.array(sprite,dtype=np.uint8)
