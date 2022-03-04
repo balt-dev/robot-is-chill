@@ -848,7 +848,7 @@ class Renderer:
               sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
               sprite = sprite.crop((box[0], box[1], constants.DEFAULT_SPRITE_SIZE + box[0], constants.DEFAULT_SPRITE_SIZE + box[1]))
           if style == "property":
-              assert (not sprite.height != constants.DEFAULT_SPRITE_SIZE or sprite.width != constants.DEFAULT_SPRITE_SIZE), f'Properties can\'t be larger than {constants.DEFAULT_SPRITE_SIZE}x{constants.DEFAULT_SPRITE_SIZE}.'
+              assert (sprite.height <= constants.DEFAULT_SPRITE_SIZE and sprite.width <= constants.DEFAULT_SPRITE_SIZE), f'Properties can\'t be larger than {constants.DEFAULT_SPRITE_SIZE}x{constants.DEFAULT_SPRITE_SIZE}.'
               plate, box = self.bot.db.plate(direction, wobble)
               plate_alpha = plate.getchannel("A")
               sprite_alpha = sprite.getchannel("A")
@@ -902,7 +902,7 @@ class Renderer:
             for x in range(im.shape[1]):
                 for y in range(im.shape[0]):
                     if im[y,x,3] > 0 :
-                   	    colors.append(tuple(im[y,x]))
+                        colors.append(tuple(im[y,x]))
             color = []
             for n in value:
                 try:
