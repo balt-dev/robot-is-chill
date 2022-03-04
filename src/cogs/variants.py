@@ -1147,5 +1147,16 @@ def setup(bot: Bot):
     return add(ctx,
       "colselect", tuple([int(n) for n in ctx.groups[0].split('+')])
     )
+
+  @handlers.handler(
+    pattern=r"(?:channelswap|cswap|cs)([rgba])([rgba])([rgba])([rgba])",
+    variant_hints={"channelswap": "`channelswap<r/g/b/a><r/g/b/a><r/g/b/a><r/g/b/a>` (Swaps around channels of the sprite.)"},
+    variant_group="Filters"
+  )
+  def color(ctx: HandlerContext) -> TileFields:
+    lookup_rgba = {'r':0,'g':1,'b':2,'a':3}
+    return add(ctx,
+      "channelswap", tuple([lookup_rgba[n] for n in ctx.groups])
+    )
     
   return handlers

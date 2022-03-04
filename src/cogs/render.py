@@ -920,6 +920,12 @@ class Renderer:
             im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
             im.paste(cropped,(value[0],value[1]))
             sprite = im
+        elif name == 'channelswap':
+          im_np = np.array(sprite,dtype=np.uint8)
+          out_np = np.zeros(im_np.shape,dtype=np.uint8)
+          for i, n in enumerate(value):
+            out_np[:,:,i] = im_np[:,:,n]
+          sprite = Image.fromarray(out_np)
         elif name == 'snip' and any(value):
             im = np.array(sprite,dtype=np.uint8)
             h,w,_ = im.shape
