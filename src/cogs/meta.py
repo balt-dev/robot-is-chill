@@ -89,10 +89,18 @@ class PrettyHelpCommand(commands.DefaultHelpCommand):
     def get_ending_note(self) -> str:
         """Returns help command's ending note. This is mainly useful to override for i18n purposes."""
         command_name = self.invoked_with
-        return "Type {0}{1} command for more info on a command.".format(self.clean_prefix, command_name)
+        try:
+            prefix = self.clean_prefix
+        except AttributeError:
+            prefix = "{prefix}"
+        return "Type {0}{1} command for more info on a command.".format(prefix, command_name)
 
     def get_command_signature(self, command: commands.Command) -> str:
         parent = command.full_parent_name
+        try:
+            prefix = self.clean_prefix
+        except AttributeError:
+            prefix = "{prefix}"
         if len(command.aliases) > 0:
             aliases = '|'.join(command.aliases)
             fmt = '[%s|%s]' % (command.name, aliases)
@@ -102,7 +110,7 @@ class PrettyHelpCommand(commands.DefaultHelpCommand):
         else:
             alias = command.name if not parent else parent + ' ' + command.name
 
-        return '`%s%s %s`' % (self.clean_prefix, alias, command.signature)
+        return '`%s%s %s`' % (prefix, alias, command.signature)
 
 class MetaCog(commands.Cog, name="Other Commands"):
     def __init__(self, bot: Bot):
