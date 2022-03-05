@@ -9,6 +9,7 @@ from .. import constants, errors
 from ..tile import FullTile, RawTile, TileFields
 
 import random as rand
+import numpy as np
 
 if TYPE_CHECKING:
   from ...ROBOT import Bot
@@ -1133,7 +1134,7 @@ def setup(bot: Bot):
     variant_hints={"color": "`color<n>/<n>` (Cuts all but the specified range of colors from the image. First number is inclusive, second is exclusive.)"},
     variant_group="Filters"
   )
-  def color(ctx: HandlerContext) -> TileFields:
+  def colselect(ctx: HandlerContext) -> TileFields:
     return add(ctx,
       "colselect", tuple([*range(*[int(n) for n in ctx.groups])])
     )
@@ -1143,20 +1144,29 @@ def setup(bot: Bot):
     variant_hints={"color": "`color<n>[+<n>[+<n>...]]` (Cuts all but the specified colors from the image.)"},
     variant_group="Filters"
   )
-  def color(ctx: HandlerContext) -> TileFields:
+  def colselect(ctx: HandlerContext) -> TileFields:
     return add(ctx,
       "colselect", tuple([int(n) for n in ctx.groups[0].split('+')])
     )
 
   @handlers.handler(
-    pattern=r"(?:channelswap|cswap|cs)([rgba10])([rgba10])([rgba10])([rgba10])",
-    variant_hints={"channelswap": "`channelswap<r/g/b/a/1/0><r/g/b/a/1/0><r/g/b/a/1/0><r/g/b/a/1/90>` (Swaps around channels of the sprite.)"},
+    pattern=r"(?:channelswap|cswap|cs)\((0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\)\((0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\)\((0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\)\((0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\/(0(?:\.\d+)?|1(?:\.0)?)\)",
+    variant_hints={"channelswap": "`channelswap(<0.0-1.0>/<0.0-1.0>/<0.0-1.0>/<0.0-1.0>)(<0.0-1.0>/<0.0-1.0>/<0.0-1.0>/<0.0-1.0>)(<0.0-1.0>/<0.0-1.0>/<0.0-1.0>/<0.0-1.0>)(<0.0-1.0>/<0.0-1.0>/<0.0-1.0>/<0.0-1.0>)`\n(Swaps around channels of the sprite according to a 4x4 RGBA matrix.\nThe 4 groups correspond to RGBA channels, and the 4 numbers correspond to the influence the original sprite's channels have on them.)"},
     variant_group="Filters"
   )
-  def color(ctx: HandlerContext) -> TileFields:
-    lookup_rgba = {'r':0,'g':1,'b':2,'a':3,'1':-2,'0':-1}
+  def channelswap(ctx: HandlerContext) -> TileFields:
     return add(ctx,
-      "channelswap", tuple([lookup_rgba[n] for n in ctx.groups])
+      "channelswap", np.array([float(n) for n in ctx.groups],dtype=float).reshape((4,4))
+    )
+  
+  @handlers.handler(
+    pattern=r"(?:channelset|cset)([rgba])(0(?:\.\d+)?|1(?:\.0)?)",
+    variant_hints={"channelset": "`channelset<r/g/b/a><0.0-1.0>` (Sets a RGBA channel of the sprite to a value)"},
+    variant_group="Filters"
+  )
+  def channelset(ctx: HandlerContext) -> TileFields:
+    return add(ctx,
+      "channelset", ({'r':0,'g':1,'b':2,'a':3}[ctx.groups[0]],float(ctx.groups[1]))
     )
     
   return handlers

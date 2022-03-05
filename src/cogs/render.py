@@ -921,14 +921,17 @@ class Renderer:
             im.paste(cropped,(value[0],value[1]))
             sprite = im
         elif name == 'channelswap':
-          im_np = np.array(sprite,dtype=np.uint8)
-          out_np = np.zeros(im_np.shape,dtype=np.uint8)
-          for i, n in enumerate(value):
-            if math.abs(value) != value: #no sign function in python :(
-              out_np[:,:,i] = -(1+value)
-            else:
-              out_np[:,:,i] = im_np[:,:,n]
+          im_np = np.array(sprite,dtype=float)/255 #making it a float for convenience
+          out_np = np.zeros(im_np.shape,dtype=float)
+          for i, channel_dst in enumerate(value):
+              for j, channel_src in enumerate(channel_dst):
+                out_np[:,:,i] += im_np[:,:,j]*channel_src
+          out_np = np.array(np.vectorize(lambda n: int(min(max(n,0),1)*255))(out_np),dtype=np.uint8)
           sprite = Image.fromarray(out_np)
+        elif name == 'channelset':
+          im_np = np.array(sprite,dtype=float)
+          im_np[:,:,value[0]] = value[1]*255
+          sprite = Image.fromarray(np.array(np.vectorize(int)(im_np),dtype=np.uint8))
         elif name == 'snip' and any(value):
             im = np.array(sprite,dtype=np.uint8)
             h,w,_ = im.shape
