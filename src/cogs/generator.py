@@ -8,6 +8,8 @@ import json
 import random
 import time
 import re
+import zlib
+import zipfile
 
 from io import BytesIO
 from discord.ext import commands
