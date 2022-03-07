@@ -229,6 +229,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         upscale = 2
         pad = (0,0,0,0)
         do_embed = False
+        format = 'gif'
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -353,6 +354,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if embedmatch:
                 do_embed = True
                 to_delete.append((x, y))
+            formatmatch = re.fullmatch(r'(?:--format|-f)=(gif|png)',flag)
+            if formatmatch:
+                format = formatmatch.group(1)
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         try:
@@ -441,7 +446,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 scaleddef=gscale,
                 printme=printme,
                 crop=crop,
-                pad=pad
+                pad=pad,
+                format=format
             )
         except errors.TileNotFound as e:
             word = e.args[0]
@@ -462,7 +468,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         except errors.TextGenerationError as e:
             return await self.handle_custom_text_errors(ctx, e)
 
-        filename = datetime.utcnow().strftime(r"render_%Y-%m-%d_%H.%M.%S.gif")
+        filename = datetime.utcnow().strftime(f"render_%Y-%m-%d_%H.%M.%S.{format}")
         delta = time() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
         description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','').replace('`', '')}`{'||' if spoiler else ''}"

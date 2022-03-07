@@ -125,6 +125,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     ,("-crop=int/int/int/int","Crops the render to the specified pixels.")
                     ,("-pad=int/int/int/int","Pads the render with the specified pixels.")
                     ,("-v","Gives more information about the render.")
+                    ,("-fm=<gif|png>","Sets the format of the render output.")
                     #,("","")
         )
                    

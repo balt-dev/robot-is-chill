@@ -5,5 +5,5 @@ requests>=2.25.1
 pandas
 emoji
 git+https://github.com/Rapptz/asqlite
-git+https://github.com/Rapptz/discord.py/tree/feature/threads
+discord.py >= 1.7
 git+https://github.com/Rapptz/discord-ext-menus

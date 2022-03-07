@@ -132,7 +132,8 @@ class Renderer:
         scaleddef: float = 1,
         printme: bool = False,
         crop: tuple[int,int,int,int] | None = None,
-        pad: tuple[int,int,int,int] | None = (0,0,0,0)
+        pad: tuple[int,int,int,int] | None = (0,0,0,0),
+        format: str = 'gif'
     ):
         '''Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -145,6 +146,8 @@ class Renderer:
         `background` is a palette index. If given, the image background color is set to that color, otherwise transparent. Background images overwrite this. 
         '''
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
+        durations = []
+        dur_check = []
         sprite_cache: dict[str, Image.Image] = {}
         imgs = []
         times = []
@@ -152,6 +155,15 @@ class Renderer:
         height = len(grid[0])
         img_width_raw = int(width * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
         img_height_raw =  int(height * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
+        new_frames = []
+        for f in frames:
+            if len(durations) == 0 or dur_check[-1] != f: #if the frame before is the same as the current frame
+                durations.append(speed)
+                new_frames.append(f)
+            else:
+                durations[-1] += speed
+            dur_check.append(f)
+        frames = new_frames
         def wl(a): 
             try: 
                 return int(a.frames[0].width * scaleddef)
@@ -349,12 +361,15 @@ class Renderer:
                         times.append(tile.delta + (time.time() - t))
         if before_image:
             bfr=0
+            before_durations = []
             for frame in ImageSequence.Iterator(before_image):
+                before_durations.append(frame.info['duration'])
                 im = frame.convert('RGBA').resize((frame.width//2,frame.height//2),Image.NEAREST)
                 newImage = Image.new('RGBA', (img_width,img_height), (0, 0, 0, 0))
                 newImage.paste(im, (padding-pad_l,padding-pad_u),mask=im)
                 imgs.insert(bfr,newImage) 
                 bfr += 1 #i dont wanna use an enumerate on an iterator
+            durations = before_durations + durations
         outs = []
         for img in imgs:
             if type(gridol) != type(None):
@@ -381,13 +396,14 @@ class Renderer:
                     q = q + '\n'
                 print(q)'''
             outs.append(img)
-    
+        print(durations, outs)
         self.save_frames(
             outs,
             out,
-            speed=speed,
+            durations=durations,
             extra_out=extra_out,
             extra_name=extra_name,
+            format=format
         )
         if len(times)==0:
             return 0, 0, 0
@@ -439,7 +455,10 @@ class Renderer:
                 else:
                     source, sprite_name = tile.sprite
                     path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
-                sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+                try:
+                    sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+                except:
+                    assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
                 sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
                 sprite = await self.apply_options_name(
                     tile.name,
@@ -1127,28 +1146,40 @@ class Renderer:
         self,
         imgs: list[Image.Image],
         out: str | BinaryIO,
-        speed: int,
+        durations: list[int],
         extra_out: str | BinaryIO | None = None,
         extra_name: str = 'render',
+        format: str = 'gif'
     ) -> None:
         '''Saves the images as a gif to the given file or buffer.
         
         If a buffer, this also conveniently seeks to the start of the buffer.
-
         If extra_out is provided, the frames are also saved as a zip file there.
         '''
-        imgs[0].save(
-            out, 
-            format="GIF",
-            save_all=True,
-            append_images=imgs[1:],
-            loop=0,
-            duration=speed,
-            disposal=2, # Frames don't overlap
-            transparency=255,
-            background=255,
-            optimize=False # Important in order to keep the color palettes from being unpredictable
-        )
+        if format == 'gif':
+            imgs[0].save(
+                out, 
+                format="GIF",
+                interlace=True,
+                save_all=True,
+                append_images=imgs[1:],
+                loop=0,
+                duration=durations,
+                disposal=2, # Frames don't overlap
+                transparency=0,
+                background=0,
+                optimize=False
+            )
+        elif format == 'png':
+            imgs[0].save(
+                out, 
+                format="PNG",
+                save_all=True,
+                append_images=imgs,
+                default_image=True,
+                loop=0,
+                duration=durations
+            )
         if not isinstance(out, str):
             out.seek(0)
         if extra_name == None: extra_name = 'render'
