@@ -912,7 +912,7 @@ class Renderer:
 				im = np.array(sprite)
 				ima = im[:,:,3]
 				ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
-				imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima, np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
+				imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima.astype("uint8"), np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
 				im[:,:,3] = imf[1:-1,1:-1]
 				for y in range(len(im)):
 					for x in range(len(im[0])):
