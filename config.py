@@ -5,6 +5,7 @@ description = "*An entertainment bot for rendering levels and custom scenes base
 prefixes = ["=", "Robot is ", "robot is ", "ROBOT IS "]
 trigger_on_mention = True
 embed_color = discord.Color(12877055)
+logging_color = 0xffffff
 auth_file = "config/auth.json"
 log_file = "log.txt"
 db_path = "robot.db"
