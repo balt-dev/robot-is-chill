@@ -125,7 +125,7 @@ async def on_command(ctx):
     embed = discord.Embed(
         title = discord.Embed.Empty,
         description = (ctx.message.content),
-        color=0xffffff
+        color=config.logging_color
     )
     try:
         embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=discord.Embed.Empty, icon_url=ctx.author.avatar.url)
