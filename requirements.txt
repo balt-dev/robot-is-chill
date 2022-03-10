@@ -1,4 +1,4 @@
-Pillow>=8.3.0
+Pillow==8.4.0
 jishaku>=1.18
 opencv-python>=4.0.0.0
 requests>=2.25.1
