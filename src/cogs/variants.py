@@ -643,13 +643,12 @@ def setup(bot: Bot):
     }
     
   @handlers.handler(
-    pattern=r"neon(?:(-?\d+(?:\.\d+)?))?",
-    variant_hints={"neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.)"},
+    pattern=r"neon(?:(-?\d+(?:\.\d+)?))?(?:\/(d+))?",
+    variant_hints={"neon": "`neon[float][/<int>]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.\nThe behavior of edge pixels is set by the second number if specified, which has binary for the edges you want clear. (0bDLUR))"},
     variant_group="Filters"
   )
   def neon(ctx: HandlerContext) -> TileFields:
-    neon = ctx.groups[0] or 1.4
-    return add(ctx,'neon',float(neon))
+    return add(ctx,'neon',(float(ctx.groups[0] or 1.4),int(ctx.groups(1))))
   
   @handlers.handler(
     pattern=r"pixelate([\d]+)(?:\/([\d]+))?",
