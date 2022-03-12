@@ -10,7 +10,7 @@ from datetime import datetime
 from io import BytesIO
 from json import load
 from os import listdir
-from time import time
+from time import time, perf_counter
 from typing import Any, OrderedDict, TYPE_CHECKING
 
 import numpy as np
@@ -158,7 +158,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 	async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
 		'''Performs the bulk work for both `tile` and `rule` commands.'''
 		await self.trigger_typing(ctx)
-		start = time()
+		start = perf_counter()
 			
 		tiles = objects.lower().strip().replace("\\", "").replace("`", "")
 
@@ -470,7 +470,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			return await self.handle_custom_text_errors(ctx, e)
 
 		filename = datetime.utcnow().strftime(f"render_%Y-%m-%d_%H.%M.%S.{format}")
-		delta = time() - start
+		delta = perf_counter() - start
 		image = discord.File(buffer, filename=filename, spoiler=spoiler)
 		description=f"{'||' if spoiler else ''}`{ctx.message.content.replace('||','').replace('`', '')}`{'||' if spoiler else ''}"
 		if do_embed:
@@ -480,13 +480,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				description = discord.Embed.Empty
 			)
 			def rendertime(v):
-				a=math.ceil(v*1000)
+				v *= 1000
 				nice=False
-				if a == 69:
+				if math.ceil(v) == 69:
 					nice=True
 				if objects=="lag":
-					a*=100000
-				return str(a)+("(nice)" if nice else "")
+					v*=100000
+				return f'{v:.4f}' + ("(nice)" if nice else "")
 			totalrendertime = rendertime(delta)
 			activerendertime = rendertime(tiledelta)
 			averagerendertime = rendertime(avgdelta)
@@ -886,20 +886,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		# Only the author should be mentioned
 		mentions = discord.AllowedMentions(everyone=False, users=[ctx.author], roles=False)
 
-		# Embed the level
-		embed = discord.Embed(
-			color = self.bot.embed_color,
-			title = discord.Embed.Empty,
-			description = formatted
-		)
-		embed.set_image(url=f'attachment://{gif.filename}')
 		# Send the result
-		await ctx.reply(file=gif, embed=embed, allowed_mentions=mentions)
+		await ctx.reply(file=gif, allowed_mentions=mentions)
 	
 	@commands.command(aliases=["filterimages","fi"])
 	@commands.cooldown(5, 8, commands.BucketType.channel)
 	async def filterimage(self, ctx: Context, *, query: str = ""):
-		'''Performs filterimage-related actions like template creation, conversion and accessing the (currently unimplemented) database.
+		'''Performs filterimage-related actions like template creation, conversion and accessing the database.
 		'''
 		if query.startswith("convert "):
 			query=query.split(" ")

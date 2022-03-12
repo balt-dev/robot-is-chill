@@ -202,7 +202,7 @@ class Renderer:
 		for layer in grid:
 			for y, row in enumerate(layer):
 				for x, tile in enumerate(row):
-					t = time.time()
+					t = time.perf_counter()
 					if tile.frames is None:
 						continue
 					tframes = []
@@ -359,7 +359,7 @@ class Renderer:
 									),
 									mask=sprite
 								)
-						times.append(tile.delta + (time.time() - t))
+					times.append(tile.delta + (time.perf_counter() - t))
 		if before_image:
 			bfr=0
 			before_durations = []
@@ -400,7 +400,6 @@ class Renderer:
 					q = q + '\n'
 				print(q)'''
 			outs.append(img)
-		print(durations, outs)
 		self.save_frames(
 			outs,
 			out,
@@ -425,7 +424,7 @@ class Renderer:
 	) -> ReadyTile:
 		'''woohoo'''
 
-		t = time.time()
+		t = time.perf_counter()
 		if tile.empty:
 			return ReadyTile(None)
 		out = []
@@ -548,7 +547,7 @@ class Renderer:
 			lowestlist.sort()
 			tile.displace = (tile.displace[0],(tile.displace[1]+int(lowestlist[0]*(gscale**-1)))-int(out[0].height//gscale))
 		f0, f1, f2 = out
-		return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.blending, time.time()-t)
+		return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.blending, time.perf_counter()-t)
 
 	async def render_full_tiles(
 		self,
