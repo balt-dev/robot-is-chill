@@ -917,7 +917,8 @@ class Renderer:
 				for y in range(len(im)):
 					for x in range(len(im[0])):
 						if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
-							im[y,x,:] = np.array([round(value*255),round(value*255),round(value*255),255])  #somehow this doesn't fuck up anywhere
+                            brightnessvalue=round(value*255)
+							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])  #somehow this doesn't fuck up anywhere
 				sprite = Image.fromarray(np.array(im))
 			elif name == 'colselect' and value != None:
 				im = np.array(sprite)
