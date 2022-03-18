@@ -29,5 +29,14 @@
             "0"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "errorflag",
+        "sprite": "errorflag",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
