@@ -12,7 +12,7 @@ import itertools
 import collections
 from src import constants
 from typing import Any, Optional
-import os 
+import os
 import config
 
 import time
@@ -38,14 +38,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         if row is None:
             return True
         return row["blacklisted"]
-        
+
     def __init__(self, bot: Bot):
         self.bot = bot
         self.identifies = []
         self.resumes = []
         # Are assets loading?
         self.bot.loading = False
-    
+
     @commands.command()
     @commands.is_owner()
     async def danger(self, ctx: Context, cog: str = ""):
@@ -74,7 +74,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def viewzip(self, ctx: Context):
         m = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read())).namelist()
         m.sort()
-        n  = '\n'.join(m)
+        n = '\n'.join(m)
         print(n)
         await ctx.send(f"```\n{n}```")
 
@@ -86,32 +86,34 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def editsprite(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
-        if attribute not in ['sprite','tiling','color']:
+        if attribute not in ['sprite', 'tiling', 'color']:
             return await ctx.error('You specified an invalid attribute.')
         if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
             return await ctx.error('You specified an invalid value.')
         if attribute == 'color':
-            value = [value,value2]
+            value = [value, value2]
         with open(f"data/custom/{pack_name}.json", "r") as f:
             sprite_data = json.load(f)
         for i in range(len(sprite_data)):
-            if sprite_data[i]['name'] == sprite_name: #this is dumb
+            if sprite_data[i]['name'] == sprite_name:  # this is dumb
                 sprite_data[i][attribute] = value
         with open(f"data/custom/{pack_name}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
         return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
-        
+
     @commands.command()
     @commands.is_owner()
-    async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
+    async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1, withtext: bool = False):
         '''Adds sprites to a specified sprite pack'''
         try:
             zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
         except IndexError:
             return await ctx.error('You forgot to attach a zip.')
-        dir = zip.namelist()[0]
-        file_name = re.sub(r'.+?\/(.+)',r'\1',re.match(r'(.+?)_\d+?_\d\.png', dir).groups()[0])
+        for name in zip.namelist():
+            if name[:5] != 'text_':
+                file_name = re.sub(r'.+?\/(.+)', r'\1',re.match(r'(.+?)_\d+?_\d\.png', name).groups()[0])
+                break
         for name in zip.namelist():
             sprite = zip.read(name)
             path = name.split("/")[-1]
@@ -131,6 +133,16 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             ],
             "tiling": str(tiling)
         })
+        if withtext:
+            sprite_data.append({
+                "name": f'text_{sprite_name}',
+                "sprite": f'text_{file_name}',
+                "color": [
+                    str(color_x),
+                    str(color_y)
+                ],
+                "tiling": "-1"
+            })
         with open(f"data/custom/{pack_name}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
@@ -140,23 +152,26 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.is_owner()
     async def importbab(self, ctx: Context, name: str, color_x: int = 0, color_y: int = 3, transform_txt_text: bool = True):
         '''Auto-import a bab sprite'''
-        pack_name = "bab" #yup
-        tiling = -1 #yupyup
+        pack_name = "bab"  # yup
+        tiling = -1  # yupyup
         await ctx.send(f"Hold on, cen be scan bab...")
+
         def scanforname(name):
-            for jsonfilename in ["characters","devs","special","thingify","ui","unsorted"]:
+            for jsonfilename in ["characters", "devs", "special", "thingify", "ui", "unsorted"]:
                 for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/objects/{jsonfilename}.json").json():
-                    if babdata["name"]==name:
+                    if babdata["name"] == name:
                         return babdata
         babdata = scanforname(name)
-        sprite=requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
+        sprite = requests.get(
+            f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
         # if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
         #     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
         pilsprite = Image.open(BytesIO(sprite))
-        pilsprite = pilsprite.resize(((pilsprite.width*3)//4,(pilsprite.height*3)//4),Image.NEAREST)
+        pilsprite = pilsprite.resize(
+            ((pilsprite.width*3)//4, (pilsprite.height*3)//4), Image.NEAREST)
         if transform_txt_text:
             if name.startswith("txt_"):
-                name="text_"+name[4:]
+                name = "text_"+name[4:]
         for i in range(3):
             # with open(f"data/sprites/{pack_name}/{name}_0_{i+1}.png", "wb") as f:
             #     f.write(sprite)
@@ -176,9 +191,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles()
         await ctx.send(f"Added {name} from bab.")
-        
-
-        
 
     @commands.command(aliases=["reboot"])
     @commands.is_owner()
@@ -189,18 +201,18 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         self.bot.exit_code = 1
         await self.bot.close()
 
-    @commands.command(aliases=["kill", "yeet", "defeat", "empty", "not","kil"])
+    @commands.command(aliases=["kill", "yeet", "defeat", "empty", "not", "kil"])
     @commands.is_owner()
-    async def logout(self, ctx: Context, endsentence : str = ""):
+    async def logout(self, ctx: Context, endsentence: str = ""):
         '''Kills the bot process.'''
-        if endsentence != "": #Normally, logout doesn't trigger with arguments.
+        if endsentence != "":  # Normally, logout doesn't trigger with arguments.
             if ctx.invoked_with == "not":
-                if endsentence == "robot": #Check if the argument is *actually* robot, making robot is not robot
+                if endsentence == "robot":  # Check if the argument is *actually* robot, making robot is not robot
                     await ctx.send("Poofing bot process...")
-                    await self.bot.close() # Trigger close before returning
-            return #Doesn't close the bot if any of these logic statements is false
+                    await self.bot.close()  # Trigger close before returning
+            return  # Doesn't close the bot if any of these logic statements is false
         elif ctx.invoked_with == "not":
-            return #Catch "robot is not"
+            return  # Catch "robot is not"
         elif ctx.invoked_with == "yeet":
             await ctx.send("Yeeting bot process...")
         elif ctx.invoked_with == "defeat":
@@ -259,13 +271,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.load_custom_tiles()
         self.bot.loading = False
         return await ctx.send("Done. Loaded custom tile data.")
-    
+
     async def load_initial_tiles(self):
         '''Loads tile data from `data/values.lua` and `.ld` files.'''
         # values.lua contains the data about which color (on the palette) is associated with each tile.
         with open("data/values.lua", errors='ignore') as fp:
             data = fp.read()
-        
+
         start = data.find("tileslist =\n")
         end = data.find("\n}\n", start)
 
@@ -278,7 +290,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 d["text_type"] = d.pop("type")
             if d.get("image") is not None:
                 d["sprite"] = d.pop("image")
-            if d.get("colour") is not None:    
+            if d.get("colour") is not None:
                 inactive = d.pop("colour").split(",")
                 d["inactive_color_x"] = int(inactive[0])
                 d["inactive_color_y"] = int(inactive[1])
@@ -326,7 +338,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         changed_objects: list[dict[str, Any]] = []
 
         by_name = itertools.groupby(
-            sorted(changed_objects, key=lambda x: x["name"]), 
+            sorted(changed_objects, key=lambda x: x["name"]),
             key=lambda x: x["name"]
         )
         ready: list[dict[str, Any]] = []
@@ -337,7 +349,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             counts = collections.Counter(map(freeze_dict, duplicates))
             most_common, _ = counts.most_common(1)[0]
             ready.append(dict(most_common))
-    
+
         await self.bot.db.conn.executemany(
             f'''
             INSERT INTO tiles(
@@ -405,7 +417,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         with open("data/editor_objectlist.lua", errors="replace") as fp:
             data = fp.read()
-        
+
         start = data.find("editor_objlist = {")
         end = data.find("\n}", start)
         assert start > 0 and end > 0
@@ -452,7 +464,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 active_color_y=active_y,
                 tags=tags
             ))
-        
+
         await self.bot.db.conn.executemany(
             f'''
             INSERT INTO tiles
@@ -485,7 +497,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             objects
         )
 
-    async def load_custom_tiles(self,file = '*'):
+    async def load_custom_tiles(self, file='*'):
         '''Loads custom tile data from `data/custom/*.json`'''
         def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
             '''From config format to db format'''
@@ -543,7 +555,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     objects
                 )
                 # this is a mega HACK, but I'm keeping it because the alternative is a headache
-                hacks = [x for x in objects if "baba_special" in x["tags"].split("\t")]
+                hacks = [
+                    x for x in objects if "baba_special" in x["tags"].split("\t")]
                 await cur.executemany(
                     '''
                     INSERT INTO tiles
@@ -584,12 +597,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
         await ctx.send(f"All hidden commands:\n{cmds}")
 
-    @commands.command(aliases=['clear','cls'])
+    @commands.command(aliases=['clear', 'cls'])
     @commands.is_owner()
     async def clearconsole(self, ctx: Context):
         os.system('cls||clear')
         await ctx.send('Console cleared.')
-            
+
     @commands.command()
     @commands.is_owner()
     async def doc(self, ctx: Context, command: commands.Command):
@@ -603,22 +616,21 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         '''Run some sql'''
         filemode = False
         if query[:3] == '-f ':
-            query = query[3:] #hardcode but whatever
+            query = query[3:]  # hardcode but whatever
             filemode = True
         async with self.bot.db.conn.cursor() as cur:
             result = await cur.execute(query)
             try:
-                formatted = pandas.DataFrame.from_records(data = await result.fetchall(), columns = [column[0] for column in result.get_cursor().description]).to_markdown(index=False, tablefmt="presto")
+                formatted = pandas.DataFrame.from_records(data=await result.fetchall(), columns=[column[0] for column in result.get_cursor().description]).to_markdown(index=False, tablefmt="presto")
             except TypeError:
                 return await ctx.send(f"No output.")
         if filemode:
-            await ctx.send('Writing file...',delete_after=5)
+            await ctx.send('Writing file...', delete_after=5)
             out = BytesIO()
-            out.write(bytes(formatted,'utf-8'))
+            out.write(bytes(formatted, 'utf-8'))
             out.seek(0)
-            return await ctx.send('Output:',file=discord.File(out,filename='sql-output.txt'))
+            return await ctx.send('Output:', file=discord.File(out, filename='sql-output.txt'))
         return await ctx.send(f"Output:\n```\n{formatted}\n```")
-        
 
     @commands.command()
     @commands.is_owner()
@@ -637,8 +649,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             data = TileData.from_row(row)
             if data.sprite not in ignored:
                 await self.load_letter(
-                    data.sprite, 
-                    data.text_type # type: ignore
+                    data.sprite,
+                    data.text_type  # type: ignore
                 )
             print(i/len(fetch))
 
@@ -657,26 +669,27 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def makedir(self, ctx: Context, name: str):
         '''Makes a directory for sprites to go in.'''
         os.mkdir(f'data/sprites/{name}')
-        with open(f'data/custom/{name}.json',mode='x') as f:
+        with open(f'data/custom/{name}.json', mode='x') as f:
             f.write('[]')
         await ctx.send(f"Made directory `{name}`.")
-        
+
     async def load_letter(self, word: str, tile_type: int):
         '''Scrapes letters from a sprite.'''
-        chars = word[5:] # Strip "text_" prefix
+        chars = word[5:]  # Strip "text_" prefix
 
         # Get the number of rows
         two_rows = len(chars) >= 4
 
         # Background plates for type-2 text,
         # in 1 bit per pixel depth
-        plates = [self.bot.db.plate(None, i)[0].getchannel("A").convert("1") for i in range(3)]
-        
+        plates = [self.bot.db.plate(None, i)[0].getchannel(
+            "A").convert("1") for i in range(3)]
+
         # Maps each character to three bounding boxes + images
         # (One box + image for each frame of animation)
         # char_pos : [((x1, y1, x2, y2), Image), ...]
         char_sizes: dict[tuple[int, str], Any] = {}
-        
+
         # Scrape the sprites for the sprite characters in each of the three frames
         for i, plate in enumerate(plates):
             # Get the alpha channel in 1-bit depth
@@ -684,12 +697,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 .convert("RGBA") \
                 .getchannel("A") \
                 .convert("1")
-            
+
             # Type-2 text has inverted text on a background plate
             if tile_type == 2:
                 alpha = ImageChops.invert(alpha)
                 alpha = ImageChops.logical_and(alpha, plate)
-
 
             # Get the point from which characters are seeked for
             x = 0
@@ -697,7 +709,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
             # Flags
             skip = False
-            
+
             # More than 1 bit per pixel is required for the flood fill
             alpha = alpha.convert("L")
             for i, char in enumerate(chars):
@@ -717,19 +729,19 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 # There's a letter at this position
                 else:
                     clone = alpha.copy()
-                    ImageDraw.floodfill(clone, (x, y), 128) # 1 placeholder
+                    ImageDraw.floodfill(clone, (x, y), 128)  # 1 placeholder
                     clone = Image.eval(clone, lambda x: 255 if x == 128 else 0)
                     clone = clone.convert("1")
-                    
-                    # Get bounds of character blob 
-                    x1, y1, x2, y2 = clone.getbbox() # type: ignore
+
+                    # Get bounds of character blob
+                    x1, y1, x2, y2 = clone.getbbox()  # type: ignore
                     # Run some checks
                     # # Too wide => Skip 2 characters (probably merged two chars)
                     # if x2 - x1 > (1.5 * alpha.width * (1 + two_rows) / len(chars)):
                     #     skip = True
                     #     alpha = ImageChops.difference(alpha, clone)
                     #     continue
-                    
+
                     # Too tall? Scrap the rest of the characters
                     if y2 - y1 > 1.5 * alpha.height / (1 + two_rows):
                         break
@@ -738,7 +750,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     if x2 - x1 <= 2:
                         alpha = ImageChops.difference(alpha, clone)
                         continue
-                    
+
                     # Remove character from sprite, push to char_sizes
                     alpha = ImageChops.difference(alpha, clone)
                     clone = clone.crop((x1, y1, x2, y2))
@@ -775,7 +787,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             VALUES (?, ?, ?, ?, ?, ?);
             ''',
             results
-        )   
+        )
 
     async def load_ready_letters(self):
         def channel_shenanigans(im: Image.Image) -> Image.Image:
@@ -788,10 +800,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         for path in pathlib.Path("data/letters").glob("*/*/*/*_0.png"):
             _, _, mode, char, w, name = path.parts
             replacelist = [('asterisk',    '*'),
-                           ('questionmark','?'),
+                           ('questionmark', '?'),
                            ('period',      '.')]
             for original, substitute in replacelist:
-                char = char.replace(original,substitute)
+                char = char.replace(original, substitute)
             width = int(w)
             prefix = name[:-6]
             # mo ch w h
@@ -799,13 +811,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             channel_shenanigans(Image.open(path)).save(buf_0, format="PNG")
             blob_0 = buf_0.getvalue()
             buf_1 = BytesIO()
-            channel_shenanigans(Image.open(path.parent / f"{prefix}_1.png")).save(buf_1, format="PNG")
+            channel_shenanigans(Image.open(
+                path.parent / f"{prefix}_1.png")).save(buf_1, format="PNG")
             blob_1 = buf_1.getvalue()
             buf_2 = BytesIO()
-            channel_shenanigans(Image.open(path.parent / f"{prefix}_2.png")).save(buf_2, format="PNG")
+            channel_shenanigans(Image.open(
+                path.parent / f"{prefix}_2.png")).save(buf_2, format="PNG")
             blob_2 = buf_2.getvalue()
             data.append((mode, char, width, blob_0, blob_1, blob_2))
- 
+
         await self.bot.db.conn.executemany(
             '''
             INSERT INTO letters
@@ -818,13 +832,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def on_guild_join(self, guild: discord.Guild):
         webhook = await self.bot.fetch_webhook(self.bot.webhook_id)
         embed = discord.Embed(
-            color = self.bot.embed_color,
-            title = "Joined Guild",
-            description = f"Joined {guild.name}."
+            color=self.bot.embed_color,
+            title="Joined Guild",
+            description=f"Joined {guild.name}."
         )
         embed.add_field(name="ID", value=str(guild.id))
         embed.add_field(name="Member Count", value=str(guild.member_count))
         await webhook.send(embed=embed)
+
 
 def setup(bot: Bot):
     bot.add_cog(OwnerCog(bot))

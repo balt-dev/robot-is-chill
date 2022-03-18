@@ -1043,11 +1043,12 @@ Absolute: {truefalseemoji[int(absolute)]}"""
 					await ctx.reply("ERROR: A name can't have spaces.")
 					return
 				if len(query)<3:
-					await ctx.reply("ERROR: No name provided.")
-					return
-				name=query[2].lower()
-				command="SELECT name FROM filterimages WHERE INSTR(name,?)<>0;"
-				args=(name,)
+					command="SELECT name FROM filterimages"
+					args=tuple()
+				else:
+					command="SELECT name FROM filterimages WHERE INSTR(name,?)<>0;"
+					name=query[2].lower()
+					args=(name,)
 				async with self.bot.db.conn.cursor() as cursor:
 					await cursor.execute(command,args)
 					results=await cursor.fetchall()

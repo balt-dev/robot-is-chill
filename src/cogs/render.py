@@ -97,6 +97,14 @@ def grayscale(arr,influence):
 	result = ((gray_arr*influence) + (arr*(1-influence)))
 	return np.array(result,dtype=np.uint8)
 
+def alpha_paste(img1,img2,coords):
+	imgtemp = Image.new('RGBA',img1.size,(0,0,0,0))
+	imgtemp.paste(
+		img2,
+		coords
+	)
+	return Image.alpha_composite(img1, imgtemp)
+
 class Renderer:
 	'''This class exposes various image rendering methods.
 	Some of them require metadata from the bot to function properly.
@@ -322,14 +330,7 @@ class Renderer:
 								)
 								imgtempar = np.asarray(imgtemp)
 								imgtempar[:,:,3] = np.asarray(imgs[frame])[:,:,3]
-								imgs[frame].paste(
-									Image.fromarray(cv2.min(np.asarray(imgs[frame]),imgtempar)),
-									(
-										0,
-										0
-									),
-									mask=imgtemp
-								)
+								imgs[frame] = Image.fromarray(cv2.min(np.asarray(imgs[frame]),imgtempar))
 							elif tile.blending == 'multiply':
 								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
 								imgtemp.paste(
@@ -342,22 +343,15 @@ class Renderer:
 								)
 								imgtempar = np.asarray(imgtemp)
 								imgtempar[:,:,3] = 1
-								imgs[frame].paste(
-									Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame]),np.asarray(imgtemp))),
-									(
-										0,
-										0
-									),
-									mask=imgtemp
-								)
+								imgs[frame] = Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame]),np.asarray(imgtemp)))
 							else:
-								imgs[frame].paste(
+								imgs[frame] = alpha_paste(
+									imgs[frame],
 									sprite,
 									(
 										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
 										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
+									)
 								)
 					times.append(tile.delta + (time.perf_counter() - t))
 		if before_image:
@@ -908,16 +902,34 @@ class Renderer:
 			elif name == 'floodfill' and type(value) == float:
 				f = lambda x: 420 if x > 0 else 0
 				g = lambda x: 0 if x == 69 else 255
-				im = np.array(sprite)
+				im = np.array(sprite,dtype=np.uint8)
+				for y in range(im.shape[0]):
+					for x in range(im.shape[1]):
+						im[y,x] = np.array([0,0,0,0],dtype=np.uint8) if im[y,x,3] == 0 else im[y,x]
 				ima = im[:,:,3]
 				ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
-				imf = np.array([[g(b) for b in a] for a in cv2.floodFill(ima.astype("uint8"), np.full((ima.shape[0]+2,ima.shape[1]+2),np.uint8(0)),(0,0),69,flags=4)[1]])
+				imf = np.array([[g(b) for b in a] for a in cv2.floodFill(image=ima.astype("uint8"),mask=np.zeros(np.array(ima.shape[:2])+2,dtype=np.uint8),seedPoint=(0,0),newVal=69)[1]])
 				im[:,:,3] = imf[1:-1,1:-1]
 				for y in range(len(im)):
 					for x in range(len(im[0])):
 						if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
 							brightnessvalue=round(value*255)
 							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])  #somehow this doesn't fuck up anywhere
+				sprite = Image.fromarray(np.array(im))
+			elif name == 'surround' and type(value) == float:
+				im = np.array(sprite,dtype=np.uint8)
+				for y in range(im.shape[0]):
+					for x in range(im.shape[1]):
+						im[y,x] = np.array([0,0,0,0],dtype=np.uint8) if im[y,x,3] == 0 else im[y,x]
+				ima = np.pad(im[:,:,3],((1,1),(1,1)))
+				imf = cv2.floodFill(image=ima.astype("uint8"),mask=np.zeros(np.array(ima.shape[:2])+2,dtype=np.uint8),seedPoint=(0,0),newVal=255)[1]
+				print(type(imf),type(im))
+				im[:,:,3] = imf[1:-1,1:-1]
+				for y in range(len(im)):
+					for x in range(len(im[0])):
+						if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
+							brightnessvalue=round(value*255)
+							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])
 				sprite = Image.fromarray(np.array(im))
 			elif name == 'colselect' and value != None:
 				im = np.array(sprite)
@@ -1065,28 +1077,28 @@ class Renderer:
 			elif name == 'opacity' and value < 1:
 				r,g,b,a = sprite.split()
 				sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * value)))
-			elif name == 'neon' and value != 1:
+			elif name == 'neon':
 				spritenp = np.array(sprite)
 				spritenp2 = copy.deepcopy(spritenp)
 				for x in range(spritenp.shape[1]):
 					for y in range(spritenp.shape[0]):
 						if spritenp[y][x][3] > 0 :
 							neighbors = 0
-							for xo,yo in [[1,0],[0,1],[-1,0],[0,-1]]:
+							for xo,yo,xor in [[1,0,1],[0,1,2],[-1,0,4],[0,-1,8]]:
 								if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
 									neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
 								else:
-									neighbors += int(not name.startswith('text_'))
+									neighbors += value[1]
 							if neighbors >= 4:
-								spritenp2[y,x,3] //= abs(value)
+								spritenp2[y,x,3] //= abs(value[0])
 							for xo,yo in [[-1,-1],[-1,1],[1,-1],[1,1]]:
 								if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
 									neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
 								else:
-									neighbors += int(not name.startswith('text_'))
+									neighbors += value[1]
 							if neighbors >= 8:
-								spritenp2[y,x,3] //= abs(value)
-				if value < 0:
+								spritenp2[y,x,3] //= abs(value[0])
+				if value[0] < 0:
 					spritenp2 = np.array([[[r,g,b,(255-a if a != 0 else 0)] for r,g,b,a in row] for row in spritenp2],dtype=np.uint8)
 				sprite = Image.fromarray(spritenp2)
 			elif name == 'warp' and value != ((0,0),(0,0),(0,0),(0,0)):

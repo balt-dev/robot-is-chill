@@ -643,12 +643,12 @@ def setup(bot: Bot):
     }
     
   @handlers.handler(
-    pattern=r"neon(?:(-?\d+(?:\.\d+)?))?(?:\/(d+))?",
-    variant_hints={"neon": "`neon[float][/<int>]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.\nThe behavior of edge pixels is set by the second number if specified, which has binary for the edges you want clear. (0bDLUR))"},
+    pattern=r"neon(?:(-?\d+(?:\.\d+)?))?(?:\/([10]))?",
+    variant_hints={"neon": "`neon[float][/<0|1>]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4.\nThe behavior of edge pixels is set by the second boolean, which leaves edges clear if set to true.)"},
     variant_group="Filters"
   )
   def neon(ctx: HandlerContext) -> TileFields:
-    return add(ctx,'neon',(float(ctx.groups[0] or 1.4),int(ctx.groups(1))))
+    return add(ctx,'neon',(float(ctx.groups[0] or 1.4),int(ctx.groups[1] or 0	)))
   
   @handlers.handler(
     pattern=r"pixelate([\d]+)(?:\/([\d]+))?",
@@ -787,6 +787,14 @@ def setup(bot: Bot):
   )
   def floodfill(ctx: HandlerContext) -> TileFields:
     return add(ctx,'floodfill',float(ctx.groups[0] or 0))
+
+  @handlers.handler(
+    pattern=r"(?:surround|surr|sr)([01]\.\d+)?",
+    variant_hints={"surround": "`surround[n]` (Fills in all but the open pockets in the sprite. An optional number specifies how bright the fill will be.)"},
+    variant_group="Filters"
+  )
+  def surround(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'surround',float(ctx.groups[0] or 0))
   
   @handlers.handler(
     pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
