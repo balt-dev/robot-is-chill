@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 import src.cogs.fish as fish
 import src.cogs.filterimage as filterimage
 import src.cogs.seamcarving as seamcarving
+import src.cogs.liquify as liquify
 import requests
 
 def rgb_to_hsv(rgb):
@@ -116,9 +117,9 @@ class Renderer:
 		'''Apply rgb color multiplication (0-255)'''
 		r,g,b = rgb
 		rc,gc,bc,ac = sprite.split()
-		rc = rc.point(lambda i: i * (r/256))
-		gc = gc.point(lambda i: i * (g/256))
-		bc = bc.point(lambda i: i * (b/256))
+		rc = rc.point(lambda i: int(i * (r/255)))
+		gc = gc.point(lambda i: int(i * (g/255)))
+		bc = bc.point(lambda i: int(i * (b/255)))
 		
 		return Image.merge('RGBA', (rc,gc,bc,ac))
 				
@@ -1058,6 +1059,8 @@ class Renderer:
 						col_removed.insert(0,(0,0,0,0))
 					sprite_arr[i]=col_removed
 				sprite = Image.fromarray(np.array(sprite_arr,dtype=np.uint8).swapaxes(0,1))
+			elif name == 'liquify':
+				sprite = Image.fromarray(liquify.liquify(np.array(sprite)))
 			elif name == 'reverse':
 				im = np.array(sprite.convert('RGBA'),dtype=np.uint8)
 				def colortoint(a):
