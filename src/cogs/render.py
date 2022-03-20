@@ -108,9 +108,9 @@ class Renderer:
 		'''Apply rgb color multiplication (0-255)'''
 		r,g,b = rgb
 		rc,gc,bc,ac = sprite.split()
-		rc = rc.point(lambda i: int(i * (r/256)))
-		gc = gc.point(lambda i: int(i * (g/256)))
-		bc = bc.point(lambda i: int(i * (b/256)))
+		rc = rc.point(lambda i: int(i * (r/255)))
+		gc = gc.point(lambda i: int(i * (g/255)))
+		bc = bc.point(lambda i: int(i * (b/255)))
 		
 		return Image.merge('RGBA', (rc,gc,bc,ac))
 				
