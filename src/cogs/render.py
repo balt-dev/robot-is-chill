@@ -97,7 +97,7 @@ def grayscale(arr,influence):
 	result = ((gray_arr*influence) + (arr*(1-influence)))
 	return np.array(result,dtype=np.uint8)
 
-def alpha_paste(img1,img2,coords):
+def alpha_paste(img1,img2,coords,format):
 	imgtemp = Image.new('RGBA',img1.size,(0,0,0,0))
 	imgtemp.paste(
 		img2,
@@ -351,7 +351,8 @@ class Renderer:
 									(
 										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
 										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									)
+									),
+									format
 								)
 					times.append(tile.delta + (time.perf_counter() - t))
 		if before_image:
@@ -370,15 +371,20 @@ class Renderer:
 			durations = before_durations + durations
 		outs = []
 		for img in imgs:
+			img = np.array(img,dtype=np.uint8)
 			if type(gridol) != type(None):
-				img = np.array(img,dtype=np.uint8)
 				for col in range(img.shape[0]//(gridol[0]*2)):
 					img[col*gridol[0]*2,:,:] = ~img[col*gridol[0]*2,:,:]
 					img[col*gridol[0]*2,:,3] = 255
 				for row in range(img.shape[1]//(gridol[1]*2)):
 					img[:,row*gridol[1]*2,:] = ~img[:,row*gridol[1]*2,:]
 					img[:,row*gridol[1]*2,3] = 255
-				img = Image.fromarray(img)
+			if format == 'gif':
+				for y in range(img.shape[0]):
+					for x in range(img.shape[1]):
+						img[y,x,:3] = [int(n//((img[y,x,3]/255)**-1)) for n in img[y,x,:3]]
+						img[y,x,3] = 255 if img[y,x,3] > 0 else 0
+			img = Image.fromarray(img)
 			img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
 			if crop != None:
 				img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
