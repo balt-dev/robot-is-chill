@@ -953,6 +953,14 @@ def setup(bot: Bot):
     return add(ctx,'melt')
 
   @handlers.handler(
+    pattern=r"liquify",
+    variant_hints={"liquify": "`liquify` (\"Liquifies\" the tile by melting every color except the main color and turning the main color into liquid, filling empty pockets.)"},
+    variant_group="Filters"
+  )
+  def melt(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'liquify')
+
+  @handlers.handler(
     pattern=r"(?:lockhue|huelock)(\d+)",
     variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
     variant_group="Filters"
