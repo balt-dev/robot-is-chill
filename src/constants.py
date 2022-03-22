@@ -183,6 +183,61 @@ DIRECTIONS = {
     16: "left",
     24: "down"
 }
+
+# for n in [[0,1],[-1,0],[0,-1],[1,0],[-1,1],[-1,-1],[1,-1],[]] 
+TILING_VARIANTS: dict[tuple[bool, bool, bool, bool, bool, bool, bool, bool], int] = {
+    #R, U, L, D, E, Q, Z, C
+    # Straightforward so far, easy to compute with a bitfield
+    (False, False, False, False, False, False, False, False): 0,
+    (True,  False, False, False, False, False, False, False): 1,
+    (False, True,  False, False, False, False, False, False): 2,
+    (True,  True,  False, False, False, False, False, False): 3,
+    (False, False, True,  False, False, False, False, False): 4,
+    (True,  False, True,  False, False, False, False, False): 5,
+    (False, True,  True,  False, False, False, False, False): 6,
+    (True,  True,  True,  False, False, False, False, False): 7,
+    (False, False, False, True,  False, False, False, False): 8,
+    (True,  False, False, True,  False, False, False, False): 9,
+    (False, True,  False, True,  False, False, False, False): 10,
+    (True,  True,  False, True,  False, False, False, False): 11,
+    (False, False, True,  True,  False, False, False, False): 12,
+    (True,  False, True,  True,  False, False, False, False): 13,
+    (False, True,  True,  True,  False, False, False, False): 14,
+    (True,  True,  True,  True,  False, False, False, False): 15,
+    # Messy from here on, requires hardcoding
+    (True,  True,  False, False, True,  False, False, False): 16,
+    (True,  True,  True,  False, True,  False, False, False): 17,
+    (True,  True,  False, True,  True,  False, False, False): 18,
+    (True,  True,  True,  True,  True,  False, False, False): 19,
+    (False, True,  True,  False, False, True,  False, False): 20,
+    (True,  True,  True,  False, False, True,  False, False): 21,
+    (False, True,  True,  True,  False, True,  False, False): 22,
+    (True,  True,  True,  True,  False, True,  False, False): 23,
+    (True,  True,  True,  False, True,  True,  False, False): 24,
+    (True,  True,  True,  True,  True,  True,  False, False): 25,
+    (False, False, True,  True,  False, False, True,  False): 26,
+    (True,  False, True,  True,  False, False, True,  False): 27,
+    (False, True,  True,  True,  False, False, True,  False): 28,
+    (True,  True,  True,  True,  False, False, True,  False): 29,
+    (True,  True,  True,  True,  True,  False, True,  False): 30,
+    (False, True,  True,  True,  False, True,  True,  False): 31,
+    (True,  True,  True,  True,  False, True,  True,  False): 32,
+    (True,  True,  True,  True,  True,  True,  True,  False): 33,
+    (True,  False, False, True,  False, False, False, True ): 34,
+    (True,  True,  False, True,  False, False, False, True ): 35,
+    (True,  False, True,  True,  False, False, False, True ): 36,
+    (True,  True,  True,  True,  False, False, False, True ): 37,
+    (True,  True,  False, True,  True,  False, False, True ): 38,
+    (True,  True,  True,  True,  True,  False, False, True ): 39,
+    (True,  True,  True,  True,  False, True,  False, True ): 40,
+    (True,  True,  True,  True,  True,  True,  False, True ): 41,
+    (True,  False, True,  True,  False, False, True,  True ): 42,
+    (True,  True,  True,  True,  False, False, True,  True ): 43,
+    (True,  True,  True,  True,  True,  False, True,  True ): 44,
+    (True,  True,  True,  True,  False, True,  True,  True ): 45,
+    (True,  True,  True,  True,  True,  True,  True,  True ): 46,
+}
+
 # While not all of these are nouns, their appearance is very noun-like
 TEXT_TYPES = {
     0: "noun",

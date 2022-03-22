@@ -381,10 +381,7 @@ class Renderer:
 					img[:,row*gridol[1]*2,:] = ~img[:,row*gridol[1]*2,:]
 					img[:,row*gridol[1]*2,3] = 255
 			if format == 'gif':
-				for y in range(img.shape[0]):
-					for x in range(img.shape[1]):
-						img[y,x,:3] = [int(n//((img[y,x,3]/255)**-1)) for n in img[y,x,:3]]
-						img[y,x,3] = 255 if img[y,x,3] > 0 else 0
+				img[:, :, :3] = (img[:, :, :3] * (img[:, :, 3] / 255).repeat(3).reshape(img.shape[:2]+(3,))).astype("uint8")
 			img = Image.fromarray(img)
 			img = img.crop((padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
 			if crop != None:
@@ -401,6 +398,7 @@ class Renderer:
 					q = q + '\n'
 				print(q)'''
 			outs.append(img)
+		
 		self.save_frames(
 			outs,
 			out,
@@ -447,6 +445,7 @@ class Renderer:
 					gscale=gscale
 				)
 			else:
+				path_fallback = None
 				if tile.name in ("icon",):
 					path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
 				elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
@@ -460,7 +459,15 @@ class Renderer:
 					source, sprite_name = tile.sprite
 					path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
 				try:
-					sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+					path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.variant_fallback}_{wobble + 1}.png"
+					try:
+						sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+					except FileNotFoundError:
+						print(path)
+						if path_fallback is not None:
+							sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
+						else:
+							raise
 				except:
 					assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
 				sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
@@ -483,7 +490,7 @@ class Renderer:
 				sprite = self.recolor(sprite, rgb)
 			else:
 				try:
-					overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA").resize((int(constants.DEFAULT_SPRITE_SIZE*gscale),int(constants.DEFAULT_SPRITE_SIZE*gscale)),Image.NEAREST)
+					overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA")
 					if overlay.width < sprite.width or overlay.height < sprite.height:
 						width = math.ceil(sprite.width/overlay.width)
 						height = math.ceil(sprite.height/overlay.height)
