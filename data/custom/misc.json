@@ -843,5 +843,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "abomination",
+        "sprite": "project",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

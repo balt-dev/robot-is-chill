@@ -1,6 +1,6 @@
 [
     {
-        "name": "text_bomb",
+        "name": "text_bomb_old",
         "sprite": "text_bomb",
         "color": [
             "1",
@@ -9,7 +9,7 @@
         "tiling": "-1"
     },
     {
-        "name": "bomb",
+        "name": "bomb_old",
         "sprite": "bomb",
         "color": [
             "1",
