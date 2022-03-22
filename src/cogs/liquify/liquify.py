@@ -4,7 +4,6 @@
 
 import cv2
 import numpy as np
-from PIL import Image, ImageDraw
 
 def sorter(x):
 	# print(x.shape)
@@ -33,18 +32,7 @@ def colorflood(x, color, times):
 	f[np.argwhere(f[:,3]==0).flatten()[-times:]]=color
 	return f.reshape(x.shape)
 
-def makecircle(size, radius, color):
-	img = Image.new("RGBA", size)
-	center = (size[0]/2,size[1]/2)
-	bbox = (center[0]-radius,center[1]-radius,center[0]+radius,center[1]+radius)
-	draw = ImageDraw.Draw(img)
-	draw.ellipse(bbox, fill=tuple(color))
-	del draw
-	return img
-
 def liquify(img):
-	assert img.shape[1]<=48, "Sprite size is too big! This could jam up the bot."
-	assert img.shape[0]<=48, "Sprite size is too big! This could jam up the bot."
 	#Count colors
 	most_used_color = [0,0,0,0]
 	most_used_color_count = 0
@@ -69,44 +57,3 @@ def liquify(img):
 	img = colorflood(img, most_used_color, most_used_color_count)
 
 	return img
-
-def planet(img):
-	assert img.shape[1]<=48, "Sprite size is too big! This could jam up the bot."
-	assert img.shape[0]<=48, "Sprite size is too big! This could jam up the bot."
-	#Count colors
-	most_used_color = [0,0,0,0]
-	most_used_color_count = 0
-	total_color_count = 0
-	colors = get_colors(img)
-	if len(colors)>1:
-		for color in colors:
-			instances = count_instances_of_color(img, color)
-			if instances>most_used_color_count:
-				most_used_color_count = instances
-				most_used_color = color
-			total_color_count+=instances
-
-		#Remove most used color
-		img = remove_instances_of_color(img,most_used_color)
-	else:
-		most_used_color = colors[0]
-		total_color_count = most_used_color_count = count_instances_of_color(img, most_used_color)
-		radius = pow(most_used_color_count/np.pi,0.5) #sqrt(area/π) = radius
-		return makecircle((img.shape[1], img.shape[0]), radius, most_used_color)
-
-	#Center
-	for axis in range(2):
-	    nonempty = np.nonzero(np.any(img, axis=1-axis))[0]
-	    first, last = nonempty.min(), nonempty.max()
-	    shift = (img.shape[axis] - first - last)//2
-	    img = np.roll(img, shift, axis=axis)
-
-	#Create circle of volume most_used_color_count with color most_used_color
-	radius = pow(most_used_color_count/np.pi,0.5) #sqrt(area/π) = radius
-	circle = makecircle((img.shape[1], img.shape[0]),radius, most_used_color)
-	
-	#Blend
-	pimg = Image.fromarray(img)
-	pimg = Image.alpha_composite(circle, pimg)
-
-	return pimg
