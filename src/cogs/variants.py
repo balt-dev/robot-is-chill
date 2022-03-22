@@ -974,13 +974,21 @@ def setup(bot: Bot):
 	def melt(ctx: HandlerContext) -> TileFields:
 		return add(ctx,'liquify')
 
-	@handlers.handler(
-		pattern=r"(?:lockhue|huelock)(\d+)",
-		variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
-		variant_group="Filters"
-	)
-	def lockhue(ctx: HandlerContext) -> TileFields:
-		return add(ctx,'lockhue',int(ctx.groups[0])/360)
+  @handlers.handler(
+    pattern=r"planet",
+    variant_hints={"planet": "`planet` (Leverages some code from the `liquify` module to attempt to make a planet from any tile.)"},
+    variant_group="Filters"
+  )
+  def melt(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'planet')
+
+  @handlers.handler(
+    pattern=r"(?:lockhue|huelock)(\d+)",
+    variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
+    variant_group="Filters"
+  )
+  def lockhue(ctx: HandlerContext) -> TileFields:
+    return add(ctx,'lockhue',int(ctx.groups[0])/360)
 
 	@handlers.handler(
 		pattern=r"(?:locksat|satlock)(\d+)",

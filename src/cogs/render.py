@@ -1068,6 +1068,8 @@ class Renderer:
 				sprite = Image.fromarray(np.array(sprite_arr,dtype=np.uint8).swapaxes(0,1))
 			elif name == 'liquify':
 				sprite = Image.fromarray(liquify.liquify(np.array(sprite)))
+			elif name == 'planet':
+				sprite = liquify.planet(np.array(sprite))
 			elif name == 'reverse':
 				im = np.array(sprite.convert('RGBA'),dtype=np.uint8)
 				def colortoint(a):
