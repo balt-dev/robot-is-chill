@@ -43,8 +43,6 @@ def makecircle(size, radius, color):
 	return img
 
 def liquify(img):
-	assert img.shape[1]<=48, "Sprite size is too big! This could jam up the bot."
-	assert img.shape[0]<=48, "Sprite size is too big! This could jam up the bot."
 	#Count colors
 	most_used_color = [0,0,0,0]
 	most_used_color_count = 0
@@ -71,8 +69,6 @@ def liquify(img):
 	return img
 
 def planet(img):
-	assert img.shape[1]<=48, "Sprite size is too big! This could jam up the bot."
-	assert img.shape[0]<=48, "Sprite size is too big! This could jam up the bot."
 	#Count colors
 	most_used_color = [0,0,0,0]
 	most_used_color_count = 0
