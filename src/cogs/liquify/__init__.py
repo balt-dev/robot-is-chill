@@ -1,2 +1,2 @@
-from .liquify import liquify, planet
-__all__ = ["liquify", "planet"]
+from .liquify import liquify
+__all__ = ["liquify"]
