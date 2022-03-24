@@ -438,7 +438,7 @@ def setup(bot: Bot):
 		tiling = tile_data.tiling
 		try:
 			if tiling in constants.AUTO_TILINGS:
-				if variant >= 16:
+				if variant >= 47:
 					raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
 			else:
 				dir, anim = split_variant(variant)
