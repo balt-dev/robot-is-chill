@@ -948,8 +948,8 @@ class Renderer:
 			elif name == 'colselect' and value != None:
 				im = np.array(sprite)
 				colors = []
-				for x in range(im.shape[1]):
-					for y in range(im.shape[0]):
+				for y in range(im.shape[0]):
+					for x in range(im.shape[1]):
 						if im[y,x,3] > 0 :
 							colors.append(tuple(im[y,x]))
 				color = []
@@ -959,8 +959,8 @@ class Renderer:
 					except:
 						color.append((0,0,0,0))
 				out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-				for x in range(im.shape[1]):
-					for y in range(im.shape[0]):
+				for y in range(im.shape[0]):
+					for x in range(im.shape[1]):
 						if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
 							out[y,x] = im[y,x]
 				sprite = Image.fromarray(out)
@@ -1097,9 +1097,9 @@ class Renderer:
 				sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * value)))
 			elif name == 'neon':
 				spritenp = np.array(sprite)
-				spritenp2 = copy.deepcopy(spritenp)
-				for x in range(spritenp.shape[1]):
-					for y in range(spritenp.shape[0]):
+				spritenp2 = copy.deepcopy(spritenp) #i REALLY need to rewrite this
+				for y in range(spritenp.shape[0]):
+					for x in range(spritenp.shape[1]):
 						if spritenp[y][x][3] > 0 :
 							neighbors = 0
 							for xo,yo,xor in [[1,0,1],[0,1,2],[-1,0,4],[0,-1,8]]:
