@@ -1097,29 +1097,46 @@ class Renderer:
 				r,g,b,a = sprite.split()
 				sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * value)))
 			elif name == 'neon':
-				spritenp = np.array(sprite)
-				spritenp2 = copy.deepcopy(spritenp) #i REALLY need to rewrite this
-				for y in range(spritenp.shape[0]):
-					for x in range(spritenp.shape[1]):
-						if spritenp[y][x][3] > 0 :
-							neighbors = 0
-							for xo,yo,xor in [[1,0,1],[0,1,2],[-1,0,4],[0,-1,8]]:
-								if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
-									neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
-								else:
-									neighbors += value[1]
-							if neighbors >= 4:
-								spritenp2[y,x,3] //= abs(value[0])
-							for xo,yo in [[-1,-1],[-1,1],[1,-1],[1,1]]:
-								if (x+xo in range(spritenp.shape[1])) and (y+yo in range(spritenp.shape[0])):
-									neighbors += int(all(spritenp[y+yo,x+xo]==spritenp[y,x]))
-								else:
-									neighbors += value[1]
-							if neighbors >= 8:
-								spritenp2[y,x,3] //= abs(value[0])
+				#"i REALLY need to rewrite this"
+				#Guess what.
+				hv_directions = (
+							         ( 0,-1),
+							(-1, 0),          ( 1, 0),
+							         ( 0, 1)
+						)
+				diag_directions = (
+							(-1,-1),          ( 1,-1),
+
+							(-1, 1),          ( 1, 1)
+						)
+				img = np.array(sprite).astype(float)
+				img = np.pad(img,((1,),(1,),(0,))) #Pad only the first 2 axes.
+				colors = liquify.get_colors(img)
+				for color in colors:
+					neighbormap = np.zeros((img.shape[0],img.shape[1]),dtype=int)
+					neighbormask = (img==color).all(2) #This array contains booleans, but this will automatically get typecasted to an int when performing math operations. (Because neighbotmap is an int, otherwise it'd be a float.)
+					for direction in hv_directions:
+						directionmask = neighbormask.copy()
+						if direction[0]!=0:
+							directionmask = np.roll(directionmask, direction[0], 1) #Roll directionmask on the X axis, numpy axis 1.
+						if direction[1]!=0:
+							directionmask = np.roll(directionmask, direction[1], 0) #Roll directionmask on the Y axis, numpy axis 0.
+						neighbormap+=directionmask
+					# if neighbors >= 4:
+					img[:,:,3][neighbormask & (neighbormap[:,:]>=4)] //= abs(value[0])
+					for direction in diag_directions:
+						directionmask = neighbormask.copy()
+						if direction[0]!=0:
+							directionmask = np.roll(directionmask, direction[0], 1) #Roll directionmask on the X axis, numpy axis 1.
+						if direction[1]!=0:
+							directionmask = np.roll(directionmask, direction[1], 0) #Roll directionmask on the Y axis, numpy axis 0.
+						neighbormap+=directionmask
+					# if neighbors >= 8:
+					img[:,:,3][neighbormask & (neighbormap[:,:]>=8)] //= abs(value[0])
+				img = img[1:-1,1:-1].astype(np.uint8)
 				if value[0] < 0:
-					spritenp2 = np.array([[[r,g,b,(255-a if a != 0 else 0)] for r,g,b,a in row] for row in spritenp2],dtype=np.uint8)
-				sprite = Image.fromarray(spritenp2)
+					img[:,:,3]=255-img[:,:,3]
+				sprite = Image.fromarray(img)
 			elif name == 'warp' and value != ((0,0),(0,0),(0,0),(0,0)):
 				widwarp = [-1*min(value[0][0],value[3][0],0),max((value[2][0]),(value[1][0]),0)]
 				hgtwarp = [-1*min(value[0][1],value[1][1],0),max((value[2][1]),(value[3][1]),0)]
