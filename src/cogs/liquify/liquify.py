@@ -19,6 +19,12 @@ def get_colors(x):
 	f=flatten_to_color_array(x)
 	return np.unique(f[f[:,3]!=0],axis=0)
 
+def get_colors_unsorted(x):
+	f=flatten_to_color_array(x)
+	arr = f[f[:,3]!=0]
+	indexes = np.unique(arr, return_index=True, axis=0)[1]
+	return np.array([arr[index] for index in sorted(indexes)])
+
 def count_instances_of_color(x, color):
 	f=flatten_to_color_array(x)
 	return np.count_nonzero((f[:]==color).all(1))

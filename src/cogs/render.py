@@ -946,24 +946,25 @@ class Renderer:
 							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])
 				sprite = Image.fromarray(np.array(im))
 			elif name == 'colselect' and value != None:
-				im = np.array(sprite)
-				colors = []
-				for y in range(im.shape[0]):
-					for x in range(im.shape[1]):
-						if im[y,x,3] > 0 :
-							colors.append(tuple(im[y,x]))
-				color = []
-				for n in value:
-					try:
-						color.append(collections.Counter(colors).most_common()[n][0])
-					except:
-						color.append((0,0,0,0))
-				out = np.zeros((im.shape[0],im.shape[1],im.shape[2]),dtype=np.uint8)
-				for y in range(im.shape[0]):
-					for x in range(im.shape[1]):
-						if any([all([a==b for a,b in zip([n for n in im[y,x]],c)]) for c in color]):
-							out[y,x] = im[y,x]
-				sprite = Image.fromarray(out)
+				img = np.array(sprite)
+
+				colors = liquify.get_colors_unsorted(img)
+				if len(colors)>1:
+					colors = list(sorted(
+							colors,
+							key=lambda color: liquify.count_instances_of_color(img, color),
+							reverse=True
+						))
+
+					#Modulo the value field
+					positivevalue = [(color%len(colors)) for color in value]
+
+					#Remove most used color
+					for color_index, color in enumerate(colors):
+						if color_index not in positivevalue:
+							img = liquify.remove_instances_of_color(img,color)
+
+					sprite = Image.fromarray(img) # This is indented because we don't need to convert back if nothing changed
 			elif name == 'crop' and any(value):
 				cropped = sprite.crop((value[0],value[1],value[0]+value[2],value[1]+value[3]))
 				im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
