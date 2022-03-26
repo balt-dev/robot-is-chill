@@ -90,13 +90,9 @@ def lock(t,arr,lock):
 	return rgb
 
 def grayscale(arr,influence):
-	arr = np.array(arr,dtype=np.float64)
-	gray_arr = np.copy(arr)
-	for y in range(arr.shape[0]):
-		for x in range(arr.shape[1]):
-			gray_arr[y,x,0:3] = sum(gray_arr[y,x,0:3])/4
-	result = ((gray_arr*influence) + (arr*(1-influence)))
-	return np.array(result,dtype=np.uint8)
+	arr = arr.astype(np.float64)
+	arr[:,:,0:3] = (((arr[:,:,0:3].sum(2)/3).repeat(3).reshape(arr.shape[:2]+(3,))) * influence) + (arr[:,:,0:3]*(1-influence))
+	return arr.astype(np.uint8)
 
 def alpha_paste(img1,img2,coords,format):
 	imgtemp = Image.new('RGBA',img1.size,(0,0,0,0))
