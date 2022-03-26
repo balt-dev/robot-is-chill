@@ -1,6 +1,6 @@
 import discord
 
-activity = "ROBOT IS CHILL"
+activity = "Booting..."
 description = "*An entertainment bot for rendering levels and custom scenes based on the indie game Baba Is You.*"
 prefixes = ["=", "Robot is ", "robot is ", "ROBOT IS "]
 trigger_on_mention = True

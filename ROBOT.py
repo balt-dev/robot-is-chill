@@ -78,7 +78,7 @@ class Bot(commands.Bot):
     async def on_ready(self) -> None:
         await self.db.connect(self.db_path)
         print(f"Logged in as {self.user}!")
-        await self.change_presence(status=discord.Status.online)
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
 logging.basicConfig(filename=config.log_file, level=logging.WARNING)
     
