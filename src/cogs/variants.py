@@ -1207,11 +1207,11 @@ def setup(bot: Bot):
 		)
 	
 	@handlers.handler(
-		pattern=r"(?:abberate|chrome|ca)(-?\d+)?",
-		variant_hints={"abberate": "`abberate[int]` (Performs chromatic abberation.)"},
+		pattern=r"(?:aberrate|abberate|chrome|ca)(-?\d+)?(?:\/(-?\d+))?",
+		variant_hints={"aberrate": "`aberrate[int]` (Performs chromatic abberation.)"},
 		variant_group="Filters"
 	)
-	def abberate(ctx: HandlerContext) -> TileFields:
-		return add(ctx, "abberate", (int(ctx.groups[0] or 1)))
+	def aberrate(ctx: HandlerContext) -> TileFields:
+		return add(ctx, "aberrate", (int(ctx.groups[0] or 1), int(ctx.groups[1] or 0)))
 		
 	return handlers
