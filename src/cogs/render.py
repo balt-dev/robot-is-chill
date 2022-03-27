@@ -1030,9 +1030,10 @@ class Renderer:
 				mx,my = value if len(value) == 2 else (value[0],value[0])
 				sprite = sprite.resize((math.floor(sprite.width/value[0]),math.floor(sprite.height/value[1])), resample=Image.NEAREST)
 				sprite = sprite.resize((wid,hgt), resample=Image.NEAREST)
-			elif name == 'glitch' and all([x!=0.0 for x in value]):
-				clamp = lambda m,mn,mx: min(mx,max(mn,m))
-				fil = np.array([[[clamp(random.randint(128-value[0],128+value[0]),0,255),clamp(random.randint(128-value[0],128+value[0]),0,255),255,255] if value[1] > random.random() else [128,128,255,255] for _ in range(sprite.size[1])] for _ in range(sprite.size[0])], dtype=np.uint8)
+			elif name == 'glitch' and all([x!=0 for x in value]):
+				fil = np.random.random_integers(0x80-value[0],0x80+value[0],(sprite.size[1],sprite.size[0],2))
+				fil[np.random.choice([False,True],(sprite.size[1],sprite.size[0]),p=(value[1],1-value[1]))] = 0x80
+				fil=np.pad(fil,((0,0),(0,0),(0,2)),constant_values=(255,))
 				sprite = filterimage.apply_filterimage(sprite,fil,absolute=False)
 			elif name == 'wavex' and value[1]!=0:
 				numpysprite = np.array(sprite)
