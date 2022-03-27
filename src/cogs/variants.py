@@ -971,7 +971,7 @@ def setup(bot: Bot):
 		variant_hints={"liquify": "`liquify` (\"Liquifies\" the tile by melting every color except the main color and turning the main color into liquid, filling empty pockets.)"},
 		variant_group="Filters"
 	)
-	def melt(ctx: HandlerContext) -> TileFields:
+	def liquify(ctx: HandlerContext) -> TileFields:
 		return add(ctx,'liquify')
 
 	@handlers.handler(
@@ -979,7 +979,7 @@ def setup(bot: Bot):
 		variant_hints={"planet": "`planet` (Leverages some code from the `liquify` module to attempt to make a planet from any tile.)"},
 		variant_group="Filters"
 	)
-	def melt(ctx: HandlerContext) -> TileFields:
+	def planet(ctx: HandlerContext) -> TileFields:
 		return add(ctx,'planet')
 
 	@handlers.handler(
@@ -1205,5 +1205,13 @@ def setup(bot: Bot):
 		return add(ctx,
 			"channelset", ({'r':0,'g':1,'b':2,'a':3}[ctx.groups[0]],float(ctx.groups[1]))
 		)
+	
+	@handlers.handler(
+		pattern=r"(?:aberrate|abberate|chrome|ca)(-?\d+)?(?:\/(-?\d+))?",
+		variant_hints={"aberrate": "`aberrate[int]` (Performs chromatic abberation.)"},
+		variant_group="Filters"
+	)
+	def aberrate(ctx: HandlerContext) -> TileFields:
+		return add(ctx, "aberrate", (int(ctx.groups[0] or 1), int(ctx.groups[1] or 0)))
 		
 	return handlers

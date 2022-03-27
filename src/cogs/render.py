@@ -1110,6 +1110,18 @@ class Renderer:
 			elif name == 'fisheye' and value != 0:
 				spritefish = fish.fish(np.array(sprite),value)
 				sprite = Image.fromarray(spritefish)
+			elif name == 'aberrate' and value != (0, 0):
+				arr = np.array(sprite)
+				arr = np.pad(arr,((abs(value[1]),abs(value[1])),(abs(value[0]),abs(value[0])),(0,0)))
+				arr[:,:,0]=np.roll(arr[:,:,0],-value[0],1)
+				arr[:,:,2]=np.roll(arr[:,:,2],value[0],1)
+				arr[:,:,0]=np.roll(arr[:,:,0],-value[1],0)
+				arr[:,:,2]=np.roll(arr[:,:,2],value[1],0)
+				arr=arr.astype(np.uint16)
+				arr[:,:,3]+=np.roll(np.roll(arr[:,:,3],-value[0],1),-value[1],0)
+				arr[:,:,3]+=np.roll(np.roll(arr[:,:,3],value[0],1),value[1],0)
+				arr[arr>255]=255
+				sprite = Image.fromarray(arr.astype(np.uint8))
 			elif name == 'opacity' and value < 1:
 				arr=np.array(sprite,dtype=float)
 				arr[:,:,3]*=value
