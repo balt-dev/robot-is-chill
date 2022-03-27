@@ -1106,7 +1106,7 @@ class Renderer:
 
 							(-1, 1),          ( 1, 1)
 						)
-				img = np.array(sprite).astype(float)
+				img = np.array(sprite, dtype=float)
 				img = np.pad(img,((1,),(1,),(0,))) #Pad only the first 2 axes.
 				colors = liquify.get_colors(img)
 				for color in colors:
