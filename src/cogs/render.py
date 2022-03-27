@@ -1112,6 +1112,7 @@ class Renderer:
 				sprite = Image.fromarray(spritefish)
 			elif name == 'abberate' and value != 0:
 				arr = np.array(sprite)
+				arr = np.pad(arr,((abs(value),abs(value)),(abs(value),abs(value)),(0,0)))
 				arr[:,:,0]=np.roll(arr[:,:,0],-value,1)
 				arr[:,:,2]=np.roll(arr[:,:,2],value,1)
 				arr=arr.astype(np.uint16)
