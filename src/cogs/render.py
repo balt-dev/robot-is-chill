@@ -910,37 +910,57 @@ class Renderer:
 			elif name == 'pad' and any(value):
 				sprite = Image.fromarray(np.pad(np.array(sprite),((value[1],value[3]),(value[0],value[2]),(0,0))))
 			elif name == 'floodfill' and type(value) == float:
-				f = lambda x: 420 if x > 0 else 0
-				g = lambda x: 0 if x == 69 else 255
-				im = np.array(sprite,dtype=np.uint8)
-				for y in range(im.shape[0]):
-					for x in range(im.shape[1]):
-						im[y,x] = np.array([0,0,0,0],dtype=np.uint8) if im[y,x,3] == 0 else im[y,x]
-				ima = im[:,:,3]
-				ima = np.pad([[f(b) for b in a] for a in ima],((1,1),(1,1)))
-				imf = np.array([[g(b) for b in a] for a in cv2.floodFill(image=ima.astype("uint8"),mask=np.zeros(np.array(ima.shape[:2])+2,dtype=np.uint8),seedPoint=(0,0),newVal=69)[1]])
-				im[:,:,3] = imf[1:-1,1:-1]
-				for y in range(len(im)):
-					for x in range(len(im[0])):
-						if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
-							brightnessvalue=round(value*255)
-							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])  #somehow this doesn't fuck up anywhere
-				sprite = Image.fromarray(np.array(im))
+				im = np.array(sprite)
+				
+				im[im[:,:,3]==0]=0 #Optimal
+				
+				ima = im[:,:,3] #Stores the alpha channel separately
+				ima[ima>0]=69 #Sets all nonzero numbers to a number that's neither 0 or 255. In this case, a funny number.
+				ima = np.pad(ima,((1,1),(1,1))) #Pads the alpha channel by 1 on each side to prevent using the sprite borders for filling or something probably
+
+				#Balt I think you might be overusing the numpy array constructor
+				imf = cv2.floodFill(
+					image=ima,
+					mask=None,
+					seedPoint=(0,0),
+					newVal=255
+					)[1]
+				imf[imf!=255]=0
+				imf=255-imf
+				
+				im[:,:,3] = imf[1:-1,1:-1].astype(np.uint8) #Crops the alpha channel back to the original size and positioning
+
+				brightnessvalue=round(value*255) #This does not need to be in a loop
+
+				im[(im[:,:]==[0,0,0,255]).all(2)] = [brightnessvalue,brightnessvalue,brightnessvalue,255] #Optimal, "somehow this doesn't fuck up anywhere"
+
+				sprite = Image.fromarray(im)
 			elif name == 'surround' and type(value) == float:
-				im = np.array(sprite,dtype=np.uint8)
-				for y in range(im.shape[0]):
-					for x in range(im.shape[1]):
-						im[y,x] = np.array([0,0,0,0],dtype=np.uint8) if im[y,x,3] == 0 else im[y,x]
-				ima = np.pad(im[:,:,3],((1,1),(1,1)))
-				imf = cv2.floodFill(image=ima.astype("uint8"),mask=np.zeros(np.array(ima.shape[:2])+2,dtype=np.uint8),seedPoint=(0,0),newVal=255)[1]
-				print(type(imf),type(im))
-				im[:,:,3] = imf[1:-1,1:-1]
-				for y in range(len(im)):
-					for x in range(len(im[0])):
-						if all([x == 0 for x in im[y,x,:3]]) and im[y,x,3] == 255:
-							brightnessvalue=round(value*255)
-							im[y,x,:] = np.array([brightnessvalue,brightnessvalue,brightnessvalue,255])
-				sprite = Image.fromarray(np.array(im))
+				#Guess what, it's mostly a big copy-paste of the previous section.
+				im = np.array(sprite)
+				
+				im[im[:,:,3]==0]=0 #Optimal
+				
+				ima = im[:,:,3] #Stores the alpha channel separately
+				ima[ima>0]=69 #Sets all nonzero numbers to a number that's neither 0 or 255. In this case, a funny number.
+				ima = np.pad(ima,((1,1),(1,1))) #Pads the alpha channel by 1 on each side to prevent using the sprite borders for filling or something probably
+
+				#Balt I think you might be overusing the numpy array constructor
+				imf = cv2.floodFill(
+					image=ima,
+					mask=None,
+					seedPoint=(0,0),
+					newVal=255
+					)[1]
+				imf[imf!=0]=255
+				
+				im[:,:,3] = imf[1:-1,1:-1].astype(np.uint8) #Crops the alpha channel back to the original size and positioning
+
+				brightnessvalue=round(value*255) #This does not need to be in a loop
+
+				im[(im[:,:]==[0,0,0,255]).all(2)] = [brightnessvalue,brightnessvalue,brightnessvalue,255] #Optimal, "somehow this doesn't fuck up anywhere"
+
+				sprite = Image.fromarray(im)
 			elif name == 'colselect' and value != None:
 				img = np.array(sprite)
 
