@@ -1205,5 +1205,13 @@ def setup(bot: Bot):
 		return add(ctx,
 			"channelset", ({'r':0,'g':1,'b':2,'a':3}[ctx.groups[0]],float(ctx.groups[1]))
 		)
+	
+	@handlers.handler(
+		pattern=r"(?:abberate|chrome|ca)(-?\d+)?",
+		variant_hints={"abberate": "`abberate[int]` (Performs chromatic abberation.)"},
+		variant_group="Filters"
+	)
+	def abberate(ctx: HandlerContext) -> TileFields:
+		return add(ctx, "abberate", (int(ctx.groups[0] or 1)))
 		
 	return handlers
