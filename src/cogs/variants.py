@@ -971,7 +971,7 @@ def setup(bot: Bot):
 		variant_hints={"liquify": "`liquify` (\"Liquifies\" the tile by melting every color except the main color and turning the main color into liquid, filling empty pockets.)"},
 		variant_group="Filters"
 	)
-	def melt(ctx: HandlerContext) -> TileFields:
+	def liquify(ctx: HandlerContext) -> TileFields:
 		return add(ctx,'liquify')
 
 	@handlers.handler(
@@ -979,7 +979,7 @@ def setup(bot: Bot):
 		variant_hints={"planet": "`planet` (Leverages some code from the `liquify` module to attempt to make a planet from any tile.)"},
 		variant_group="Filters"
 	)
-	def melt(ctx: HandlerContext) -> TileFields:
+	def planet(ctx: HandlerContext) -> TileFields:
 		return add(ctx,'planet')
 
 	@handlers.handler(
