@@ -820,14 +820,14 @@ def setup(bot: Bot):
 		return add(ctx,'fisheye',float(fish))
 		
 	@handlers.handler(
-		pattern=r"(?:glitch|g)(\d+(?:\.\d+)?)(?:\/(\d+(?:\.\d+)?))?",
-		variant_hints={"glitch": "`glitch<float>[/float]` (Displaces some pixels. With 123/.456, 123 is the max displacement distance, with a 45.6% chance of displacing a pixel.)"},
+		pattern=r"(?:glitch|g)(\d+)(?:\/(\d+(?:\.\d+)?))?",
+		variant_hints={"glitch": "`glitch<int>[/float]` (Displaces some pixels. With 123/.456, 123 is the max displacement distance, with a 45.6% chance of displacing a pixel.)"},
 		variant_group="Filters"
 	)
 	def glitch(ctx: HandlerContext) -> TileFields:
 		intensity = ctx.groups[0] or 0
-		chance = ctx.groups[1] or 100
-		return add(ctx,'glitch',(float(intensity),float(chance)))
+		chance = ctx.groups[1] or 1
+		return add(ctx,'glitch',(int(intensity),float(chance)))
 	
 	@handlers.handler(
 		pattern=r"blur(\d)",
