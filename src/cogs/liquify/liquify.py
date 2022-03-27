@@ -98,10 +98,10 @@ def planet(img):
 
 	#Center
 	for axis in range(2):
-	    nonempty = np.nonzero(np.any(img, axis=1-axis))[0]
-	    first, last = nonempty.min(), nonempty.max()
-	    shift = (img.shape[axis] - first - last)//2
-	    img = np.roll(img, shift, axis=axis)
+		nonempty = np.nonzero(np.any(img, axis=1-axis))[0]
+		first, last = nonempty.min(), nonempty.max()
+		shift = (img.shape[axis] - first - last)//2
+		img = np.roll(img, shift, axis=axis)
 
 	#Create circle of volume most_used_color_count with color most_used_color
 	radius = pow(most_used_color_count/np.pi,0.5) #sqrt(area/π) = radius
