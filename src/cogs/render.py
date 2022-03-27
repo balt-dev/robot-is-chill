@@ -1090,8 +1090,9 @@ class Renderer:
 				spritefish = fish.fish(np.array(sprite),value)
 				sprite = Image.fromarray(spritefish)
 			elif name == 'opacity' and value < 1:
-				r,g,b,a = sprite.split()
-				sprite = Image.merge('RGBA',(r,g,b,a.point(lambda i: i * value)))
+				arr=np.array(sprite,dtype=float)
+				arr[:,:,3]*=value
+				sprite = Image.fromarray(arr.astype(np.uint8))
 			elif name == 'neon':
 				#"i REALLY need to rewrite this"
 				#Guess what.
