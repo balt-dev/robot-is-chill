@@ -1165,7 +1165,8 @@ class Renderer:
 					img[:,:,3][neighbormask & (neighbormap[:,:]>=8)] //= abs(value[0])
 				img = img[1:-1,1:-1].astype(np.uint8)
 				if value[0] < 0:
-					img[:,:,3]=255-img[:,:,3]
+					notzero = img[:,:,3]!=0
+					img[:,:,3][notzero]=255-img[:,:,3][notzero]
 				sprite = Image.fromarray(img)
 			elif name == 'warp' and value != ((0,0),(0,0),(0,0),(0,0)):
 				widwarp = [-1*min(value[0][0],value[3][0],0),max((value[2][0]),(value[1][0]),0)]
