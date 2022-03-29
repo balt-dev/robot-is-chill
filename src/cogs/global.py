@@ -303,10 +303,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 						return await ctx.error('None of your commands were found in the last `10` messages.')
 				finally:
 					try:
+						assert int(requests.head(msg.attachments[0].url, stream=True).headers.get('content-length', 0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
 						before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
-						print(before_image.format)
-						break
-					except:
+					except AttributeError:
 						pass
 			speed_match = re.fullmatch(r"-speed=([\d\.]+)", flag)
 			if speed_match:
