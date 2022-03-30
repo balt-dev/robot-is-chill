@@ -2,12 +2,11 @@ import numpy as np
 import math
 from random import random
 
-def get_diff(coord1: tuple, coord2: tuple):
-	r1,g1,b1,a1=img[coord1[0],coord1[1]]
-	r2,g2,b2,a2=img[coord2[0],coord2[1]]
-	return math.sqrt(((a1-a2)**2)+((r1-r2)**2)+((g1-g2)**2)+((b1-b2)**2))
-
 def do_carving(img):
+	def get_diff(coord1: tuple, coord2: tuple):
+		r1,g1,b1,a1=img[coord1[0],coord1[1]]
+		r2,g2,b2,a2=img[coord2[0],coord2[1]]
+		return math.sqrt(((a1-a2)**2)+((r1-r2)**2)+((g1-g2)**2)+((b1-b2)**2))
 	lscore = None
 	lpts = []
 	for x in range(len(img[0])):
