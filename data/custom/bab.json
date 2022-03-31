@@ -642,8 +642,8 @@
         "name": "robobot",
         "sprite": "robobot",
         "color": [
-            "0",
-            "3"
+            "6",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -833,6 +833,60 @@
         "color": [
             "6",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_robobot",
+        "sprite": "text_robobot",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_anti",
+        "sprite": "text_anti",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_stukc",
+        "sprite": "text_stukc",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_whoa",
+        "sprite": "text_:o",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "boll",
+        "sprite": "boll",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tryagain",
+        "sprite": "text_tryagain",
+        "color": [
+            "3",
+            "1"
         ],
         "tiling": "-1"
     }

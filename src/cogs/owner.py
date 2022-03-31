@@ -150,20 +150,37 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def importbab(self, ctx: Context, name: str, color_x: int = 0, color_y: int = 3, transform_txt_text: bool = True):
+	async def importbab(self, ctx: Context, name: str, color_x: int = None, color_y: int = None, transform_txt_text: bool = True):
 		'''Auto-import a bab sprite'''
-		pack_name = "bab"  # yup
-		tiling = -1  # yupyup
-		await ctx.send(f"Hold on, cen be scan bab...")
-
+		await ctx.send(f"Hold on, robobot be scan bab...")
+		assert name.find(':') == -1, 'Name has colon in it, so it won\'t work.'
+		color_table = {
+			(3,3): (3,1),
+			(3,2): (3,0),
+			(5,4): (2,3),
+			(3,0): (4,0),
+			(3,4): (3,3),
+			(3,5): (3,3)
+		}
 		def scanforname(name):
-			for jsonfilename in ["characters", "devs", "special", "thingify", "ui", "unsorted"]:
-				for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/objects/{jsonfilename}.json").json():
-					if babdata["name"] == name:
-						return babdata
+			for directory, filenames in ( #i wish this could be a dict
+				('objects', ("characters", "devs", "special", "thingify", "ui", "unsorted")),
+				('text',    ("conditions", "letters", "properties", "tutorial", "unsorted", "verbs"))
+			):
+				for filename in filenames:
+					for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/{directory}/{filename}.json").json():
+						if babdata["name"] == name:
+							return babdata
 		babdata = scanforname(name)
-		sprite = requests.get(
-			f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
+		try:
+			sprite = requests.get(
+				f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
+		except TypeError:
+			raise AssertionError(f'Bab til `{name}` not found!')
+		if type(color_x) == type(None) or type(color_y) == type(None):
+			color_x, color_y = babdata['color'][0]
+			if (color_x,color_y) in color_table:
+				color_x,color_y = color_table[(color_x,color_y)]
 		# if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
 		#     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
 		pilsprite = Image.open(BytesIO(sprite))
@@ -175,8 +192,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		for i in range(3):
 			# with open(f"data/sprites/{pack_name}/{name}_0_{i+1}.png", "wb") as f:
 			#     f.write(sprite)
-			pilsprite.save(f"data/sprites/{pack_name}/{name}_0_{i+1}.png")
-		with open(f"data/custom/{pack_name}.json", "r") as f:
+			pilsprite.save(f"data/sprites/bab/{name}_0_{i+1}.png")
+		with open(f"data/custom/bab.json", "r") as f:
 			sprite_data = json.load(f)
 		sprite_data.append({
 			"name": name,
@@ -185,9 +202,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 				str(color_x),
 				str(color_y)
 			],
-			"tiling": str(tiling)
+			"tiling": "-1"
 		})
-		with open(f"data/custom/{pack_name}.json", "w") as f:
+		with open(f"data/custom/bab.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
 		await self.load_custom_tiles()
 		await ctx.send(f"Added {name} from bab.")
