@@ -158,8 +158,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 		def scanforname(name):
 			for directory, filenames in ( #i wish this could be a dict
-				'objects', ("characters", "devs", "special", "thingify", "ui", "unsorted"),
-				'text',    ("conditions", "letters", "properties", "tutorial", "unsorted", "verbs")
+				('objects', ("characters", "devs", "special", "thingify", "ui", "unsorted")),
+				('text',    ("conditions", "letters", "properties", "tutorial", "unsorted", "verbs"))
 			):
 				for filename in filenames:
 					for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/{directory}/{filename}.json").json():
