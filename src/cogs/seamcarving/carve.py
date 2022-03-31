@@ -9,18 +9,18 @@ def do_carving(img):
 		return math.sqrt(((a1-a2)**2)+((r1-r2)**2)+((g1-g2)**2)+((b1-b2)**2))
 	lscore = None
 	lpts = []
-	for x in range(len(img[0])):
+	for x in range(img.shape[1]):
 		score = 0
 		searchx = x
 		pixels_to_remove = []
-		for y in range(len(img)):
-			deltal = deltah = deltar = 2**31
+		for y in range(img.shape[0]):
+			deltal = deltah = deltar = 2147483648
 			pixels_to_remove.append([y,searchx])
-			if y != len(img)-1:
+			if y != img.shape[0]-1:
 				deltah = get_diff((y,searchx),(y+1,searchx))
 				if searchx != 0:
 					deltal = get_diff((y,searchx),(y+1,searchx-1))
-				if searchx != len(img[0])-1:
+				if searchx != img.shape[1]-1:
 					deltar = get_diff((y,searchx),(y+1,searchx+1))
 			if deltal < deltah and deltal < deltar:
 				searchx -= 1
