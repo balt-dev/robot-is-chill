@@ -154,16 +154,23 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		'''Auto-import a bab sprite'''
 		pack_name = "bab"  # yup
 		tiling = -1  # yupyup
-		await ctx.send(f"Hold on, cen be scan bab...")
+		await ctx.send(f"Hold on, robobot be scan bab...")
 
 		def scanforname(name):
-			for jsonfilename in ["characters", "devs", "special", "thingify", "ui", "unsorted"]:
-				for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/objects/{jsonfilename}.json").json():
-					if babdata["name"] == name:
-						return babdata
+			for directory, filenames in ( #i wish this could be a dict
+				'objects', ("characters", "devs", "special", "thingify", "ui", "unsorted"),
+				'text',    ("conditions", "letters", "properties", "tutorial", "unsorted", "verbs")
+			):
+				for filename in filenames:
+					for babdata in requests.get(f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/{directory}/{filename}.json").json():
+						if babdata["name"] == name:
+							return babdata
 		babdata = scanforname(name)
-		sprite = requests.get(
-			f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
+		try:
+			sprite = requests.get(
+				f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
+		except TypeError:
+			raise AssertionError(f'Bab til `{name}` not found!')
 		# if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
 		#     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
 		pilsprite = Image.open(BytesIO(sprite))
