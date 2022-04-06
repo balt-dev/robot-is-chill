@@ -889,5 +889,41 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_fridgd",
+        "sprite": "text_fridgd",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hotte",
+        "sprite": "text_hotte",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_go",
+        "sprite": "text_go",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_walk",
+        "sprite": "text_walk",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

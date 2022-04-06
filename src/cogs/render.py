@@ -28,7 +28,6 @@ if TYPE_CHECKING:
 
 import src.cogs.fish as fish
 import src.cogs.filterimage as filterimage
-import src.cogs.seamcarving as seamcarving
 import src.cogs.liquify as liquify
 import requests
 
@@ -887,10 +886,48 @@ class Renderer:
 			if name == 'meta_level' and value != 0:
 					sprite = self.make_meta(sprite, value)
 			elif name == 'threeoo' and value != None:
-				sprite = np.array(sprite,dtype=np.uint8)
-				h,w,_ = sprite.shape
+				img = np.array(sprite,dtype=np.uint8)
+				h,w,_ = img.shape
 				assert h <= 24 and w <= 24, 'Image too large for 3oo filter!'
-				sprite = Image.fromarray(seamcarving.seam_carve(sprite,(sprite.shape[0]//value,sprite.shape[1]//value))).resize((w,h),Image.NEAREST)
+				def carve_once(img):
+					def get_diff(coord1: tuple, coord2: tuple):
+						return math.dist(img[coord1[0],coord1[1]],img[coord2[0],coord2[1]])
+					lscore = None
+					lpts = None
+					for x in range(img.shape[1]):
+						score = 0
+						searchx = x
+						pixels_to_remove = ~np.zeros(img.shape,dtype=bool)
+						for y in range(img.shape[0]):
+							deltal = deltah = deltar = 2147483648
+							pixels_to_remove[y,searchx,:] = False
+							if y != img.shape[0]-1:
+								deltah = math.dist(img[y,searchx],img[y+1,searchx])
+								deltal = math.dist(img[y,searchx],img[y+1,max(searchx-1,0)])
+								deltar = math.dist(img[y,searchx],img[y+1,min(searchx+1,img.shape[1]-1)])
+							if deltal < deltah and deltal < deltar:
+								searchx -= 1
+								score += deltal
+							elif deltar < deltah and deltar < deltal:
+								searchx += 1
+								score += deltar
+							else:
+								score += deltah
+							if lscore != None and score > lscore:
+								break
+						if lscore == None or score < lscore:
+							lscore = score
+							lpts = pixels_to_remove
+					return img[lpts].reshape(img.shape[0],img.shape[1]-1,-1)
+				
+				assert img.shape[0]//value <= img.shape[0] and img.shape[1]//value <= img.shape[1], "Bounding box too big!"
+				for _ in range(int(sprite.size[1]-(sprite.size[1]//value))):
+					img = carve_once(img)
+				img = np.swapaxes(img,0,1)
+				for _ in range(int(sprite.size[0]-(sprite.size[0]//value))):
+					img = carve_once(img)
+				img = np.swapaxes(img,0,1)
+				sprite = Image.fromarray(img).resize((w,h),Image.NEAREST)
 			elif name == 'normalize':
 				sprite = np.array(sprite,dtype=np.uint8)
 				minx, miny = sprite.shape[:2]
@@ -1153,7 +1190,7 @@ class Renderer:
 							directionmask = np.roll(directionmask, direction[1], 0) #Roll directionmask on the Y axis, numpy axis 0.
 						neighbormap+=directionmask
 					# if neighbors >= 4:
-					img[:,:,3][neighbormask & (neighbormap[:,:]>=4)] //= abs(value[0])
+					img[:,:,3][neighbormask & (neighbormap[:,:]>=4)] //= abs(value)
 					for direction in diag_directions:
 						directionmask = neighbormask.copy()
 						if direction[0]!=0:
@@ -1162,9 +1199,9 @@ class Renderer:
 							directionmask = np.roll(directionmask, direction[1], 0) #Roll directionmask on the Y axis, numpy axis 0.
 						neighbormap+=directionmask
 					# if neighbors >= 8:
-					img[:,:,3][neighbormask & (neighbormap[:,:]>=8)] //= abs(value[0])
+					img[:,:,3][neighbormask & (neighbormap[:,:]>=8)] //= abs(value)
 				img = img[1:-1,1:-1].astype(np.uint8)
-				if value[0] < 0:
+				if value < 0:
 					notzero = img[:,:,3]!=0
 					img[:,:,3][notzero]=255-img[:,:,3][notzero]
 				sprite = Image.fromarray(img)
