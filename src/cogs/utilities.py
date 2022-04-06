@@ -335,6 +335,12 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     async def variants(self, ctx: Context):
         '''Alias for =search type:variant'''
         await self.search(ctx,query='type:variant')
+
+    @commands.command()
+    @commands.cooldown(4, 8, type=commands.BucketType.channel)
+    async def grabtile(self, ctx: Context):
+        '''Gets the files for a specific tile from the bot'''
+        await self.search(ctx,query='type:variant')
         
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="overlays")
