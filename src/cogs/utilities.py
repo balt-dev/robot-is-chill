@@ -356,6 +356,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 				for f_b in files:
 					with open(f_b,'rb') as f_c:
 						f_a.writestr(os.path.basename(os.path.normpath(f_b)), f_c.read())
+				with open(f_b,'rb') as f_c:
+						f_a.writestr('attributes.txt', '''f_c.read()''')
 			zipped_files.seek(0)
 			return await ctx.send(f'Files for sprite `{sprite_name}` from `{source}`:',files=[discord.File(zipped_files,filename=f'{source}-{sprite_name}.zip')])
 		

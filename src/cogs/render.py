@@ -441,7 +441,7 @@ class Renderer:
 				)
 			else:
 				path_fallback = None
-				if tile.name in ("icon",):
+				if tile.name == "icon":
 					path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
 				elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
 					path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
@@ -455,16 +455,16 @@ class Renderer:
 					path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
 				try:
 					path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.variant_fallback}_{wobble + 1}.png"
-					try:
-						sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
-					except FileNotFoundError:
-						print(path)
-						if path_fallback is not None:
-							sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
-						else:
-							raise
 				except:
-					assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
+					path_fallback = None
+				try:
+					sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+				except FileNotFoundError:
+					print(path)
+					if path_fallback is not None:
+						sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
+					else:
+						assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
 				sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
 				sprite = await self.apply_options_name(
 					tile.name,
