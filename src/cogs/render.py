@@ -1052,11 +1052,11 @@ class Renderer:
 						np_img[:,:midpoint[1]+offset[1]:value[1]] = np_img[:,midpoint[1]::value[1]][:,::-1]
 					except:
 						np_img[:,:midpoint[1]-1+offset[1]:value[1]] = np_img[:,midpoint[1]-1::value[1]][:,::-1]
-					else:
-						try:
-							np_img[:midpoint[0]+offset[0]:value[1],:] = np_img[midpoint[0]::value[1]][::-1]
-						except:
-							np_img[:midpoint[0]-1+offset[0]:value[1],:] = np_img[midpoint[0]-1::value[1]][::-1]
+				else:
+					try:
+						np_img[:midpoint[0]+offset[0]:value[1],:] = np_img[midpoint[0]::value[1]][::-1]
+					except:
+						np_img[:midpoint[0]-1+offset[0]:value[1],:] = np_img[midpoint[0]-1::value[1]][::-1]
 				sprite = Image.fromarray(np_img)
 			elif name == 'scale' and any([x!=1 for x in value]):
 				sprite = sprite.resize((math.floor(sprite.width*value[0]),math.floor(sprite.height*value[1])), resample=Image.NEAREST)
