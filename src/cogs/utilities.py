@@ -8,6 +8,7 @@ import os.path
 from typing import Any, Sequence, Literal
 import numpy as np
 import cv2
+import json
 
 from src.tile import RawTile
 from src.db import CustomLevelData, LevelData, TileData
@@ -340,26 +341,31 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
 	@commands.command()
 	@commands.cooldown(4, 8, type=commands.BucketType.channel)
-	async def grabtile(self, ctx: Context, sprite_name: str):
+	async def grabtile(self, ctx: Context, name: str):
 		'''Gets the files for a specific tile from the bot'''
 		#
 		async with self.bot.db.conn.cursor() as cur:
 			await ctx.trigger_typing()
-			result = await cur.execute('SELECT DISTINCT source FROM tiles WHERE name = (?)',sprite_name)
+			result = await cur.execute('SELECT DISTINCT sprite, source, active_color_x, active_color_y, tiling FROM tiles WHERE name = (?)',name)
 			try:
-				source = (await result.fetchone())[0]
+				sprite_name, source, colorx, colory, tiling = (await result.fetchone())[:]
 			except:
-				return await ctx.error(f'Tile {sprite_name} not found!')
+				return await ctx.error(f'Tile {name} not found!')
 			files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')
 			zipped_files = BytesIO()
-			with zipfile.ZipFile(zipped_files, "x") as f_a:
-				for f_b in files:
-					with open(f_b,'rb') as f_c:
-						f_a.writestr(os.path.basename(os.path.normpath(f_b)), f_c.read())
-				with open(f_b,'rb') as f_c:
-						f_a.writestr('attributes.txt', '''f_c.read()''')
+			with zipfile.ZipFile(zipped_files, "x") as zip_file:
+				for data_filename in files:
+					with open(data_filename,'rb') as data_file:
+						zip_file.writestr(os.path.basename(os.path.normpath(data_filename)), data_file.read())
+				attributes = {
+					'name': name,
+					'sprite': sprite_name,
+					'color': (str(colorx),str(colory)),
+					'tiling': str(tiling)
+				}
+				zip_file.writestr(f'{sprite_name}.json', json.dumps(attributes,indent=4))
 			zipped_files.seek(0)
-			return await ctx.send(f'Files for sprite `{sprite_name}` from `{source}`:',files=[discord.File(zipped_files,filename=f'{source}-{sprite_name}.zip')])
+			return await ctx.send(f'Files for sprite `{name}` from `{source}`:',files=[discord.File(zipped_files,filename=f'{source}-{name}.zip')])
 		
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	@commands.command(name="overlays")
