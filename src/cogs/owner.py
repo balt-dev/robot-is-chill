@@ -271,23 +271,17 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def loaddata(self, ctx: Context):
-		'''Reloads tile data from the world map, editor, and custom files.'''
+	async def loaddata(self, ctx: Context, flag: str):
+		'''Reloads tile data from the world map, editor, and custom files.
+		The --rebuild-database flag deletes all tiles from the database before updating with new tiles. [slow, do not do unless necessary]'''
 		self.bot.loading = True
+		if flag == '--rebuild-database':
+			await self.bot.db.conn.execute('DELETE FROM tiles') #Flush the tile database since it all gets reconstructed anyways
 		await self.load_initial_tiles()
 		await self.load_editor_tiles()
 		await self.load_custom_tiles()
 		self.bot.loading = False
 		return await ctx.send("Done. Loaded all tile data.")
-
-	@commands.command()
-	@commands.is_owner()
-	async def loadcustom(self, ctx: Context):
-		'''Reloads tile data from custom files.'''
-		self.bot.loading = True
-		await self.load_custom_tiles()
-		self.bot.loading = False
-		return await ctx.send("Done. Loaded custom tile data.")
 
 	async def load_initial_tiles(self):
 		'''Loads tile data from `data/values.lua` and `.ld` files.'''
