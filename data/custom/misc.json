@@ -852,5 +852,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "meep",
+        "sprite": "meep",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
