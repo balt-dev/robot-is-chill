@@ -177,7 +177,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			['р','p'],
 			['с','c'],
 			['т','t'],
-			['х','x']
+			['х','x'],
+			['ⓜ',':m:']
 		]
 		for src,dst in replace_list:
 			tiles = tiles.replace(src,dst)

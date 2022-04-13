@@ -790,5 +790,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "cece",
+        "sprite": "cece",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
