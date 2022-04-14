@@ -480,7 +480,7 @@ def setup(bot: Bot):
 		if x > 6 or y > 4:
 			raise errors.BadPaletteIndex(ctx.tile.name, ctx.variant)
 		return {
-			"color_index": (int(ctx.groups[0]), int(ctx.groups[1]))
+			"color_index": (x, y)
 		}
 	
 	@handlers.handler(
@@ -1214,4 +1214,16 @@ def setup(bot: Bot):
 	def aberrate(ctx: HandlerContext) -> TileFields:
 		return add(ctx, "aberrate", (int(ctx.groups[0] or 1), int(ctx.groups[1] or 0)))
 		
+	@handlers.handler(
+		pattern=r"randpal",
+		variant_hints={'randpal': '`randpal` (Color with a random palette color.)'},
+		variant_group="Filters"
+	)
+	def randpal(ctx: HandlerContext) -> TileFields:
+		return {
+			"color_index": (rand.randint(0,6), rand.randint(0,4))
+		}
+	
+	
+	
 	return handlers

@@ -322,7 +322,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			if printme_match and await ctx.bot.is_owner(ctx.author):
 				printme = True
 				to_delete.append((x, y))
-			con_match = re.fullmatch(r"(?:--consistent|-co)", flag)
+			con_match = re.fullmatch(r"(?:--consistent|-co|--synchronize|-sync)", flag)
 			if con_match:
 				random_animations = False
 				to_delete.append((x, y))
