@@ -857,12 +857,21 @@ def setup(bot: Bot):
 
 	@handlers.handler(
 		pattern=r"scale([\d\.]+)(?:\/([\d\.]+))?",
-		variant_hints={"scale": "`scale<int>/[int]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
+		variant_hints={"scale": "`scale<float>/[float]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
 		variant_group="Filters"
 	)
 	def scale(ctx: HandlerContext) -> TileFields:
 		n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
-		return add(ctx,'scale',(max(min(float(ctx.groups[0]),48),0.01),max(min(n,48),0.01)))
+		return add(ctx,'scale',(max(min(float(ctx.groups[0]),8),0.01),max(min(n,8),0.01)))
+	
+	@handlers.handler(
+		pattern=r"scale\((\d+)\/(\d+)\)(?:\((\d+)\/(\d+)\))?",
+		variant_hints={"scale": "`scale(<int>/<int>)[(<int>/<int>)]` (Overload for scale with fractions)"},
+		variant_group="Filters"
+	)
+	def scale(ctx: HandlerContext) -> TileFields:
+		n = float(ctx.groups[2])/float(ctx.groups[3]) if ctx.groups[2] else float(ctx.groups[0])/float(ctx.groups[1])
+		return add(ctx,'scale',(max(min((float(ctx.groups[0])/float(ctx.groups[1])),8),0.01),max(min(n,8),0.01)))
 
 	@handlers.handler(
 		pattern=r"add",
@@ -940,7 +949,23 @@ def setup(bot: Bot):
 		variant_group="Filters"
 	)
 	def displace(ctx: HandlerContext) -> TileFields:
-		return {'displace':(0-int(ctx.groups[0]),0-int(ctx.groups[1]))}
+		try: 
+			d = ctx.fields.get("displace")
+			return {'displace':[a+b for a,b in zip((0-int(ctx.groups[0]),0-int(ctx.groups[1])),d)]}
+		except TypeError:
+			return {'displace':(0-int(ctx.groups[0]),0-int(ctx.groups[1]))}
+
+	@handlers.handler(
+		pattern=r"displace\((-?\d+)\/(\d+)\)(?:\((-?\d+)\/(\d+)\))?",
+		variant_hints={"displace": "`displace(<int>/<int>)[(<int>/<int>)]` (Overload for displace that works with fractions.)"},
+		variant_group="Filters"
+	)
+	def displace(ctx: HandlerContext) -> TileFields:
+		try: 
+			d = ctx.fields.get("displace")
+			return {'displace':[a+b for a,b in zip((0-((int(ctx.groups[0])/int(ctx.groups[1]))*constants.DEFAULT_SPRITE_SIZE),0-((int(ctx.groups[2])/int(ctx.groups[3]))*constants.DEFAULT_SPRITE_SIZE)),d)]}
+		except TypeError:
+			return {'displace':(0-((int(ctx.groups[0])/int(ctx.groups[1]))*constants.DEFAULT_SPRITE_SIZE),0-((int(ctx.groups[2])/int(ctx.groups[3]))*constants.DEFAULT_SPRITE_SIZE))}
 
 	@handlers.handler(
 		pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",

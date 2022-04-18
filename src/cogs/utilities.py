@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 from os import listdir
 import os.path
-from typing import Any, Sequence, Literal
+from typing import Any, Sequence, Literal, Union
 import numpy as np
 import cv2
 import json
@@ -435,22 +435,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	@commands.command(name="blacklist")
 	@commands.has_permissions(administrator=True)
-	async def blacklist(self, ctx: Context, *, args: str):
+	async def blacklist(self, ctx: Context, sub_command: str, mode: str, id: int):
 		'''Set up a blacklist of channels or users. Channels are server moderator only, users are bot owner only.'''
-		try:
-			sub_command, mode, id = args.split(' ')
-		except ValueError:
-			assert False, 'Error! Not enough arguments'
+		assert sub_command in ['channel','user'], 'Subcommand invalid! Has to be `channel` or `user`.'
+		assert mode in ['add','remove'], 'Mode invalid! Has to be `add` or `remove`.'
 		channels = []
 		for channel in ctx.channel.guild.channels:
 			if str(channel.type) == 'text':
 				channels.append(channel.id)
-		assert sub_command in ['channel','user'], 'Error! `sub-command` needs to be one of `channel,user`'
-		assert mode in ['add','remove'], 'Error! `move` needs to be one of `add,remove`'
-		try:
-			id = int(id)
-		except:
-			assert False, 'Error! `id` needs to be of type `int`'
 		assert (
 			sub_command == 'user' and 
 			commands.is_owner()

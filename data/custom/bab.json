@@ -925,5 +925,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pingu",
+        "sprite": "pingu",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_thatbe",
+        "sprite": "text_thatbe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
