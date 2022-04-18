@@ -244,20 +244,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def ban(self, ctx: Context, user: int):
-		await self.bot.db.conn.execute(
-			'''
-			INSERT INTO users (user_id, blacklisted)
-			VALUES(?, 1) 
-			ON CONFLICT(user_id) 
-			DO UPDATE SET blacklisted=1;
-			''',
-			user
-		)
-		await ctx.send(f"`{user}` bent.")
-
-	@commands.command()
-	@commands.is_owner()
 	async def leave(self, ctx: Context, guild: Optional[discord.Guild] = None):
 		if guild is None:
 			if ctx.guild is not None:
@@ -271,7 +257,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def loaddata(self, ctx: Context, flag: str):
+	async def loaddata(self, ctx: Context, flag: str = None):
 		'''Reloads tile data from the world map, editor, and custom files.
 		The --rebuild-database flag deletes all tiles from the database before updating with new tiles. [slow, do not do unless necessary]'''
 		self.bot.loading = True

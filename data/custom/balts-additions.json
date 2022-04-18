@@ -585,15 +585,6 @@
         "tiling": "2"
     },
     {
-        "name": "yougold",
-        "sprite": "yougold",
-        "color": [
-            "6",
-            "2"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "hat",
         "sprite": "hat",
         "color": [

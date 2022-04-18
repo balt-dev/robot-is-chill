@@ -163,6 +163,8 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error('A given link for the filterimage was invalid.')
             elif isinstance(error, errors.OverlayNotFound):
                 return await ctx.error(f'The overlay `{error}` does not exist.')
+            elif isinstance(error, ZeroDivisionError):
+                return await ctx.error('Somewhere in the code, something divided by 0. Please stop.')
             # All other Errors not returned come here... And we can just print the default TraceBack + log
             if os.name=="nt":
                 trace = '\n'.join(traceback.format_tb(error.__traceback__)).replace(os.getcwd(),os.path.curdir).replace(os.environ["USERPROFILE"],"")
