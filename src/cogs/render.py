@@ -1167,9 +1167,9 @@ class Renderer:
 				#"i REALLY need to rewrite this"
 				#Guess what.
 				hv_directions = (
-							         ( 0,-1),
+									 ( 0,-1),
 							(-1, 0),          ( 1, 0),
-							         ( 0, 1)
+									 ( 0, 1)
 						)
 				diag_directions = (
 							(-1,-1),          ( 1,-1),

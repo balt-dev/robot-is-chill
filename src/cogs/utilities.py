@@ -131,7 +131,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 					,("-f=<gif|png>","Sets the format of the render output.")
 					#,("","")
 		)
-				   
+		
 		emb = discord.Embed(
 			title=f"Flag list",
 			colour=self.bot.embed_color,
