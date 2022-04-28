@@ -10,15 +10,16 @@ auth_file = "config/auth.json"
 log_file = "log.txt"
 db_path = "robot.db"
 cogs = [
-    "src.cogs.owner",
-    "src.cogs.global",
-    "src.cogs.meta",
-    "src.cogs.errorhandler",
-    "src.cogs.reader",
-    "src.cogs.render",
-    "src.cogs.variants",
-    "src.cogs.utilities",
-    "src.cogs.generator",
-    "jishaku"
+	"src.cogs.owner",
+	"src.cogs.global",
+	"src.cogs.meta",
+	"src.cogs.errorhandler",
+	"src.cogs.reader",
+	"src.cogs.render",
+	"src.cogs.variants",
+	"src.cogs.utilities",
+	"src.cogs.generator",
+	"src.cogs.event",
+	"jishaku"
 ]
 danger_mode = False

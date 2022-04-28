@@ -618,7 +618,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		async with self.bot.db.conn.cursor() as cur:
 			result = await cur.execute(query)
 			try:
-				formatted = pandas.DataFrame.from_records(data=await result.fetchall(), columns=[column[0] for column in result.get_cursor().description]).to_markdown(index=False, tablefmt="presto")
+				formatted = pandas.DataFrame.from_records(data=await result.fetchall(), columns=[column[0] for column in result.get_cursor().description]).to_markdown(index=False, tablefmt="presto", disable_numparse=True)
 			except TypeError:
 				return await ctx.send(f"No output.")
 		if filemode:
