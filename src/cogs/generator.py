@@ -99,9 +99,9 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 			btio.seek(0)
 			return btio
 
-	@commands.command(aliases=["oldchar"])
+	@commands.command(aliases=["oldchar"],hidden=True)
 	@commands.cooldown(4, 8, type=commands.BucketType.channel)
-	async def oldcharacter(self, ctx: Context, *, seed: str = None):
+	async def old_character(self, ctx: Context, *, seed: str = None):
 		"""Old code for =char, kept for legacy purposes"""
 		rand = self.Random()
 		try:
@@ -128,6 +128,48 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 		embed.set_image(url=f"attachment://{name}-{rand.get_seed()}.png")
 		# note to self: it's literally this easy what are you doing
 		await ctx.send(embed=embed, file=file)
+
+	@commands.command(aliases=['oldcustomchar','oldcc'],hidden=True)
+	@commands.cooldown(4, 8, type=commands.BucketType.channel)
+	async def old_customcharacter(self, ctx: Context, ears: str, legs: str, eyes: str, mouth: str, color: str, variant: str, type: str, name: str):
+		'''Old code to generate a specified character.'''
+		try:
+			assert ears == '*' or (int(ears) in range(3)), 'Invalid face! Ears has to be between `0` and `2`.'
+			assert legs == '*' or (int(legs) in range(5)), 'Invalid face! Legs has to be between `0` and `4`.'
+			assert eyes == '*' or (int(eyes) in range(7)), 'Invalid face! Eyes has to be between `0` and `6`.'
+			assert mouth == '*' or (int(mouth) in range(2)), 'Invalid face! Mouth has to be `0` or `1`.'
+			assert color == '*' or color in ['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'], 'Invalid color!\nColor must be one of `pink, red, maroon, yellow, orange, gold, brown, lime, green, cyan, blue, purple, white, silver, grey`.'
+			assert variant == '*' or variant in ['smooth','fuzzy','fluffy','polygonal','skinny','belt'], 'Invalid variant!\nVariant must be one of `smooth, fuzzy, fluffy, polygonal, skinny, belt`.'
+			assert type == '*' or type in ['long','tall','curved','round'], 'Invalid type!\nType must be one of `long, tall, curved, round`.'
+			assert name == '*' or re.fullmatch(r'((?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])(?:(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])?|(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt])(?:[aeiou]|[aeo]i|ea|[abo]u))|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|ck|[cpt]h|s[hkpt]))\1?|(?:[aeiou]|[aeo]i|ea|[abo]u)(?:[bcdfghj-mp-tv-z]|[cpt]h|[bcdgpt]r|[bcfgp]l|s[hk-nptw])',
+								name.lower()), 'Invalid name!\nThe naming scheme is pretty complex, just trial and error it, sorry ¯\_(ツ)_/¯'
+			#shoutouts to jony for doing the regex here
+			#tysm <3
+			ears = random.choice([0,0,0,1,2,2,2,2]) if ears == '*' else int(ears)
+			legs = random.choice([0,0,1,2,2,2,3,4,4,4]) if legs == '*' else int(legs)
+			eyes = random.choice([0,0,1,2,2,2,2,2,3,4,5,6]) if eyes == '*' else int(eyes)
+			mouth = random.random() > 0.75 if mouth == '*' else int(mouth)
+			color = random.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey']) if color == '*' else color
+			variant = random.choice(['smooth','fuzzy','fluffy','polygonal','skinny','belt']) if variant == '*' else variant
+			type = random.choice(['long','tall','curved','round']) if type == '*' else type
+			if name == '*':
+				a = random.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','th','ph','cr','gr','tr','br','dr','pr','bl','sl','pl','cl','gl','fl','sk','sp','st','sn','sm','sw'])
+				b = random.choice(['a','e','i','o','u','ei','oi','ea','ou','ai','au','bu'])
+				c = random.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
+				name = random.choice([a+b+a+b,a+b,a+b+c,b+c,a+c+b,a+c+b+a+c+b,b+c+b+c,a+b+c+a+b+c,b+a])
+		except AssertionError as e:
+			return await ctx.error(e.args[0])
+		name = name.title()
+		embed = discord.Embed(
+				color = self.bot.embed_color,
+				title = name,
+				description = f"{name} is a __**{color}**__, __**{variant}**__, __**{type}**__ creature with __**{eyes}**__ eye{'s' if eyes != 1 else ''}, __**{ears}**__ ear{'s' if ears != 1 else ''}{', __**a mouth**__' if mouth else ''}{f',and __**{legs}'}**__ leg{'s' if legs != 1 else ''}."
+			)
+		embed.set_footer(text=f'Custom-generated, no seed for you!')
+		file = discord.File(self.old_generate_image(ears,legs,eyes,mouth,color,variant,type,self.Random()),filename=f'{name}-custom.png')
+		embed.set_image(url=f'attachment://{name}-custom.png')
+		#note to self: it's literally this easy what are you doing
+		await ctx.send(embed=embed,file=file)
 
 	# Level generation
 

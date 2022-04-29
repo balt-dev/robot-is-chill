@@ -307,12 +307,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 						before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
 					except AttributeError:
 						pass
-			speed_match = re.fullmatch(r"-speed=([\d\.]+)", flag)
+			speed_match = re.fullmatch(r"-speed=(\d+)", flag)
 			if speed_match:
 				try:
-					speed = int(200 * max(min(1/float(speed_match.group(1)),200),0.1))
+					speed = int(speed_match.group(1))
 				except:
-					speed = 200
+					return await ctx.error('Speed specified is invalid.')
 				to_delete.append((x, y))
 			global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
 			if global_match:
