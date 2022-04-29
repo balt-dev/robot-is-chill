@@ -116,7 +116,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 					,("--comment=anything","Just a comment. Does nothing.")
 					,("-f=(comma separated values in [1,2,3])","Chooses which wobble frames to display.")
 					,("-c","Prepends the render in the message you replied to in the render, or the last message you sent in the channel if there is none.")
-					,("-speed=float","Multiplies the frame delta of the image by the reciprocal of the specified number.")
+					,("-speed=int","Sets the frame delta of the image to the specified number in milliseconds. Unspecified, the speed is 200ms.")
 					,("-g=string","Applies the specified string as a variant to every tile in the image")
 					,("-co","Disables randomization of tile wobble.")
 					,("-gr=int/int","Adds a grid overlay, dimensions being the specified numbers.")
