@@ -45,15 +45,6 @@
         "tiling": "-1"
     },
     {
-        "name": "wifi",
-        "sprite": "wifi",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": 0
-    },
-    {
         "name": "hfofo",
         "sprite": "hfofo",
         "color": [

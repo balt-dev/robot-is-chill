@@ -1192,17 +1192,17 @@ def setup(bot: Bot):
 		return {}
 	
 	@handlers.handler(
-		pattern=r"(?:color|col|c)(-?\d+)\/(-?\d+)",
-		variant_hints={"color": "`color<n>/<n>` (Cuts all but the specified range of colors from the image. First number is inclusive, second is exclusive.)"},
+		pattern=r"(?:color|col|c)(-?\d)*(?:\/(-?\d)*(?:\/(-?\d)*)?)?",
+		variant_hints={"color": "`color<start>[/<stop>[/<step>]]` (Cuts all but the selected slice of colors, sorted by frequency. Slices work like they do in Python.)"},
 		variant_group="Filters"
 	)
 	def colselect(ctx: HandlerContext) -> TileFields:
 		return add(ctx,
-			"colselect", tuple([*range(*[int(n) for n in ctx.groups])])
+			"colselect", slice(*[int(n) if n is not None and len(n) != 0 else None for n in ctx.groups])
 		)
 		
 	@handlers.handler(
-		pattern=r"(?:color|col|c)((?:-?\d+\+?)+)",
+		pattern=r"(?:color|col|c)(-?\d(?:\+-?\d)*)",
 		variant_hints={"color": "`color<n>[+<n>[+<n>...]]` (Cuts all but the specified colors from the image.)"},
 		variant_group="Filters"
 	)

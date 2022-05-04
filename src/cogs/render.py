@@ -1008,10 +1008,18 @@ class Renderer:
 							key=lambda color: liquify.count_instances_of_color(img, color),
 							reverse=True
 						))
+					try:
+						selection = np.arange(len(colors))[value]
+					except IndexError:
+						assert 0, f'The color slice `{value}` is invalid.'
+					if type(selection) == np.ndarray:
+						selection = selection.flatten().tolist()
+					else:
+						selection = [selection]
 
+					print(selection)
 					#Modulo the value field
-					positivevalue = [(color%len(colors)) for color in value]
-
+					positivevalue = [(color%len(colors)) for color in selection]
 					#Remove most used color
 					for color_index, color in enumerate(colors):
 						if color_index not in positivevalue:
