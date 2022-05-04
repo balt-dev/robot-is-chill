@@ -1208,7 +1208,7 @@ def setup(bot: Bot):
 	)
 	def colselect(ctx: HandlerContext) -> TileFields:
 		return add(ctx,
-			"colselect", tuple([int(n) for n in ctx.groups[0].split('+')])
+			"colselect", [int(n) for n in ctx.groups[0].split('+')]
 		)
 
 	@handlers.handler(
