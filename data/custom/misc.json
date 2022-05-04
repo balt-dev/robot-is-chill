@@ -861,5 +861,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "wifi",
+        "sprite": "wifi",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "text_wifi",
+        "sprite": "text_wifi",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
