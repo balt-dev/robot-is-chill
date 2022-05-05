@@ -178,9 +178,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		except TypeError:
 			raise AssertionError(f'Bab til `{name}` not found!')
 		if type(color_x) == type(None) or type(color_y) == type(None):
-			color_x, color_y = babdata['color'][0]
-			if (color_x,color_y) in color_table:
-				color_x,color_y = color_table[(color_x,color_y)]
+			if len(babdata['color'][0]) == 2:
+				color_x, color_y = babdata['color'][0]
+				if (color_x,color_y) in color_table:
+					color_x,color_y = color_table[(color_x,color_y)]
+			else:
+				with Image.open('data/palettes/default.png') as l:
+					default_palette = np.array(l.convert('RGB'),dtype=np.uint8)
+				return await ctx.send(str(np.argmin(abs(default_palette-np.full(default_palette.shape,babdata['color'][0])),axis=2)))
 		# if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
 		#     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
 		pilsprite = Image.open(BytesIO(sprite))
