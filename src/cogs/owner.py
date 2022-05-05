@@ -14,6 +14,7 @@ from src import constants
 from typing import Any, Optional
 import os
 import config
+import numpy as np
 
 import time
 import discord
@@ -185,7 +186,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			else:
 				with Image.open('data/palettes/default.png') as l:
 					default_palette = np.array(l.convert('RGB'),dtype=np.uint8)
-				return await ctx.send(str(np.argmin(abs(default_palette-np.full(default_palette.shape,babdata['color'][0])),axis=2)))
+				closest_color = np.argmin(np.sum(abs(default_palette-np.full(default_palette.shape,babdata['color'][0])),axis=2))
+				color_x, color_y = (closest_color%default_palette.shape[1],closest_color//default_palette.shape[1])
 		# if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
 		#     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
 		pilsprite = Image.open(BytesIO(sprite))
