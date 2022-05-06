@@ -1012,15 +1012,6 @@
         "sprite": "text_gay",
         "color": [
             "0",
-            "None"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_gay",
-        "sprite": "text_gay",
-        "color": [
-            "0",
             "3"
         ],
         "tiling": "-1"
