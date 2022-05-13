@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Union
 
 import discord
 import numpy as np
@@ -47,24 +47,44 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 	# New code for character generation
 	@commands.command(aliases=["char"])
 	@commands.cooldown(4, 8, type=commands.BucketType.channel)
-	async def character(self, ctx: Context, seed: int = None, *args):
+	async def character(
+		self, ctx: Context, 
+		# Discord commands don't support **kwargs
+		*flags: str
+		):
 		"""Randomly generate a character using prefabs."""
 		await ctx.trigger_typing()
 		if not await ctx.bot.is_owner(ctx.author): #keep this off limits for now
 			return await ctx.error('The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
-		args_split = [a.split('=') for a in args]
-		if not all([len(a) == 2 for a in args_split]):
-			return await ctx.error('One or more of your keyword arguments are invalid.')
-		print(args_split)
-		final_zip, attributes = self.generate(seed,dict(args_split))
+		#flags = {a:b for a,b in re.findall(r'--(.+?)=(.+?)\b',' '.join(flags))}
+		flags = dict()
+		final_zip, attributes = self.generate(**flags)
 		preview = []
 		with zipfile.PyZipFile(final_zip) as final_zip_opened:
 			with Image.open('data/generator/preview_bg.png') as bg:
+				with Image.open(f"data/palettes/default.png").convert("RGBA") as p:
+					palette = np.array(p)
 				bg = bg.convert('RGBA')
 				for image in final_zip_opened.namelist():
 					with final_zip_opened.open(image) as imfile:
 						with Image.open(imfile) as im:
-							preview.append(Image.alpha_composite(bg,(Image.fromarray(np.pad(np.array(im),((4,4),(4,4),(0,0)))).resize((256,256),Image.NEAREST).convert('RGBA'))))
+							preview.append(
+								Image.alpha_composite(
+									bg,(
+										Image.fromarray(
+											np.pad(
+												(
+													np.array(im.convert('RGBA'))
+													*(palette[attributes['color'][1][::-1]]/255)
+												).astype(np.uint8),
+												((4,4),(4,4),(0,0))
+											)
+										).resize((256,256),
+										Image.NEAREST).convert('RGBA')
+									)
+								)
+							)
+		attributes['color'] = attributes['color'][0]
 		preview_file = BytesIO()
 		preview[0].save(
 			preview_file,
@@ -78,13 +98,12 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 		)
 		preview_file.seek(0)
 		final_zip.seek(0)
-		return await ctx.send('-'.join([str(a) for a in attributes]),files=[discord.File(preview_file,filename='preview.gif'),discord.File(final_zip,filename='out.zip')])
+		return await ctx.send("```"+'\n'.join([f'{a}: {b}' for a,b in attributes.items()])+"```",files=[discord.File(preview_file,filename='preview.gif'),discord.File(final_zip,filename='out.zip')])
 
-	def generate(self, seed: int = None, args = dict()):
-		if seed is None:
-			seed = random.randint(-9223372036854775808,9223372036854775807)
+	def generate(self,**attr):		
+		if 'seed' not in attr: attr['seed'] = random.randint(-9223372036854775808,9223372036854775807)
 		r = random.Random()
-		r.seed(seed)
+		r.seed(attr['seed'])
 		combinations = {
 			'long':['smooth','fluffy','fuzzy','polygonal','skinny','belt-like'],
 			'tall':['smooth','fluffy','fuzzy','polygonal','skinny','belt-like'],
@@ -92,16 +111,26 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 			'round':['smooth','fluffy','fuzzy','polygonal'],
 			'segmented':['smooth','fluffy']
 		}
-		shape = args['shape'] if 'shape' in args else r.choice(list(combinations.keys()))
-		variant = args['variant'] if 'variant' in args else r.choice(combinations[shape])
-		eye_shape = args['eye_shape'] if 'eye_shape' in args else r.choice(['angry','normal'])
+		print(attr)
 		with open('data/generator/eyes/eyes.json') as f:
 			eyes_json = json.load(f)
-		eye_count = int(args['eye_count']) if 'eye_count' in args else r.choice(eyes_json[shape]['allowed_values'])
+		def handle(key,values,setter: function = lambda x: x,*,do_assertion=True):
+			attr[key] = attr[key] if key in attr else r.choice(values) 
+			if do_assertion:
+				assert attr[key] in values, f'Invalid value for `{key}`!\nPossible values are: `{", ".join([str(n) for n in values])}`'
+			else:
+				attr[key] = attr[key] if attr[key] in values else r.choice(values)
+			attr[key] = setter(attr[key])
+		color_names = np.array(list(constants.COLOR_NAMES.keys()))
+		handle('shape',list(combinations.keys()))
+		handle('eye_count',eyes_json[attr['shape']]['allowed_values'])
+		handle('variant',combinations[attr['shape']])
+		handle('eye_shape',['normal','angry'])
+		handle('color',list(color_names[color_names != 'black']),lambda n: (n,constants.COLOR_NAMES[n]))
 		eye_displacement = [0,0]
-		if variant in eyes_json[shape]['special']:
-			eye_displacement = eyes_json[shape]['special'][variant]
-		eye_locations = eyes_json[shape]['generic']
+		if attr['variant'] in eyes_json[attr['shape']]['special']:
+			eye_displacement = eyes_json[attr['shape']]['special'][attr['variant']]
+		eye_locations = eyes_json[attr['shape']]['generic']
 		for dir in eye_locations.keys():
 			for eyes, locs in eye_locations[dir].items():
 				for i, eye in enumerate(locs):
@@ -115,31 +144,32 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 							else:
 								displacement = np.array(eye_displacement[1]) 
 							eye_locations[dir][eyes][i][j][k] = (np.array(loc)+displacement).tolist()
-		with Image.open(f'data/generator/eyes/{eye_shape}-awake.png') as f:
+		with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-awake.png') as f:
 			eye_awake = f.copy()
-		with Image.open(f'data/generator/eyes/{eye_shape}-sleep.png') as f:
+		with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-sleep.png') as f:
 			eye_asleep = f.copy()
 		final_zip = BytesIO()
 		with zipfile.PyZipFile(final_zip, "x") as fzip:
 			for dir_name, dir in [('right',0),('up',8),('left',16),('down',24)]:
 				for walkcycle_frame in range(-1,4):
 					for wobble_frame in range(3):
-						with Image.open(f'data/generator/bodies/{shape}-{variant}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png') as base:
-							if dir != 8 and eye_count != 0:
+						with Image.open(f'data/generator/bodies/{attr["shape"]}-{attr["variant"]}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png') as base:
+							if dir != 8 and attr['eye_count'] != 0:
 								eye = eye_awake if walkcycle_frame != -1 else eye_asleep
-								if variant != 'belt-like':
+								if attr['variant'] != 'belt-like':
 									eye = np.array(eye,dtype=np.uint8)
 									eye[:,:,:3] = 0
 									eye = Image.fromarray(eye)
-								for right_eye in eye_locations[dir_name]['right_eyes'][wobble_frame][eye_count-1]:
-									base.paste(ImageOps.mirror(eye),(np.array(right_eye)-[3-(1 if walkcycle_frame == -1 else -1 if walkcycle_frame % 2 == 1 else 0),0]).tolist()[::-1],ImageOps.mirror(eye).getchannel(3))
-								for left_eye in eye_locations[dir_name]['left_eyes'][wobble_frame][eye_count-1]:
-									base.paste(eye,(np.array(left_eye)-[3-(1 if walkcycle_frame == -1 else -1 if walkcycle_frame % 2 == 1 else 0),2]).tolist()[::-1],eye.getchannel(3))
+								eye_offset = (1 if walkcycle_frame == -1 else -1 if walkcycle_frame % 2 == 1 and dir != 24 else 0)
+								for right_eye in eye_locations[dir_name]['right_eyes'][wobble_frame][attr['eye_count']-1]:
+									base.paste(ImageOps.mirror(eye),(np.array(right_eye)-[3-eye_offset,0]).tolist()[::-1],ImageOps.mirror(eye).getchannel(3))
+								for left_eye in eye_locations[dir_name]['left_eyes'][wobble_frame][attr['eye_count']-1]:
+									base.paste(eye,(np.array(left_eye)-[3-eye_offset,2]).tolist()[::-1],eye.getchannel(3))
 							buffer = BytesIO()
 							base.save(buffer, "PNG")
-							fzip.writestr(f"{shape}-{variant}-{eye_count}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png", buffer.getvalue())
+							fzip.writestr(f"{attr['seed']}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png", buffer.getvalue())
 		final_zip.seek(0)
-		return final_zip, [shape,variant,eye_count,eye_shape,seed]
+		return final_zip, attr
 
 	# Old code for character generation
 
@@ -153,38 +183,39 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 
 	def old_generate_image(self, ears, legs, eyes, mouth, color, variant, type, rand):
 		with Image.open(f"data/generator/legacy/sprites/{type}_{variant}.png") as im:
-			palette = np.array(Image.open(f"data/palettes/default.png").convert("RGB"))
-			with open("data/generator/legacy/spritedata.json") as f:
-				spritedata = json.loads(f.read())
+			with Image.open(f"data/palettes/default.png").convert("RGB") as p:
+				palette = np.array(p)
+				with open("data/generator/legacy/spritedata.json") as f:
+					spritedata = json.loads(f.read())
 
-			if legs != 0:
-				positions = spritedata[type][variant][("1leg" if legs == 1 else f"{legs}legs")]
-				for leg in positions:
-					with Image.open(f"data/generator/legacy/sprites/parts/legs/{rand.randint(1,5)}.png") as i:
-						im = self.old_paste(im, i, leg, 1)
-			if ears != 0:
-				positions = spritedata[type][variant][("1ear" if ears == 1 else "2ears")]
-				for ear in positions:
-					with Image.open(f"data/generator/legacy/sprites/parts/ears/{rand.randint(1,4)}.png") as i:
-						im = self.old_paste(im, i, ear, 2)
-			if eyes != 0:
-				with Image.open(f"data/generator/legacy/sprites/parts/eyes/{eyes}.png") as i:
-					im = self.old_paste(im, self.old_blacken(i, palette), spritedata[type][variant]["eyes"][0])
-			if mouth:
-				try:
-					with Image.open(f"data/generator/legacy/sprites/parts/mouth.png") as i:
-						im = self.old_paste(im, self.old_blacken(i, palette), spritedata[type][variant]["mouth"][0])
-				except:
-					pass
+				if legs != 0:
+					positions = spritedata[type][variant][("1leg" if legs == 1 else f"{legs}legs")]
+					for leg in positions:
+						with Image.open(f"data/generator/legacy/sprites/parts/legs/{rand.randint(1,5)}.png") as i:
+							im = self.old_paste(im, i, leg, 1)
+				if ears != 0:
+					positions = spritedata[type][variant][("1ear" if ears == 1 else "2ears")]
+					for ear in positions:
+						with Image.open(f"data/generator/legacy/sprites/parts/ears/{rand.randint(1,4)}.png") as i:
+							im = self.old_paste(im, i, ear, 2)
+				if eyes != 0:
+					with Image.open(f"data/generator/legacy/sprites/parts/eyes/{eyes}.png") as i:
+						im = self.old_paste(im, self.old_blacken(i, palette), spritedata[type][variant]["eyes"][0])
+				if mouth:
+					try:
+						with Image.open(f"data/generator/legacy/sprites/parts/mouth.png") as i:
+							im = self.old_paste(im, self.old_blacken(i, palette), spritedata[type][variant]["mouth"][0])
+					except:
+						pass
 
-			# Recolor after generation
-			im = self.recolor(np.array(im), color, palette)
+				# Recolor after generation
+				im = self.recolor(np.array(im), color, palette)
 
-			# Send generated sprite
-			btio = BytesIO()
-			im.resize((192, 192), Image.NEAREST).save(btio, "png")
-			btio.seek(0)
-			return btio
+				# Send generated sprite
+				btio = BytesIO()
+				im.resize((192, 192), Image.NEAREST).save(btio, "png")
+				btio.seek(0)
+				return btio
 
 	@commands.command(aliases=["oldchar"],hidden=True)
 	@commands.cooldown(4, 8, type=commands.BucketType.channel)

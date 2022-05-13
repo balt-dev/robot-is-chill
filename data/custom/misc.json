@@ -879,5 +879,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "whee",
+        "sprite": "whee",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
