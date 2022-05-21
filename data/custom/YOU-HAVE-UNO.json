@@ -1,0 +1,110 @@
+[
+    {
+        "name": "text_unoplusfour",
+        "sprite": "text_unocard",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "unoplusfour",
+        "sprite": "unocard",
+        "tiling": "0",
+        "color": [
+            "0",
+            "1"
+        ]
+    },
+    {
+        "name": "text_unoreverse",
+        "sprite": "text_unocardrev",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "unoreverse",
+        "sprite": "unocardrev",
+        "tiling": "0",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "unoskip",
+        "sprite": "unoskip",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_unoskip",
+        "sprite": "text_unoskip",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "unowild",
+        "sprite": "unowild",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_unowild",
+        "sprite": "text_unowild",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "unodeck",
+        "sprite": "unodeck",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_unodeck",
+        "sprite": "text_unodeck",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "unoplustwo",
+        "sprite": "unoplustwo",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_unoplustwo",
+        "sprite": "text_unoplustwo",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

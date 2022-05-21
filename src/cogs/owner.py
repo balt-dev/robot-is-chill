@@ -105,16 +105,24 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1, withtext: bool = False):
+	async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
 		'''Adds sprites to a specified sprite pack'''
 		try:
 			zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
 		except IndexError:
 			return await ctx.error('You forgot to attach a zip.')
+		check = [os.path.basename(name)[:5] == 'text_' for name in zip.namelist()]
+		withtext = any(check) and not all(check)
+		file_name = None
 		for name in zip.namelist():
-			if name[:5] != 'text_':
-				file_name = re.sub(r'.+?\/(.+)', r'\1',re.match(r'(.+?)_\d+?_\d\.png', name).groups()[0])
-				break
+			name = os.path.basename(name)
+			if name[:5] != 'text_' or all(check):
+				file_name = re.match(r'(.+?)_\d+?_\d\.png', name)
+				if file_name is not None:
+					file_name = file_name.groups()[0]
+					break
+		if file_name is None:
+			raise AssertionError('Couldn\'t find any valid sprites!')
 		for name in zip.namelist():
 			sprite = zip.read(name)
 			path = name.split("/")[-1]

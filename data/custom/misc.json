@@ -888,5 +888,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ship",
+        "sprite": "ship",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_ship",
+        "sprite": "text_ship",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

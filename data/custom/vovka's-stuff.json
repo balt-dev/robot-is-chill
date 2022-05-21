@@ -36,42 +36,6 @@
         "tiling": "-1"
     },
     {
-        "name": "unocardrev",
-        "sprite": "unocardrev",
-        "tiling": "0",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
-        "name": "text_unocardrev",
-        "sprite": "text_unocardrev",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "unocard",
-        "sprite": "unocard",
-        "tiling": "0",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
-        "name": "text_unocard",
-        "sprite": "text_unocard",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "skele",
         "sprite": "skele",
         "tiling": "2",
