@@ -328,7 +328,7 @@ class Renderer:
 								imgtempar[:,:,3] = np.asarray(imgs[frame])[:,:,3]
 								imgs[frame] = Image.fromarray(cv2.min(np.asarray(imgs[frame]),imgtempar))
 							elif tile.blending == 'multiply':
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
+								imgtemp = Image.new('RGBA',imgs[frame].size,(255,255,255,255))
 								imgtemp.paste(
 									sprite,
 									(
@@ -337,9 +337,9 @@ class Renderer:
 									),
 									mask=sprite
 								)
-								imgtempar = np.asarray(imgtemp)
-								imgtempar[:,:,3] = 1
-								imgs[frame] = Image.fromarray(cv2.bitwise_and(np.asarray(imgs[frame]),np.asarray(imgtemp)))
+								imgtempar = np.array(imgtemp,dtype=np.uint8)/255
+								imgtempar[:,:,3] = 1.0
+								imgs[frame] = Image.fromarray((np.array(imgs[frame])*np.array(imgtempar)).astype(np.uint8))
 							else:
 								imgs[frame] = alpha_paste(
 									imgs[frame],

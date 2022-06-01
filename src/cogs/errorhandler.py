@@ -176,7 +176,10 @@ class CommandErrorHandler(commands.Cog):
 				trace=(trace[:2048]+'...'+trace[-2045+len(f'{error} [[Jump]]({ctx.message.jump_url})\n``````'):])
 			emb = discord.Embed(
 				title = f'**Error!** {type(error).__name__}',
-				description = (f'{error} [[Jump]]({ctx.message.jump_url})\n```{trace}```'),
+				description = (f"""{error} [[Jump]]({ctx.message.jump_url})
+Server: {ctx.message.guild.name} ({ctx.message.guild.id})
+User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.message.author.id})
+```{trace}```"""),
 				color=15029051
 			)
 			if footer:
