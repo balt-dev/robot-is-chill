@@ -1015,5 +1015,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bellt",
+        "sprite": "bellt",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bellt",
+        "sprite": "text_bellt",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

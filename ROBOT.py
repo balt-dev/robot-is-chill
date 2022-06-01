@@ -28,7 +28,7 @@ class Context(commands.Context):
 		else:
 			return await self.reply(msg)
 
-	async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs) -> discord.Message:
+	async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
 		if len(content) > 2000:
 			msg = " [...] \n\n (Character limit reached!)"
 			content = content[:2000-len(msg)] + msg
@@ -39,7 +39,11 @@ class Context(commands.Context):
 		elif content:
 			return await super().send(content, embed=embed, **kwargs)
 		return await super().send(**kwargs)
-
+	
+	async def reply(self, *args, mention_author: bool = False, **kwargs):
+		kwargs['mention_author'] = mention_author
+		kwargs['reference'] = self.message
+		return await self.send(*args, **kwargs)
 
 class Bot(commands.Bot):
 	'''Custom bot class :)'''

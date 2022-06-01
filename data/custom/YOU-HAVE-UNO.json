@@ -14,7 +14,7 @@
         "tiling": "0",
         "color": [
             "0",
-            "1"
+            "0"
         ]
     },
     {
@@ -103,6 +103,24 @@
         "sprite": "text_unoplustwo",
         "color": [
             "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "unoblank",
+        "sprite": "unoblank",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_unoblank",
+        "sprite": "text_unoblank",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"
