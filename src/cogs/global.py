@@ -283,6 +283,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				to_delete.append((x, y))
 			combine_match = re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
 			if combine_match:
+				if isinstance(ctx.channel,discord.VoiceChannel):
+					return await ctx.error('Images can\'t be combined in voice-text channels.')
 				to_delete.append((x, y))
 				msg = None
 				try:
