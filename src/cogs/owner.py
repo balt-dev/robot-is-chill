@@ -15,6 +15,7 @@ from typing import Any, Optional
 import os
 import config
 import numpy as np
+import subprocess
 
 import time
 import discord
@@ -614,6 +615,16 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 	async def clearconsole(self, ctx: Context):
 		os.system('cls||clear')
 		await ctx.send('Console cleared.')
+
+	@commands.command(aliases=['execute', 'exec'],rest_is_raw = True)
+	@commands.is_owner()
+	async def run(self, ctx: Context,*,command: str):
+		'''Run a command from the command prompt.'''
+		print(command)
+		result = subprocess.getoutput(command)
+		if len(result)+15 > 2000:
+			result = result[:1982]+'...'
+		await ctx.send(f'Output:\n```\n{result}```')
 
 	@commands.command()
 	@commands.is_owner()
