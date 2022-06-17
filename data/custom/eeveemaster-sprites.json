@@ -1,0 +1,56 @@
+[
+    {
+        "name": "yoyu",
+        "sprite": "youguy",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "wina",
+        "sprite": "winguy",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "void",
+        "sprite": "void",
+        "color": [
+            "0",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rere",
+        "sprite": "rere",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "pan",
+        "sprite": "pan",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gugu2",
+        "sprite": "gugu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    }
+]

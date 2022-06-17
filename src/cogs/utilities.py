@@ -346,7 +346,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 			await ctx.trigger_typing()
 			result = await cur.execute('SELECT DISTINCT sprite, source, active_color_x, active_color_y, tiling FROM tiles WHERE name = (?)',name)
 			try:
-				sprite_name, source, colorx, colory, tiling = (await result.fetchone())[:]
+				sprite_name, source, colorx, colory, tiling = (await result.fetchone())[:] 
+				#not sure why this [:] is here but i bet it's important and i'm too lazy to test so i'm keeping it
 			except:
 				return await ctx.error(f'Tile {name} not found!')
 			files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')
@@ -429,35 +430,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 			buf.seek(0)
 			file = discord.File(buf, filename=f"palette_{palette}.png")
 			await ctx.reply(f"Palette `{palette}`:", file=file)
-
-	@commands.cooldown(5, 8, type=commands.BucketType.channel)
-	@commands.command(name="blacklist")
-	@commands.has_permissions(administrator=True)
-	async def blacklist(self, ctx: Context, sub_command: str, mode: str, id: int):
-		'''Set up a blacklist of channels or users. Channels are server moderator only, users are bot owner only.'''
-		assert sub_command in ['channel','user'], 'Subcommand invalid! Has to be `channel` or `user`.'
-		assert mode in ['add','remove'], 'Mode invalid! Has to be `add` or `remove`.'
-		channels = []
-		for channel in ctx.channel.guild.channels:
-			if str(channel.type) == 'text':
-				channels.append(channel.id)
-		assert (
-			sub_command == 'user' and 
-			commands.is_owner()
-		) or (
-			sub_command == 'channel' and 
-			id in channels
-		), 'You\'re not authorized to do that.'
-		async with self.bot.db.conn.cursor() as cur:
-			if mode == 'add':
-				await cur.execute(f'''INSERT INTO blacklisted{sub_command}s
-								VALUES ({id})''')
-				await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
-			elif mode == 'remove':
-				await cur.execute(f'''DELETE FROM blacklisted{sub_command}s
-								WHERE id={id}''')
-				await ctx.reply(f'Removed `{sub_command}` of id `{id}` from the blacklist.')
-		
 				
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	@commands.command(name="hint", aliases=["hints"])

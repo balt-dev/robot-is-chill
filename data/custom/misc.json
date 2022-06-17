@@ -906,5 +906,104 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "patrick2",
+        "sprite": "para",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_patrick2",
+        "sprite": "text_para",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "he",
+        "sprite": "He",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_he",
+        "sprite": "text_He",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dots",
+        "sprite": "dots",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dots",
+        "sprite": "text_dots",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dufu",
+        "sprite": "dufut",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "wall2",
+        "sprite": "wall2",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "toad",
+        "sprite": "toad",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_toad",
+        "sprite": "text_toad",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "eeveemaster",
+        "sprite": "eeveemaster",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

@@ -29,18 +29,6 @@ from ..types import Bot, Context
 
 
 class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
-	async def bot_check(self, ctx: Context):
-		row = await self.bot.db.conn.fetchone(
-			'''
-			SELECT (blacklisted) FROM users
-			WHERE user_id == ?;
-			''',
-			ctx.author.id
-		)
-		if row is None:
-			return True
-		return row["blacklisted"]
-
 	def __init__(self, bot: Bot):
 		self.bot = bot
 		self.identifies = []
@@ -77,13 +65,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		m = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read())).namelist()
 		m.sort()
 		n = '\n'.join(m)
-		print(n)
 		await ctx.send(f"```\n{n}```")
 
 	@commands.command()
 	@commands.is_owner()
 	async def listdirs(self, ctx: Context):
-		await ctx.reply('```'+'\n'.join(next(os.walk('data/sprites/'))[1])+'```')
+		await ctx.reply('```'+'\n'.join()+'```')
 
 	@commands.command()
 	@commands.is_owner()
@@ -106,8 +93,17 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: int = -1):
+	async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: str = '-1'): #int | str didn't wanna work for me
 		'''Adds sprites to a specified sprite pack'''
+		try:
+			tiling = int(tiling)
+		except ValueError:
+			async with self.bot.db.conn.cursor() as cur:
+				result = await cur.execute('SELECT DISTINCT tiling FROM tiles WHERE name = (?)',tiling)
+				try:
+					tiling = (await result.fetchone())[0]
+				except:
+					return await ctx.error(f'The specified tile doesn\'t exist.')
 		try:
 			zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
 		except IndexError:
@@ -124,6 +120,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 					break
 		if file_name is None:
 			raise AssertionError('Couldn\'t find any valid sprites!')
+		if sprite_name == '.':
+			sprite_name = file_name
 		for name in zip.namelist():
 			sprite = zip.read(name)
 			path = name.split("/")[-1]
@@ -158,6 +156,32 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		await self.load_custom_tiles()
 		await ctx.send(f"Added {sprite_name}.")
 
+	@commands.command(name="blacklist")
+	@commands.is_owner()
+	async def blacklist(self, ctx: Context, sub_command: str, mode: str, id: int):
+		'''Set up a blacklist of users.'''
+		assert sub_command in ['channel','user'], 'Subcommand invalid! Has to be `channel` or `user`.'
+		assert mode in ['add','remove'], 'Mode invalid! Has to be `add` or `remove`.'
+		channels = []
+		for channel in ctx.channel.guild.channels:
+			if str(channel.type) == 'text':
+				channels.append(channel.id)
+		assert (
+			sub_command == 'user' and 
+			commands.is_owner()
+		) or (
+			sub_command == 'channel'
+		), 'You\'re not authorized to do that.'
+		async with self.bot.db.conn.cursor() as cur:
+			if mode == 'add':
+				await cur.execute(f'''INSERT INTO blacklisted{sub_command}s
+								VALUES ({id})''')
+				return await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
+			else:
+				await cur.execute(f'''DELETE FROM blacklisted{sub_command}s
+								WHERE id={id}''')
+				return await ctx.reply(f'Removed `{sub_command}` of id `{id}` from the blacklist.')
+				
 	@commands.command()
 	@commands.is_owner()
 	async def importbab(self, ctx: Context, name: str, color_x: int = None, color_y: int = None, transform_txt_text: bool = True):
@@ -273,11 +297,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def loaddata(self, ctx: Context, flag: str = None):
+	async def loaddata(self, ctx: Context, flag: bool = False):
 		'''Reloads tile data from the world map, editor, and custom files.
-		The --rebuild-database flag deletes all tiles from the database before updating with new tiles. [slow, do not do unless necessary]'''
+		The boolean flag deletes all tiles from the database before updating with new tiles. [slow, do not do unless necessary]'''
 		self.bot.loading = True
-		if flag == '--rebuild-database':
+		if flag:
 			await self.bot.db.conn.execute('DELETE FROM tiles') #Flush the tile database since it all gets reconstructed anyways
 		await self.load_initial_tiles()
 		await self.load_editor_tiles()
@@ -620,7 +644,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 	@commands.is_owner()
 	async def run(self, ctx: Context,*,command: str):
 		'''Run a command from the command prompt.'''
-		print(command)
 		result = subprocess.getoutput(command)
 		if len(result)+15 > 2000:
 			result = result[:1982]+'...'
@@ -675,7 +698,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 					data.sprite,
 					data.text_type  # type: ignore
 				)
-			print(i/len(fetch))
 
 		await self.load_ready_letters()
 
@@ -687,7 +709,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		await self.load_ready_letters()
 		await ctx.send("Ready letters loaded.")
 
-	@commands.command()
+	@commands.command(aliases=['mkdir'])
 	@commands.is_owner()
 	async def makedir(self, ctx: Context, name: str):
 		'''Makes a directory for sprites to go in.'''
