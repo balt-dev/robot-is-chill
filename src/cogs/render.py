@@ -135,7 +135,6 @@ class Renderer:
 		speed: int = 200,
 		gridol: tuple[int] = None,
 		scaleddef: float = 1,
-		printme: bool = False,
 		crop: tuple[int,int,int,int] | None = None,
 		pad: tuple[int,int,int,int] | None = (0,0,0,0),
 		format: str = 'gif'
@@ -383,15 +382,6 @@ class Renderer:
 				img = img.crop((crop[0],crop[1],img.width-crop[2],img.height-crop[3]))
 			if upscale != 1:
 				img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
-			'''if printme:
-				q = ''
-				im_np = np.array(img)
-				flat = im_np.flatten()
-				for i, cell in flat:
-					if flat[]
-					q = q + (f'\x1b[48;2;{vx[0]};{vx[1]};{vx[2]}m  \x1b[0m' if vx[3]>0 else '  ')
-					q = q + '\n'
-				print(q)'''
 			outs.append(img)
 		
 		self.save_frames(
@@ -439,6 +429,9 @@ class Renderer:
 					position=(x,y),
 					gscale=gscale
 				)
+			elif isinstance(tile.sprite,np.ndarray):
+				sprite = Image.fromarray(tile.sprite[(tile.variant_number*3)+wobble])
+				Image.open(sprite)
 			else:
 				path_fallback = None
 				if tile.name == "icon":
@@ -460,7 +453,6 @@ class Renderer:
 				try:
 					sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
 				except FileNotFoundError:
-					print(path)
 					if path_fallback is not None:
 						sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
 					else:
@@ -533,6 +525,14 @@ class Renderer:
 				sprite = filterimage.apply_filterimage(sprite,ifilterimage.resize((int(ifilterimage.width*gscale),int(ifilterimage.height*gscale)),Image.NEAREST),absolute)
 				#except OSError:
 				#    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
+			if not np.array_equal(tile.channelswap,np.array([[1.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,1.]])):
+				im_np = np.array(sprite,dtype=float)/255 #making it a float for convenience
+				out_np = np.zeros(im_np.shape,dtype=float)
+				for i, channel_dst in enumerate(tile.channelswap):
+					for j, channel_src in enumerate(channel_dst):
+						out_np[:,:,i] += im_np[:,:,j]*channel_src
+				out_np = np.array(np.vectorize(lambda n: int(min(max(n,0),1)*255))(out_np),dtype=np.uint8)
+				sprite = Image.fromarray(out_np)
 			numpysprite = np.array(sprite)
 			numpysprite[np.all(numpysprite[:,:,:3]<=(0,0,0),axis=2)&(numpysprite[:,:,3]>1),:3]=8
 			sprite = Image.fromarray(numpysprite)
@@ -1016,8 +1016,6 @@ class Renderer:
 						selection = selection.flatten().tolist()
 					else:
 						selection = [selection]
-
-					print(selection)
 					#Modulo the value field
 					positivevalue = [(color%len(colors)) for color in selection]
 					#Remove most used color
@@ -1031,18 +1029,6 @@ class Renderer:
 				im = Image.new('RGBA',(sprite.width,sprite.height),(0,0,0,0))
 				im.paste(cropped,(value[0],value[1]))
 				sprite = im
-			elif name == 'channelswap':
-				im_np = np.array(sprite,dtype=float)/255 #making it a float for convenience
-				out_np = np.zeros(im_np.shape,dtype=float)
-				for i, channel_dst in enumerate(value):
-					for j, channel_src in enumerate(channel_dst):
-						out_np[:,:,i] += im_np[:,:,j]*channel_src
-				out_np = np.array(np.vectorize(lambda n: int(min(max(n,0),1)*255))(out_np),dtype=np.uint8)
-				sprite = Image.fromarray(out_np)
-			elif name == 'channelset':
-				im_np = np.array(sprite,dtype=float)
-				im_np[:,:,value[0]] = value[1]*255
-				sprite = Image.fromarray(np.array(np.vectorize(int)(im_np),dtype=np.uint8))
 			elif name == 'snip' and any(value):
 				im = np.array(sprite,dtype=np.uint8)
 				h,w,_ = im.shape

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 
 import json
 import logging
@@ -29,6 +30,7 @@ class Context(commands.Context):
 			return await self.reply(msg)
 
 	async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
+		content = str(content)
 		if len(content) > 2000:
 			msg = " [...] \n\n (Character limit reached!)"
 			content = content[:2000-len(msg)] + msg
@@ -111,8 +113,6 @@ bot = Bot(
 	prefixes=config.prefixes,
 	db_path=config.db_path
 )
-
-
 
 @bot.event
 async def on_command(ctx):

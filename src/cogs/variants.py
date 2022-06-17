@@ -36,7 +36,7 @@ class ContextBase:
 	def is_adjacent(self, coordinate: tuple[int, int, int],) -> bool:
 		'''Tile is next to a joining tile'''
 		x, y, l = coordinate
-		joining_tiles = (self.tile.name, "level")
+		joining_tiles = (self.tile.name, "level", "border")
 		if x < 0 or y < 0 or y >= len(self.grid[l]) or x >= len(self.grid[l][0]):
 			return bool(self.flags.get("tile_borders"))
 		return self.grid[l][y][x].name in joining_tiles
@@ -655,7 +655,15 @@ def setup(bot: Bot):
 		return{
 			"cut_alpha": True
 		}
-		
+
+	@handlers.handler(
+		pattern=r"(?:channelswap|cswap|cs)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)",
+		variant_hints={"channelswap": "`channelswap(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)`\n(Swaps around channels of the sprite according to a 4x4 RGBA matrix.\nThe 4 groups correspond to RGBA channels, and the 4 numbers correspond to the influence the original sprite's channels have on them.)"},
+		variant_group="Filters"
+	)
+	def channelswap(ctx: HandlerContext) -> TileFields:
+		return {"channelswap": np.array([float(n) for n in ctx.groups],dtype=float).reshape((4,4))}
+
 	@handlers.handler(
 		pattern=r"neon(?:(-?\d+(?:\.\d+)?))?",
 		variant_hints={"neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4."},
@@ -1209,26 +1217,6 @@ def setup(bot: Bot):
 	def colselect(ctx: HandlerContext) -> TileFields:
 		return add(ctx,
 			"colselect", [int(n) for n in ctx.groups[0].split('+')]
-		)
-
-	@handlers.handler(
-		pattern=r"(?:channelswap|cswap|cs)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)",
-		variant_hints={"channelswap": "`channelswap(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)`\n(Swaps around channels of the sprite according to a 4x4 RGBA matrix.\nThe 4 groups correspond to RGBA channels, and the 4 numbers correspond to the influence the original sprite's channels have on them.)"},
-		variant_group="Filters"
-	)
-	def channelswap(ctx: HandlerContext) -> TileFields:
-		return add(ctx,
-			"channelswap", np.array([float(n) for n in ctx.groups],dtype=float).reshape((4,4))
-		)
-	
-	@handlers.handler(
-		pattern=r"(?:channelset|cset)([rgba])(0(?:\.\d+)?|1(?:\.0)?)",
-		variant_hints={"channelset": "`channelset<r/g/b/a><0.0-1.0>` (Sets a RGBA channel of the sprite to a value)"},
-		variant_group="Filters"
-	)
-	def channelset(ctx: HandlerContext) -> TileFields:
-		return add(ctx,
-			"channelset", ({'r':0,'g':1,'b':2,'a':3}[ctx.groups[0]],float(ctx.groups[1]))
 		)
 	
 	@handlers.handler(

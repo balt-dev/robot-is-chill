@@ -2,13 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from cv2 import floodFill
 from src.constants import BABA_WORLD
 from typing import TYPE_CHECKING, Literal, TypedDict
-from collections import namedtuple
 from PIL import Image
 import re
-
+import numpy as np
 from . import errors
 
 if TYPE_CHECKING:
@@ -42,7 +40,7 @@ class RawTile:
 				return self.name.startswith("text_") or self.name.startswith("rule_")
 
 class TileFields(TypedDict, total=False):
-		sprite: tuple[str, str]
+		sprite: tuple[str, str] | np.ndarray
 		variant_number: int
 		variant_fallback: int
 		color_index: tuple[int, int]
@@ -65,37 +63,13 @@ class TileFields(TypedDict, total=False):
 		grayscale: float
 		filterimage: str
 		displace: tuple
-		'''
-		angle: float
-		blur_radius: int
-		glitch: tuple[float,float]
-		displace: tuple[int,int]
-		scale: tuple[float,float]
-		warp: tuple[tuple[int,int],tuple[int,int],tuple[int,int],tuple[int,int]]
-		neon: float
-		opacity: float
-		pixelate: int
-		freeze: bool
-		negative: bool
-		hueshift: float
-		brightness: float
-		wavex: tuple[float,float,float]
-		wavey: tuple[float,float,float]
-		gradientx: tuple[float,float,float,float]
-		gradienty: tuple[float,float,float,float]
-		crop: tuple[int,int,int,int]
-		pad: tuple[int,int,int,int]
-		filterimage: str
-		fisheye: float  
-		colslice: tuple[int,int] | int | None
-		floodfill: float | None
-		threeoo: float'''
+		channelswap: np.ndarray
 
 @dataclass
 class FullTile:
 		'''A tile ready to be rendered'''
 		name: str
-		sprite: tuple[str, str] = BABA_WORLD, "error"
+		sprite: tuple[str, str] | np.ndarray = BABA_WORLD, "error"
 		variant_number: int = 0
 		variant_fallback: int = 0
 		color_index: tuple[int, int] = (0, 3)
@@ -118,6 +92,7 @@ class FullTile:
 		brightness: float = 1
 		filterimage: str = ""
 		displace: tuple[int,int] = (0,0)
+		channelswap: np.ndarray = np.array([[1.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,1.]])
 		
 		@classmethod
 		def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:

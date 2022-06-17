@@ -224,7 +224,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		gridol = None
 		random_animations = True
 		tborders = False
-		printme = False
 		crop = None
 		upscale = 2
 		pad = (0,0,0,0)
@@ -318,10 +317,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
 			if global_match:
 				global_variant = ':'+global_match.group(1)
-				to_delete.append((x, y))
-			printme_match = re.fullmatch(r"--printme|-printme", flag)
-			if printme_match and await ctx.bot.is_owner(ctx.author):
-				printme = True
 				to_delete.append((x, y))
 			con_match = re.fullmatch(r"(?:--consistent|-co|--synchronize|-sync)", flag)
 			if con_match:
@@ -445,7 +440,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				speed=speed,
 				gridol=gridol,
 				scaleddef=gscale,
-				printme=printme,
 				crop=crop,
 				pad=pad,
 				format=format
@@ -846,18 +840,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				)
 
 			if mobile and mobile_exists:
-				gif = discord.File(f"target/renders/{level.world}_m/{level.id}.gif", filename=level.world+'_m_'+level.id+'.gif', spoiler=True)
+				gif = discord.File(f"target/renders/{level.world}_m/{level.id}.gif", filename=level.world+'_m_'+level.id+'.gif', spoiler=spoiler)
 			elif mobile and not mobile_exists:
 				rows.append("*This level doesn't have a mobile version. Using the normal gif instead...*")
-				gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
-			else:
-				gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=True)
+			gif = discord.File(f"target/renders/{level.world}/{level.id}.gif", filename=level.world+'_'+level.id+'.gif', spoiler=spoiler)
 		else:
 			try:
-				gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+				gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=spoiler)
 			except FileNotFoundError:
 				await self.bot.get_cog("Reader").render_custom_level(fine_query)
-				gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=True)
+				gif = discord.File(f"target/renders/levels/{level.code}.gif", filename=level.code+'.gif', spoiler=spoiler)
 			path = level.unique()
 			display = level.name
 			rows = [
@@ -887,7 +879,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		mentions = discord.AllowedMentions(everyone=False, users=[ctx.author], roles=False)
 
 		# Send the result
-		await ctx.reply(file=gif, allowed_mentions=mentions)
+		await ctx.reply(formatted,file=gif, allowed_mentions=mentions)
 	
 	@commands.command(aliases=["filterimages","fi"])
 	@commands.cooldown(5, 8, commands.BucketType.channel)

@@ -58,7 +58,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 			return await ctx.error('The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
 		#flags = {a:b for a,b in re.findall(r'--(.+?)=(.+?)\b',' '.join(flags))}
 		flags = dict()
-		final_zip, attributes = self.generate(**flags)
+		final_zip, attributes = self.generate(False,**flags)
 		preview = []
 		with zipfile.PyZipFile(final_zip) as final_zip_opened:
 			with Image.open('data/generator/preview_bg.png') as bg:
@@ -100,7 +100,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 		final_zip.seek(0)
 		return await ctx.send("```"+'\n'.join([f'{a}: {b}' for a,b in attributes.items()])+"```",files=[discord.File(preview_file,filename='preview.gif'),discord.File(final_zip,filename='out.zip')])
 
-	def generate(self,**attr):		
+	def generate(self,array,**attr):		
 		if 'seed' not in attr: attr['seed'] = random.randint(-9223372036854775808,9223372036854775807)
 		r = random.Random()
 		r.seed(attr['seed'])
@@ -111,7 +111,6 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 			'round':['smooth','fluffy','fuzzy','polygonal'],
 			'segmented':['smooth','fluffy']
 		}
-		print(attr)
 		with open('data/generator/eyes/eyes.json') as f:
 			eyes_json = json.load(f)
 		def handle(key,values,setter: function = lambda x: x,*,do_assertion=True):
@@ -148,8 +147,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 			eye_awake = f.copy()
 		with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-sleep.png') as f:
 			eye_asleep = f.copy()
-		final_zip = BytesIO()
-		with zipfile.PyZipFile(final_zip, "x") as fzip:
+		if array:
+			final_arr = np.zeros((96,24,24,4),dtype=np.uint8)
 			for dir_name, dir in [('right',0),('up',8),('left',16),('down',24)]:
 				for walkcycle_frame in range(-1,4):
 					for wobble_frame in range(3):
@@ -165,11 +164,31 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 									base.paste(ImageOps.mirror(eye),(np.array(right_eye)-[3-eye_offset,0]).tolist()[::-1],ImageOps.mirror(eye).getchannel(3))
 								for left_eye in eye_locations[dir_name]['left_eyes'][wobble_frame][attr['eye_count']-1]:
 									base.paste(eye,(np.array(left_eye)-[3-eye_offset,2]).tolist()[::-1],eye.getchannel(3))
-							buffer = BytesIO()
-							base.save(buffer, "PNG")
-							fzip.writestr(f"{attr['seed']}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png", buffer.getvalue())
-		final_zip.seek(0)
-		return final_zip, attr
+							final_arr[(((dir+walkcycle_frame)%32)*3)+wobble_frame] = np.array(base)
+			return final_arr, attr
+		else:
+			final_zip = BytesIO()
+			with zipfile.PyZipFile(final_zip, "x") as fzip:
+				for dir_name, dir in [('right',0),('up',8),('left',16),('down',24)]:
+					for walkcycle_frame in range(-1,4):
+						for wobble_frame in range(3):
+							with Image.open(f'data/generator/bodies/{attr["shape"]}-{attr["variant"]}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png') as base:
+								if dir != 8 and attr['eye_count'] != 0:
+									eye = eye_awake if walkcycle_frame != -1 else eye_asleep
+									if attr['variant'] != 'belt-like':
+										eye = np.array(eye,dtype=np.uint8)
+										eye[:,:,:3] = 0
+										eye = Image.fromarray(eye)
+									eye_offset = (1 if walkcycle_frame == -1 else -1 if walkcycle_frame % 2 == 1 and dir != 24 else 0)
+									for right_eye in eye_locations[dir_name]['right_eyes'][wobble_frame][attr['eye_count']-1]:
+										base.paste(ImageOps.mirror(eye),(np.array(right_eye)-[3-eye_offset,0]).tolist()[::-1],ImageOps.mirror(eye).getchannel(3))
+									for left_eye in eye_locations[dir_name]['left_eyes'][wobble_frame][attr['eye_count']-1]:
+										base.paste(eye,(np.array(left_eye)-[3-eye_offset,2]).tolist()[::-1],eye.getchannel(3))
+								buffer = BytesIO()
+								base.save(buffer, "PNG")
+								fzip.writestr(f"{attr['seed']}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png", buffer.getvalue())
+			final_zip.seek(0)
+			return final_zip, attr
 
 	# Old code for character generation
 
