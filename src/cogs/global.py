@@ -15,11 +15,13 @@ from typing import Any, OrderedDict, TYPE_CHECKING
 
 import numpy as np
 import emoji
+from charset_normalizer import from_bytes
 
 import asyncio
 import aiohttp
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 if TYPE_CHECKING:
 	from ..tile import RawGrid
@@ -149,15 +151,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 					for layer in grid
 				]
 
-	async def trigger_typing(self, ctx: Context):
-		try: await ctx.trigger_typing()
-		except:
-			embed = discord.Embed(title=discord.Embed.Empty,color=discord.Color(7340031),description="Processing...")
-			await ctx.reply(embed=embed,delete_after=5,mention_author=False)
-
 	async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
 		'''Performs the bulk work for both `tile` and `rule` commands.'''
-		await self.trigger_typing(ctx)
+		await ctx.typing()
 		start = perf_counter()
 			
 		tiles = objects.lower().strip().replace("\\", "").replace("`", "")
@@ -538,14 +534,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 	async def file(self, ctx: Context, rule: str = ''):
 		'''Renders the text from a file attatchment.
 		Add -r, --rule, -rule, -t, --text, or -text to render as text.'''
-		urls = []
-		for attachement in ctx.message.attachments:
-			urls.append(attachement.url)
-		urls+=re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\.txt',ctx.message.content)
-		for attachment_url in urls:
-			file_request = requests.get(attachment_url)
-			await self.render_tiles(ctx, objects=file_request.content.decode(), rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
-			
+		try:
+			objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
+			await self.render_tiles(ctx, objects=objects, rule=rule in ['-r','--rule','-rule','-t','--text','-text'])
+		except IndexError:
+			await ctx.error('You forgot to attach a file.')
+
 	# Generates an animated gif of the tiles provided, using the default palette
 	@commands.command()
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -776,7 +770,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 	
 	async def perform_level_command(self, ctx: Context, query: str, *, mobile: bool):
 		# User feedback
-		await self.trigger_typing(ctx)
+		await ctx.typing()
 
 		custom_level: CustomLevelData | None = None
 		
@@ -796,7 +790,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			else:
 				# Expensive operation 
 				await ctx.reply("Searching for custom level... this might take a while", mention_author=False, delete_after=10)
-				await self.trigger_typing(ctx)
+				await ctx.typing()
 				async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/exists?code={fine_query.upper()}") as resp:
 					if resp.status in (200, 304):
 						data = await resp.json()
@@ -1069,5 +1063,5 @@ Absolute: {truefalseemoji[int(absolute)]}"""
 create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]
 database [...]```""")
 
-def setup(bot: Bot):
-	bot.add_cog(GlobalCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(GlobalCog(bot))

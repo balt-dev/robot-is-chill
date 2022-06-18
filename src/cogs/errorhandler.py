@@ -69,7 +69,7 @@ class CommandErrorHandler(commands.Cog):
 				formatted = f"ID: {ID}\nName: {name}\n{nsfw} {news}"
 				emb.add_field(name="Channel",value=formatted)
 			# Guild (if in a guild)
-			if ctx.guild:
+			if ctx.guild is not None:
 				ID = ctx.guild.id
 				name = ctx.guild.name
 				member_count = ctx.guild.member_count
@@ -85,7 +85,7 @@ class CommandErrorHandler(commands.Cog):
 				formatted = f"ID: {ID}\nName: {name}#{discriminator} ({nick})"
 				emb.add_field(name=DM, value=formatted)
 			# Message link
-			if all([ctx.guild, ctx.channel, ctx.message]):
+			if all([ctx.guild is not None, ctx.channel, ctx.message]):
 				guild_ID = ctx.guild.id
 				channel_ID = ctx.channel.id
 				message_ID = ctx.message.id
@@ -177,7 +177,7 @@ class CommandErrorHandler(commands.Cog):
 			emb = discord.Embed(
 				title = f'**Error!** {type(error).__name__}',
 				description = (f"""{error} [[Jump]]({ctx.message.jump_url})
-Server: {ctx.message.guild.name} ({ctx.message.guild.id})
+{f"Server: {ctx.message.guild.name} ({ctx.message.guild.id})" if ctx.message.guild else 'Server: DMs'}
 User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.message.author.id})
 ```{trace}```"""),
 				color=15029051
@@ -196,5 +196,5 @@ User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.messag
 			traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 			return
 
-def setup(bot: Bot):
-	bot.add_cog(CommandErrorHandler(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(CommandErrorHandler(bot))

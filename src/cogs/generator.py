@@ -53,7 +53,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 		*flags: str
 		):
 		"""Randomly generate a character using prefabs."""
-		await ctx.trigger_typing()
+		await ctx.typing()
 		if not await ctx.bot.is_owner(ctx.author): #keep this off limits for now
 			return await ctx.error('The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
 		#flags = {a:b for a,b in re.findall(r'--(.+?)=(.+?)\b',' '.join(flags))}
@@ -379,5 +379,5 @@ name={width-2}x{height-2}""",
 		return await ctx.send(f"Generated in {int((time.time()-t)*1000)} ms.\nUnzip this into your `Baba Is You/Data/Worlds/levels/` folder to view.", files=[discord.File(BytesIO(zipbuf.read()), filename=f"{width-2}x{height-2}.zip")])
 
 
-def setup(bot: Bot):
-	bot.add_cog(GeneratorCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(GeneratorCog(bot))

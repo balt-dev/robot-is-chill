@@ -3,6 +3,7 @@ from __future__ import annotations
 import configparser
 from io import BytesIO
 import json
+import traceback
 import zipfile
 import pathlib
 import re
@@ -16,6 +17,8 @@ import os
 import config
 import numpy as np
 import subprocess
+from contextlib import redirect_stdout, redirect_stderr
+from io import StringIO
 
 import time
 import discord
@@ -50,10 +53,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		if not cog:
 			extensions = [a for a in self.bot.extensions.keys()]
 			for extension in extensions:
-				self.bot.reload_extension(extension)
+				await self.bot.reload_extension(extension)
 			await ctx.send("Reloaded all extensions.")
 		elif "src.cogs." + cog in self.bot.extensions.keys():
-			self.bot.reload_extension("src.cogs." + cog)
+			await self.bot.reload_extension("src.cogs." + cog)
 			await ctx.send(f"Reloaded extension `{cog}` from `src/cogs/{cog}.py`.")
 		else:
 			await ctx.send("Unknown extension provided.")
@@ -66,11 +69,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		m.sort()
 		n = '\n'.join(m)
 		await ctx.send(f"```\n{n}```")
-
-	@commands.command()
-	@commands.is_owner()
-	async def listdirs(self, ctx: Context):
-		await ctx.reply('```'+'\n'.join()+'```')
 
 	@commands.command()
 	@commands.is_owner()
@@ -886,5 +884,5 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		await webhook.send(embed=embed)
 
 
-def setup(bot: Bot):
-	bot.add_cog(OwnerCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(OwnerCog(bot))

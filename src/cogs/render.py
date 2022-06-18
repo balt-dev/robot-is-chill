@@ -1305,6 +1305,6 @@ class Renderer:
 				file.writestr(f"{extra_name}_{i//3}_{(i%3)+1}.png", buffer.getvalue())
 			file.close()
 
-def setup(bot: Bot):
+async def setup(bot: Bot):
 	bot.renderer = Renderer(bot)
 

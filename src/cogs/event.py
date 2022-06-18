@@ -33,5 +33,5 @@ class EventCog(commands.Cog, name='Events'):
 			pass
 		return True
 	
-def setup(bot: Bot):
-	bot.add_cog(EventCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(EventCog(bot))
