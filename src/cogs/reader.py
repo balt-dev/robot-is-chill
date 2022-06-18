@@ -718,5 +718,5 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 			b.seek(0)
 			await ctx.send(file=discord.File(b,filename=f'{filename}.txt'))
 
-def setup(bot: Bot):
-	bot.add_cog(Reader(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(Reader(bot))

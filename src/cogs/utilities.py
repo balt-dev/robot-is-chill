@@ -88,7 +88,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 	@commands.command(name="undo")
 	async def undo(self, ctx: Context):
 		'''Deletes the last message sent from the bot.'''
-		await ctx.trigger_typing()
+		await ctx.typing()
 		h = ctx.channel.history(limit=20)
 		async for m in h:
 			if m.author.id == self.bot.user.id and m.attachments:
@@ -343,7 +343,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 		'''Gets the files for a specific tile from the bot'''
 		#
 		async with self.bot.db.conn.cursor() as cur:
-			await ctx.trigger_typing()
+			await ctx.typing()
 			result = await cur.execute('SELECT DISTINCT sprite, source, active_color_x, active_color_y, tiling FROM tiles WHERE name = (?)',name)
 			try:
 				sprite_name, source, colorx, colory, tiling = (await result.fetchone())[:] 
@@ -460,5 +460,5 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 		).start(ctx)
 
 
-def setup(bot: Bot):
-	bot.add_cog(UtilityCommandsCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(UtilityCommandsCog(bot))

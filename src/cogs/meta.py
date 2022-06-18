@@ -269,5 +269,5 @@ class MetaCog(commands.Cog, name="Other Commands"):
 	def cog_unload(self):
 		self.bot.help_command = self._original_help_command
 
-def setup(bot: Bot):
-	bot.add_cog(MetaCog(bot))
+async def setup(bot: Bot):
+	await bot.add_cog(MetaCog(bot))

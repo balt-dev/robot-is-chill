@@ -1,9 +1,8 @@
 Pillow==8.4.0
-jishaku>=1.18
 opencv-python>=4.0.0.0
 requests>=2.25.1
 pandas
 emoji
 git+https://github.com/Rapptz/asqlite
-discord.py >= 1.7
+git+https://github.com/Rapptz/discord.py
 git+https://github.com/Rapptz/discord-ext-menus

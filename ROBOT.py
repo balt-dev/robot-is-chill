@@ -11,14 +11,12 @@ from datetime import datetime
 from typing import Iterable
 
 import discord
-import jishaku
 from discord.ext import commands
 from PIL import Image
 
 import auth
 import config
 import webhooks
-from src.constants import DIRECTIONS
 from src.db import Database
 
 class Context(commands.Context):
@@ -72,7 +70,7 @@ class Bot(commands.Bot):
 		super().__init__(*args, **kwargs)
 		# has to be after __init__
 		for cog in cogs:
-			self.load_extension(cog, package="ROBOT")
+			asyncio.run(self.load_extension(cog, package='ROBOT'))
 
 	async def get_context(self, message: discord.Message) -> Context:
 		return await super().get_context(message, cls=Context)
@@ -99,7 +97,7 @@ bot = Bot(
 	# Never mention roles, @everyone or @here
 	allowed_mentions=discord.AllowedMentions(everyone=False, roles=False),
 	# Only receive message and reaction events
-	intents=discord.Intents(messages=True, reactions=True, guilds=True),
+	intents=discord.Intents(messages=True, reactions=True, guilds=True, message_content=True),
 	# Disable the member cache
 	member_cache_flags=discord.MemberCacheFlags.none(),
 	# Disable the message cache
@@ -118,14 +116,14 @@ bot = Bot(
 async def on_command(ctx):
 	webhook = await bot.fetch_webhook(webhooks.logging_id)
 	embed = discord.Embed(
-		title = discord.Embed.Empty,
+		title = None,
 		description = (ctx.message.content),
 		color=config.logging_color
 	)
 	try:
-		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=discord.Embed.Empty, icon_url=ctx.author.avatar.url)
+		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None, icon_url=ctx.author.avatar.url)
 	except:
-		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=discord.Embed.Empty, icon_url=ctx.author.avatar_url)
+		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None, icon_url=ctx.author.avatar_url)
 	embed.set_footer(text=str(ctx.author.id))
 	await webhook.send(embed=embed)
 
