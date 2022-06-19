@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import configparser
+from glob import glob
 from io import BytesIO
 import json
 import traceback
@@ -70,9 +71,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		n = '\n'.join(m)
 		await ctx.send(f"```\n{n}```")
 
-	@commands.command()
+	@commands.group()
 	@commands.is_owner()
-	async def editsprite(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
+	async def sprite(self,ctx: Context):
+		pass
+
+	@sprite.command()
+	async def edit(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
 		if attribute not in ['sprite', 'tiling', 'color']:
 			return await ctx.error('You specified an invalid attribute.')
 		if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
@@ -84,14 +89,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		for i in range(len(sprite_data)):
 			if sprite_data[i]['name'] == sprite_name:  # this is dumb
 				sprite_data[i][attribute] = value
+				break
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
 		await self.load_custom_tiles()
 		return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
 
-	@commands.command()
-	@commands.is_owner()
-	async def addsprite(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: str = '-1'): #int | str didn't wanna work for me
+	@sprite.command()
+	async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: str = '-1'): #int | str didn't wanna work for me
 		'''Adds sprites to a specified sprite pack'''
 		try:
 			tiling = int(tiling)
@@ -152,7 +157,29 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
 		await self.load_custom_tiles()
-		await ctx.send(f"Added {sprite_name}.")
+		await ctx.send(f"Done. Added {sprite_name}.")
+
+	@sprite.command(aliases=['del'])
+	async def delete(self, ctx: Context, sprite_name: str): 
+		'''Deletes a specified sprite'''
+		async with self.bot.db.conn.cursor() as cur:
+			result = await (await cur.execute('SELECT sprite, source FROM tiles WHERE name = (?)',sprite_name)).fetchall()
+			if not len(result):
+				return await ctx.error(f'The sprite {sprite_name} already doesn\'t exist.')
+			sprite_name, source = [*(result[0])]
+			result = await cur.execute('DELETE FROM tiles WHERE name = (?)',sprite_name)
+		for file in glob(f'data/sprites/{source}/{sprite_name}*.png'):
+			os.delete(file)
+		with open(f"data/custom/{source}.json", "r") as f:
+			sprite_data = json.load(f)
+		for i in range(len(sprite_data)):
+			if sprite_data[i]['name'] == sprite_name:  # this is dumb
+				del sprite_data[i]
+				break
+		with open(f"data/custom/{source}.json", "w") as f:
+			json.dump(sprite_data, f, indent=4)
+		await self.load_custom_tiles()
+		await ctx.send(f"Done. Deleted {sprite_name}.")
 
 	@commands.command(name="blacklist")
 	@commands.is_owner()

@@ -19,88 +19,8 @@ from os import urandom as _urandom
 from ..types import Bot, Context
 from .. import constants
 
-
-class GeneratorCog(commands.Cog, name="Generation Commands"):
-	def __init__(self, bot: Bot):
-		self.bot = bot
-
-	# Rewriting Random so I can get the seed
-	# https://stackoverflow.com/a/34699351/13290530
-	class Random(random.Random):
-		def seed(self, a=None):
-			if a is None:
-				a = int(time.time() * 256) % (2**64)  # use fractional seconds
-			self._current_seed = a
-			super().seed(a)
-		def get_seed(self):
-			return self._current_seed
-
-	def recolor(self, sprite: Image.Image, color: str, palette: np.ndarray) -> Image.Image:
-		"""Apply rgb color"""
-		r, g, b = palette[constants.COLOR_NAMES[color][::-1]]
-		arr = np.asarray(sprite, dtype="float64")
-		arr[..., 0] *= r / 256
-		arr[..., 1] *= g / 256
-		arr[..., 2] *= b / 256
-		return Image.fromarray(arr.astype("uint8"))
-
-	# New code for character generation
-	@commands.command(aliases=["char"])
-	@commands.cooldown(4, 8, type=commands.BucketType.channel)
-	async def character(
-		self, ctx: Context, 
-		# Discord commands don't support **kwargs
-		*flags: str
-		):
-		"""Randomly generate a character using prefabs."""
-		await ctx.typing()
-		if not await ctx.bot.is_owner(ctx.author): #keep this off limits for now
-			return await ctx.error('The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
-		#flags = {a:b for a,b in re.findall(r'--(.+?)=(.+?)\b',' '.join(flags))}
-		flags = dict()
-		final_zip, attributes = self.generate(False,**flags)
-		preview = []
-		with zipfile.PyZipFile(final_zip) as final_zip_opened:
-			with Image.open('data/generator/preview_bg.png') as bg:
-				with Image.open(f"data/palettes/default.png").convert("RGBA") as p:
-					palette = np.array(p)
-				bg = bg.convert('RGBA')
-				for image in final_zip_opened.namelist():
-					with final_zip_opened.open(image) as imfile:
-						with Image.open(imfile) as im:
-							preview.append(
-								Image.alpha_composite(
-									bg,(
-										Image.fromarray(
-											np.pad(
-												(
-													np.array(im.convert('RGBA'))
-													*(palette[attributes['color'][1][::-1]]/255)
-												).astype(np.uint8),
-												((4,4),(4,4),(0,0))
-											)
-										).resize((256,256),
-										Image.NEAREST).convert('RGBA')
-									)
-								)
-							)
-		attributes['color'] = attributes['color'][0]
-		preview_file = BytesIO()
-		preview[0].save(
-			preview_file,
-			format="GIF",
-			interlace=True,
-			save_all=True,
-			append_images=preview[1:],
-			loop=0,
-			duration=200,
-			optimize=False
-		)
-		preview_file.seek(0)
-		final_zip.seek(0)
-		return await ctx.send("```"+'\n'.join([f'{a}: {b}' for a,b in attributes.items()])+"```",files=[discord.File(preview_file,filename='preview.gif'),discord.File(final_zip,filename='out.zip')])
-
-	def generate(self,array,**attr):		
+class CharacterGenerator:
+	def generate(self,array,**attr):
 		if 'seed' not in attr: attr['seed'] = random.randint(-9223372036854775808,9223372036854775807)
 		r = random.Random()
 		r.seed(attr['seed'])
@@ -126,6 +46,9 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 		handle('variant',combinations[attr['shape']])
 		handle('eye_shape',['normal','angry'])
 		handle('color',list(color_names[color_names != 'black']),lambda n: (n,constants.COLOR_NAMES[n]))
+		handle('legs',range(2,5))
+		handle('mouth',range(2))
+		handle('ears',range(2))
 		eye_displacement = [0,0]
 		if attr['variant'] in eyes_json[attr['shape']]['special']:
 			eye_displacement = eyes_json[attr['shape']]['special'][attr['variant']]
@@ -189,6 +112,86 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
 								fzip.writestr(f"{attr['seed']}_{(dir+walkcycle_frame)%32}_{wobble_frame+1}.png", buffer.getvalue())
 			final_zip.seek(0)
 			return final_zip, attr
+
+class GeneratorCog(commands.Cog, name="Generation Commands"):
+	def __init__(self, bot: Bot):
+		self.bot = bot
+
+	# Rewriting Random so I can get the seed
+	# https://stackoverflow.com/a/34699351/13290530
+	class Random(random.Random):
+		def seed(self, a=None):
+			if a is None:
+				a = int(time.time() * 256) % (2**64)  # use fractional seconds
+			self._current_seed = a
+			super().seed(a)
+		def get_seed(self):
+			return self._current_seed
+
+	def recolor(self, sprite: Image.Image, color: str, palette: np.ndarray) -> Image.Image:
+		"""Apply rgb color"""
+		r, g, b = palette[constants.COLOR_NAMES[color][::-1]]
+		arr = np.asarray(sprite, dtype="float64")
+		arr[..., 0] *= r / 256
+		arr[..., 1] *= g / 256
+		arr[..., 2] *= b / 256
+		return Image.fromarray(arr.astype("uint8"))
+
+	# New code for character generation
+	@commands.command(aliases=["char"])
+	@commands.cooldown(4, 8, type=commands.BucketType.channel)
+	async def character(
+		self, ctx: Context, 
+		# Discord commands don't support **kwargs
+		*flags: str
+		):
+		"""Randomly generate a character using prefabs."""
+		await ctx.typing()
+		if not await ctx.bot.is_owner(ctx.author): #keep this off limits for now
+			return await ctx.error('The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
+		#flags = {a:b for a,b in re.findall(r'--(.+?)=(.+?)\b',' '.join(flags))}
+		flags = dict()
+		final_zip, attributes = CharacterGenerator().generate(False,**flags)
+		preview = []
+		with zipfile.PyZipFile(final_zip) as final_zip_opened:
+			with Image.open('data/generator/preview_bg.png') as bg:
+				with Image.open(f"data/palettes/default.png").convert("RGBA") as p:
+					palette = np.array(p)
+				bg = bg.convert('RGBA')
+				for image in final_zip_opened.namelist():
+					with final_zip_opened.open(image) as imfile:
+						with Image.open(imfile) as im:
+							preview.append(
+								Image.alpha_composite(
+									bg,(
+										Image.fromarray(
+											np.pad(
+												(
+													np.array(im.convert('RGBA'))
+													*(palette[attributes['color'][1][::-1]]/255)
+												).astype(np.uint8),
+												((4,4),(4,4),(0,0))
+											)
+										).resize((256,256),
+										Image.NEAREST).convert('RGBA')
+									)
+								)
+							)
+		attributes['color'] = attributes['color'][0]
+		preview_file = BytesIO()
+		preview[0].save(
+			preview_file,
+			format="GIF",
+			interlace=True,
+			save_all=True,
+			append_images=preview[1:],
+			loop=0,
+			duration=200,
+			optimize=False
+		)
+		preview_file.seek(0)
+		final_zip.seek(0)
+		return await ctx.send("```"+'\n'.join([f'{a}: {b}' for a,b in attributes.items()])+"```",files=[discord.File(preview_file,filename='preview.gif'),discord.File(final_zip,filename='out.zip')])
 
 	# Old code for character generation
 
@@ -380,4 +383,5 @@ name={width-2}x{height-2}""",
 
 
 async def setup(bot: Bot):
+	bot.generator = CharacterGenerator()
 	await bot.add_cog(GeneratorCog(bot))

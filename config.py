@@ -19,6 +19,7 @@ cogs = [
 	"src.cogs.variants",
 	"src.cogs.utilities",
 	"src.cogs.generator",
-	"src.cogs.event"
+	"src.cogs.event",
+	"jishaku"
 ]
 danger_mode = False

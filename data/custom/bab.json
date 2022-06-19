@@ -702,15 +702,6 @@
         "tiling": "-1"
     },
     {
-        "name": "therealbabdictatorhd",
-        "sprite": "therealbabdictatorhd",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "ditto",
         "sprite": "ditto",
         "color": [
