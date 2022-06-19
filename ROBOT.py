@@ -120,10 +120,7 @@ async def on_command(ctx):
 		description = (ctx.message.content),
 		color=config.logging_color
 	)
-	try:
-		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None, icon_url=ctx.author.avatar.url)
-	except:
-		embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None, icon_url=ctx.author.avatar_url)
+	embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None, icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
 	embed.set_footer(text=str(ctx.author.id))
 	await webhook.send(embed=embed)
 

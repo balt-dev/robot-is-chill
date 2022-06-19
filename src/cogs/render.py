@@ -431,7 +431,6 @@ class Renderer:
 				)
 			elif isinstance(tile.sprite,np.ndarray):
 				sprite = Image.fromarray(tile.sprite[(tile.variant_number*3)+wobble])
-				Image.open(sprite)
 			else:
 				path_fallback = None
 				if tile.name == "icon":

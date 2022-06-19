@@ -333,7 +333,7 @@ async def setup(bot: Bot):
 				tile.custom_style = "noun"
 
 	def add(ctx,dst,var = True):
-		d = {dst: var}
+		d = {dst: var}   #WHAT????? WHY?????????
 		try:
 			f = ctx.fields.get("filters")
 			return{
@@ -1200,7 +1200,7 @@ async def setup(bot: Bot):
 		return {}
 	
 	@handlers.handler(
-		pattern=r"(?:color|col|c)(-?\d)*(?:\/(-?\d)*(?:\/(-?\d)*)?)?",
+		pattern=r"(?:color|col|c)(-?\d+)*(?:\/(-?\d+)*(?:\/(-?\d+)*)?)?",
 		variant_hints={"color": "`color<start>[/<stop>[/<step>]]` (Cuts all but the selected slice of colors, sorted by frequency. Slices work like they do in Python.)"},
 		variant_group="Filters"
 	)
@@ -1210,7 +1210,7 @@ async def setup(bot: Bot):
 		)
 		
 	@handlers.handler(
-		pattern=r"(?:color|col|c)(-?\d(?:\+-?\d)*)",
+		pattern=r"(?:color|col|c)(-?\d+(?:\+-?\d+)*)",
 		variant_hints={"color": "`color<n>[+<n>[+<n>...]]` (Cuts all but the specified colors from the image.)"},
 		variant_group="Filters"
 	)

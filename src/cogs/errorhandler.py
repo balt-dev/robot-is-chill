@@ -14,6 +14,7 @@ import requests
 from ..types import Bot, Context
 from .. import errors
 
+
 class CommandErrorHandler(commands.Cog):
 	def __init__(self, bot: Bot):
 		self.bot = bot

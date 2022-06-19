@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import colorsys
+from functools import reduce
 import itertools
 from datetime import datetime
 from subprocess import PIPE, STDOUT, TimeoutExpired, run
@@ -93,7 +95,7 @@ class PrettyHelpCommand(commands.DefaultHelpCommand):
 			prefix = self.clean_prefix
 		except AttributeError:
 			prefix = "{prefix}"
-		return "Type {0}{1} command for more info on a command.".format(prefix, command_name)
+		return f"Type {prefix}{command_name} command for more info on a command."
 
 	def get_command_signature(self, command: commands.Command) -> str:
 		parent = command.full_parent_name
@@ -110,7 +112,7 @@ class PrettyHelpCommand(commands.DefaultHelpCommand):
 		else:
 			alias = command.name if not parent else parent + ' ' + command.name
 
-		return '`%s%s %s`' % (prefix, alias, command.signature)
+		return f'`{prefix}{alias} {command.signature}`'
 
 class MetaCog(commands.Cog, name="Other Commands"):
 	def __init__(self, bot: Bot):
@@ -162,11 +164,15 @@ class MetaCog(commands.Cog, name="Other Commands"):
 	async def ping(self, ctx: Context):
 		'''Returns bot latency.'''
 		clamp = lambda val, mn, mx: max(min(val,mx),mn)
-		pingns = f'{self.bot.latency:.5f}'
+		pingns = int(self.bot.latency*1000)
+		color = reduce(
+					lambda a, b: (a<<8) + b,
+					[int(255*n) for n in colorsys.hsv_to_rgb((0.33333333-((pingns/250)*0.33333333)) % 1,0.4,1)]
+				)
 		await ctx.send(embed=discord.Embed(
 			title="Latency", 
-			color=discord.Color(int(('{0:02x}'.format(clamp(math.floor(pingns*250),0,255))+('{0:02x}'.format(255-clamp(math.floor(pingns*250),0,255)))+'00'),16)),
-			description=f"{round(pingns, 3)} seconds"))
+			color=discord.Color(color),
+			description=f"{pingns} ms"))
 
 	@commands.command()
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
