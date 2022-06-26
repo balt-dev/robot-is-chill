@@ -174,13 +174,18 @@ class MetaCog(commands.Cog, name="Other Commands"):
 			color=discord.Color(color),
 			description=f"{pingns} ms"))
 
+	class InviteView(discord.ui.View):
+		def __init__(self):
+			super().__init__()
+			self.add_item(discord.ui.Button(label='Invite', url='https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot',style=discord.ButtonStyle.link))
+			self.add_item(discord.ui.Button(label='Support guild', url='https://discord.gg/ktk8XkAfGD',style=discord.ButtonStyle.link))
+
 	@commands.command()
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	async def invite(self, ctx: Context):
 		'''Links for the bot support server'''
-		msg = discord.Embed(colour=self.bot.embed_color, title="Invite Link", description="[Click to invite.](https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=67497024&scope=bot)\n*__Don't invite the bot to a private server only you're in.\nJust DM the bot!__*"
-		)
-		await ctx.send(embed=msg)
+		msg = discord.Embed(colour=self.bot.embed_color, title="Don't invite the bot to a private server only you're in.\nJust DM the bot!")
+		await ctx.send(embed=msg,view=self.InviteView())
 	
 	@commands.command(aliases=["interpret"])
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)

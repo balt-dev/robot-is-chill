@@ -78,7 +78,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@sprite.command()
 	async def edit(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
-		if attribute not in ['sprite', 'tiling', 'color']:
+		if attribute not in ['sprite', 'tiling', 'color', 'name']:
 			return await ctx.error('You specified an invalid attribute.')
 		if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
 			return await ctx.error('You specified an invalid value.')
@@ -86,10 +86,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			value = [value, value2]
 		with open(f"data/custom/{pack_name}.json", "r") as f:
 			sprite_data = json.load(f)
+		found = False
 		for i in range(len(sprite_data)):
 			if sprite_data[i]['name'] == sprite_name:  # this is dumb
 				sprite_data[i][attribute] = value
+				found = True
 				break
+		assert found, f"Sprite `{sprite_name}` not found!"
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
 		await self.load_custom_tiles()

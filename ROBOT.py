@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+from io import BytesIO
 
 import json
 import logging
@@ -66,8 +67,9 @@ class Bot(commands.Bot):
 		self.prefixes = prefixes
 		self.db = Database()
 		self.db_path = db_path
-		
+		sys.stdout = BytesIO()
 		super().__init__(*args, **kwargs)
+		sys.stdout = sys.__stdout__
 		# has to be after __init__
 		for cog in cogs:
 			asyncio.run(self.load_extension(cog, package='ROBOT'))
@@ -84,7 +86,7 @@ class Bot(commands.Bot):
 		print(f"Logged in as {self.user}!")
 		await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
-logging.basicConfig(filename=config.log_file, level=logging.WARNING)
+logging.basicConfig(filename=config.log_file, level=logging.INFO)
 	
 # Establishes the bot
 bot = Bot(
@@ -124,5 +126,5 @@ async def on_command(ctx):
 	embed.set_footer(text=str(ctx.author.id))
 	await webhook.send(embed=embed)
 
-bot.run(auth.token)
+bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)
