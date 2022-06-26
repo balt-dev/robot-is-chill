@@ -429,33 +429,34 @@ class Renderer:
 					position=(x,y),
 					gscale=gscale
 				)
-			elif isinstance(tile.sprite,np.ndarray):
-				sprite = Image.fromarray(tile.sprite[(tile.variant_number*3)+wobble])
 			else:
-				path_fallback = None
-				if tile.name == "icon":
-					path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
-				elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
-					path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
-				elif tile.name == "default":
-					path = f"data/sprites/{constants.BABA_WORLD}/default_{wobble + 1}.png"
-				elif tile.variant_number == -1:
-					source, sprite_name = tile.sprite
-					path = f"data/sprites/vanilla/error_0_{wobble + 1}.png"
+				if isinstance(tile.sprite,np.ndarray):
+					sprite = Image.fromarray(tile.sprite[(tile.variant_number*3)+wobble])
 				else:
-					source, sprite_name = tile.sprite
-					path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
-				try:
-					path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.variant_fallback}_{wobble + 1}.png"
-				except:
 					path_fallback = None
-				try:
-					sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
-				except FileNotFoundError:
-					if path_fallback is not None:
-						sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
+					if tile.name == "icon":
+						path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
+					elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
+						path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
+					elif tile.name == "default":
+						path = f"data/sprites/{constants.BABA_WORLD}/default_{wobble + 1}.png"
+					elif tile.variant_number == -1:
+						source, sprite_name = tile.sprite
+						path = f"data/sprites/vanilla/error_0_{wobble + 1}.png"
 					else:
-						assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
+						source, sprite_name = tile.sprite
+						path = f"data/sprites/{source}/{sprite_name}_{tile.variant_number}_{wobble + 1}.png"
+					try:
+						path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.variant_fallback}_{wobble + 1}.png"
+					except:
+						path_fallback = None
+					try:
+						sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+					except FileNotFoundError:
+						if path_fallback is not None:
+							sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
+						else:
+							assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
 				sprite = sprite.resize((int(sprite.width*gscale),int(sprite.height*gscale)),Image.NEAREST)
 				sprite = await self.apply_options_name(
 					tile.name,
@@ -802,9 +803,12 @@ class Renderer:
 	) -> Image.Image:
 		'''Takes an image, taking tile data from its name, and applies the given options to it.'''
 		tile_data = await self.bot.db.tile(name)
-		assert tile_data is not None
-		original_style = constants.TEXT_TYPES[tile_data.text_type]
-		original_direction = tile_data.text_direction
+		if tile_data is not None:
+			original_style = constants.TEXT_TYPES[tile_data.text_type]
+			original_direction = tile_data.text_direction
+		else: #catch generated sprites
+			original_style = style
+			original_direction = direction
 		try:
 			return self.apply_options(
 				sprite,
@@ -883,7 +887,7 @@ class Renderer:
 				sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
 		for name, value in filters:
 			if name == 'meta_level' and value != 0:
-					sprite = self.make_meta(sprite, value)
+				sprite = self.make_meta(sprite, value)
 			elif name == 'threeoo' and value != None:
 				img = np.array(sprite,dtype=np.uint8)
 				h,w,_ = img.shape

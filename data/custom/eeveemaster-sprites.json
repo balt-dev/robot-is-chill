@@ -52,5 +52,23 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "bibo",
+        "sprite": "bibo",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_bibo",
+        "sprite": "text_bibo",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

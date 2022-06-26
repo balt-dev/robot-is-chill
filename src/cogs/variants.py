@@ -556,7 +556,7 @@ async def setup(bot: Bot):
 		}
 
 	@handlers.handler(
-		pattern=r"meta|m",
+		pattern=r"meta|m(?!-?\d+)",
 		variant_hints={"m": "`meta` / `m` (1 meta layer)"},
 		variant_group="Filters"
 	)

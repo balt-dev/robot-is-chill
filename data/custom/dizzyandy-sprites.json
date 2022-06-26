@@ -34,5 +34,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "camera3",
+        "sprite": "camera3",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
