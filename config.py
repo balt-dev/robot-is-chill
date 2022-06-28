@@ -23,3 +23,4 @@ cogs = [
 	"jishaku"
 ]
 danger_mode = False
+owner_only_mode = [False,'']

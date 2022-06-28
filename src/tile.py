@@ -11,9 +11,9 @@ from . import errors
 
 if TYPE_CHECKING:
 		# @ps-ignore
-		RawGrid = list(list(list('RawTile')))
-		FullGrid = list(list(list('FullTile')))
-		GridIndex = tuple(int, int, int)
+		RawGrid = list(list(list(list('RawTile'))))
+		FullGrid = list(list(list(list('FullTile'))))
+		GridIndex = tuple(int, int, int,int)
 
 @dataclass
 class RawTile:

@@ -120,7 +120,7 @@ class Renderer:
 				
 	async def render(
 		self,
-		grid: list[list[list[ReadyTile]]],
+		grid: list[list[list[list[ReadyTile]]]],
 		*,
 		before_image: Image = None,
 		palette: str = "default",
@@ -155,8 +155,10 @@ class Renderer:
 		sprite_cache: dict[str, Image.Image] = {}
 		imgs = []
 		times = []
-		width = len(grid[0][0])
-		height = len(grid[0])
+		width = len(grid[0][0][0])
+		height = len(grid[0][0])
+		#don't need depth anywhere
+		steps = len(grid)
 		img_width_raw = int(width * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
 		img_height_raw = int(height * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
 		new_frames = []
@@ -167,6 +169,7 @@ class Renderer:
 			else:
 				durations[-1] += speed
 			dur_check.append(f)
+		durations *= steps
 		frames = new_frames
 		def wl(a):
 			try:
@@ -178,178 +181,179 @@ class Renderer:
 				return int(a.frames[0].height * scaleddef)
 			except:
 				return 0
-		padding = max(np.amax(np.array([[[hl(c) for c in b] for b in a] for a in grid],dtype=object)),np.amax(np.array([[[wl(c) for c in b] for b in a] for a in grid],dtype=object)))
-		padding = padding[0] if type(padding) == list else padding
+		padding = np.amax(np.vectorize(lambda tile: max(hl(tile),wl(tile)))(np.array(grid)))
 		img_width = int(img_width_raw + (2 * padding) + pad[0] + pad[2])
 		img_height = int(img_height_raw + (2 * padding) + pad[1] + pad[3])
 		i = 0
-		for l, frame in enumerate(frames):
-			if images and image_source is not None:
-				img = Image.new("RGBA", (img_width, img_height))
-				# for loop in case multiple background images are used (i.e. baba's world map)
-				for image in images:
-					overlap = Image.open(f"data/images/{image_source}/{image}_{frame}.png")
-					img.paste(overlap, (padding, padding), mask=overlap)
-			# bg color
-			elif type(background) == tuple:
-				palette_color = palette_img.getpixel(background)
-				img = Image.new("RGBA", (img_width, img_height), color=palette_color)
-			elif type(background) == str:
-				img = Image.new("RGBA", (img_width, img_height), color=tuple([int(a+b,16) for a,b in np.reshape(list(background),(3,2))]))
-			# neither
-			else:
-				img = Image.new("RGBA", (img_width, img_height), color=(0,0,0,0))
-			imgs.append(img)
+		for n in range(steps):
+			for l, frame in enumerate(frames):
+				if images and image_source is not None:
+					img = Image.new("RGBA", (img_width, img_height))
+					# for loop in case multiple background images are used (i.e. baba's world map)
+					for image in images:
+						overlap = Image.open(f"data/images/{image_source}/{image}_{frame}.png")
+						img.paste(overlap, (padding, padding), mask=overlap)
+				# bg color
+				elif type(background) == tuple:
+					palette_color = palette_img.getpixel(background)
+					img = Image.new("RGBA", (img_width, img_height), color=palette_color)
+				elif type(background) == str:
+					img = Image.new("RGBA", (img_width, img_height), color=tuple([int(a+b,16) for a,b in np.reshape(list(background),(3,2))]))
+				# neither
+				else:
+					img = Image.new("RGBA", (img_width, img_height), color=(0,0,0,0))
+				imgs.append(img)
 		# keeping track of the amount of padding we can slice off
 		pad_r=pad_u=pad_l=pad_d=0
-		for layer in grid:
-			for y, row in enumerate(layer):
-				for x, tile in enumerate(row):
-					t = time.perf_counter()
-					if tile.frames is None:
-						continue
-					tframes = []
-					for f in frames:
-						tframes.append(tile.frames[f-1])
-					for frame, sprite in enumerate(tframes[:len(frames)]):
-						x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
-						y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
-						x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0]*scaleddef)
-						y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]*scaleddef)
-						if x == 0:
-							pad_l = max(pad_l, x_offset)
-						if x == width - 1:
-							pad_r = max(pad_r, x_offset)
-						if y == 0:
-							pad_u = max(pad_u, y_offset)
-						if y == height - 1:
-							pad_d = max(pad_d, y_offset)
-						alpha = sprite.getchannel("A")
-						x_offset_disp -= pad[0]
-						y_offset_disp -= pad[1]
-						if tile.mask_alpha:
-							alpha = ImageChops.invert(alpha)
-							if background is not None:
-								palette_color = palette_img.getpixel(background)
-							else:
-								palette_color = (0,0,0,0)
-							sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
-							imgs[frame].paste(
-								sprite,
-								(
-									int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-									int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-								),
-								alpha
-							)
-						elif tile.cut_alpha:
-							if background is not None:
-								imgs[frame].paste(
-									Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)),
+		for d, timestep in enumerate(grid):
+			for layer in timestep:
+				for y, row in enumerate(layer):
+					for x, tile in enumerate(row):
+						t = time.perf_counter()
+						if tile.frames is None:
+							continue
+						tframes = []
+						for f in frames:
+							tframes.append(tile.frames[f-1])
+						for frame, sprite in enumerate(tframes[:len(frames)]):
+							x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
+							y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
+							x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0]*scaleddef)
+							y_offset_disp = int(((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[1]*scaleddef)
+							if x == 0:
+								pad_l = max(pad_l, x_offset)
+							if x == width - 1:
+								pad_r = max(pad_r, x_offset)
+							if y == 0:
+								pad_u = max(pad_u, y_offset)
+							if y == height - 1:
+								pad_d = max(pad_d, y_offset)
+							alpha = sprite.getchannel("A")
+							x_offset_disp -= pad[0]
+							y_offset_disp -= pad[1]
+							if tile.mask_alpha: #i should really rewrite all of this lmao
+								alpha = ImageChops.invert(alpha)
+								if background is not None:
+									palette_color = palette_img.getpixel(background)
+								else:
+									palette_color = (0,0,0,0)
+								sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
+								imgs[frame+(d*len(frames))].paste(
+									sprite,
 									(
 										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
 										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
 									),
 									alpha
 								)
+							elif tile.cut_alpha:
+								if background is not None:
+									imgs[frame+(d*len(frames))].paste(
+										Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)),
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										alpha
+									)
+								else:
+									imgs[frame+(d*len(frames))].paste(
+										Image.new("RGBA", (sprite.width, sprite.height)),
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										alpha
+									)
 							else:
-								imgs[frame].paste(
-									Image.new("RGBA", (sprite.width, sprite.height)),
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									alpha
-								)
-						else:
-							if tile.blending == 'add':
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								imgs[frame] = Image.fromarray(cv2.add(np.asarray(imgs[frame]),np.asarray(imgtemp)))
-							elif tile.blending == 'subtract':
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								inmp = np.asarray(imgtemp)
-								inmp[:,:,3] = 0
-								imgs[frame] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame]),inmp))
-							elif tile.blending == 'maximum':
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								imgs[frame] = Image.fromarray(cv2.max(np.asarray(imgs[frame]),np.asarray(imgtemp)))
-							elif tile.blending and tile.blending.startswith('xor'):
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								i1 = np.asarray(imgs[frame])
-								i2 = np.asarray(imgtemp)
-								rgb = (i1^i2)
-								if tile.blending == 'xora':
-									rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
-								imgs[frame] = Image.fromarray(rgb)
-							elif tile.blending == 'minimum':
-								imgtemp=Image.new('RGBA',imgs[frame].size,(0,0,0,0))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								imgtempar = np.asarray(imgtemp)
-								imgtempar[:,:,3] = np.asarray(imgs[frame])[:,:,3]
-								imgs[frame] = Image.fromarray(cv2.min(np.asarray(imgs[frame]),imgtempar))
-							elif tile.blending == 'multiply':
-								imgtemp = Image.new('RGBA',imgs[frame].size,(255,255,255,255))
-								imgtemp.paste(
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									mask=sprite
-								)
-								imgtempar = np.array(imgtemp,dtype=np.uint8)/255
-								imgtempar[:,:,3] = 1.0
-								imgs[frame] = Image.fromarray((np.array(imgs[frame])*np.array(imgtempar)).astype(np.uint8))
-							else:
-								imgs[frame] = alpha_paste(
-									imgs[frame],
-									sprite,
-									(
-										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
-										int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
-									),
-									format
-								)
-					times.append(tile.delta + (time.perf_counter() - t))
+								if tile.blending == 'add':
+									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.add(np.asarray(imgs[frame+(d*len(frames))]),np.asarray(imgtemp)))
+								elif tile.blending == 'subtract':
+									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									inmp = np.asarray(imgtemp)
+									inmp[:,:,3] = 0
+									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame+(d*len(frames))]),inmp))
+								elif tile.blending == 'maximum':
+									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.max(np.asarray(imgs[frame+(d*len(frames))]),np.asarray(imgtemp)))
+								elif tile.blending and tile.blending.startswith('xor'):
+									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									i1 = np.asarray(imgs[frame+(d*len(frames))])
+									i2 = np.asarray(imgtemp)
+									rgb = (i1^i2)
+									if tile.blending == 'xora':
+										rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
+									imgs[frame+(d*len(frames))] = Image.fromarray(rgb)
+								elif tile.blending == 'minimum':
+									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									imgtempar = np.asarray(imgtemp)
+									imgtempar[:,:,3] = np.asarray(imgs[frame+(d*len(frames))])[:,:,3]
+									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.min(np.asarray(imgs[frame+(d*len(frames))]),imgtempar))
+								elif tile.blending == 'multiply':
+									imgtemp = Image.new('RGBA',imgs[frame+(d*len(frames))].size,(255,255,255,255))
+									imgtemp.paste(
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										mask=sprite
+									)
+									imgtempar = np.array(imgtemp,dtype=np.uint8)/255
+									imgtempar[:,:,3] = 1.0
+									imgs[frame+(d*len(frames))] = Image.fromarray((np.array(imgs[frame+(d*len(frames))])*np.array(imgtempar)).astype(np.uint8))
+								else:
+									imgs[frame+(d*len(frames))] = alpha_paste(
+										imgs[frame+(d*len(frames))],
+										sprite,
+										(
+											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
+											int(y * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - y_offset_disp)
+										),
+										format
+									)
+						times.append(tile.delta + (time.perf_counter() - t))
 		if before_image:
 			bfr=0
 			before_durations = []
@@ -554,35 +558,38 @@ class Renderer:
 
 	async def render_full_tiles(
 		self,
-		grid: list[list[list[FullTile]]],
+		grid: list[list[list[list[FullTile]]]],
 		*,
 		palette: str = "default",
 		random_animations: bool = False,
 		gscale: float = 1
-	) -> list[list[list[ReadyTile]]]:
+	) -> list[list[list[list[ReadyTile]]]]:
 		'''Final individual tile processing step'''
 		sprite_cache = {}
 		palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
 
-		a = []
-		for layer in grid:
-			b = []
-			for y, row in enumerate(layer):
-				c = []
-				for x, tile in enumerate(row):
-					c.append(
-						await self.render_full_tile(
-							tile,
-							position=(x, y),
-							palette_img=palette_img,
-							random_animations=random_animations,
-							sprite_cache=sprite_cache,
-							gscale=gscale
+		d = []
+		for timestep in grid:
+			a = []
+			for layer in timestep:
+				b = []
+				for y, row in enumerate(layer):
+					c = []
+					for x, tile in enumerate(row):
+						c.append(
+							await self.render_full_tile(
+								tile,
+								position=(x, y),
+								palette_img=palette_img,
+								random_animations=random_animations,
+								sprite_cache=sprite_cache,
+								gscale=gscale
+							)
 						)
-					)
-				b.append(c)
-			a.append(b)
-		return a
+					b.append(c)
+				a.append(b)
+			d.append(a)
+		return d
 
 	async def generate_sprite(
 		self,
