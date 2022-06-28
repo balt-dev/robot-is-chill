@@ -67,6 +67,7 @@ class Bot(commands.Bot):
 		self.prefixes = prefixes
 		self.db = Database()
 		self.db_path = db_path
+		self.config = config.__dict__
 		sys.stdout = BytesIO()
 		super().__init__(*args, **kwargs)
 		sys.stdout = sys.__stdout__

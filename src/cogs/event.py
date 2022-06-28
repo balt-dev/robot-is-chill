@@ -5,6 +5,8 @@ import time
 
 from ..types import Bot, Context
 
+import config
+
 class EventCog(commands.Cog, name='Events'):
 	def __init__(self, bot: Bot):
 		self.bot = bot
@@ -31,6 +33,9 @@ class EventCog(commands.Cog, name='Events'):
 				await cur.execute(f'''REPLACE INTO ServerActivity(id, timestamp) VALUES(?,?);''',(ctx.guild.id,time.time()))
 		except AttributeError:
 			pass
+		if self.bot.config['owner_only_mode'][0] and ctx.author.id != self.bot.owner_id:
+			await ctx.error(f'The bot is currently in owner only mode. The owner specified this reason:\n`{config.owner_only_mode[1]}`')
+			return False
 		return True
 	
 async def setup(bot: Bot):

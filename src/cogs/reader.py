@@ -210,7 +210,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 				row.pop(grid.width - 1)
 				row.pop(0)
 		out = f"target/renders/levels/{code}.gif"
-		await self.bot.renderer.render(objects, palette=grid.palette, background=(0, 4), out=out)
+		await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out)
 		
 		data = CustomLevelData(code.lower(), grid.name, grid.subtitle, grid.author)
 
@@ -256,7 +256,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
 		# Render the level
 		await self.bot.renderer.render(
-			objects,
+			[objects],
 			palette=grid.palette,
 			images=grid.images,
 			image_source=grid.world,

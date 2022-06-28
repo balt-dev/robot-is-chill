@@ -33,13 +33,14 @@ class ContextBase:
 		'''Associated tile data'''
 		return self.tile_data_cache.get(self.tile.name)
 	
-	def is_adjacent(self, coordinate: tuple[int, int, int],) -> bool:
+	def is_adjacent(self, coordinate: tuple[int, int, int, int]) -> bool:
 		'''Tile is next to a joining tile'''
-		x, y, l = coordinate
+		d, x, y, l = coordinate
 		joining_tiles = (self.tile.name, "level", "border")
-		if x < 0 or y < 0 or y >= len(self.grid[l]) or x >= len(self.grid[l][0]):
+		print(self.grid[d],coordinate)
+		if x < 0 or y < 0 or y >= len(self.grid[d][l]) or x >= len(self.grid[d][l][0]):
 			return bool(self.flags.get("tile_borders"))
-		return self.grid[l][y][x].name in joining_tiles
+		return self.grid[d][l][y][x].name in joining_tiles
 
 class HandlerContext(ContextBase):
 	'''The context that the handler was invoked in.'''
@@ -201,7 +202,7 @@ class VariantHandlers:
 		tile_data_cache = {
 			data.name: data async for data in self.bot.db.tiles(
 				{
-					tile.name for row in grid for stack in row for tile in stack
+					tile.name for steps in grid for row in steps for stack in row for tile in stack
 				},
 				maximum_version = flags.get("ignore_editor_overrides", 1000)
 			)
@@ -209,12 +210,15 @@ class VariantHandlers:
 		return [
 			[
 				[
-					self.handle_tile(tile, grid, (x, y, z), tile_data_cache, **flags)
-					for z, tile in enumerate(stack)
+					[
+						self.handle_tile(tile, grid, (d, x, y, z), tile_data_cache, **flags)
+						for z, tile in enumerate(stack)
+					]
+					for x, stack in enumerate(row)
 				]
-				for x, stack in enumerate(row)
+				for y, row in enumerate(step)
 			]
-			for y, row in enumerate(grid)
+			for d, step in enumerate(grid)
 		]
 
 class Handler:
@@ -277,21 +281,21 @@ async def setup(bot: Bot):
 		if tile_data is not None:
 			color = tile_data.active_color
 			if tile_data.tiling in constants.AUTO_TILINGS:
-				y, t, x = ctx.index
-				adj_right = ctx.is_adjacent((x + 1, y, t))
-				adj_up = ctx.is_adjacent((x, y - 1, t))
-				adj_left = ctx.is_adjacent((x - 1, y, t))
-				adj_down = ctx.is_adjacent((x, y + 1, t))
+				d, y, t, x = ctx.index
+				adj_right = ctx.is_adjacent((d, x + 1, y, t))
+				adj_up = ctx.is_adjacent((d, x, y - 1, t))
+				adj_left = ctx.is_adjacent((d, x - 1, y, t))
+				adj_down = ctx.is_adjacent((d, x, y + 1, t))
 				variant_fallback = constants.TILING_VARIANTS[(
 					adj_right, adj_up, adj_left, adj_down,
 					False, False, False, False
 				)]
 				# Variant with diagonal tiles as well, not guaranteed to exist
 				# The renderer falls back to the simple variant if it doesn't
-				adj_rightup = adj_right and adj_up and ctx.is_adjacent((x + 1, y - 1, t))
-				adj_upleft = adj_up and adj_left and ctx.is_adjacent((x - 1, y - 1, t))
-				adj_leftdown = adj_left and adj_down and ctx.is_adjacent((x - 1, y + 1, t))
-				adj_downright = adj_down and adj_right and ctx.is_adjacent((x + 1, y + 1, t))
+				adj_rightup = adj_right and adj_up and ctx.is_adjacent((d, x + 1, y - 1, t))
+				adj_upleft = adj_up and adj_left and ctx.is_adjacent((d, x - 1, y - 1, t))
+				adj_leftdown = adj_left and adj_down and ctx.is_adjacent((d, x - 1, y + 1, t))
+				adj_downright = adj_down and adj_right and ctx.is_adjacent((d, x + 1, y + 1, t))
 				variant = constants.TILING_VARIANTS.get((
 					adj_right, adj_up, adj_left, adj_down,
 					adj_rightup, adj_upleft, adj_leftdown, adj_downright
@@ -333,15 +337,14 @@ async def setup(bot: Bot):
 				tile.custom_style = "noun"
 
 	def add(ctx,dst,var = True):
-		d = {dst: var}   #WHAT????? WHY?????????
 		try:
 			f = ctx.fields.get("filters")
 			return{
-				"filters": f + list(d.items())
+				"filters": f + [dst,var]
 			}
 		except TypeError as e:
 			return{
-				"filters": list(d.items())
+				"filters": [[dst,var]]
 			}
 			
 	@handlers.handler(

@@ -15,7 +15,6 @@ import collections
 from src import constants
 from typing import Any, Optional
 import os
-import config
 import numpy as np
 import subprocess
 from contextlib import redirect_stdout, redirect_stderr
@@ -42,10 +41,18 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command()
 	@commands.is_owner()
-	async def danger(self, ctx: Context, cog: str = ""):
+	async def danger(self, ctx: Context):
 		'''Toggles danger mode.'''
-		config.danger_mode = not config.danger_mode
-		await ctx.send(f'Toggled danger mode o{"n" if config.danger_mode else "ff"}.')
+		self.bot.config['danger_mode'] = not self.bot.config['danger_mode']
+		await ctx.send(f'Toggled danger mode o{"n" if self.bot.config["danger_mode"] else "ff"}.')
+
+	@commands.command()
+	@commands.is_owner()
+	async def lockdown(self, ctx: Context, *, reason: str = ''):
+		'''Toggles owner-only mode.'''
+		assert self.bot.config['owner_only_mode'][0] or len(reason),'Specify a reason.'
+		self.bot.config['owner_only_mode'] = [not self.bot.config['owner_only_mode'][0], reason]
+		await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
 
 	@commands.command(aliases=["load", "reload"])
 	@commands.is_owner()
