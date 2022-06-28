@@ -340,7 +340,7 @@ async def setup(bot: Bot):
 		try:
 			f = ctx.fields.get("filters")
 			return{
-				"filters": f + [dst,var]
+				"filters": f + [[dst,var]]
 			}
 		except TypeError as e:
 			return{
