@@ -70,5 +70,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "goopi",
+        "sprite": "goopi",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
