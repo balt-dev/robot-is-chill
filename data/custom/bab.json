@@ -72,7 +72,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_andbab",
+        "name": "text_baband",
         "sprite": "text_andbab",
         "color": [
             "0",
@@ -1030,6 +1030,24 @@
         "sprite": "text_slep",
         "color": [
             "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_snek",
+        "sprite": "text_snek",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "snek",
+        "sprite": "snek",
+        "color": [
+            "5",
             "3"
         ],
         "tiling": "-1"
