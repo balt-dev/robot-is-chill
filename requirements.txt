@@ -3,6 +3,7 @@ opencv-python>=4.0.0.0
 requests>=2.25.1
 pandas
 emoji
+jishaku
 git+https://github.com/Rapptz/asqlite
 git+https://github.com/Rapptz/discord.py
 git+https://github.com/Rapptz/discord-ext-menus
