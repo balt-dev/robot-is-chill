@@ -75,7 +75,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
 	async def handle_variant_errors(self, ctx: Context, err: errors.VariantError):
 		'''Handle errors raised in a command context by variant handlers'''
-		word, variant, *rest = err.args
+		try:
+			word, variant, *rest = err.args
+		except ValueError:
+			word, *rest = err.args
+			variant = '(Unspecified in error)'
 		msg = f"The variant `{variant}` for `{word}` is invalid"
 		if isinstance(err, errors.BadTilingVariant):
 			tiling = rest[0]
@@ -277,10 +281,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			if combine_match:
 				to_delete.append((x, y))
 				msg = None
+				do_finally = True
 				try:
 					msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 					if not msg.attachments:
-						return await ctx.error('The replied message doesn\'t have an attached image.')
+						do_finally = False
+						return await ctx.error('The replied message doesn\'t have an attachment. Did you reply to the bot?')
 				except:
 					async for m in ctx.channel.history(limit=10):
 						if m.author.id == self.bot.user.id and m.attachments:
@@ -292,13 +298,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 							except:
 								pass
 					if msg == None:
+						do_finally = False
 						return await ctx.error('None of your commands were found in the last `10` messages.')
 				finally:
-					try:
-						assert int(requests.head(msg.attachments[0].url, stream=True).headers.get('content-length', 0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-						before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
-					except AttributeError:
-						pass
+					if do_finally:
+						try:
+							assert int(requests.head(msg.attachments[0].url, stream=True).headers.get('content-length', 0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
+							before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
+						except AttributeError:
+							pass
 			speed_match = re.fullmatch(r"-speed=(\d+)(%)?", flag)
 			if speed_match:
 				speed = int(speed_match.group(1))

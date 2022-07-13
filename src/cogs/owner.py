@@ -84,7 +84,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		pass
 
 	@sprite.command()
-	async def edit(self, ctx: Context, pack_name: str, sprite_name: str, attribute: str, value: str, value2: str = None):
+	async def edit(self, ctx: Context, sprite_name: str, attribute: str, value: str, value2: str = None):
+		async with self.bot.db.conn.cursor() as cur:
+			pack_name = (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)',sprite_name)).fetchone())[0]
+			if pack_name is None:
+				return await ctx.error('The specified sprite doesn\'t exist.')
 		if attribute not in ['sprite', 'tiling', 'color', 'name']:
 			return await ctx.error('You specified an invalid attribute.')
 		if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
@@ -138,11 +142,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		for name in zip.namelist():
 			sprite = zip.read(name)
 			path = name.split("/")[-1]
-			try:
-				with open(f"data/sprites/{pack_name}/{path}", "wb") as f:
-					f.write(sprite)
-			except FileNotFoundError:
-				return await ctx.error('That isn\'t a valid sprite directory.')
+			if len(path):
+				try:
+					with open(f"data/sprites/{pack_name}/{path}", "wb") as f:
+						f.write(sprite)
+				except FileNotFoundError:
+					return await ctx.error('That isn\'t a valid sprite directory.')
 		with open(f"data/custom/{pack_name}.json", "r") as f:
 			sprite_data = json.load(f)
 		sprite_data.append({
@@ -166,7 +171,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			})
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
-		await self.load_custom_tiles()
+		await self.load_custom_tiles(pack_name)
 		await ctx.send(f"Done. Added {sprite_name}.")
 
 	@sprite.command(aliases=['del'])
@@ -179,7 +184,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			sprite_name, source = [*(result[0])]
 			result = await cur.execute('DELETE FROM tiles WHERE name = (?)',sprite_name)
 		for file in glob(f'data/sprites/{source}/{sprite_name}*.png'):
-			os.delete(file)
+			os.remove(file)
 		with open(f"data/custom/{source}.json", "r") as f:
 			sprite_data = json.load(f)
 		for i in range(len(sprite_data)):
@@ -188,8 +193,37 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 				break
 		with open(f"data/custom/{source}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
-		await self.load_custom_tiles()
+		await self.load_custom_tiles(source)
 		await ctx.send(f"Done. Deleted {sprite_name}.")
+	
+	@sprite.command()
+	async def move(self, ctx: Context, sprite_name: str, new_source: str, reload: bool = True): 
+		'''Moves a specified sprite to a different source'''
+		assert pathlib.Path(f'data/sprites/{new_source}').exists(), f'The source {new_source} doesn\'t exist.'
+		async with self.bot.db.conn.cursor() as cur:
+			source, sprite = await (await cur.execute('SELECT source, sprite FROM tiles WHERE name = (?)',sprite_name)).fetchone()
+			if source is None or sprite is None:
+				return await ctx.error(f'The sprite {sprite_name} doesn\'t exist.')
+			await cur.execute('UPDATE tiles SET source = (?) WHERE name = (?)',(new_source,sprite_name))
+		for file in glob(f'data/sprites/{source}/{sprite}*.png'):
+			os.rename(file,f'data{os.sep}sprites{os.sep}{new_source}{os.sep}{pathlib.Path(file).stem}.png')
+		with open(f"data/custom/{source}.json", "r") as f:
+			sprite_data = json.load(f)
+		for i in range(len(sprite_data)):
+			if sprite_data[i]['name'] == sprite_name:  # this is dumb
+				data = sprite_data.pop(i)
+				break
+		with open(f"data/custom/{source}.json", "w") as f:
+			json.dump(sprite_data, f, indent=4)
+		with open(f"data/custom/{new_source}.json", "r") as f:
+			new_data = json.load(f)
+		new_data.append(data)
+		with open(f"data/custom/{new_source}.json", "w") as f:
+			json.dump(new_data, f, indent=4)
+		if reload:
+			await self.load_custom_tiles(source)
+			await self.load_custom_tiles(new_source)
+		await ctx.send(f"Done. Moved {sprite_name} to {new_source}.{' (Remember to reload custom tiles!)' if not reload else ''}")
 
 	@commands.command(name="blacklist")
 	@commands.is_owner()
@@ -329,6 +363,16 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		else:
 			await guild.leave()
 			await ctx.send(f"Left {guild}.")
+
+	@commands.command()
+	@commands.is_owner()
+	async def loadsource(self, ctx: Context, source: str):
+		'''Reloads only a single source'''
+		assert pathlib.Path(f'data/sprites/{source}').exists(), f'The source {source} doesn\'t exist.'
+		self.bot.loading = True
+		await self.load_custom_tiles(source)
+		self.bot.loading = False
+		return await ctx.send(f"Done. Loaded tile data from {source}.")
 
 	@commands.command()
 	@commands.is_owner()

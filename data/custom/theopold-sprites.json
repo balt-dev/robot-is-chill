@@ -1,0 +1,56 @@
+[
+    {
+        "name": "iz",
+        "sprite": "iz",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_iz",
+        "sprite": "text_iz",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "billiam",
+        "sprite": "billiam",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "mage",
+        "sprite": "mage",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "darius",
+        "sprite": "darius",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_darius",
+        "sprite": "text_darius",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

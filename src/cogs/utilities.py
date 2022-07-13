@@ -383,30 +383,35 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	@commands.command(name="palette", aliases=['pal'])
-	async def show_palette(self, ctx: Context, palette: str = 'default', raw: str = None):
-		'''Displays palette image.
+	async def show_palette(self, ctx: Context, palette: str = 'default', color: str = None):
+		'''Displays palette image, or details about a palette index.
 
 		This is useful for picking colors from the palette.'''
-		if palette == '-r' or palette == '--raw':
-			palette = 'default'
-			raw = '--raw'
-		assert palette.find('/') == -1 and palette.find('\\') == -1, 'No looking at the host\'s hard drive, thank you very much.'
+
+		assert palette.find('..') == -1, 'No looking at the host\'s hard drive, thank you very much.'
 		try:
 			img = Image.open(f"data/palettes/{palette}.png")
 		except FileNotFoundError:
-			return await ctx.error(f"The palette `{palette}` could not be found.")
-		if raw and (raw == '-r' or raw == '--raw'):  
-			zipbuf = BytesIO()
-			file = zipfile.PyZipFile(zipbuf, "x")
-			palbuf = BytesIO()
-			img.save(palbuf, "PNG")
-			file.writestr(f"{palette}.png", palbuf.getvalue())
-			file.close()
-			zipbuf.seek(0)
-			palbuf.seek(0)
-			zipf = discord.File(zipbuf, filename=f"{palette}.zip")
-			palf = discord.File(palbuf, filename=f"{palette}.png")
-			await ctx.reply(f"Palette `{palette}`:", files=[palf,zipf])
+			img = Image.open(f"data/palettes/default.png")
+			color = palette
+			try:
+				x, y = color.split('/')
+				x, y = min(6,max(int(x),0)), min(6,max(int(y),0))
+				r, g, b = img.convert('RGB').getpixel((x,y))
+			except ValueError:
+				return await ctx.error(f'The palette {palette} could not be found.')
+		if color is not None:
+			try:
+				x, y = color.split('/')
+				x, y = min(6,max(int(x),0)), min(6,max(int(y),0))
+				r, g, b = img.convert('RGB').getpixel((x,y))
+			except ValueError:
+				return await ctx.error(f'`{color}` is an invalid palette index.')
+			d = discord.Embed(
+				color = discord.Color.from_rgb(r,g,b),
+				title = f"Color: #{hex((r<<16) | (g<<8) | b)[2:].zfill(6)}"
+			)
+			return await ctx.reply(embed=d)
 		else:
 			txtwid, txthgt = img.size
 			img = img.resize(
