@@ -16,5 +16,113 @@
             "2"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "stone",
+        "sprite": "stone",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_stone",
+        "sprite": "text_stone",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "barrel",
+        "sprite": "barrel",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_barrel",
+        "sprite": "text_barrel",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "armor",
+        "sprite": "armour",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_armor",
+        "sprite": "text_armour",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cnimi",
+        "sprite": "nimicrown",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cnimi",
+        "sprite": "text_nimicrown",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sand",
+        "sprite": "sand",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_sand",
+        "sprite": "text_sand",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pickaxe",
+        "sprite": "pickaxe",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_pickaxe",
+        "sprite": "text_pickaxe",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

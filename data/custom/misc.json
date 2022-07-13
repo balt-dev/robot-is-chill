@@ -206,24 +206,6 @@
         ]
     },
     {
-        "name": "sand",
-        "sprite": "sand",
-        "tiling": "1",
-        "color": [
-            "2",
-            "4"
-        ]
-    },
-    {
-        "name": "text_sand",
-        "sprite": "text_sand",
-        "tiling": "-1",
-        "color": [
-            "2",
-            "4"
-        ]
-    },
-    {
         "name": "cactus2",
         "sprite": "cactus",
         "tiling": "-1",
@@ -692,24 +674,6 @@
         "tiling": "-1"
     },
     {
-        "name": "billiam",
-        "sprite": "billiam",
-        "color": [
-            "3",
-            "0"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "mage",
-        "sprite": "mage",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "text_billiam",
         "sprite": "text_billiam",
         "color": [
@@ -1129,6 +1093,114 @@
         "color": [
             "6",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "diamond",
+        "sprite": "diamond",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "spade",
+        "sprite": "spade",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "heart",
+        "sprite": "../baba/love",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_club",
+        "sprite": "text_club",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_diamond",
+        "sprite": "text_diamond",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_spade",
+        "sprite": "text_spade",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_heart",
+        "sprite": "text_heart",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "club",
+        "sprite": "club",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "monkey",
+        "sprite": "monkey",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_monkey",
+        "sprite": "text_monkey",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rat",
+        "sprite": "rat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rat",
+        "sprite": "text_rat",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }
