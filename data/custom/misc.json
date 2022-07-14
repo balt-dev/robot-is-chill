@@ -24,7 +24,8 @@
         "color": [
             "0",
             "1"
-        ]
+        ],
+        "tags": "animal\tmachine"
     },
     {
         "name": "text_balt",

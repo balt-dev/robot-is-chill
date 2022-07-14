@@ -40,7 +40,7 @@ class SearchPageSource(menus.ListPageSource):
 			if isinstance(long, TileData):
 				lines.append(f"({type}) {short} sprite: {long.sprite} source: {long.source}\n")
 				lines.append(f"    color: {long.inactive_color}, active color: {long.active_color} tiling: {long.tiling}\n")
-				lines.append(f"    tags: {','.join(long.tags)}")
+				lines.append(f"    tags: {', '.join(long.tags)}")
 			elif isinstance(long, LevelData):
 				lines.append(f"({type}) {short} {long.display()}")
 			elif isinstance(long, CustomLevelData):

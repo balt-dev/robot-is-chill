@@ -1051,5 +1051,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_every1",
+        "sprite": "text_every1",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_every2",
+        "sprite": "text_every2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_every3",
+        "sprite": "text_every3",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

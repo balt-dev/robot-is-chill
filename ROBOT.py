@@ -72,8 +72,9 @@ class Bot(commands.Bot):
 		super().__init__(*args, **kwargs)
 		sys.stdout = sys.__stdout__
 		# has to be after __init__
-		for cog in cogs:
-			asyncio.run(self.load_extension(cog, package='ROBOT'))
+		async def gather_cogs():
+			asyncio.gather(*(self.load_extension(cog, package='ROBOT') for cog in cogs))
+		asyncio.run(gather_cogs())
 
 	async def get_context(self, message: discord.Message) -> Context:
 		return await super().get_context(message, cls=Context)
