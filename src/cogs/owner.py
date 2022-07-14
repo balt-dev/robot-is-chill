@@ -19,6 +19,7 @@ import numpy as np
 import subprocess
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
+import asyncio
 
 import time
 import discord
@@ -60,8 +61,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		'''Reloads extensions within the bot while the bot is running.'''
 		if not cog:
 			extensions = [a for a in self.bot.extensions.keys()]
-			for extension in extensions:
-				await self.bot.reload_extension(extension)
+			await asyncio.gather(*((self.bot.reload_extension(extension)) for extension in extensions))
 			await ctx.send("Reloaded all extensions.")
 		elif "src.cogs." + cog in self.bot.extensions.keys():
 			await self.bot.reload_extension("src.cogs." + cog)
@@ -84,17 +84,19 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		pass
 
 	@sprite.command()
-	async def edit(self, ctx: Context, sprite_name: str, attribute: str, value: str, value2: str = None):
+	async def edit(self, ctx: Context, sprite_name: str, attribute: str, *value: str):
+		value = ' '.join(value)
 		async with self.bot.db.conn.cursor() as cur:
 			pack_name = (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)',sprite_name)).fetchone())[0]
 			if pack_name is None:
 				return await ctx.error('The specified sprite doesn\'t exist.')
-		if attribute not in ['sprite', 'tiling', 'color', 'name']:
+		if attribute not in ['sprite', 'tiling', 'color', 'name','tags']:
 			return await ctx.error('You specified an invalid attribute.')
-		if (attribute == 'color' and value2 == None) or (attribute != 'color' and value2 != None):
-			return await ctx.error('You specified an invalid value.')
 		if attribute == 'color':
-			value = [value, value2]
+			value = value.split(' ')
+			assert len(value) == 2, 'Invalid color format!'
+		elif attribute == 'tags':
+			value = value.replace(' ','\t')
 		with open(f"data/custom/{pack_name}.json", "r") as f:
 			sprite_data = json.load(f)
 		found = False
@@ -106,11 +108,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 		assert found, f"Sprite `{sprite_name}` not found!"
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
-		await self.load_custom_tiles()
+		await self.load_custom_tiles(pack_name)
 		return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
 
 	@sprite.command()
-	async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int = 0, color_y: int = 3, tiling: str = '-1'): #int | str didn't wanna work for me
+	async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int, color_y: int, tiling: str, *tags: str): #int | str didn't wanna work for me
 		'''Adds sprites to a specified sprite pack'''
 		try:
 			tiling = int(tiling)
@@ -150,7 +152,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 					return await ctx.error('That isn\'t a valid sprite directory.')
 		with open(f"data/custom/{pack_name}.json", "r") as f:
 			sprite_data = json.load(f)
-		sprite_data.append({
+		data = {
 			"name": sprite_name,
 			"sprite": file_name,
 			"color": [
@@ -158,9 +160,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 				str(color_y)
 			],
 			"tiling": str(tiling)
-		})
+		}
+		if len(tags):
+			data['tags'] = tags
+		sprite_data.append(data)
 		if withtext:
-			sprite_data.append({
+			text_data = {
 				"name": f'text_{sprite_name}',
 				"sprite": f'text_{file_name}',
 				"color": [
@@ -168,7 +173,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 					str(color_y)
 				],
 				"tiling": "-1"
-			})
+			}
+			if len(tags):
+				text_data['tags'] = tags
+			sprite_data.append(text_data)
 		with open(f"data/custom/{pack_name}.json", "w") as f:
 			json.dump(sprite_data, f, indent=4)
 		await self.load_custom_tiles(pack_name)
@@ -566,7 +574,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 			text_type = int(text_type)
 			tag_list = []
 			for tag in re.finditer(tag_pattern, raw_tags):
-				tag_list.append(tag.group(0))
+				tag_list.append(tag.group(0).replace('"','')) #hack but i am Not touching that regex
 			tags = "\t".join(tag_list)
 
 			objects.append(dict(
