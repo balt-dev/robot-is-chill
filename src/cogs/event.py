@@ -23,11 +23,16 @@ class EventCog(commands.Cog, name='Events'):
 			await cur.execute(f'''DELETE FROM ServerActivity WHERE id LIKE ?;''',(guild.id))
 
 	async def bot_check(self,ctx):
-		for sub, id in [('channel',ctx.channel.id),('user',ctx.author.id)]:
-			async with self.bot.db.conn.cursor() as cur:
-				await cur.execute(f'''SELECT DISTINCT * FROM BLACKLISTED{sub}S WHERE id = {id}''') #this is risky but both values are guaranteed ints so i think it's fine?
-				if len(await cur.fetchall()):
-					return False
+		async with self.bot.db.conn.cursor() as cur:
+			await cur.execute(f'SELECT DISTINCT * FROM BLACKLISTEDUSERS WHERE id = ?;',ctx.author.id) #this is risky but guaranteed int so i think it's fine?
+			if len(await cur.fetchall()):
+				dm_channel = await self.bot.create_dm(ctx.author)
+				await dm_channel.send('''You can\'t use this bot, as you have been blacklisted. This may be for a few reasons:
+> You did something bad (like pedophilia) and the bot owner heard about it
+> You spammed the bot
+> Other reasons
+If you feel this was unjustified, please DM the bot owner.''')
+				return False
 		try:
 			async with self.bot.db.conn.cursor() as cur:
 				await cur.execute(f'''REPLACE INTO ServerActivity(id, timestamp) VALUES(?,?);''',(ctx.guild.id,time.time()))

@@ -235,29 +235,22 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
 	@commands.command(name="blacklist")
 	@commands.is_owner()
-	async def blacklist(self, ctx: Context, sub_command: str, mode: str, id: int):
+	async def blacklist(self, ctx: Context, mode: str, user_id: int):
 		'''Set up a blacklist of users.'''
-		assert sub_command in ['channel','user'], 'Subcommand invalid! Has to be `channel` or `user`.'
+		try:
+			user = await self.bot.fetch_user(user_id)
+		except discord.NotFound:
+			return await ctx.error(f'User of id {user_id} was not found.')
 		assert mode in ['add','remove'], 'Mode invalid! Has to be `add` or `remove`.'
-		channels = []
-		for channel in ctx.channel.guild.channels:
-			if str(channel.type) == 'text':
-				channels.append(channel.id)
-		assert (
-			sub_command == 'user' and 
-			commands.is_owner()
-		) or (
-			sub_command == 'channel'
-		), 'You\'re not authorized to do that.'
 		async with self.bot.db.conn.cursor() as cur:
 			if mode == 'add':
-				await cur.execute(f'''INSERT INTO blacklisted{sub_command}s
-								VALUES ({id})''')
-				return await ctx.reply(f'Added `{sub_command}` of id `{id}` to the blacklist.')
+				await cur.execute(f'''INSERT INTO blacklistedusers
+								VALUES ({user_id})''')
+				return await ctx.reply(f'Added user `{user.name}#{user.discriminator}` to the blacklist.')
 			else:
-				await cur.execute(f'''DELETE FROM blacklisted{sub_command}s
-								WHERE id={id}''')
-				return await ctx.reply(f'Removed `{sub_command}` of id `{id}` from the blacklist.')
+				await cur.execute(f'''DELETE FROM blacklistedusers
+								WHERE id={user_id}''')
+				return await ctx.reply(f'Removed user `{user.name}#{user.discriminator}` from the blacklist.')
 				
 	@commands.command()
 	@commands.is_owner()
