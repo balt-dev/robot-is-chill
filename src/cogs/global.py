@@ -380,7 +380,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				for l, timeline in enumerate(stack.split('&')):
 					for d, tile in enumerate(timeline.split('>')):
 						if len(tile):
-							if len(tile.split(':',1)[0]):
+							if len(tile.split(':',1)[0].split(';',1)[0]):
+								assert not len(tile.split(':',1))-1 or not tile.split(':',1)[1].count(';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
 								tilecount+=1
 								tile = tile.replace('rule_','text_')
 								if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
@@ -393,7 +394,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 										tile = re.sub('(.+?)(:.+|$)',t[0][0]+':4/2:lockhue0'+r'\2',tile)
 								layer_grid[d:,l,y,x] = tile
 							else:
-								layer_grid[d:,l,y,x] = layer_grid[d,l,y,x].split(':',1)[0]+tile
+								if len(tile.split(';',1)) == 2:
+									layer_grid[d:,l,y,x] = layer_grid[d,l,y,x].split(';',1)[0]+tile
+								else:
+									layer_grid[d:,l,y,x] = layer_grid[d,l,y,x].split(':',1)[0]+tile
 		# Get the dimensions of the grid
 		height, width = layer_grid.shape[2:]
 		layer_grid = layer_grid.tolist()
