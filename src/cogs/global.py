@@ -380,17 +380,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				for l, timeline in enumerate(stack.split('&')):
 					for d, tile in enumerate(timeline.split('>')):
 						if len(tile):
-							tilecount+=1
-							tile = tile.replace('rule_','text_')
-							if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
-								tile = re.sub('(.+?)(:.+|$)',rf'\1{global_variant}\2',tile)
-							r = re.fullmatch(r'(.+?)(?::.*)?',tile)
-							if r != None and not rule and r.groups()[0] == '2': #hardcoded easter egg
-								async with self.bot.db.conn.cursor() as cur:
-									await cur.execute('''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
-									t = await cur.fetchall()
-									tile = re.sub('(.+?)(:.+|$)',t[0][0]+':4/2:lockhue0'+r'\2',tile)
-							layer_grid[d:,l,y,x] = tile
+							if len(tile.split(':',1)[0]):
+								tilecount+=1
+								tile = tile.replace('rule_','text_')
+								if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
+									tile = re.sub('(.+?)(:.+|$)',rf'\1{global_variant}\2',tile)
+								r = re.fullmatch(r'(.+?)(?::.*)?',tile)
+								if r != None and not rule and r.groups()[0] == '2': #hardcoded easter egg
+									async with self.bot.db.conn.cursor() as cur:
+										await cur.execute('''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
+										t = await cur.fetchall()
+										tile = re.sub('(.+?)(:.+|$)',t[0][0]+':4/2:lockhue0'+r'\2',tile)
+								layer_grid[d:,l,y,x] = tile
+							else:
+								layer_grid[d:,l,y,x] = layer_grid[d,l,y,x].split(':',1)[0]+tile
 		# Get the dimensions of the grid
 		height, width = layer_grid.shape[2:]
 		layer_grid = layer_grid.tolist()
