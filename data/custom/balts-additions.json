@@ -781,5 +781,23 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "snombad",
+        "sprite": "snombad",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "snombalt",
+        "sprite": "snombalt",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
