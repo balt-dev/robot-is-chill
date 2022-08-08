@@ -850,13 +850,13 @@ async def setup(bot: Bot):
 		return add(ctx,'blur_radius',float(radius))
 		
 	@handlers.handler(
-		pattern=r"rot(?:ate)?(-?\d+(?:\.\d+)?)",
-		variant_hints={"rotate": "`rot|rotate<float>` (Rotates the sprite n degrees counterclockwise)"},
+		pattern=r"rot(?:ate)?(-?\d+(?:\.\d+)?)(?:/(true|false))?",
+		variant_hints={"rotate": "`rot|rotate<float>[/<bool>]` (Rotates the sprite n degrees counterclockwise. The second boolean, defaulting to true, decides whether or not to expand the bounding box of the sprite.)"},
 		variant_group="Filters"
 	)
 	def rotate(ctx: HandlerContext) -> TileFields:
 		angle = ctx.groups[0] or 0.0
-		return add(ctx,'angle',float(angle))
+		return add(ctx,'angle',(float(angle),(ctx.groups[1] or 'true')=='true'))
 
 	@handlers.handler(
 		pattern=r"rotaterand",

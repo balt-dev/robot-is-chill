@@ -127,6 +127,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 					,("-pad=int/int/int/int","Pads the render with the specified pixels.")
 					,("-v","Gives more information about the render.")
 					,("-f=<gif|png>","Sets the format of the render output.")
+					,("-am=<a>/<ad>","Makes the wobble frames independent from the animation.\nThe first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep.")
 					#,("","")
 		)
 		

@@ -819,15 +819,6 @@
         "tiling": "-1"
     },
     {
-        "name": "meep",
-        "sprite": "meep",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "wifi",
         "sprite": "wifi",
         "color": [
@@ -1202,6 +1193,33 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "feller",
+        "sprite": "feller",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "yuyu",
+        "sprite": "yuyu",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_yuyu",
+        "sprite": "text_yuyu",
+        "color": [
+            "3",
+            "4"
         ],
         "tiling": "-1"
     }
