@@ -1,0 +1,9 @@
+{
+    "name": "balt",
+    "sprite": "balt",
+    "color": [
+        "0",
+        "1"
+    ],
+    "tiling": "2"
+}

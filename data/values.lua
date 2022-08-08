@@ -2718,6 +2718,8 @@ bicons =
 	yes = 44,
 	no = 45,
 	m_settings_language = 46,
+	m_settings_hand_right = 47,
+	m_settings_hand_left = 48,
 }
 
 lookup_table =
@@ -2776,6 +2778,8 @@ play_data =
 		bubble = "splash",
 		crab = "splash",
 		bottle = "splash",
+		bunny = "boing",
+		arm = "drum_kick",
 	},
 	freqs = 
 	{

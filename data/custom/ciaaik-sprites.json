@@ -16,5 +16,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kyberhyper-skullmutantnightmaremonster-batpowerspikemon",
+        "sprite": "kyberhyper",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_kyberhyper-skullmutantnightmaremonster-batpowerspikemon",
+        "sprite": "text_kyberhyper",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

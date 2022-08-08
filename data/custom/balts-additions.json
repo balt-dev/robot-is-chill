@@ -1,14 +1,5 @@
 [
     {
-        "name": "flafla",
-        "sprite": "flafla",
-        "tiling": "2",
-        "color": [
-            "2",
-            "4"
-        ]
-    },
-    {
         "name": "text_flafla",
         "sprite": "text_flafla",
         "color": [
@@ -268,15 +259,6 @@
             "2"
         ],
         "tiling": "-1"
-    },
-    {
-        "name": "jaja",
-        "sprite": "jaja",
-        "tiling": "2",
-        "color": [
-            "2",
-            "3"
-        ]
     },
     {
         "name": "text_jaja",
@@ -576,15 +558,6 @@
         "tiling": "-1"
     },
     {
-        "name": "bilt",
-        "sprite": "bilt",
-        "color": [
-            "0",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "hat",
         "sprite": "hat",
         "color": [
@@ -639,8 +612,8 @@
         "tiling": "-1"
     },
     {
-        "name": "beba",
-        "sprite": "beba",
+        "name": "beba2",
+        "sprite": "beba2",
         "color": [
             "0",
             "1"
@@ -799,5 +772,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "beba",
+        "sprite": "beba",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]

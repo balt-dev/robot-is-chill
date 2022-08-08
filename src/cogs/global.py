@@ -225,6 +225,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		gridol = None
 		random_animations = True
 		tborders = False
+		animate = (0,None)
 		crop = None
 		upscale = 2
 		pad = (0,0,0,0)
@@ -260,7 +261,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				upscale = 1
 				raw_output = True
 				to_delete.append((x, y))
-			if re.fullmatch(r"--comment(.*)", flag): 
+			if re.fullmatch(r"--comment=\"(.*)\"", flag): 
 				to_delete.append((x, y))
 			letter_match = re.fullmatch(r"--letter", flag)
 			if letter_match:
@@ -347,6 +348,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			if embedmatch:
 				do_embed = True
 				to_delete.append((x, y))
+			animmatch = re.fullmatch(r'(?:--anim|-am)=(\d+)/(\d+)',flag)
+			if animmatch:
+				animate = (int(animmatch.group(1)),int(animmatch.group(2)))
+				to_delete.append((x, y))
 			formatmatch = re.fullmatch(r'(?:--format|-f)=(gif|png)',flag)
 			if formatmatch:
 				format = formatmatch.group(1)
@@ -380,8 +385,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				for l, timeline in enumerate(stack.split('&')):
 					for d, tile in enumerate(timeline.split('>')):
 						if len(tile):
+							assert not len(tile.split(':',1))-1 or not tile.split(':',1)[1].count(';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
 							if len(tile.split(':',1)[0].split(';',1)[0]):
-								assert not len(tile.split(':',1))-1 or not tile.split(':',1)[1].count(';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
 								tilecount+=1
 								tile = tile.replace('rule_','text_')
 								if not (tile.find(':ng')!=-1 or tile.find(':noglobal')!=-1):
@@ -406,6 +411,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		if tilecount > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id): 
 			return await ctx.error(f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
 		try:
+			print(layer_grid)
 			grid = self.parse_raw(layer_grid, rule=rule)
 			# Handles variants based on `:` affixes
 			buffer = BytesIO()
@@ -436,7 +442,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 				scaleddef=gscale,
 				crop=crop,
 				pad=pad,
-				format=format
+				format=format,
+				animation=animate
 			)
 		except errors.TileNotFound as e:
 			word = e.args[0]

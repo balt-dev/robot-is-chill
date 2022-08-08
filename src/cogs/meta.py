@@ -187,6 +187,17 @@ class MetaCog(commands.Cog, name="Other Commands"):
 		msg = discord.Embed(colour=self.bot.embed_color, title="Don't invite the bot to a private server only you're in.\nJust DM the bot!")
 		await ctx.send(embed=msg,view=self.InviteView())
 	
+	class WikiView(discord.ui.View):
+		def __init__(self):
+			super().__init__()
+			self.add_item(discord.ui.Button(label='Wiki', url='https://github.com/balt-is-you-and-shift/robot-is-chill/wiki',style=discord.ButtonStyle.link))
+
+	@commands.command()
+	@commands.cooldown(4, 8, type=commands.BucketType.channel)
+	async def wiki(self, ctx: Context):
+		'''Drops a link to the wiki page.'''
+		await ctx.send('_Note: The wiki is currently under construction._',view=self.WikiView())
+
 	@commands.command(aliases=["interpret"])
 	@commands.cooldown(5, 8, type=commands.BucketType.channel)
 	async def babalang(self, ctx: Context, program: str, *program_input: str):
@@ -215,7 +226,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
 		def interpret_babalang():
 			try:
 				process = run(
-					["./src/babalang",  "-c", f"'{program}'"], 
+					["wine", "./src/babalang.exe",  "-c", f"'{program}'"], 
 					stdout=PIPE,
 					stderr=STDOUT,
 					timeout=1.0,

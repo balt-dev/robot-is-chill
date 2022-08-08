@@ -132,6 +132,7 @@ class Renderer:
 		extra_out: str | BinaryIO | None = None,
 		extra_name: str | None = None,
 		frames: list[int] = [1,2,3],
+		animation: tuple[int,int] = (0,None),
 		speed: int = 200,
 		gridol: tuple[int] = None,
 		scaleddef: float = 1,
@@ -149,8 +150,8 @@ class Renderer:
 
 		`background` is a palette index. If given, the image background color is set to that color, otherwise transparent. Background images overwrite this.
 		'''
+		animation, animation_delta = animation #number of frames per wobble frame, number of frames per timestep
 		palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
-		durations = []
 		dur_check = []
 		sprite_cache: dict[str, Image.Image] = {}
 		imgs = []
@@ -161,16 +162,10 @@ class Renderer:
 		steps = len(grid)
 		img_width_raw = int(width * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
 		img_height_raw = int(height * (constants.DEFAULT_SPRITE_SIZE*scaleddef))
-		new_frames = []
-		for f in frames:
-			if len(durations) == 0 or dur_check[-1] != f: #if the frame before is the same as the current frame
-				durations.append(speed)
-				new_frames.append(f)
-			else:
-				durations[-1] += speed
-			dur_check.append(f)
-		durations *= steps
-		frames = new_frames
+		durations = [speed]*(len(frames) if animation_delta is None else animation_delta)*steps
+		if animation:
+			frames = np.repeat(frames,animation).tolist()
+			frames = (frames*(math.ceil(len(durations)/animation_delta)))[:len(durations)]
 		def wl(a):
 			try:
 				return int(a.frames[0].width * scaleddef)
@@ -185,7 +180,8 @@ class Renderer:
 		img_width = int(img_width_raw + (2 * padding) + pad[0] + pad[2])
 		img_height = int(img_height_raw + (2 * padding) + pad[1] + pad[3])
 		i = 0
-		for n in range(steps):
+		bg_iter = [0] if animation else range(steps) #no iteration on animation 
+		for _ in bg_iter:
 			for l, frame in enumerate(frames):
 				if images and image_source is not None:
 					img = Image.new("RGBA", (img_width, img_height))
@@ -205,17 +201,25 @@ class Renderer:
 				imgs.append(img)
 		# keeping track of the amount of padding we can slice off
 		pad_r=pad_u=pad_l=pad_d=0
+		dframes = animation_delta if animation else len(frames)
 		for d, timestep in enumerate(grid):
-			for layer in timestep:
+			for l, layer in enumerate(timestep):
 				for y, row in enumerate(layer):
 					for x, tile in enumerate(row):
 						t = time.perf_counter()
 						if tile.frames is None:
 							continue
 						tframes = []
-						for f in frames:
+						anim_frames = frames
+						if animation:
+							anim_frames = anim_frames[d*animation_delta:(d+1)*animation_delta]
+						for f in anim_frames:
 							tframes.append(tile.frames[f-1])
-						for frame, sprite in enumerate(tframes[:len(frames)]):
+						for frame, sprite in enumerate(tframes[:dframes]):
+							if animation:
+								dst_frame = (d*animation_delta)+frame
+							else:
+								dst_frame = frame+(d*len(frames))
 							x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
 							y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 )
 							x_offset_disp = int(((sprite.width - (constants.DEFAULT_SPRITE_SIZE*scaleddef)) / 2 ) + tile.displace[0]*scaleddef)
@@ -238,7 +242,7 @@ class Renderer:
 								else:
 									palette_color = (0,0,0,0)
 								sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
-								imgs[frame+(d*len(frames))].paste(
+								imgs[dst_frame].paste(
 									sprite,
 									(
 										int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -248,7 +252,7 @@ class Renderer:
 								)
 							elif tile.cut_alpha:
 								if background is not None:
-									imgs[frame+(d*len(frames))].paste(
+									imgs[dst_frame].paste(
 										Image.new("RGBA", (sprite.width, sprite.height), palette_img.getpixel(background)),
 										(
 											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -257,7 +261,7 @@ class Renderer:
 										alpha
 									)
 								else:
-									imgs[frame+(d*len(frames))].paste(
+									imgs[dst_frame].paste(
 										Image.new("RGBA", (sprite.width, sprite.height)),
 										(
 											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -267,7 +271,7 @@ class Renderer:
 									)
 							else:
 								if tile.blending == 'add':
-									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp=Image.new('RGBA',imgs[dst_frame].size,(0,0,0,0))
 									imgtemp.paste(
 										sprite,
 										(
@@ -276,9 +280,9 @@ class Renderer:
 										),
 										mask=sprite
 									)
-									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.add(np.asarray(imgs[frame+(d*len(frames))]),np.asarray(imgtemp)))
+									imgs[dst_frame] = Image.fromarray(cv2.add(np.asarray(imgs[dst_frame]),np.asarray(imgtemp)))
 								elif tile.blending == 'subtract':
-									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp=Image.new('RGBA',imgs[dst_frame].size,(0,0,0,0))
 									imgtemp.paste(
 										sprite,
 										(
@@ -289,9 +293,9 @@ class Renderer:
 									)
 									inmp = np.asarray(imgtemp)
 									inmp[:,:,3] = 0
-									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.subtract(np.asarray(imgs[frame+(d*len(frames))]),inmp))
+									imgs[dst_frame] = Image.fromarray(cv2.subtract(np.asarray(imgs[dst_frame]),inmp))
 								elif tile.blending == 'maximum':
-									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp=Image.new('RGBA',imgs[dst_frame].size,(0,0,0,0))
 									imgtemp.paste(
 										sprite,
 										(
@@ -300,9 +304,9 @@ class Renderer:
 										),
 										mask=sprite
 									)
-									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.max(np.asarray(imgs[frame+(d*len(frames))]),np.asarray(imgtemp)))
+									imgs[dst_frame] = Image.fromarray(cv2.max(np.asarray(imgs[dst_frame]),np.asarray(imgtemp)))
 								elif tile.blending and tile.blending.startswith('xor'):
-									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp=Image.new('RGBA',imgs[dst_frame].size,(0,0,0,0))
 									imgtemp.paste(
 										sprite,
 										(
@@ -311,14 +315,14 @@ class Renderer:
 										),
 										mask=sprite
 									)
-									i1 = np.asarray(imgs[frame+(d*len(frames))])
+									i1 = np.asarray(imgs[dst_frame])
 									i2 = np.asarray(imgtemp)
 									rgb = (i1^i2)
 									if tile.blending == 'xora':
 										rgb[:,:,3] = cv2.max(i1[:,:,3],i2[:,:,3])
-									imgs[frame+(d*len(frames))] = Image.fromarray(rgb)
+									imgs[dst_frame] = Image.fromarray(rgb)
 								elif tile.blending == 'minimum':
-									imgtemp=Image.new('RGBA',imgs[frame+(d*len(frames))].size,(0,0,0,0))
+									imgtemp=Image.new('RGBA',imgs[dst_frame].size,(0,0,0,0))
 									imgtemp.paste(
 										sprite,
 										(
@@ -328,10 +332,10 @@ class Renderer:
 										mask=sprite
 									)
 									imgtempar = np.asarray(imgtemp)
-									imgtempar[:,:,3] = np.asarray(imgs[frame+(d*len(frames))])[:,:,3]
-									imgs[frame+(d*len(frames))] = Image.fromarray(cv2.min(np.asarray(imgs[frame+(d*len(frames))]),imgtempar))
+									imgtempar[:,:,3] = np.asarray(imgs[dst_frame])[:,:,3]
+									imgs[dst_frame] = Image.fromarray(cv2.min(np.asarray(imgs[dst_frame]),imgtempar))
 								elif tile.blending == 'multiply':
-									imgtemp = Image.new('RGBA',imgs[frame+(d*len(frames))].size,(255,255,255,255))
+									imgtemp = Image.new('RGBA',imgs[dst_frame].size,(255,255,255,255))
 									imgtemp.paste(
 										sprite,
 										(
@@ -342,10 +346,10 @@ class Renderer:
 									)
 									imgtempar = np.array(imgtemp,dtype=np.uint8)/255
 									imgtempar[:,:,3] = 1.0
-									imgs[frame+(d*len(frames))] = Image.fromarray((np.array(imgs[frame+(d*len(frames))])*np.array(imgtempar)).astype(np.uint8))
+									imgs[dst_frame] = Image.fromarray((np.array(imgs[dst_frame])*np.array(imgtempar)).astype(np.uint8))
 								else:
-									imgs[frame+(d*len(frames))] = alpha_paste(
-										imgs[frame+(d*len(frames))],
+									imgs[dst_frame] = alpha_paste(
+										imgs[dst_frame],
 										sprite,
 										(
 											int(x * (constants.DEFAULT_SPRITE_SIZE*scaleddef) + padding - x_offset_disp),
@@ -1237,8 +1241,8 @@ class Renderer:
 				spritenumpywarp = np.pad(spritenumpywarp,((paddedheight,paddedheight),(paddedwidth,paddedwidth),(0,0)), 'constant', constant_values=0)
 				warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=(int((paddedwidth*2)+sprite.width), int((paddedheight*2)+sprite.height)), flags = cv2.INTER_NEAREST)
 				sprite = Image.fromarray(warped)
-			elif name == 'angle' and value != 0:
-				sprite = sprite.rotate(-value,expand=True)
+			elif name == 'angle' and value[0] != 0:
+				sprite = sprite.rotate(-(value[0]),expand=value[1])
 			elif name == 'blur_radius' and value != 0:
 				sprite = sprite.filter(ImageFilter.GaussianBlur(radius = value))
 		return sprite

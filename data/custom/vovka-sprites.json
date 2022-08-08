@@ -69,5 +69,23 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "flafla",
+        "sprite": "flafla",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_flafla",
+        "sprite": "text_flafla",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
