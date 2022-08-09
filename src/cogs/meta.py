@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import colorsys
+import os
 from functools import reduce
 import itertools
 from datetime import datetime
@@ -225,8 +226,12 @@ class MetaCog(commands.Cog, name="Other Commands"):
 
 		def interpret_babalang():
 			try:
+				if os.name == "nt":
+					babalang_executable_path = "./src/babalang.exe"
+				else:
+					babalang_executable_path = "./src/babalang"
 				process = run(
-					["wine", "./src/babalang.exe",  "-c", f"'{program}'"], 
+					[babalang_executable_path,  "-c", f"'{program}'"],
 					stdout=PIPE,
 					stderr=STDOUT,
 					timeout=1.0,
