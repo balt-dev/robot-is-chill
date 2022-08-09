@@ -96,7 +96,7 @@ class FullTile:
     brightness: float = 1
     filterimage: str = ""
     displace: tuple[int, int] = (0, 0)
-    channelswap: np.ndarray = np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]]),
+    channelswap: np.ndarray = np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
     palette_snap: bool = False
 
     @classmethod

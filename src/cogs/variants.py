@@ -1087,7 +1087,7 @@ async def setup(bot: Bot):
 	)
 	def palettesnap(ctx: HandlerContext) -> TileFields:
 		return {
-			"palettesnap": True
+			"palette_snap": True
 		}
 
 	@handlers.handler(
