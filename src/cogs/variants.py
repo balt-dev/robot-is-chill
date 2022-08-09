@@ -1079,7 +1079,17 @@ async def setup(bot: Bot):
 		return{
 			"overlay": ctx.groups[0]
 		}
-	
+
+	@handlers.handler(
+		pattern=r"palettesnap|palsnap|ps",
+		variant_hints={"palettesnap": "`palettesnap` (Makes the colors of the tile snap to the nearest color on the specified palette.)"},
+		variant_group="Filters"
+	)
+	def palettesnap(ctx: HandlerContext) -> TileFields:
+		return {
+			"palettesnap": True
+		}
+
 	@handlers.handler(
 		pattern=r"(?:brightness|bright)([\d\.]*)",
 		variant_hints={"brightness": "`brightness<factor>` (Darkens or brightens the tile by multiplying it by factor.)"},

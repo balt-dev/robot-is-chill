@@ -252,6 +252,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         upscale = 2
         pad = (0, 0, 0, 0)
         do_embed = False
+        loop = True
         file_format = 'gif'
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
@@ -374,6 +375,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if embedmatch:
                 do_embed = True
                 to_delete.append((x, y))
+            noloopmatch = re.fullmatch(r'--noloop|-nl', flag)
+            if noloopmatch:
+                loop = False
+                to_delete.append((x, y))
             animmatch = re.fullmatch(r'(?:--anim|-am)=(\d+)/(\d+)', flag)
             if animmatch:
                 animate = (int(animmatch.group(1)), int(animmatch.group(2)))
@@ -476,7 +481,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 crop=crop,
                 pad=pad,
                 format=file_format,
-                animation=animate
+                animation=animate,
+                loop=loop
             )
         except errors.TileNotFound as e:
             word = e.args[0]
