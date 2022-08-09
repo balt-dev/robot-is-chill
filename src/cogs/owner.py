@@ -8,7 +8,6 @@ import traceback
 import zipfile
 import pathlib
 import re
-import pandas
 import requests
 import itertools
 import collections
@@ -26,8 +25,6 @@ import discord
 from discord.ext import commands
 from PIL import Image, ImageChops, ImageDraw
 
-if os.path.exists('data/src/cogs/secret.py'):
-    from . import secret
 from ..db import TileData
 from ..types import Bot, Context
 
@@ -43,14 +40,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def danger(self, ctx: Context):
-        '''Toggles danger mode.'''
+        """Toggles danger mode."""
         self.bot.config['danger_mode'] = not self.bot.config['danger_mode']
         await ctx.send(f'Toggled danger mode o{"n" if self.bot.config["danger_mode"] else "ff"}.')
 
     @commands.command()
     @commands.is_owner()
     async def lockdown(self, ctx: Context, *, reason: str = ''):
-        '''Toggles owner-only mode.'''
+        """Toggles owner-only mode."""
         assert self.bot.config['owner_only_mode'][0] or len(reason), 'Specify a reason.'
         self.bot.config['owner_only_mode'] = [not self.bot.config['owner_only_mode'][0], reason]
         await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
@@ -58,7 +55,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(aliases=["load", "reload"])
     @commands.is_owner()
     async def reloadcog(self, ctx: Context, cog: str = ""):
-        '''Reloads extensions within the bot while the bot is running.'''
+        """Reloads extensions within the bot while the bot is running."""
         if not cog:
             extensions = [a for a in self.bot.extensions.keys()]
             await asyncio.gather(*((self.bot.reload_extension(extension)) for extension in extensions))
@@ -99,7 +96,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         for name in zip.namelist():
             name = os.path.basename(name)
             if name[:5] != 'text_' or all(check):
-                file_name = re.match(r'(.+?)_\d+?_\d\.png', name)
+                file_name = re.match(r"(.+?)_\d+?_\d\.png", name)
                 if file_name is not None:
                     file_name = file_name.groups()[0]
                     break
@@ -160,7 +157,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @sprite.command()
     async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int, color_y: int, tiling: str,
                   *tags: str):  # int | str didn't wanna work for me
-        '''Adds sprites to a specified sprite pack'''
+        """Adds sprites to a specified sprite pack"""
         try:
             tiling = int(tiling)
         except ValueError:
@@ -180,7 +177,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         for name in zip.namelist():
             name = os.path.basename(name)
             if name[:5] != 'text_' or all(check):
-                file_name = re.match(r'(.+?)_\d+?_\d\.png', name)
+                file_name = re.match(r"(.+?)_\d+?_\d\.png", name)
                 if file_name is not None:
                     file_name = file_name.groups()[0]
                     break
@@ -231,7 +228,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @sprite.command(aliases=['del'])
     async def delete(self, ctx: Context, sprite_name: str):
-        '''Deletes a specified sprite'''
+        """Deletes a specified sprite"""
         async with self.bot.db.conn.cursor() as cur:
             result = await (
                 await cur.execute('SELECT sprite, source FROM tiles WHERE name = (?)', sprite_name)).fetchall()
@@ -286,7 +283,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(name="blacklist")
     @commands.is_owner()
     async def blacklist(self, ctx: Context, mode: str, user_id: int):
-        '''Set up a blacklist of users.'''
+        """Set up a blacklist of users."""
         try:
             user = await self.bot.fetch_user(user_id)
         except discord.NotFound:
@@ -306,7 +303,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.is_owner()
     async def importbab(self, ctx: Context, name: str, color_x: int = None, color_y: int = None,
                         transform_txt_text: bool = True):
-        '''Auto-import a bab sprite'''
+        """Auto-import a bab sprite"""
         await ctx.send(f"Hold on, robobot be scan bab...")
         assert name.find(':') == -1, 'Name has colon in it, so it won\'t work.'
         color_table = {
@@ -377,7 +374,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(aliases=["reboot"])
     @commands.is_owner()
     async def restart(self, ctx: Context):
-        '''Restarts the bot process.'''
+        """Restarts the bot process."""
         await ctx.send("Restarting bot process...")
         await self.bot.change_presence(status=discord.Status.idle, activity=discord.Game(name="Rebooting..."))
         self.bot.exit_code = 1
@@ -386,7 +383,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(aliases=["kill", "yeet", "defeat", "empty", "not", "kil"])
     @commands.is_owner()
     async def logout(self, ctx: Context, endsentence: str = ""):
-        '''Kills the bot process.'''
+        """Kills the bot process."""
         if endsentence != "":  # Normally, logout doesn't trigger with arguments.
             if ctx.invoked_with == "not":
                 if endsentence == "robot":  # Check if the argument is *actually* robot, making robot is not robot

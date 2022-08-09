@@ -141,7 +141,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
 				"\n**Credits**\n> Original written by RocketRace#0798\n> Maintained and modded by balt#6423\n> More advanced stuff by CenTdemeern1#3610"
 			])
 		)
-		about_embed.add_field(name="Links", value="[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n[Support guild](https://discord.gg/3DsEJgWQhd)"
+		about_embed.add_field(name="Links", value=f"[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n[Support guild](https://discord.gg/3DsEJgWQhd)"
 		)
 		ut = datetime.utcnow() - self.bot.started
 		stats = "".join([
