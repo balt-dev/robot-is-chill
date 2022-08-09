@@ -206,6 +206,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Execute before spoiler check to catch binary or
         for match in re.finditer(r'{(?:c|calc|calculate)!(.+)}', tiles):
+            raise AssertionError('Calculations have been disabled due to concerns about crashing the bot.')
             value_replace = self.parse_and_evaluate_expression(match.group(1))
             tiles = tiles[:match.span()[0]] + str(value_replace) + tiles[match.span()[1]:]
 
