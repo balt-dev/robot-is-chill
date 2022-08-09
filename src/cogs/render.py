@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import colorsys
+
 from discord.ext import commands
 import copy
 import math
@@ -15,6 +17,9 @@ import time
 import config
 import asyncio
 from functools import reduce
+from colormath.color_conversions import convert_color
+from colormath.color_objects import LabColor, AdobeRGBColor
+from colormath.color_diff import delta_e_cie1976
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -448,13 +453,19 @@ class Renderer:
         else:
             return sum(times) / len(times), max(times), sum(times)
 
-    def closest_color(self, colors, color):  # https://stackoverflow.com/a/54244301
-        colors = np.array(colors)
-        color = np.array(color)
-        distances = np.sqrt(np.sum((colors - color) ** 2, axis=1))
-        index_of_smallest = np.where(distances == np.amin(distances))
-        smallest_distance = colors[index_of_smallest]
-        return smallest_distance
+    def closest_color(self, colors, color):
+        t = time.perf_counter()
+        # using delta E is probably way overkill here but i really want this to look good
+        colormath_rgb_color = AdobeRGBColor(*[channel / 255 for channel in color])
+        colormath_lab_color = convert_color(colormath_rgb_color, LabColor)
+        distances = []
+        for palette_color in colors:
+            colormath_rgb_pcolor = AdobeRGBColor(*[channel / 255 for channel in palette_color])
+            colormath_lab_pcolor = convert_color(colormath_rgb_pcolor, LabColor)
+            distances.append(delta_e_cie1976(colormath_lab_color,colormath_lab_pcolor))
+        index = np.where(min(*distances)-np.array(distances) == 0)
+        print(time.perf_counter() - t)
+        return colors[index]
 
     async def render_full_tile(self,
                                tile: FullTile,
@@ -561,11 +572,18 @@ class Renderer:
                 bsprite[bsprite < 0] = 0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             if tile.palette_snap:
-                palette_colors = np.array(Image.open(f"data/palettes/{tile.palette}.png").convert("RGBA")).reshape(-1, 3)
+                cached_colors = {}  # rocketrace's idea
+                palette_colors = np.array(Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
                 im = np.array(sprite)
                 for y, row in enumerate(im):  # slow
                     for x, cell in enumerate(row):
-                        im[y, x] = self.closest_color(palette_colors, im[y,x])
+                        if str(im[y, x, :3]) in list(cached_colors.keys()):
+                            im[y, x, :3] = cached_colors[str(im[y, x, :3])]
+                        else:
+                            im[y, x, :3] = self.closest_color(palette_colors, im[y, x, :3])[0]
+                            cached_colors[str(im[y, x, :3])] = im[y, x, :3]
+                print(cached_colors)
+                sprite = np.array(im)
             if tile.grayscale != 0:
                 sprite = Image.fromarray(grayscale(np.array(sprite), tile.grayscale))
             if tile.filterimage != "":
@@ -591,15 +609,15 @@ class Renderer:
                     (int(ifilterimage.width * gscale), int(ifilterimage.height * gscale)), Image.NEAREST), absolute)
                 # except OSError:
                 #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
-            if not np.array_equal(tile.channelswap,
-                                  np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
-                im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
-                out_np = np.zeros(im_np.shape, dtype=float)
-                for i, channel_dst in enumerate(tile.channelswap):
-                    for j, channel_src in enumerate(channel_dst):
-                        out_np[:, :, i] += im_np[:, :, j] * channel_src
-                out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
-                sprite = Image.fromarray(out_np)
+            #if not np.array_equal(tile.channelswap,
+            #                      np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
+            #    im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
+            #    out_np = np.zeros(im_np.shape, dtype=float)
+            #    for i, channel_dst in enumerate(tile.channelswap):
+            #        for j, channel_src in enumerate(channel_dst):
+            #            out_np[:, :, i] += im_np[:, :, j] * channel_src
+            #    out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
+            #    sprite = Image.fromarray(out_np)
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 8
             sprite = Image.fromarray(numpysprite)

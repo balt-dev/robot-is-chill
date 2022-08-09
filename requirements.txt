@@ -7,3 +7,4 @@ git+https://github.com/Rapptz/asqlite
 git+https://github.com/Rapptz/discord.py
 git+https://github.com/Rapptz/discord-ext-menus
 charset-normalizer
+colormath
