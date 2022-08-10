@@ -17,9 +17,7 @@ import time
 import config
 import asyncio
 from functools import reduce
-from colormath.color_conversions import convert_color
-from colormath.color_objects import LabColor, AdobeRGBColor
-from colormath.color_diff import delta_e_cie1976
+import colour
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -105,7 +103,7 @@ def grayscale(arr, influence):
     return arr.astype(np.uint8)
 
 
-def alpha_paste(img1, img2, coords, format):
+def alpha_paste(img1, img2, coords):
     imgtemp = Image.new('RGBA', img1.size, (0, 0, 0, 0))
     imgtemp.paste(
         img2,
@@ -114,23 +112,23 @@ def alpha_paste(img1, img2, coords, format):
     return Image.alpha_composite(img1, imgtemp)
 
 
+def recolor(sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
+    """Apply rgb color multiplication (0-255)"""
+    r, g, b = rgb
+    rc, gc, bc, ac = sprite.split()
+    rc = rc.point(lambda i: int(i * (r / 255)))
+    gc = gc.point(lambda i: int(i * (g / 255)))
+    bc = bc.point(lambda i: int(i * (b / 255)))
+    return Image.merge('RGBA', (rc, gc, bc, ac))
+
 class Renderer:
-    '''This class exposes various image rendering methods.
+    """This class exposes various image rendering methods.
     Some of them require metadata from the bot to function properly.
-    '''
+    """
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
-
-    def recolor(self, sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
-        '''Apply rgb color multiplication (0-255)'''
-        r, g, b = rgb
-        rc, gc, bc, ac = sprite.split()
-        rc = rc.point(lambda i: int(i * (r / 255)))
-        gc = gc.point(lambda i: int(i * (g / 255)))
-        bc = bc.point(lambda i: int(i * (b / 255)))
-
-        return Image.merge('RGBA', (rc, gc, bc, ac))
+        self.sprite_cache = {}
 
     async def render(
             self,
@@ -155,7 +153,7 @@ class Renderer:
             format: str = 'gif',
             loop: bool = True
     ):
-        '''Takes a list of tile objects and generates a gif with the associated sprites.
+        """Takes a list of tile objects and generates a gif with the associated sprites.
 
         `out` is a file path or buffer. Renders will be saved there, otherwise to `target/renders/render.gif`.
 
@@ -164,11 +162,11 @@ class Renderer:
         `images` is a list of background image filenames. Each image is retrieved from `data/images/{image_source}/image`.
 
         `background` is a palette index. If given, the image background color is set to that color, otherwise transparent. Background images overwrite this.
-        '''
+        """
+        self.sprite_cache = {}
         animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
         dur_check = []
-        sprite_cache: dict[str, Image.Image] = {}
         imgs = []
         times = []
         width = len(grid[0][0][0])
@@ -399,8 +397,7 @@ class Renderer:
                                                     constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
                                             int(y * (
                                                     constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
-                                        format
+                                        )
                                     )
                         times.append(tile.delta + (time.perf_counter() - t))
         if before_image:
@@ -410,9 +407,9 @@ class Renderer:
                 try:
                     before_durations.append(frame.info['duration'])
                     im = frame.convert('RGBA').resize((frame.width // 2, frame.height // 2), Image.NEAREST)
-                    newImage = Image.new('RGBA', (img_width, img_height), (0, 0, 0, 0))
-                    newImage.paste(im, (padding - pad_l, padding - pad_u), mask=im)
-                    imgs.insert(bfr, newImage)
+                    new_image = Image.new('RGBA', (img_width, img_height), (0, 0, 0, 0))
+                    new_image.paste(im, (padding - pad_l, padding - pad_u), mask=im)
+                    imgs.insert(bfr, new_image)
                     bfr += 1  # i dont wanna use an enumerate on an iterator
                 except KeyError:
                     pass
@@ -420,7 +417,7 @@ class Renderer:
         outs = []
         for img in imgs:
             img = np.array(img, dtype=np.uint8)
-            if type(gridol) != type(None):
+            if gridol is not None:
                 for col in range(img.shape[0] // (gridol[0] * 2)):
                     img[col * gridol[0] * 2, :, :] = ~img[col * gridol[0] * 2, :, :]
                     img[col * gridol[0] * 2, :, 3] = 255
@@ -433,7 +430,7 @@ class Renderer:
             img = Image.fromarray(img)
             img = img.crop(
                 (padding - pad_l, padding - pad_u, img.width - padding + pad_r, img.height - padding + pad_d))
-            if crop != None:
+            if crop is not None:
                 img = img.crop((crop[0], crop[1], img.width - crop[2], img.height - crop[3]))
             if upscale != 1:
                 img = img.resize((int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
@@ -453,31 +450,16 @@ class Renderer:
         else:
             return sum(times) / len(times), max(times), sum(times)
 
-    def closest_color(self, colors, color):
-        t = time.perf_counter()
-        # using delta E is probably way overkill here but i really want this to look good
-        colormath_rgb_color = AdobeRGBColor(*[channel / 255 for channel in color])
-        colormath_lab_color = convert_color(colormath_rgb_color, LabColor)
-        distances = []
-        for palette_color in colors:
-            colormath_rgb_pcolor = AdobeRGBColor(*[channel / 255 for channel in palette_color])
-            colormath_lab_pcolor = convert_color(colormath_rgb_pcolor, LabColor)
-            distances.append(delta_e_cie1976(colormath_lab_color,colormath_lab_pcolor))
-        index = np.where(min(*distances)-np.array(distances) == 0)
-        print(time.perf_counter() - t)
-        return colors[index]
-
     async def render_full_tile(self,
                                tile: FullTile,
                                *,
                                position: tuple[int, int],
                                palette_img: Image.Image,
                                random_animations: bool = False,
-                               sprite_cache: dict[str, Image.Image],
+                               raw_sprite_cache: dict[str, Image.Image],
                                gscale: float = 1
                                ) -> ReadyTile:
         """woohoo"""
-
         t = time.perf_counter()
         if tile.empty:
             return ReadyTile(None)
@@ -521,23 +503,37 @@ class Renderer:
                     except:
                         path_fallback = None
                     try:
-                        sprite = cached_open(path, cache=sprite_cache, fn=Image.open).convert("RGBA")
+                        sprite = cached_open(path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
                     except FileNotFoundError:
                         if path_fallback is not None:
-                            sprite = cached_open(path_fallback, cache=sprite_cache, fn=Image.open).convert("RGBA")
+                            sprite = cached_open(path_fallback, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
                         else:
                             assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
                 sprite = sprite.resize((int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
-                sprite = await self.apply_options_name(
-                    tile.name,
-                    sprite,
-                    style=tile.custom_style,
-                    direction=tile.custom_direction,
-                    meta_level=tile.meta_level,
-                    wobble=wobble,
-                    filters=tile.filters,
-                    gscale=gscale
-                )
+                computed_hash = hash((
+                        tile.name,
+                        str(np.array(sprite)),
+                        tile.custom_style,
+                        tile.custom_direction,
+                        tile.meta_level,
+                        wobble,
+                        str(tile.filters),
+                        gscale
+                    ))
+                if computed_hash in self.sprite_cache:
+                    sprite = self.sprite_cache[computed_hash]
+                else:
+                    sprite = await self.apply_options_name(
+                        tile.name,
+                        sprite,
+                        style=tile.custom_style,
+                        direction=tile.custom_direction,
+                        meta_level=tile.meta_level,
+                        wobble=wobble,
+                        filters=tile.filters,
+                        gscale=gscale
+                    )
+                    self.sprite_cache[computed_hash] = sprite
             # Color augmentation
             if tile.overlay == "":
                 if tile.palette == "":
@@ -545,7 +541,7 @@ class Renderer:
                 else:
                     rgb = tile.color_rgb if tile.color_rgb is not None else Image.open(
                         f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color_index)
-                sprite = self.recolor(sprite, rgb)
+                sprite = recolor(sprite, rgb)
             else:
                 try:
                     overlay = Image.open(f"data/overlays/{tile.overlay}.png").convert("RGBA")
@@ -572,17 +568,28 @@ class Renderer:
                 bsprite[bsprite < 0] = 0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
             if tile.palette_snap:
-                cached_colors = {}  # rocketrace's idea
-                palette_colors = np.array(Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
+                palette_colors = np.array(
+                    Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
                 im = np.array(sprite)
-                for y, row in enumerate(im):  # slow
-                    for x, cell in enumerate(row):
-                        if str(im[y, x, :3]) in list(cached_colors.keys()):
-                            im[y, x, :3] = cached_colors[str(im[y, x, :3])]
-                        else:
-                            im[y, x, :3] = self.closest_color(palette_colors, im[y, x, :3])[0]
-                            cached_colors[str(im[y, x, :3])] = im[y, x, :3]
-                print(cached_colors)
+                im_lab = cv2.cvtColor(im.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
+                diff_matrix = np.full(im.shape[:-1], 99999)
+                # make a difference matrix to ensure that every color on the image is actually
+                # the nearest color to the image
+                for color in palette_colors:  # still slow, but faster than iterating through every pixel
+                    filled_color_array = np.array([[color]]).repeat(im.shape[0], 0).repeat(im.shape[1], 1)
+                    filled_color_array = cv2.cvtColor(filled_color_array.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
+                    im_delta_e = colour.delta_E(im_lab, filled_color_array)
+                    im[
+                    np.logical_and(
+                        np.amin(im_delta_e) == im_delta_e,
+                        np.amin(im_delta_e) < diff_matrix
+                    ), :3
+                    ] = color
+                    diff_matrix[
+                        np.logical_and(
+                            np.amin(im_delta_e) == im_delta_e,
+                            np.amin(im_delta_e) < diff_matrix
+                        )] = np.amin(im_delta_e)
                 sprite = np.array(im)
             if tile.grayscale != 0:
                 sprite = Image.fromarray(grayscale(np.array(sprite), tile.grayscale))
@@ -609,7 +616,7 @@ class Renderer:
                     (int(ifilterimage.width * gscale), int(ifilterimage.height * gscale)), Image.NEAREST), absolute)
                 # except OSError:
                 #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
-            #if not np.array_equal(tile.channelswap,
+            # if not np.array_equal(tile.channelswap,
             #                      np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
             #    im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
             #    out_np = np.zeros(im_np.shape, dtype=float)
@@ -648,7 +655,7 @@ class Renderer:
             random_animations: bool = False,
             gscale: float = 1
     ) -> list[list[list[list[ReadyTile]]]]:
-        '''Final individual tile processing step'''
+        """Final individual tile processing step"""
         sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
 
@@ -666,7 +673,7 @@ class Renderer:
                                 position=(x, y),
                                 palette_img=palette_img,
                                 random_animations=random_animations,
-                                sprite_cache=sprite_cache,
+                                raw_sprite_cache=sprite_cache,
                                 gscale=gscale
                             )
                         )
@@ -688,7 +695,7 @@ class Renderer:
             gscale: float,
             position: tuple[int, int]
     ) -> Image.Image:
-        '''Generates a custom text sprite'''
+        """Generates a custom text sprite"""
         text = text[5:]
         raw = text.replace("/", "")
         newline_count = text.count("/")
@@ -930,6 +937,7 @@ class Renderer:
             name: str,
             style: str | None = None,
             filters: list,  # using list of tuples now
+            hash: int | None = None
     ):
         '''Takes an image, with or without a plate, and applies the given options to it.'''
 
@@ -1018,9 +1026,9 @@ class Renderer:
                                 score += deltar
                             else:
                                 score += deltah
-                            if lscore != None and score > lscore:
+                            if lscore is not None and score > lscore:
                                 break
-                        if lscore == None or score < lscore:
+                        if lscore is None or score < lscore:
                             lscore = score
                             lpts = pixels_to_remove
                     return img[lpts].reshape(img.shape[0], img.shape[1] - 1, -1)
@@ -1112,7 +1120,7 @@ class Renderer:
                                                            255]  # Optimal, "somehow this doesn't fuck up anywhere"
 
                 sprite = Image.fromarray(im)
-            elif name == 'colselect' and value != None:
+            elif name == 'colselect' and value is not None:
                 img = np.array(sprite)
 
                 colors = liquify.get_colors_unsorted(img)
