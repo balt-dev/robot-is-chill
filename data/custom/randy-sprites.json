@@ -1,0 +1,20 @@
+[
+    {
+        "name": "feller",
+        "sprite": "feller",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "options",
+        "sprite": "options",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    }
+]

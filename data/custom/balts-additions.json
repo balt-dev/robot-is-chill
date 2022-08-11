@@ -657,15 +657,6 @@
         "tiling": "-1"
     },
     {
-        "name": "kobad",
-        "sprite": "kobad",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "rdbar",
         "sprite": "rdbar",
         "color": [
@@ -799,5 +790,15 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "kobad",
+        "sprite": "kobad",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2",
+        "tags": "animal\tcommon"
     }
 ]

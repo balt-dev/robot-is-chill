@@ -1197,15 +1197,6 @@
         "tiling": "-1"
     },
     {
-        "name": "feller",
-        "sprite": "feller",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "yuyu",
         "sprite": "yuyu",
         "color": [

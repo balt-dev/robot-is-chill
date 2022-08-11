@@ -124,5 +124,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "cbaba",
+        "sprite": "cbaba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
