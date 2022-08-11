@@ -219,7 +219,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 "tiling": "-1"
             }
             if len(tags):
-                text_data['tags'] = tags
+                text_data['tags'] = tags.join('\t')
             sprite_data.append(text_data)
         with open(f"data/custom/{pack_name}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)

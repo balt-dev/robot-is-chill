@@ -163,7 +163,6 @@ class Renderer:
 
         `background` is a palette index. If given, the image background color is set to that color, otherwise transparent. Background images overwrite this.
         """
-        self.sprite_cache = {}
         animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
         dur_check = []
@@ -446,9 +445,9 @@ class Renderer:
             loop=loop
         )
         if len(times) == 0:
-            return 0, 0, 0
+            return 0, 0, 0, len(self.sprite_cache)
         else:
-            return sum(times) / len(times), max(times), sum(times)
+            return sum(times) / len(times), max(times), sum(times), len(self.sprite_cache)
 
     async def render_full_tile(self,
                                tile: FullTile,
@@ -512,6 +511,7 @@ class Renderer:
                 sprite = sprite.resize((int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
                 computed_hash = hash((
                         tile.name,
+                        tile.variant_number,
                         str(np.array(sprite)),
                         tile.custom_style,
                         tile.custom_direction,
@@ -533,7 +533,8 @@ class Renderer:
                         filters=tile.filters,
                         gscale=gscale
                     )
-                    self.sprite_cache[computed_hash] = sprite
+                    if "glitch" not in str(tile.filters):
+                        self.sprite_cache[computed_hash] = sprite
             # Color augmentation
             if tile.overlay == "":
                 if tile.palette == "":
@@ -616,15 +617,15 @@ class Renderer:
                     (int(ifilterimage.width * gscale), int(ifilterimage.height * gscale)), Image.NEAREST), absolute)
                 # except OSError:
                 #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
-            # if not np.array_equal(tile.channelswap,
-            #                      np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
-            #    im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
-            #    out_np = np.zeros(im_np.shape, dtype=float)
-            #    for i, channel_dst in enumerate(tile.channelswap):
-            #        for j, channel_src in enumerate(channel_dst):
-            #            out_np[:, :, i] += im_np[:, :, j] * channel_src
-            #    out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
-            #    sprite = Image.fromarray(out_np)
+            if not np.array_equal(tile.channelswap,
+                                 np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
+               im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
+               out_np = np.zeros(im_np.shape, dtype=float)
+               for i, channel_dst in enumerate(tile.channelswap):
+                   for j, channel_src in enumerate(channel_dst):
+                       out_np[:, :, i] += im_np[:, :, j] * channel_src
+               out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
+               sprite = Image.fromarray(out_np)
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 8
             sprite = Image.fromarray(numpysprite)
@@ -657,6 +658,7 @@ class Renderer:
     ) -> list[list[list[list[ReadyTile]]]]:
         """Final individual tile processing step"""
         sprite_cache = {}
+        self.sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
 
         d = []
@@ -901,7 +903,7 @@ class Renderer:
             gscale: float,
             style: str
     ) -> Image.Image:
-        '''Takes an image, taking tile data from its name, and applies the given options to it.'''
+        """Takes an image, taking tile data from its name, and applies the given options to it."""
         tile_data = await self.bot.db.tile(name)
         if tile_data is not None:
             original_style = constants.TEXT_TYPES[tile_data.text_type]
@@ -937,10 +939,9 @@ class Renderer:
             name: str,
             style: str | None = None,
             filters: list,  # using list of tuples now
-            hash: int | None = None
+            seed: int | None = None
     ):
-        '''Takes an image, with or without a plate, and applies the given options to it.'''
-
+        random.seed(seed)
         # rocket's handlers are such a better system but i have no idea how they work since i don't really know OOP
         def rotate(li, x):
             return li[-x % len(li):] + li[:-x % len(li)]
