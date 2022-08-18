@@ -1,0 +1,20 @@
+[
+    {
+        "name": "baski",
+        "sprite": "baski",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_baski",
+        "sprite": "text_baski",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

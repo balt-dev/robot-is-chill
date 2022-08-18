@@ -162,6 +162,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             tiling = int(tiling)
         except ValueError:
             async with self.bot.db.conn.cursor() as cur:
+                result = await cur.execute('SELECT DISTINCT name FROM tiles WHERE name = (?)', sprite_name)
+                assert (await result.fetchone()) is None, "A sprite by that name already exists."
                 result = await cur.execute('SELECT DISTINCT tiling FROM tiles WHERE name = (?)', tiling)
                 try:
                     tiling = (await result.fetchone())[0]
