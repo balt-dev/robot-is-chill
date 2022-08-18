@@ -800,5 +800,14 @@
         ],
         "tiling": "2",
         "tags": "animal\tcommon"
+    },
+    {
+        "name": "glider",
+        "sprite": "glider",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
     }
 ]

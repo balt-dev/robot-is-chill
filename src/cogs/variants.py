@@ -1209,14 +1209,14 @@ async def setup(bot: Bot):
             return {'filterimage': a + "https://" + url}
 
     @handlers.handler(
-        pattern=r"crop(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)",
+        pattern=r"crop(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)(?:\/(true|false))?",
         variant_hints={
-            "crop": "`crop<x>/<y>/<width>/<height>` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner)"},
+            "crop": "`crop<x>/<y>/<width>/<height>[/<true_crop>]` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner. The boolean argument is if you want to truly crop the sprite, changing the bounding box.)"},
         variant_group="Filters"
     )
     def crop(ctx: HandlerContext) -> TileFields:
         return add(ctx,
-                   "crop", (int(ctx.groups[0]), int(ctx.groups[1]), int(ctx.groups[2]), int(ctx.groups[3]))
+                   "crop", (int(ctx.groups[0]), int(ctx.groups[1]), int(ctx.groups[2]), int(ctx.groups[3]), ctx.groups[4] == 'true')
                    )
 
     @handlers.handler(

@@ -255,6 +255,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         do_embed = False
         loop = True
         file_format = 'gif'
+        spacing = constants.DEFAULT_SPRITE_SIZE
+        expand = False
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -323,7 +325,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     break
                             except:
                                 pass
-                    if msg == None:
+                    if msg is None:
                         do_finally = False
                         return await ctx.error('None of your commands were found in the last `10` messages.')
                 finally:
@@ -388,6 +390,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if formatmatch:
                 file_format = formatmatch.group(1)
                 to_delete.append((x, y))
+            spacingmatch = re.fullmatch(r'(?:--spacing|-sp)=-?(\d+)', flag)
+            if spacingmatch:
+                spacing = int(spacingmatch.group(1))
+                to_delete.append((x, y))
+            expandmatch = re.fullmatch(r'(?:--expand|-ex)', flag)
+            if expandmatch:
+                expand = True
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         try:
@@ -444,7 +454,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         layer_grid = layer_grid.tolist()
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
-        if tilecount > constants.MAX_TILES and not (ctx.author.id == self.bot.owner_id):
+        if tilecount > constants.MAX_TILES and not (ctx.author.id in [self.bot.owner_id, 280756504674566144]):
             return await ctx.error(
                 f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
         try:
@@ -483,7 +493,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 pad=pad,
                 format=file_format,
                 animation=animate,
-                loop=loop
+                loop=loop,
+                spacing=spacing,
+                expand=expand
             )
         except errors.TileNotFound as e:
             word = e.args[0]
@@ -576,7 +588,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		'''
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await self.render_tiles(ctx, objects=objects, rule=True)
+        asyncio.create_task(self.render_tiles(ctx, objects=objects, rule=True))
 
     # Generates tiles from a text file.
     @commands.command()
@@ -586,8 +598,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		Add -r, --rule, -rule, -t, --text, or -text to render as text.'''
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await self.render_tiles(ctx, objects=objects,
-                                    rule=rule in ['-r', '--rule', '-rule', '-t', '--text', '-text'])
+            asyncio.create_task(self.render_tiles(ctx, objects=objects,
+                                    rule=rule in ['-r', '--rule', '-rule', '-t', '--text', '-text']))
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
@@ -619,7 +631,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		"""
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await self.render_tiles(ctx, objects=objects, rule=False)
+        asyncio.create_task(self.render_tiles(ctx, objects=objects, rule=False))
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(title="Warning: Danger Mode", color=discord.Color(16711680),

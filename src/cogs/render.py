@@ -151,7 +151,9 @@ class Renderer:
             crop: tuple[int, int, int, int] | None = None,
             pad: tuple[int, int, int, int] | None = (0, 0, 0, 0),
             format: str = 'gif',
-            loop: bool = True
+            loop: bool = True,
+            spacing: int = constants.DEFAULT_SPRITE_SIZE,
+            expand: bool = False
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -172,8 +174,8 @@ class Renderer:
         height = len(grid[0][0])
         # don't need depth anywhere
         steps = len(grid)
-        img_width_raw = int(width * (constants.DEFAULT_SPRITE_SIZE * scaleddef))
-        img_height_raw = int(height * (constants.DEFAULT_SPRITE_SIZE * scaleddef))
+        img_width_raw = max(int(width * (spacing * scaleddef)), (constants.DEFAULT_SPRITE_SIZE * scaleddef))
+        img_height_raw = max(int(height * (spacing * scaleddef)), (constants.DEFAULT_SPRITE_SIZE * scaleddef))
         durations = [speed] * (len(frames) if animation_delta is None else animation_delta) * steps
         if animation:
             frames = np.repeat(frames, animation).tolist()
@@ -222,6 +224,7 @@ class Renderer:
             for l, layer in enumerate(timestep):
                 for y, row in enumerate(layer):
                     for x, tile in enumerate(row):
+                        # i should recode this whole section but i'm too scared of breaking something badly
                         t = time.perf_counter()
                         if tile.frames is None:
                             continue
@@ -236,25 +239,36 @@ class Renderer:
                                 dst_frame = (d * animation_delta) + frame
                             else:
                                 dst_frame = frame + (d * len(frames))
-                            x_offset = int((sprite.width - (constants.DEFAULT_SPRITE_SIZE * scaleddef)) / 2)
-                            y_offset = int((sprite.height - (constants.DEFAULT_SPRITE_SIZE * scaleddef)) / 2)
+                            x_offset = int((sprite.width - (spacing * scaleddef)) / 2)
+                            y_offset = int((sprite.height - (spacing * scaleddef)) / 2)
                             x_offset_disp = int(
-                                ((sprite.width - (constants.DEFAULT_SPRITE_SIZE * scaleddef)) / 2) + tile.displace[
+                                ((sprite.width - (spacing * scaleddef)) / 2) + tile.displace[
                                     0] * scaleddef)
                             y_offset_disp = int(
-                                ((sprite.height - (constants.DEFAULT_SPRITE_SIZE * scaleddef)) / 2) + tile.displace[
+                                ((sprite.height - (spacing * scaleddef)) / 2) + tile.displace[
+                                    1] * scaleddef)
+                            x_offset_pad = int(
+                                ((sprite.width - (spacing * scaleddef)) / 2) - tile.displace[
+                                    0] * scaleddef)
+                            y_offset_pad = int(
+                                ((sprite.height - (spacing * scaleddef)) / 2) - tile.displace[
                                     1] * scaleddef)
                             if x == 0:
-                                pad_l = max(pad_l, x_offset)
+                                pad_l = max(pad_l, x_offset_pad if expand else x_offset)
                             if x == width - 1:
-                                pad_r = max(pad_r, x_offset)
+                                pad_r = max(pad_r, x_offset_pad if expand else x_offset)
                             if y == 0:
-                                pad_u = max(pad_u, y_offset)
+                                pad_u = max(pad_u, y_offset_pad if expand else y_offset)
                             if y == height - 1:
-                                pad_d = max(pad_d, y_offset)
+                                pad_d = max(pad_d, y_offset_pad if expand else y_offset)
+                            print(pad_l, pad_u, pad_d, pad_r, x_offset, y_offset, x_offset_disp, y_offset_disp, x_offset_pad, y_offset_pad, expand)
                             alpha = sprite.getchannel("A")
                             x_offset_disp -= pad[0]
                             y_offset_disp -= pad[1]
+                            coord_tuple = (
+                                        int(x * (spacing * scaleddef) + padding - x_offset_disp),
+                                        int(y * (spacing * scaleddef) + padding - y_offset_disp)
+                                    )
                             if tile.mask_alpha:  # i should really rewrite all of this lmao
                                 alpha = ImageChops.invert(alpha)
                                 if background is not None:
@@ -264,10 +278,7 @@ class Renderer:
                                 sprite = Image.new("RGBA", (sprite.width, sprite.height), color=palette_color)
                                 imgs[dst_frame].paste(
                                     sprite,
-                                    (
-                                        int(x * (constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                        int(y * (constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                    ),
+
                                     alpha
                                 )
                             elif tile.cut_alpha:
@@ -275,23 +286,13 @@ class Renderer:
                                     imgs[dst_frame].paste(
                                         Image.new("RGBA", (sprite.width, sprite.height),
                                                   palette_img.getpixel(background)),
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         alpha
                                     )
                                 else:
                                     imgs[dst_frame].paste(
                                         Image.new("RGBA", (sprite.width, sprite.height)),
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         alpha
                                     )
                             else:
@@ -299,12 +300,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     imgs[dst_frame] = Image.fromarray(
@@ -313,12 +309,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     inmp = np.asarray(imgtemp)
@@ -328,12 +319,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     imgs[dst_frame] = Image.fromarray(
@@ -342,12 +328,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     i1 = np.asarray(imgs[dst_frame])
@@ -360,12 +341,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     imgtempar = np.asarray(imgtemp)
@@ -375,12 +351,7 @@ class Renderer:
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (255, 255, 255, 255))
                                     imgtemp.paste(
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        ),
+                                        coord_tuple,
                                         mask=sprite
                                     )
                                     imgtempar = np.array(imgtemp, dtype=np.uint8) / 255
@@ -391,12 +362,7 @@ class Renderer:
                                     imgs[dst_frame] = alpha_paste(
                                         imgs[dst_frame],
                                         sprite,
-                                        (
-                                            int(x * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - x_offset_disp),
-                                            int(y * (
-                                                    constants.DEFAULT_SPRITE_SIZE * scaleddef) + padding - y_offset_disp)
-                                        )
+                                        coord_tuple
                                     )
                         times.append(tile.delta + (time.perf_counter() - t))
         if before_image:
@@ -1150,9 +1116,12 @@ class Renderer:
                         img)  # This is indented because we don't need to convert back if nothing changed
             elif name == 'crop' and any(value):
                 cropped = sprite.crop((value[0], value[1], value[0] + value[2], value[1] + value[3]))
-                im = Image.new('RGBA', (sprite.width, sprite.height), (0, 0, 0, 0))
-                im.paste(cropped, (value[0], value[1]))
-                sprite = im
+                if value[4]:
+                    sprite = cropped
+                else:
+                    im = Image.new('RGBA', (sprite.width, sprite.height), (0, 0, 0, 0))
+                    im.paste(cropped, (value[0], value[1]))
+                    sprite = im
             elif name == 'snip' and any(value):
                 im = np.array(sprite, dtype=np.uint8)
                 h, w, _ = im.shape
@@ -1310,7 +1279,7 @@ class Renderer:
                 for color in colors:
                     neighbormap = np.zeros((img.shape[0], img.shape[1]), dtype=int)
                     neighbormask = (img == color).all(
-                        2)  # This array contains booleans, but this will automatically get typecasted to an int when performing math operations. (Because neighbotmap is an int, otherwise it'd be a float.)
+                        2)  # This array contains booleans, but this will automatically get typecasted to an int when performing math operations. (Because neighbormap is an int, otherwise it'd be a float.)
                     for direction in hv_directions:
                         directionmask = neighbormask.copy()
                         if direction[0] != 0:
