@@ -33,8 +33,9 @@ from ..db import CustomLevelData, LevelData
 from ..tile import RawTile
 from ..types import Bot, Context
 
-import config
+from .errorhandler import CommandErrorHandler
 
+import config
 
 def try_index(string: str, value: str) -> int:
     '''Returns the index of a substring within a string.
@@ -257,6 +258,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         file_format = 'gif'
         spacing = constants.DEFAULT_SPRITE_SIZE
         expand = False
+        frame_variant = ''
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
             if bg_match:
@@ -442,7 +444,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         await cur.execute(
                                             '''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
                                         t = await cur.fetchall()
-                                        tile = re.sub('(.+?)(:.+|$)', t[0][0] + ':4/2:lockhue0' + r'\2', tile)
+                                        tile = re.sub('(.+?)(:.+|$)', t[0][0] + ':4/2:lockhue_before' + r'\2', tile)
                                 layer_grid[d:, l, y, x] = tile
                             else:
                                 if len(tile.split(';', 1)) == 2:
@@ -560,6 +562,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         else:
             await ctx.reply(description[:2000], embed=embed, file=image)
 
+    #hack
+    async def log_exceptions(self, ctx, awaitable):
+        try:
+            return await awaitable
+        except Exception as e:
+            await CommandErrorHandler(self.bot).on_command_error(ctx, e)
+
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def rule(self, ctx: Context, *, objects: str = ""):
@@ -588,7 +597,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		'''
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        asyncio.create_task(self.render_tiles(ctx, objects=objects, rule=True))
+        asyncio.create_task(self.log_exceptions(ctx, self.render_tiles(ctx, objects=objects, rule=True)))
 
     # Generates tiles from a text file.
     @commands.command()
@@ -598,8 +607,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		Add -r, --rule, -rule, -t, --text, or -text to render as text.'''
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            asyncio.create_task(self.render_tiles(ctx, objects=objects,
-                                    rule=rule in ['-r', '--rule', '-rule', '-t', '--text', '-text']))
+            asyncio.create_task(self.log_exceptions(ctx, self.render_tiles(ctx, objects=objects,
+                                    rule=rule in ['-r', '--rule', '-rule', '-t', '--text', '-text'])))
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
@@ -631,7 +640,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 		"""
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        asyncio.create_task(self.render_tiles(ctx, objects=objects, rule=False))
+        asyncio.create_task(self.log_exceptions(ctx, self.render_tiles(ctx, objects=objects, rule=False)))
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(title="Warning: Danger Mode", color=discord.Color(16711680),

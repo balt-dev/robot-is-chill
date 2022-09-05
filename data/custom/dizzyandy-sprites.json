@@ -43,5 +43,68 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kekeke",
+        "sprite": "kekeke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "bababa",
+        "sprite": "bababa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "badbadbad",
+        "sprite": "badbadbad",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "meme",
+        "sprite": "meme",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "jijiji",
+        "sprite": "jijiji",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "bibibi",
+        "sprite": "bibibi",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "itit",
+        "sprite": "itit",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "1"
     }
 ]

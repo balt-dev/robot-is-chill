@@ -1059,12 +1059,20 @@ async def setup(bot: Bot):
         return add(ctx, 'planet')
 
     @handlers.handler(
-        pattern=r"(?:lockhue|huelock)(\d+)",
+        pattern=r"(?:lockhue|huelock|hl)(\d+)",
         variant_hints={"lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
         variant_group="Filters"
     )
     def lockhue(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'lockhue', int(ctx.groups[0]) / 360)
+        return add(ctx, 'lockhue', int(ctx.groups[0]) / 2)
+
+    @handlers.handler(
+        pattern=r"(?:lockhue_before)",
+        variant_hints={"lockhue_before": "`lockhue_before` (Used internally for 2.)"},
+        variant_group="Filters"
+    )
+    def lockhue_before(ctx: HandlerContext) -> TileFields:
+        return add(ctx, 'lockhue_before')
 
     @handlers.handler(
         pattern=r"(?:locksat|satlock)(\d+)",
@@ -1072,7 +1080,7 @@ async def setup(bot: Bot):
         variant_group="Filters"
     )
     def locksat(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'locksat', int(ctx.groups[0]) / 100)
+        return add(ctx, 'locksat', int(ctx.groups[0]))
 
     @handlers.handler(
         pattern=r"negative|neg",
@@ -1099,8 +1107,16 @@ async def setup(bot: Bot):
         return {'hueshift': float(ctx.groups[0])}
 
     @handlers.handler(
+        pattern=r"normalizelightness|norml|nl",
+        variant_hints={"normalizelightness": "`normalizelightness | norml | nl` (Normalize the HSL lightness of the sprite to 0-1, making the brightest color fully white.)"},
+        variant_group="Filters"
+    )
+    def normalizelightness(ctx: HandlerContext) -> TileFields:
+        return {'normalize_lightness': True}
+
+    @handlers.handler(
         pattern=r"(?:palette\/|p\!)(.+)",
-        variant_hints={"palette": "`palette/<palettename>` (Applies a different color palette to the tile.)"},
+        variant_hints={"palette": "`(palette/ | p!)<palettename>` (Applies a different color palette to the tile.)"},
         variant_group="Filters"
     )
     def palette(ctx: HandlerContext) -> TileFields:

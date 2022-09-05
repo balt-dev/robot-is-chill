@@ -450,15 +450,6 @@
         "tiling": "1"
     },
     {
-        "name": "bababa",
-        "sprite": "bababa",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "1"
-    },
-    {
         "name": "text_bababa",
         "sprite": "text_bababa",
         "color": [
@@ -1228,6 +1219,78 @@
         "sprite": "text_badbalt",
         "color": [
             "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "battlecat",
+        "sprite": "battlecat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_battlecat",
+        "sprite": "text_battlecat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "youyou",
+        "sprite": "youyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_youyou",
+        "sprite": "text_youyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mina",
+        "sprite": "mina",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_mina",
+        "sprite": "text_mina",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_#",
+        "sprite": "text_#",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u00fe",
+        "sprite": "text_\u00fe",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"
