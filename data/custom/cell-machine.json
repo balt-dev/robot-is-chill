@@ -79,5 +79,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fall",
+        "sprite": "fall",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

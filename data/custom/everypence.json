@@ -1,0 +1,353 @@
+[
+    {
+        "name": "bone",
+        "sprite": "bone",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "coal",
+        "sprite": "coal",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "coin",
+        "sprite": "coin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "crown",
+        "sprite": "crown",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mouse",
+        "sprite": "mouse",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nail",
+        "sprite": "nail",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "plus",
+        "sprite": "plus",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stones",
+        "sprite": "stones",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_avenue",
+        "sprite": "text_avenue",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bone",
+        "sprite": "text_bone",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_coal",
+        "sprite": "text_coal",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_coin",
+        "sprite": "text_coin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_crown",
+        "sprite": "text_crown",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_fens",
+        "sprite": "text_fens",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_find",
+        "sprite": "text_find",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_greedy",
+        "sprite": "text_greedy",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_heal",
+        "sprite": "text_heal",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_loop",
+        "sprite": "text_loop",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_lost",
+        "sprite": "text_lost",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_mouse",
+        "sprite": "text_mouse",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nail",
+        "sprite": "text_nail",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_prop",
+        "sprite": "text_prop",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_reboot",
+        "sprite": "text_reboot",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_reflect",
+        "sprite": "text_reflect",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_system",
+        "sprite": "text_system",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_temple",
+        "sprite": "text_temple",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ue",
+        "sprite": "text_ue",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_vip",
+        "sprite": "text_vip",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_virus",
+        "sprite": "text_virus",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_wand",
+        "sprite": "text_wand",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_warning",
+        "sprite": "text_warning",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_wine",
+        "sprite": "text_wine",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_yarn",
+        "sprite": "text_yarn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "treedigital",
+        "sprite": "treedigital",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "virus",
+        "sprite": "virus",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wand",
+        "sprite": "wand",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "warning",
+        "sprite": "warning",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wine",
+        "sprite": "wine",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "yarn",
+        "sprite": "yarn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }
+]

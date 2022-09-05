@@ -52,5 +52,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tyty",
+        "sprite": "tyty",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_tyty",
+        "sprite": "text_tyty",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

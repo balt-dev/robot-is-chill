@@ -67,6 +67,7 @@ class TileFields(TypedDict, total=False):
     displace: tuple
     channelswap: np.ndarray
     palette_snap: bool
+    normalize_lightness: bool
 
 
 @dataclass
@@ -97,7 +98,8 @@ class FullTile:
     filterimage: str = ""
     displace: tuple[int, int] = (0, 0)
     channelswap: np.ndarray = np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    palette_snap: bool = False
+    palette_snap: bool = False,
+    normalize_lightness: bool = False
 
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:

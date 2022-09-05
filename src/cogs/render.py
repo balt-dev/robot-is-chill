@@ -35,65 +35,23 @@ import src.cogs.liquify as liquify
 import requests
 
 
-def rgb_to_hsv(rgb):
-    # Translated from source of colorsys.rgb_to_hsv
-    # r,g,b should be a numpy arrays with values between 0 and 255
-    # rgb_to_hsv returns an array of floats between 0.0 and 1.0.
-    rgb = rgb.astype('float')
-    hsv = np.zeros_like(rgb)
-    # in case an RGBA array was passed, just copy the A channel
-    hsv[..., 3:] = rgb[..., 3:]
-    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
-    maxc = np.max(rgb[..., :3], axis=-1)
-    minc = np.min(rgb[..., :3], axis=-1)
-    hsv[..., 2] = maxc
-    mask = maxc != minc
-    hsv[mask, 1] = (maxc - minc)[mask] / maxc[mask]
-    rc = np.zeros_like(r)
-    gc = np.zeros_like(g)
-    bc = np.zeros_like(b)
-    rc[mask] = (maxc - r)[mask] / (maxc - minc)[mask]
-    gc[mask] = (maxc - g)[mask] / (maxc - minc)[mask]
-    bc[mask] = (maxc - b)[mask] / (maxc - minc)[mask]
-    hsv[..., 0] = np.select(
-        [r == maxc, g == maxc], [bc - gc, 2.0 + rc - bc], default=4.0 + gc - rc)
-    hsv[..., 0] = (hsv[..., 0] / 6.0) % 1.0
-    return hsv
-
-
-def hsv_to_rgb(hsv):
-    # Translated from source of colorsys.hsv_to_rgb
-    # h,s should be a numpy arrays with values between 0.0 and 1.0
-    # v should be a numpy array with values between 0.0 and 255.0
-    # hsv_to_rgb returns an array of uints between 0 and 255.
-    rgb = np.empty_like(hsv)
-    rgb[..., 3:] = hsv[..., 3:]
-    h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
-    i = (h * 6.0).astype('uint8')
-    f = (h * 6.0) - i
-    p = v * (1.0 - s)
-    q = v * (1.0 - s * f)
-    t = v * (1.0 - s * (1.0 - f))
-    i = i % 6
-    conditions = [s == 0.0, i == 1, i == 2, i == 3, i == 4, i == 5]
-    rgb[..., 0] = np.select(conditions, [v, q, p, p, t, v], default=v)
-    rgb[..., 1] = np.select(conditions, [v, v, v, q, p, p], default=t)
-    rgb[..., 2] = np.select(conditions, [v, p, t, v, v, q], default=p)
-    return rgb.astype('uint8')
-
-
 def shift_hue(arr, hueshift):
-    hsv = rgb_to_hsv(arr)
-    hsv[..., 0] = (hsv[..., 0] + (hueshift / 360)) % 1
-    rgb = hsv_to_rgb(hsv)
-    return rgb
+    arr_rgb, arr_a = arr[:, :, :3], arr[:, :, 3]
+    hsv = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HSV)
+    hsv[..., 0] = np.mod(hsv[..., 0] + int(hueshift // 2), 180)
+    rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+    return np.dstack((rgb, arr_a))
 
 
-def lock(t, arr, lock):
-    hsv = rgb_to_hsv(arr)
-    hsv[..., t] = lock
-    rgb = hsv_to_rgb(hsv)
-    return rgb
+def lock(t, arr, lock, nonzero: bool = False):
+    arr_rgb, arr_a = arr[:, :, :3], arr[:, :, 3]
+    hsv = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HSV)
+    if nonzero:
+        hsv[..., t][hsv[..., t] != 0] = lock
+    else:
+        hsv[..., t] = lock
+    rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+    return np.dstack((rgb, arr_a))
 
 
 def grayscale(arr, influence):
@@ -534,7 +492,8 @@ class Renderer:
                 bsprite[bsprite > 255] = 255
                 bsprite[bsprite < 0] = 0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
-            if tile.palette_snap:
+            if tile.palette_snap == True:  # didn't work otherwise
+                print('a')
                 palette_colors = np.array(
                     Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
                 im = np.array(sprite)
@@ -592,10 +551,25 @@ class Renderer:
                        out_np[:, :, i] += im_np[:, :, j] * channel_src
                out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
                sprite = Image.fromarray(out_np)
+            if tile.normalize_lightness:
+                arr = np.array(sprite)
+                arr_rgb, sprite_a = arr[:, :, :3], arr[:, :, 3]
+                arr_hls = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HLS).astype(np.float64)  # since WHEN was it HLS???? huh?????
+                max_l = np.max(arr_hls[:, :, 1])
+                arr_hls[:, :, 1] *= (255/max_l)
+                sprite_rgb = cv2.cvtColor(arr_hls.astype(np.uint8), cv2.COLOR_HLS2RGB)  # my question still stands
+                sprite = np.dstack((sprite_rgb,sprite_a))
+            for name, value in tile.filters:
+                if name == "lockhue":
+                    print(value)
+                    sprite = Image.fromarray(lock(0, np.array(sprite, dtype="uint8"), value))
+                elif name == "locksat":
+                    sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero = True))
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 8
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
+
         if 'land' in [a[0] for a in tile.filters]:
             lowestlist = []
             for f in out:
@@ -961,7 +935,9 @@ class Renderer:
                 alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
         for name, value in filters:
-            if name == 'meta_level' and value != 0:
+            if name == "lockhue_before":
+                sprite = Image.fromarray(lock(0, np.array(sprite, dtype="uint8"), value))
+            elif name == 'meta_level' and value != 0:
                 sprite = self.make_meta(sprite, value)
             elif name == 'threeoo' and value != None:
                 img = np.array(sprite, dtype=np.uint8)
@@ -1100,7 +1076,7 @@ class Renderer:
                     try:
                         selection = np.arange(len(colors))[value]
                     except IndexError:
-                        assert 0, f'The color slice `{value}` is invalid.'
+                        raise AssertionError(f'The color slice `{value}` is invalid.')
                     if type(selection) == np.ndarray:
                         selection = selection.flatten().tolist()
                     else:
@@ -1177,10 +1153,6 @@ class Renderer:
                             value[0] / numpysprite.shape[0] * np.pi * 2)) * -value[1]
                     numpysprite[l] = rotate(numpysprite[l].tolist(), int(off + 0.5))
                 sprite = Image.fromarray(numpysprite.swapaxes(0, 1))
-            elif name == 'lockhue' and value != None:
-                sprite = Image.fromarray(lock(0, np.array(sprite, dtype="uint8"), value))
-            elif name == 'locksat' and value != None:
-                sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value))
             elif name == 'gradientx' and value != (1, 1, 1, 1):
                 numpysprite = np.array(sprite).swapaxes(0, 1)
                 for l in range(len(numpysprite)):

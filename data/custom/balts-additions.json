@@ -478,7 +478,7 @@
     },
     {
         "name": "text_bibad",
-        "sprite": "render",
+        "sprite": "text_bibad",
         "color": [
             "1",
             "4"
@@ -739,7 +739,7 @@
     },
     {
         "name": "text_ouch",
-        "sprite": "render",
+        "sprite": "text_ouch",
         "color": [
             "2",
             "3"
