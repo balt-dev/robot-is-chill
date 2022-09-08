@@ -88,5 +88,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "rotator_rd",
+        "sprite": "rotator_rd",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "converter",
+        "sprite": "convertor",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1294,5 +1294,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "placeholder",
+        "sprite": "placeholder",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

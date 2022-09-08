@@ -111,7 +111,8 @@ class Renderer:
             format: str = 'gif',
             loop: bool = True,
             spacing: int = constants.DEFAULT_SPRITE_SIZE,
-            expand: bool = False
+            expand: bool = False,
+            boomerang: bool = False
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites.
 
@@ -366,7 +367,8 @@ class Renderer:
             extra_out=extra_out,
             extra_name=extra_name,
             image_format=format,
-            loop=loop
+            loop=loop,
+            boomerang=boomerang
         )
         if len(times) == 0:
             return 0, 0, 0, len(self.sprite_cache)
@@ -1348,13 +1350,17 @@ class Renderer:
             extra_out: str | BinaryIO | None = None,
             extra_name: str = 'render',
             image_format: str = 'gif',
-            loop: bool = True
+            loop: bool = True,
+            boomerang: bool = False
     ) -> None:
         '''Saves the images as a gif to the given file or buffer.
         
         If a buffer, this also conveniently seeks to the start of the buffer.
         If extra_out is provided, the frames are also saved as a zip file there.
         '''
+        if boomerang and len(imgs) > 2:
+            imgs = imgs + imgs[-2:0:-1]
+            durations = durations + durations[-2:0:-1]
         if image_format == 'gif':
             kwargs = {
                 'format': "GIF",
@@ -1364,7 +1370,6 @@ class Renderer:
                 'loop': 0,
                 'duration': durations,
                 'disposal': 2,  # Frames don't overlap
-                'transparency': 255,
                 'background': 255,
                 'optimize': False
             }

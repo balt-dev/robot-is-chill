@@ -1,4 +1,4 @@
-Pillow==8.4.0
+Pillow
 opencv-python>=4.0.0.0
 requests>=2.25.1
 emoji==1.7.0
