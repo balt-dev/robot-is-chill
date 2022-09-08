@@ -70,5 +70,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "soso",
+        "sprite": "soso",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "soli",
+        "sprite": "soli",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]

@@ -258,6 +258,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         file_format = 'gif'
         spacing = constants.DEFAULT_SPRITE_SIZE
         expand = False
+        boomerang = False
         frame_variant = ''
         for flag, x, y in potential_flags:
             bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
@@ -400,6 +401,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if expandmatch:
                 expand = True
                 to_delete.append((x, y))
+            boomerangmatch = re.fullmatch(r'(?:--boomerang|-br)', flag)
+            if boomerangmatch:
+                boomerang = True
+                to_delete.append((x, y))
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         try:
@@ -497,7 +502,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 animation=animate,
                 loop=loop,
                 spacing=spacing,
-                expand=expand
+                expand=expand,
+                boomerang=boomerang
             )
         except errors.TileNotFound as e:
             word = e.args[0]
