@@ -1362,6 +1362,14 @@ class Renderer:
             imgs = imgs + imgs[-2:0:-1]
             durations = durations + durations[-2:0:-1]
         if image_format == 'gif':
+            for i, im in enumerate(imgs):
+                np_im = np.array(im.convert("RGBA"))
+                colors = np.unique(np_im.reshape(-1, 4),
+                                   axis=0)
+                colors = [0, 0, 0] + colors[colors[:, 3] != 0][:254, :3].flatten().tolist()
+                dummy = Image.new('P', (16, 16))
+                dummy.putpalette(colors)
+                im = im.convert('RGB').quantize(palette=dummy, dither=0)
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
@@ -1370,7 +1378,8 @@ class Renderer:
                 'loop': 0,
                 'duration': durations,
                 'disposal': 2,  # Frames don't overlap
-                'background': 255,
+                'background': 0,
+                'transparency': 0,
                 'optimize': False
             }
             if not loop:

@@ -106,5 +106,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "driller",
+        "sprite": "driller",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flipper",
+        "sprite": "rotator_fl",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rotator_fx",
+        "sprite": "rotator_fx",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "strange",
+        "sprite": "strange",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
