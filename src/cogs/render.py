@@ -568,7 +568,7 @@ class Renderer:
                 elif name == "locksat":
                     sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero = True))
             numpysprite = np.array(sprite)
-            numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 8
+            numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 1
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
 
