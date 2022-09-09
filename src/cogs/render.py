@@ -168,10 +168,10 @@ class Renderer:
                 # bg color
                 elif type(background) == tuple:
                     palette_color = palette_img.getpixel(background)
-                    img = Image.new("RGBA", (img_width, img_height), color=palette_color)
+                    img = Image.new("RGBA", (img_width, img_height), color=tuple([max(c, 8) for c in palette_color]))
                 elif type(background) == str:
                     img = Image.new("RGBA", (img_width, img_height),
-                                    color=tuple([int(a + b, 16) for a, b in np.reshape(list(background), (3, 2))]))
+                                    color=tuple([max(int(a + b, 16), 8) for a, b in np.reshape(list(background), (3, 2))]))
                 # neither
                 else:
                     img = Image.new("RGBA", (img_width, img_height), color=(0, 0, 0, 0))
@@ -368,7 +368,8 @@ class Renderer:
             extra_name=extra_name,
             image_format=format,
             loop=loop,
-            boomerang=boomerang
+            boomerang=boomerang,
+            background=(background is not None)
         )
         if len(times) == 0:
             return 0, 0, 0, len(self.sprite_cache)
@@ -568,7 +569,7 @@ class Renderer:
                 elif name == "locksat":
                     sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero = True))
             numpysprite = np.array(sprite)
-            numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 1
+            numpysprite[np.all(numpysprite[:, :, :3] <= (8, 8, 8), axis=2) & (numpysprite[:, :, 3] > 0), :3] = 8
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
 
@@ -1351,7 +1352,8 @@ class Renderer:
             extra_name: str = 'render',
             image_format: str = 'gif',
             loop: bool = True,
-            boomerang: bool = False
+            boomerang: bool = False,
+            background: bool = False
     ) -> None:
         '''Saves the images as a gif to the given file or buffer.
         
@@ -1362,14 +1364,15 @@ class Renderer:
             imgs = imgs + imgs[-2:0:-1]
             durations = durations + durations[-2:0:-1]
         if image_format == 'gif':
-            for i, im in enumerate(imgs):
-                np_im = np.array(im.convert("RGBA"))
-                colors = np.unique(np_im.reshape(-1, 4),
-                                   axis=0)
-                colors = [0, 0, 0] + colors[colors[:, 3] != 0][:254, :3].flatten().tolist()
-                dummy = Image.new('P', (16, 16))
-                dummy.putpalette(colors)
-                im = im.convert('RGB').quantize(palette=dummy, dither=0)
+            if not background:
+                for i, im in enumerate(imgs):
+                    np_im = np.array(im.convert("RGBA"))
+                    colors = np.unique(np_im.reshape(-1, 4),
+                                       axis=0)
+                    colors = [0, 0, 0] + colors[colors[:, 3] != 0][:254, :3].flatten().tolist()
+                    dummy = Image.new('P', (16, 16))
+                    dummy.putpalette(colors)
+                    im = im.convert('RGB').quantize(palette=dummy, dither=0)
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
@@ -1384,6 +1387,8 @@ class Renderer:
             }
             if not loop:
                 del kwargs['loop']
+            if background:
+                del kwargs['transparency']
             imgs[0].save(
                 out,
                 **kwargs
