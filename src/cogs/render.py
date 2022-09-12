@@ -168,10 +168,10 @@ class Renderer:
                 # bg color
                 elif type(background) == tuple:
                     palette_color = palette_img.getpixel(background)
-                    img = Image.new("RGBA", (img_width, img_height), color=palette_color)
+                    img = Image.new("RGBA", (img_width, img_height), color=tuple([max(c, 8) for c in palette_color]))
                 elif type(background) == str:
                     img = Image.new("RGBA", (img_width, img_height),
-                                    color=tuple([int(a + b, 16) for a, b in np.reshape(list(background), (3, 2))]))
+                                    color=tuple([max(int(a + b, 16), 8) for a, b in np.reshape(list(background), (3, 2))]))
                 # neither
                 else:
                     img = Image.new("RGBA", (img_width, img_height), color=(0, 0, 0, 0))
@@ -369,7 +369,7 @@ class Renderer:
             image_format=format,
             loop=loop,
             boomerang=boomerang,
-            background=background is not None
+            background=(background is not None)
         )
         if len(times) == 0:
             return 0, 0, 0, len(self.sprite_cache)
@@ -569,7 +569,7 @@ class Renderer:
                 elif name == "locksat":
                     sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero = True))
             numpysprite = np.array(sprite)
-            numpysprite[np.all(numpysprite[:, :, :3] <= (0, 0, 0), axis=2) & (numpysprite[:, :, 3] > 1), :3] = 1
+            numpysprite[np.all(numpysprite[:, :, :3] <= (8, 8, 8), axis=2) & (numpysprite[:, :, 3] > 0), :3] = 8
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
 
@@ -1387,6 +1387,8 @@ class Renderer:
             }
             if not loop:
                 del kwargs['loop']
+            if background:
+                del kwargs['transparency']
             imgs[0].save(
                 out,
                 **kwargs
