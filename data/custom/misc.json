@@ -1303,5 +1303,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "concon",
+        "sprite": "concon",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]
