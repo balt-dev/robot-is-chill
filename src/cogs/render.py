@@ -368,7 +368,8 @@ class Renderer:
             extra_name=extra_name,
             image_format=format,
             loop=loop,
-            boomerang=boomerang
+            boomerang=boomerang,
+            background=background is not None
         )
         if len(times) == 0:
             return 0, 0, 0, len(self.sprite_cache)
@@ -1351,7 +1352,8 @@ class Renderer:
             extra_name: str = 'render',
             image_format: str = 'gif',
             loop: bool = True,
-            boomerang: bool = False
+            boomerang: bool = False,
+            background: bool = False
     ) -> None:
         '''Saves the images as a gif to the given file or buffer.
         
@@ -1362,14 +1364,15 @@ class Renderer:
             imgs = imgs + imgs[-2:0:-1]
             durations = durations + durations[-2:0:-1]
         if image_format == 'gif':
-            for i, im in enumerate(imgs):
-                np_im = np.array(im.convert("RGBA"))
-                colors = np.unique(np_im.reshape(-1, 4),
-                                   axis=0)
-                colors = [0, 0, 0] + colors[colors[:, 3] != 0][:254, :3].flatten().tolist()
-                dummy = Image.new('P', (16, 16))
-                dummy.putpalette(colors)
-                im = im.convert('RGB').quantize(palette=dummy, dither=0)
+            if not background:
+                for i, im in enumerate(imgs):
+                    np_im = np.array(im.convert("RGBA"))
+                    colors = np.unique(np_im.reshape(-1, 4),
+                                       axis=0)
+                    colors = [0, 0, 0] + colors[colors[:, 3] != 0][:254, :3].flatten().tolist()
+                    dummy = Image.new('P', (16, 16))
+                    dummy.putpalette(colors)
+                    imgs[i] = im.convert('RGB').quantize(palette=dummy, dither=0)
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
