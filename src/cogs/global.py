@@ -206,12 +206,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         for src, dst in replace_list:
             tiles = tiles.replace(src, dst)
 
-        # Execute before spoiler check to catch binary or
-        for match in re.finditer(r'{(?:c|calc|calculate)!(.+)}', tiles):
-            raise AssertionError('Calculations have been disabled due to concerns about crashing the bot.')
-            value_replace = self.parse_and_evaluate_expression(match.group(1))
-            tiles = tiles[:match.span()[0]] + str(value_replace) + tiles[match.span()[1]:]
-
         # Determines if this should be a spoiler
         spoiler = "|" in tiles
         tiles = tiles.replace("|", "")
@@ -260,10 +254,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         spacing = constants.DEFAULT_SPRITE_SIZE
         expand = False
         boomerang = False
-        frame_variant = ''
         for flag, x, y in potential_flags:
-            bg_match = re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag)
-            if bg_match:
+            if bg_match := re.fullmatch(r"(?:--background|-b)(?:=(\d)/(\d))?", flag):
                 if bg_match.group(1) is not None:
                     tx, ty = int(bg_match.group(1)), int(bg_match.group(2))
                     if not (0 <= tx <= 7 and 0 <= ty <= 5):
@@ -273,34 +265,29 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     background = (0, 4)
                 to_delete.append((x, y))
                 continue
-            bg_match2 = re.fullmatch(r"(?:--background|-b)=#([\da-fA-F]{6})", flag)
-            if bg_match2:
+            if bg_match2 := re.fullmatch(r"(?:--background|-b)=#([\da-fA-F]{6})", flag):
                 if bg_match2.group(1) is not None:
                     background = bg_match2.group(1)
                 to_delete.append((x, y))
                 continue
-            flag_match = re.fullmatch(r"(?:--palette=|-p=|palette:)(\w+)", flag)
-            if flag_match:
+            if flag_match := re.fullmatch(r"(?:--palette=|-p=|palette:)(\w+)", flag):
                 palette = flag_match.group(1)
                 if palette == "random":
                     palette = random.choice(listdir("data/palettes"))[:-4]
                 elif palette + ".png" not in listdir("data/palettes"):
                     return await ctx.error(f"Could not find a palette with name \"{palette}\".")
                 to_delete.append((x, y))
-            raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
-            if raw_match:
+            if raw_match := re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag):
                 raw_name = raw_match.group(1) if raw_match.group(1) else None
                 upscale = 1
                 raw_output = True
                 to_delete.append((x, y))
             if re.fullmatch(r"--comment=\"(.*)\"", flag):
                 to_delete.append((x, y))
-            letter_match = re.fullmatch(r"--letter", flag)
-            if letter_match:
+            if re.fullmatch(r"--letter", flag):
                 default_to_letters = True
                 to_delete.append((x, y))
-            tbmatch = re.fullmatch(r"--tileborder|-tb", flag)
-            if tbmatch:
+            if re.fullmatch(r"--tileborder|-tb", flag):
                 tborders = True
                 to_delete.append((x, y))
             frames_match = re.fullmatch(r"(?:--frames|-frames|-f)=([123]).*", flag)
@@ -310,8 +297,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     if n.group(0) in ['1', '2', '3']:
                         frames.append(int(n.group(0)))
                 to_delete.append((x, y))
-            combine_match = re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag)
-            if combine_match:
+            if re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag):
                 to_delete.append((x, y))
                 msg = None
                 do_finally = True
@@ -342,8 +328,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                             before_image = Image.open(requests.get(msg.attachments[0].url, stream=True).raw)
                         except AttributeError:
                             pass
-            speed_match = re.fullmatch(r"-speed=(\d+)(%)?", flag)
-            if speed_match:
+            if speed_match := re.fullmatch(r"-speed=(\d+)(%)?", flag):
                 speed = int(speed_match.group(1))
                 if speed_match.group(2) is not None:
                     speed = int(200 // (speed / 100))
@@ -351,20 +336,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     return await ctx.error(
                         f'Frame delta of {speed} milliseconds is too small for the specified file format to handle.')
                 to_delete.append((x, y))
-            global_match = re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag)
-            if global_match:
+            if global_match := re.fullmatch(r"(?:--global|-global|-g)=(.+)", flag):
                 global_variant = ':' + global_match.group(1)
                 to_delete.append((x, y))
-            con_match = re.fullmatch(r"--consistent|-co|--synchronize|-sync", flag)
-            if con_match:
+            if re.fullmatch(r"--consistent|-co|--synchronize|-sync", flag):
                 random_animations = False
                 to_delete.append((x, y))
-            gridovmatch = re.fullmatch(r"(?:--grid|-gr)=(\d+)/(\d+)", flag)
-            if gridovmatch:
+            if gridovmatch := re.fullmatch(r"(?:--grid|-gr)=(\d+)/(\d+)", flag):
                 gridol = (int(gridovmatch.group(1)), int(gridovmatch.group(2)))
                 to_delete.append((x, y))
-            cropmatch = re.fullmatch(r"(?:--|-)crop=(\d+)/(\d+)/(\d+)/(\d+)", flag)
-            if cropmatch:
+            if cropmatch := re.fullmatch(r"(?:--|-)crop=(\d+)/(\d+)/(\d+)/(\d+)", flag):
                 crop = tuple([*[int(x) for x in cropmatch.groups()]])
                 to_delete.append((x, y))
             padmatch = re.fullmatch(r"(?:--|-)pad=(\d+)"
@@ -372,40 +353,31 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if padmatch:
                 pad = tuple([*[int(x) for x in padmatch.groups()]])
                 to_delete.append((x, y))
-            gsmatch = re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag)
-            if gsmatch:
+            if gsmatch := re.fullmatch(r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag):
                 gscale = min(float(gsmatch.group(1)), 8)
                 to_delete.append((x, y))
-            spmatch = re.fullmatch(r"(?:--multiplier|-m)=((?:\d*)?(?:\.\d+)?)", flag)
-            if spmatch:
+            if spmatch := re.fullmatch(r"(?:--multiplier|-m)=((?:\d*)?(?:\.\d+)?)", flag):
                 upscale = float(spmatch.group(1))
                 to_delete.append((x, y))
-            embedmatch = re.fullmatch(r'--verbose|-v', flag)
-            if embedmatch:
+            if re.fullmatch(r'--verbose|-v', flag):
                 do_embed = True
                 to_delete.append((x, y))
-            noloopmatch = re.fullmatch(r'--noloop|-nl', flag)
-            if noloopmatch:
+            if re.fullmatch(r'--noloop|-nl', flag):
                 loop = False
                 to_delete.append((x, y))
-            animmatch = re.fullmatch(r'(?:--anim|-am)=(\d+)/(\d+)', flag)
-            if animmatch:
+            if animmatch := re.fullmatch(r'(?:--anim|-am)=(\d+)/(\d+)', flag):
                 animate = (int(animmatch.group(1)), int(animmatch.group(2)))
                 to_delete.append((x, y))
-            formatmatch = re.fullmatch(r'(?:--format|-f)=(gif|png)', flag)
-            if formatmatch:
+            if formatmatch := re.fullmatch(r'(?:--format|-f)=(gif|png)', flag):
                 file_format = formatmatch.group(1)
                 to_delete.append((x, y))
-            spacingmatch = re.fullmatch(r'(?:--spacing|-sp)=-?(\d+)', flag)
-            if spacingmatch:
+            if spacingmatch := re.fullmatch(r'(?:--spacing|-sp)=-?(\d+)', flag):
                 spacing = int(spacingmatch.group(1))
                 to_delete.append((x, y))
-            expandmatch = re.fullmatch(r'(?:--expand|-ex)', flag)
-            if expandmatch:
+            if re.fullmatch(r'(?:--expand|-ex)', flag):
                 expand = True
                 to_delete.append((x, y))
-            boomerangmatch = re.fullmatch(r'(?:--boomerang|-br)', flag)
-            if boomerangmatch:
+            if re.fullmatch(r'(?:--boomerang|-br)', flag):
                 boomerang = True
                 to_delete.append((x, y))
         for x, y in reversed(to_delete):
