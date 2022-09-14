@@ -142,5 +142,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "teleporter",
+        "sprite": "teleporter",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

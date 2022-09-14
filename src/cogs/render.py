@@ -17,7 +17,6 @@ import time
 import config
 import asyncio
 from functools import reduce
-import colour
 
 import numpy as np
 from PIL import Image, ImageChops, ImageFilter, ImageOps, ImageSequence
@@ -78,6 +77,12 @@ def recolor(sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
     gc = gc.point(lambda i: int(i * (g / 255)))
     bc = bc.point(lambda i: int(i * (b / 255)))
     return Image.merge('RGBA', (rc, gc, bc, ac))
+
+
+def delta_e(img1, img2):
+    # compute the Euclidean distance with pixels of two images
+    return np.sqrt(np.sum((img1 - img2) ** 2, axis=-1))
+
 
 class Renderer:
     """This class exposes various image rendering methods.
@@ -171,7 +176,8 @@ class Renderer:
                     img = Image.new("RGBA", (img_width, img_height), color=tuple([max(c, 8) for c in palette_color]))
                 elif type(background) == str:
                     img = Image.new("RGBA", (img_width, img_height),
-                                    color=tuple([max(int(a + b, 16), 8) for a, b in np.reshape(list(background), (3, 2))]))
+                                    color=tuple(
+                                        [max(int(a + b, 16), 8) for a, b in np.reshape(list(background), (3, 2))]))
                 # neither
                 else:
                     img = Image.new("RGBA", (img_width, img_height), color=(0, 0, 0, 0))
@@ -220,14 +226,15 @@ class Renderer:
                                 pad_u = max(pad_u, y_offset_pad if expand else y_offset)
                             if y == height - 1:
                                 pad_d = max(pad_d, y_offset_pad if expand else y_offset)
-                            print(pad_l, pad_u, pad_d, pad_r, x_offset, y_offset, x_offset_disp, y_offset_disp, x_offset_pad, y_offset_pad, expand)
+                            print(pad_l, pad_u, pad_d, pad_r, x_offset, y_offset, x_offset_disp, y_offset_disp,
+                                  x_offset_pad, y_offset_pad, expand)
                             alpha = sprite.getchannel("A")
                             x_offset_disp -= pad[0]
                             y_offset_disp -= pad[1]
                             coord_tuple = (
-                                        int(x * (spacing * scaleddef) + padding - x_offset_disp),
-                                        int(y * (spacing * scaleddef) + padding - y_offset_disp)
-                                    )
+                                int(x * (spacing * scaleddef) + padding - x_offset_disp),
+                                int(y * (spacing * scaleddef) + padding - y_offset_disp)
+                            )
                             if tile.mask_alpha:  # i should really rewrite all of this lmao
                                 alpha = ImageChops.invert(alpha)
                                 if background is not None:
@@ -271,9 +278,9 @@ class Renderer:
                                         coord_tuple,
                                         mask=sprite
                                     )
-                                    inmp = np.asarray(imgtemp)
+                                    inmp = np.array(imgtemp)
                                     inmp[:, :, 3] = 0
-                                    imgs[dst_frame] = Image.fromarray(cv2.subtract(np.asarray(imgs[dst_frame]), inmp))
+                                    imgs[dst_frame] = Image.fromarray(cv2.absdiff(np.array(imgs[dst_frame]), inmp))
                                 elif tile.blending == 'maximum':
                                     imgtemp = Image.new('RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
                                     imgtemp.paste(
@@ -341,6 +348,7 @@ class Renderer:
         outs = []
         for img in imgs:
             img = np.array(img, dtype=np.uint8)
+            img[np.all(img[:, :, :3] <= (8, 8, 8), axis=2) & (img[:, :, 3] > 0), :3] = 8
             if gridol is not None:
                 for col in range(img.shape[0] // (gridol[0] * 2)):
                     img[col * gridol[0] * 2, :, :] = ~img[col * gridol[0] * 2, :, :]
@@ -437,16 +445,16 @@ class Renderer:
                             assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
                 sprite = sprite.resize((int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
                 computed_hash = hash((
-                        tile.name,
-                        tile.variant_number,
-                        str(np.array(sprite)),
-                        tile.custom_style,
-                        tile.custom_direction,
-                        tile.meta_level,
-                        wobble,
-                        str(tile.filters),
-                        gscale
-                    ))
+                    tile.name,
+                    tile.variant_number,
+                    str(np.array(sprite)),
+                    tile.custom_style,
+                    tile.custom_direction,
+                    tile.meta_level,
+                    wobble,
+                    str(tile.filters),
+                    gscale
+                ))
                 if computed_hash in self.sprite_cache:
                     sprite = self.sprite_cache[computed_hash]
                 else:
@@ -495,31 +503,27 @@ class Renderer:
                 bsprite[bsprite > 255] = 255
                 bsprite[bsprite < 0] = 0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
-            if tile.palette_snap == True:  # didn't work otherwise
-                print('a')
+            if tile.palette_snap:  # didn't work otherwise
                 palette_colors = np.array(
                     Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
                 im = np.array(sprite)
                 im_lab = cv2.cvtColor(im.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
-                diff_matrix = np.full(im.shape[:-1], 99999)
+                diff_matrix = np.full((palette_colors.shape[0], *im.shape[:-1]), 999)
                 # make a difference matrix to ensure that every color on the image is actually
                 # the nearest color to the image
-                for color in palette_colors:  # still slow, but faster than iterating through every pixel
+                for i, color in enumerate(palette_colors):  # still slow, but faster than iterating through every pixel
                     filled_color_array = np.array([[color]]).repeat(im.shape[0], 0).repeat(im.shape[1], 1)
                     filled_color_array = cv2.cvtColor(filled_color_array.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
-                    im_delta_e = colour.delta_E(im_lab, filled_color_array)
-                    im[
-                    np.logical_and(
-                        np.amin(im_delta_e) == im_delta_e,
-                        np.amin(im_delta_e) < diff_matrix
-                    ), :3
-                    ] = color
-                    diff_matrix[
-                        np.logical_and(
-                            np.amin(im_delta_e) == im_delta_e,
-                            np.amin(im_delta_e) < diff_matrix
-                        )] = np.amin(im_delta_e)
-                sprite = np.array(im)
+                    im_delta_e = delta_e(im_lab, filled_color_array)
+                    diff_matrix[i] = im_delta_e
+                min_indexes = np.argmin(diff_matrix, 0, keepdims=True).reshape(diff_matrix.shape[1:])
+                result = np.full(im.shape, 0, dtype=np.uint8)
+                for i, color in enumerate(palette_colors):  # double iteration makes this O(2n)
+                    result[:, :, 0][min_indexes == i] = color[0]
+                    result[:, :, 1][min_indexes == i] = color[1]  # it just straight up wouldn't let me use [:, :, :3]
+                    result[:, :, 2][min_indexes == i] = color[2]
+                result[:, :, 3] = im[:, :, 3]
+                sprite = Image.fromarray(result)
             if tile.grayscale != 0:
                 sprite = Image.fromarray(grayscale(np.array(sprite), tile.grayscale))
             if tile.filterimage != "":
@@ -546,28 +550,29 @@ class Renderer:
                 # except OSError:
                 #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
             if not np.array_equal(tile.channelswap,
-                                 np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
-               im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
-               out_np = np.zeros(im_np.shape, dtype=float)
-               for i, channel_dst in enumerate(tile.channelswap):
-                   for j, channel_src in enumerate(channel_dst):
-                       out_np[:, :, i] += im_np[:, :, j] * channel_src
-               out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
-               sprite = Image.fromarray(out_np)
+                                  np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
+                im_np = np.array(sprite, dtype=float) / 255  # making it a float for convenience
+                out_np = np.zeros(im_np.shape, dtype=float)
+                for i, channel_dst in enumerate(tile.channelswap):
+                    for j, channel_src in enumerate(channel_dst):
+                        out_np[:, :, i] += im_np[:, :, j] * channel_src
+                out_np = np.array(np.vectorize(lambda n: int(min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
+                sprite = Image.fromarray(out_np)
             if tile.normalize_lightness:
                 arr = np.array(sprite)
                 arr_rgb, sprite_a = arr[:, :, :3], arr[:, :, 3]
-                arr_hls = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HLS).astype(np.float64)  # since WHEN was it HLS???? huh?????
+                arr_hls = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HLS).astype(
+                    np.float64)  # since WHEN was it HLS???? huh?????
                 max_l = np.max(arr_hls[:, :, 1])
-                arr_hls[:, :, 1] *= (255/max_l)
+                arr_hls[:, :, 1] *= (255 / max_l)
                 sprite_rgb = cv2.cvtColor(arr_hls.astype(np.uint8), cv2.COLOR_HLS2RGB)  # my question still stands
-                sprite = np.dstack((sprite_rgb,sprite_a))
+                sprite = np.dstack((sprite_rgb, sprite_a))
             for name, value in tile.filters:
                 if name == "lockhue":
                     print(value)
                     sprite = Image.fromarray(lock(0, np.array(sprite, dtype="uint8"), value))
                 elif name == "locksat":
-                    sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero = True))
+                    sprite = Image.fromarray(lock(1, np.array(sprite, dtype="uint8"), value, nonzero=True))
             numpysprite = np.array(sprite)
             numpysprite[np.all(numpysprite[:, :, :3] <= (8, 8, 8), axis=2) & (numpysprite[:, :, 3] > 0), :3] = 8
             sprite = Image.fromarray(numpysprite)
@@ -885,6 +890,7 @@ class Renderer:
             seed: int | None = None
     ):
         random.seed(seed)
+
         # rocket's handlers are such a better system but i have no idea how they work since i don't really know OOP
         def rotate(li, x):
             return li[-x % len(li):] + li[:-x % len(li)]

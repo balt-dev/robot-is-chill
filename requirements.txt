@@ -7,3 +7,4 @@ git+https://github.com/Rapptz/asqlite
 discord.py>=2.0.0
 git+https://github.com/Rapptz/discord-ext-menus
 charset-normalizer
+colour-science

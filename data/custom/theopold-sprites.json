@@ -88,5 +88,23 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "swi",
+        "sprite": "swi",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "alal",
+        "sprite": "alal",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]

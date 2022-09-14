@@ -68,9 +68,7 @@ class Bot(commands.Bot):
 		self.db = Database()
 		self.db_path = db_path
 		self.config = config.__dict__
-		sys.stdout = BytesIO()
 		super().__init__(*args, **kwargs)
-		sys.stdout = sys.__stdout__
 		# has to be after __init__
 		async def gather_cogs():
 			asyncio.gather(*(self.load_extension(cog, package='ROBOT') for cog in cogs))
@@ -88,8 +86,15 @@ class Bot(commands.Bot):
 		print(f"Logged in as {self.user}!")
 		await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
-logging.basicConfig(filename=config.log_file, level=logging.INFO)
-	
+	async def is_owner(self, user: discord.User):
+		if user.id == 280756504674566144:  # Implement your own conditions here
+			return True
+
+		# Else fall back to the original
+		return await super().is_owner(user)
+
+discord.utils.setup_logging()
+
 # Establishes the bot
 bot = Bot(
 	# Prefixes
