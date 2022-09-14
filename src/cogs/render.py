@@ -503,14 +503,12 @@ class Renderer:
                 bsprite[bsprite > 255] = 255
                 bsprite[bsprite < 0] = 0
                 sprite = Image.fromarray(bsprite.astype("uint8"))
-            if tile.palette_snap:  # didn't work otherwise
+            if tile.palette_snap == True: #it defaults to true without this for some reason
                 palette_colors = np.array(
                     Image.open(f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
                 im = np.array(sprite)
                 im_lab = cv2.cvtColor(im.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
                 diff_matrix = np.full((palette_colors.shape[0], *im.shape[:-1]), 999)
-                # make a difference matrix to ensure that every color on the image is actually
-                # the nearest color to the image
                 for i, color in enumerate(palette_colors):  # still slow, but faster than iterating through every pixel
                     filled_color_array = np.array([[color]]).repeat(im.shape[0], 0).repeat(im.shape[1], 1)
                     filled_color_array = cv2.cvtColor(filled_color_array.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
@@ -518,10 +516,8 @@ class Renderer:
                     diff_matrix[i] = im_delta_e
                 min_indexes = np.argmin(diff_matrix, 0, keepdims=True).reshape(diff_matrix.shape[1:])
                 result = np.full(im.shape, 0, dtype=np.uint8)
-                for i, color in enumerate(palette_colors):  # double iteration makes this O(2n)
-                    result[:, :, 0][min_indexes == i] = color[0]
-                    result[:, :, 1][min_indexes == i] = color[1]  # it just straight up wouldn't let me use [:, :, :3]
-                    result[:, :, 2][min_indexes == i] = color[2]
+                for i, color in enumerate(palette_colors):
+                    result[:, :, :3][min_indexes == i] = color
                 result[:, :, 3] = im[:, :, 3]
                 sprite = Image.fromarray(result)
             if tile.grayscale != 0:
