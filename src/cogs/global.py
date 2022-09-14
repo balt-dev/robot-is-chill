@@ -6,6 +6,7 @@ import os
 import requests
 
 import math
+import random
 from PIL import Image
 import re
 from datetime import datetime
@@ -281,7 +282,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             flag_match = re.fullmatch(r"(?:--palette=|-p=|palette:)(\w+)", flag)
             if flag_match:
                 palette = flag_match.group(1)
-                if palette + ".png" not in listdir("data/palettes"):
+                if palette == "random":
+                    palette = random.choice(listdir("data/palettes"))[:-4]
+                elif palette + ".png" not in listdir("data/palettes"):
                     return await ctx.error(f"Could not find a palette with name \"{palette}\".")
                 to_delete.append((x, y))
             raw_match = re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag)
@@ -441,7 +444,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                             if len(tile.split(':', 1)[0].split(';', 1)[0]):
                                 tilecount += 1
                                 tile = tile.replace('rule_', 'text_')
-                                if not (tile.find(':ng') != -1 or tile.find(':noglobal') != -1):
+                                if (not (tile.find(':ng') != -1 or tile.find(':noglobal') != -1)) and tile != "-":
                                     tile = re.sub("(.+?)(:.+|$)", rf'\1{global_variant}\2', tile)
                                 r = re.fullmatch(r"(.+?)(?::.*)?", tile)
                                 if r != None and not rule and r.groups()[0] == '2':  # hardcoded easter egg

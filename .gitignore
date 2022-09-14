@@ -14,3 +14,4 @@ webhooks.py
 grass
 .idea/*
 .vscode/*
+update_ba.bash
