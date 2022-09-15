@@ -394,7 +394,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 spacing = int(spacingmatch.group(1))
                 to_delete.append((x, y))
             if re.fullmatch(r'--expand|-ex', flag):
-                await asyncio.sleep(20)
                 expand = True
                 to_delete.append((x, y))
             if re.fullmatch(r'--boomerang|-br', flag):
