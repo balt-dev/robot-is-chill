@@ -41,7 +41,7 @@ class Context(commands.Context):
 
 
 class Bot(commands.Bot):
-    '''Custom bot class :)'''
+    """Custom bot class :)"""
     db: Database
 
     def __init__(
@@ -124,11 +124,9 @@ bot = Bot(
 async def on_command(ctx):
     webhook = await bot.fetch_webhook(webhooks.logging_id)
     embed = discord.Embed(
-        title=None,
-        description=(ctx.message.content),
-        color=config.logging_color
-    )
-    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32], url=None,
+        description=ctx.message.content,
+        color=config.logging_color)
+    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
                      icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
     embed.set_footer(text=str(ctx.author.id))
     await webhook.send(embed=embed)
