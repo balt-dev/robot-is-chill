@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import collections
+import functools
 import os
 import requests
 
@@ -609,7 +610,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     ctx,
                     objects=objects,
                     rule=True)))
-        await asyncio.get_running_loop().run_in_executor(None, asyncio.wait_for, task, timeout=10)
+        await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
 
     # Generates tiles from a text file.
     @commands.command()
@@ -673,7 +674,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     ctx,
                     objects=objects,
                     rule=False)))
-        await asyncio.get_running_loop().run_in_executor(None, asyncio.wait_for, task, timeout=10)
+        await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(
