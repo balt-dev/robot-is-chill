@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class Context(commands.Context):
-    async def error(self, msg: str) -> discord.Message: ...
+    async def error(self, msg: str, **kwargs) -> discord.Message: ...
 
     async def send(self,
                    content: str = "",

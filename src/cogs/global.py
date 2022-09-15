@@ -394,6 +394,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 spacing = int(spacingmatch.group(1))
                 to_delete.append((x, y))
             if re.fullmatch(r'--expand|-ex', flag):
+                await asyncio.sleep(20)
                 expand = True
                 to_delete.append((x, y))
             if re.fullmatch(r'--boomerang|-br', flag):
@@ -468,7 +469,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
         try:
 
-            print(layer_grid)
             grid = self.parse_raw(layer_grid, rule=rule)
             # Handles variants based on `:` affixes
             buffer = BytesIO()
@@ -603,13 +603,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        asyncio.create_task(
+        task = asyncio.create_task(
             self.log_exceptions(
                 ctx,
                 self.render_tiles(
                     ctx,
                     objects=objects,
                     rule=True)))
+        await asyncio.get_running_loop().run_in_executor(None, asyncio.wait_for, task, timeout=10)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -666,13 +667,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        asyncio.create_task(
+        task = asyncio.create_task(
             self.log_exceptions(
                 ctx,
                 self.render_tiles(
                     ctx,
                     objects=objects,
                     rule=False)))
+        await asyncio.get_running_loop().run_in_executor(None, asyncio.wait_for, task, timeout=10)
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(

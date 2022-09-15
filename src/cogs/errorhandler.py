@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import sqlite3
 import sys
@@ -181,6 +182,8 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error('A given link for the filterimage was invalid.')
             elif isinstance(error, errors.OverlayNotFound):
                 return await ctx.error(f'The overlay `{error}` does not exist.')
+            elif isinstance(error, asyncio.exceptions.TimeoutError):
+                return await ctx.error(f'The render took too long, so it was cancelled.')
             # All other Errors not returned come here... And we can just print
             # the default TraceBack + log
             if os.name == "nt":
@@ -218,7 +221,7 @@ User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.messag
                          len(f'{error} [[Jump]]({ctx.message.jump_url})\n``````'):])
                 emb.description = (
                     f'{error} [[Jump]]({ctx.message.jump_url})\n```{trace}```')
-            await ctx.error(msg='')
+            await ctx.error(msg='', embed=emb)
             print(
                 f'Ignoring exception in command {ctx.command}:',
                 file=sys.stderr)
