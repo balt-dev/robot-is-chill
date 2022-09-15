@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import configparser
 from glob import glob
 from io import BytesIO
 import json
-import traceback
 import zipfile
 import pathlib
 import re
@@ -16,11 +14,8 @@ from typing import Any, Optional
 import os
 import numpy as np
 import subprocess
-from contextlib import redirect_stdout, redirect_stderr
-from io import StringIO
 import asyncio
 
-import time
 import discord
 from discord.ext import commands
 from PIL import Image, ImageChops, ImageDraw
@@ -48,8 +43,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.is_owner()
     async def lockdown(self, ctx: Context, *, reason: str = ''):
         """Toggles owner-only mode."""
-        assert self.bot.config['owner_only_mode'][0] or len(reason), 'Specify a reason.'
-        self.bot.config['owner_only_mode'] = [not self.bot.config['owner_only_mode'][0], reason]
+        assert self.bot.config['owner_only_mode'][0] or len(
+            reason), 'Specify a reason.'
+        self.bot.config['owner_only_mode'] = [
+            not self.bot.config['owner_only_mode'][0], reason]
         await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
 
     @commands.command(aliases=["load", "reload"])
@@ -70,8 +67,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def viewzip(self, ctx: Context):
-        m = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read())).namelist()
-        m.sort()
+        m = sorted(zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read())).namelist())
         n = '\n'.join(m)
         await ctx.send(f"```\n{n}```")
 
@@ -84,7 +80,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def update(self, ctx: Context, sprite_name: str):
         async with self.bot.db.conn.cursor() as cur:
             pack_name = \
-            (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)', sprite_name)).fetchone())[0]
+                (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)', sprite_name)).fetchone())[0]
             if pack_name is None:
                 return await ctx.error('The specified sprite doesn\'t exist.')
         try:
@@ -92,7 +88,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         except IndexError:
             return await ctx.error('You forgot to attach a zip.')
         file_name = None
-        check = [os.path.basename(name)[:5] == 'text_' for name in zip.namelist()]
+        check = [
+            os.path.basename(name)[
+                :5] == 'text_' for name in zip.namelist()]
         for name in zip.namelist():
             name = os.path.basename(name)
             if name[:5] != 'text_' or all(check):
@@ -105,6 +103,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         with open(f"data/custom/{pack_name}.json", "r") as f:
             sprite_data = json.load(f)
         found = False
+        old_sprite_name = "ALSDFHASDFHSADLFBCASDPFHINsaDLKJFFBSADLFBLSADKASDFNLSADKF" #make sure this doesn't delete anything on accident
         for i in range(len(sprite_data)):
             if sprite_data[i]['name'] == sprite_name:  # this is dumb
                 old_sprite_name = sprite_data[i]['sprite']
@@ -130,7 +129,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         value = ' '.join(value)
         async with self.bot.db.conn.cursor() as cur:
             pack_name = \
-            (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)', sprite_name)).fetchone())[0]
+                (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)', sprite_name)).fetchone())[0]
             if pack_name is None:
                 return await ctx.error('The specified sprite doesn\'t exist.')
         if attribute not in ['sprite', 'tiling', 'color', 'name', 'tags']:
@@ -157,7 +156,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @sprite.command()
     async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int, color_y: int, tiling: str,
                   *tags: str):  # int | str didn't wanna work for me
-        """Adds sprites to a specified sprite pack"""
+        """Adds sprites to a specified sprite pack."""
         try:
             tiling = int(tiling)
         except ValueError:
@@ -167,13 +166,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 result = await cur.execute('SELECT DISTINCT tiling FROM tiles WHERE name = (?)', tiling)
                 try:
                     tiling = (await result.fetchone())[0]
-                except:
+                except BaseException:
                     return await ctx.error(f'The specified tile doesn\'t exist.')
         try:
             zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
         except IndexError:
             return await ctx.error('You forgot to attach a zip.')
-        check = [os.path.basename(name)[:5] == 'text_' for name in zip.namelist()]
+        check = [
+            os.path.basename(name)[
+                :5] == 'text_' for name in zip.namelist()]
         withtext = any(check) and not all(check)
         file_name = None
         for name in zip.namelist():
@@ -230,7 +231,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @sprite.command(aliases=['del'])
     async def delete(self, ctx: Context, sprite_name: str):
-        """Deletes a specified sprite"""
+        """Deletes a specified sprite."""
         async with self.bot.db.conn.cursor() as cur:
             result = await (
                 await cur.execute('SELECT sprite, source FROM tiles WHERE name = (?)', sprite_name)).fetchall()
@@ -253,8 +254,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @sprite.command()
     async def move(self, ctx: Context, sprite_name: str, new_source: str, reload: bool = True):
-        '''Moves a specified sprite to a different source'''
-        assert pathlib.Path(f'data/sprites/{new_source}').exists(), f'The source {new_source} doesn\'t exist.'
+        """Moves a specified sprite to a different source."""
+        data = None
+        assert pathlib.Path(
+            f'data/sprites/{new_source}').exists(), f'The source {new_source} doesn\'t exist.'
         async with self.bot.db.conn.cursor() as cur:
             source, sprite = await (
                 await cur.execute('SELECT source, sprite FROM tiles WHERE name = (?)', sprite_name)).fetchone()
@@ -262,7 +265,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 return await ctx.error(f'The sprite {sprite_name} doesn\'t exist.')
             await cur.execute('UPDATE tiles SET source = (?) WHERE name = (?)', (new_source, sprite_name))
         for file in glob(f'data/sprites/{source}/{sprite}*.png'):
-            os.rename(file, f'data{os.sep}sprites{os.sep}{new_source}{os.sep}{pathlib.Path(file).stem}.png')
+            os.rename(
+                file,
+                f'data{os.sep}sprites{os.sep}{new_source}{os.sep}{pathlib.Path(file).stem}.png')
         with open(f"data/custom/{source}.json", "r") as f:
             sprite_data = json.load(f)
         for i in range(len(sprite_data)):
@@ -290,7 +295,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             user = await self.bot.fetch_user(user_id)
         except discord.NotFound:
             return await ctx.error(f'User of id {user_id} was not found.')
-        assert mode in ['add', 'remove'], 'Mode invalid! Has to be `add` or `remove`.'
+        assert mode in [
+            'add', 'remove'], 'Mode invalid! Has to be `add` or `remove`.'
         async with self.bot.db.conn.cursor() as cur:
             if mode == 'add':
                 await cur.execute(f'''INSERT INTO blacklistedusers
@@ -305,7 +311,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.is_owner()
     async def importbab(self, ctx: Context, name: str, color_x: int = None, color_y: int = None,
                         transform_txt_text: bool = True):
-        """Auto-import a bab sprite"""
+        """Auto-import a bab sprite."""
         await ctx.send(f"Hold on, robobot be scan bab...")
         assert name.find(':') == -1, 'Name has colon in it, so it won\'t work.'
         color_table = {
@@ -319,8 +325,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         def scanforname(name):
             for directory, filenames in (  # i wish this could be a dict
-                    ('objects', ("characters", "devs", "special", "thingify", "ui", "unsorted")),
-                    ('text', ("conditions", "letters", "properties", "tutorial", "unsorted", "verbs"))
+                    ('objects', ("characters", "devs",
+                     "special", "thingify", "ui", "unsorted")),
+                    ('text', ("conditions", "letters",
+                     "properties", "tutorial", "unsorted", "verbs"))
             ):
                 for filename in filenames:
                     for babdata in requests.get(
@@ -334,22 +342,28 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
         except TypeError:
             raise AssertionError(f'Bab til `{name}` not found!')
-        if type(color_x) == type(None) or type(color_y) == type(None):
+        if isinstance(color_x, type(None)) or isinstance(color_y, type(None)):
             if len(babdata['color'][0]) == 2:
                 color_x, color_y = babdata['color'][0]
                 if (color_x, color_y) in color_table:
                     color_x, color_y = color_table[(color_x, color_y)]
             else:
                 with Image.open('data/palettes/default.png') as l:
-                    default_palette = np.array(l.convert('RGB'), dtype=np.uint8)
-                closest_color = np.argmin(
-                    np.sum(abs(default_palette - np.full(default_palette.shape, babdata['color'][0])), axis=2))
-                color_x, color_y = (closest_color % default_palette.shape[1], closest_color // default_palette.shape[1])
+                    default_palette = np.array(
+                        l.convert('RGB'), dtype=np.uint8)
+                closest_color = np.argmin(np.sum(abs(
+                    default_palette - np.full(default_palette.shape, babdata['color'][0])), axis=2))
+                color_x, color_y = (closest_color %
+                                    default_palette.shape[1], closest_color //
+                                    default_palette.shape[1])
         # if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
-        #     return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off, the bab pack exists.
+        # return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off,
+        # the bab pack exists.
         pilsprite = Image.open(BytesIO(sprite))
         pilsprite = pilsprite.resize(
-            ((pilsprite.width * 3) // 4, (pilsprite.height * 3) // 4), Image.NEAREST)
+            ((pilsprite.width * 3) // 4,
+             (pilsprite.height * 3) // 4),
+            Image.NEAREST)
         if transform_txt_text:
             if name.startswith("txt_"):
                 name = "text_" + name[4:]
@@ -382,7 +396,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         self.bot.exit_code = 1
         await self.bot.close()
 
-    @commands.command(aliases=["kill", "yeet", "defeat", "empty", "not", "kil"])
+    @commands.command(aliases=["kill", "yeet",
+                      "defeat", "empty", "not", "kil"])
     @commands.is_owner()
     async def logout(self, ctx: Context, endsentence: str = ""):
         """Kills the bot process."""
@@ -422,8 +437,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def loadsource(self, ctx: Context, source: str):
-        '''Reloads only a single source'''
-        assert pathlib.Path(f'data/sprites/{source}').exists(), f'The source {source} doesn\'t exist.'
+        """Reloads only a single source."""
+        assert pathlib.Path(
+            f'data/sprites/{source}').exists(), f'The source {source} doesn\'t exist.'
         self.bot.loading = True
         await self.load_custom_tiles(source)
         self.bot.loading = False
@@ -432,12 +448,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def loaddata(self, ctx: Context, flag: bool = False):
-        '''Reloads tile data from the world map, editor, and custom files.
-        The boolean flag deletes all tiles from the database before updating with new tiles. [slow, do not do unless necessary]'''
+        """Reloads tile data from the world map, editor, and custom files.
+
+        The boolean flag deletes all tiles from the database before
+        updating with new tiles. [slow, do not do unless necessary]
+        """
         self.bot.loading = True
         if flag:
-            await self.bot.db.conn.execute(
-                'DELETE FROM tiles')  # Flush the tile database since it all gets reconstructed anyways
+            # Flush the tile database since it all gets reconstructed anyways
+            await self.bot.db.conn.execute('DELETE FROM tiles')
         await self.load_initial_tiles()
         await self.load_editor_tiles()
         await self.load_custom_tiles()
@@ -445,8 +464,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         return await ctx.send("Done. Loaded all tile data.")
 
     async def load_initial_tiles(self):
-        '''Loads tile data from `data/values.lua` and `.ld` files.'''
-        # values.lua contains the data about which color (on the palette) is associated with each tile.
+        """Loads tile data from `data/values.lua` and `.ld` files."""
+        # values.lua contains the data about which color (on the palette) is
+        # associated with each tile.
         with open("data/values.lua", errors='ignore') as fp:
             data = fp.read()
 
@@ -457,7 +477,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         spanned = data[start:end]
 
         def prepare(d: dict[str, Any]) -> dict[str, Any]:
-            '''From game format into DB format'''
+            """From game format into DB format."""
             if d.get("type") is not None:
                 d["text_type"] = d.pop("type")
             if d.get("image") is not None:
@@ -479,9 +499,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             r"\n.*\n.*\n\s*tiling = (-1|\d),"
             r"\n\s*type = (\d),"
             r"\n\s*(?:argextra = .*,\n\s*)?(?:argtype = .*,\n\s*)?"
-            r"colour = \{(\d), (\d)\},"
-            r"\n\s*(?:active = \{(\d), (\d)\},\n\s*)?"
-            r".*\n.*\n.*\n\s*\}",
+            r"colour = \{(\d), (\d)},"
+            r"\n\s*(?:active = \{(\d), (\d)},\n\s*)?"
+            r".*\n.*\n.*\n\s*}",
         )
         initial_objects: dict[str, dict[str, Any]] = {}
         for match in re.finditer(object_pattern, spanned):
@@ -516,7 +536,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         ready: list[dict[str, Any]] = []
         for name, duplicates in by_name:
             def freeze_dict(d: dict[str, Any]) -> tuple[tuple[str, Any], ...]:
-                '''Hashable (frozen) dict'''
+                """Hashable (frozen) dict."""
                 return tuple(d.items())
 
             counts = collections.Counter(map(freeze_dict, duplicates))
@@ -579,14 +599,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :text_type,
                 NULL,
                 ""
-            ) 
+            )
             ON CONFLICT(name, version) DO NOTHING;
             ''',
             ready
         )
 
     async def load_editor_tiles(self):
-        '''Loads tile data from `data/editor_objectlist.lua`.'''
+        """Loads tile data from `data/editor_objectlist.lua`."""
 
         with open("data/editor_objectlist.lua", errors="replace") as fp:
             data = fp.read()
@@ -597,16 +617,16 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         spanned = data[start:end]
 
         object_pattern = re.compile(
-            r"\[\d+\] = \{"
+            r"\[\d+] = \{"
             r"\n\s*name = \"([^\"]*)\","
             r"(?:\n\s*sprite = \"([^\"]*)\",)?"
             r"\n.*"
-            r"\n\s*tags = \{((?:\"[^\"]*?\"(?:,\"[^\"]*?\")*)?)\},"
+            r"\n\s*tags = \{((?:\"[^\"]*?\"(?:,\"[^\"]*?\")*)?)},"
             r"\n\s*tiling = (-1|\d),"
             r"\n\s*type = (\d),"
             r"\n.*"
-            r"\n\s*colour = \{(\d), (\d)\},"
-            r"(?:\n\s*colour_active = \{(\d), (\d)\})?"
+            r"\n\s*colour = \{(\d), (\d)},"
+            r"(?:\n\s*colour_active = \{(\d), (\d)})?"
         )
         tag_pattern = re.compile(r"\"([^\"]*?)\"")
         objects = []
@@ -623,7 +643,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             text_type = int(text_type)
             tag_list = []
             for tag in re.finditer(tag_pattern, raw_tags):
-                tag_list.append(tag.group(0).replace('"', ''))  # hack but i am Not touching that regex
+                # hack but i am Not touching that regex
+                tag_list.append(tag.group(0).replace('"', ''))
             tags = "\t".join(tag_list)
 
             objects.append(dict(
@@ -654,9 +675,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :text_type,
                 NULL,
                 :tags
-            ) 
+            )
             ON CONFLICT(name, version)
-            DO UPDATE SET 
+            DO UPDATE SET
                 sprite=excluded.sprite,
                 source={repr(constants.BABA_WORLD)},
                 inactive_color_x=excluded.inactive_color_x,
@@ -671,10 +692,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         )
 
     async def load_custom_tiles(self, file='*'):
-        '''Loads custom tile data from `data/custom/*.json`'''
+        """Loads custom tile data from `data/custom/*.json`"""
 
         def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
-            '''From config format to db format'''
+            """From config format to db format."""
             inactive = d.pop("color")
             if d.get("active") is not None:
                 d["inactive_color_x"] = inactive[0]
@@ -712,9 +733,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         :text_type,
                         :text_direction,
                         :tags
-                    ) 
+                    )
                     ON CONFLICT(name, version)
-                    DO UPDATE SET 
+                    DO UPDATE SET
                         sprite=excluded.sprite,
                         source=excluded.source,
                         inactive_color_x=excluded.inactive_color_x,
@@ -728,7 +749,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     ''',
                     objects
                 )
-                # this is a mega HACK, but I'm keeping it because the alternative is a headache
+                # this is a mega HACK, but I'm keeping it because the
+                # alternative is a headache
                 hacks = [
                     x for x in objects if "baba_special" in x["tags"].split("\t")]
                 await cur.executemany(
@@ -747,9 +769,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         :text_type,
                         :text_direction,
                         :tags
-                    ) 
+                    )
                     ON CONFLICT(name, version)
-                    DO UPDATE SET 
+                    DO UPDATE SET
                         sprite=excluded.sprite,
                         source=excluded.source,
                         inactive_color_x=excluded.inactive_color_x,
@@ -767,7 +789,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def hidden(self, ctx: Context):
-        '''Lists all hidden commands.'''
+        """Lists all hidden commands."""
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
         await ctx.send(f"All hidden commands:\n{cmds}")
 
@@ -780,7 +802,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(aliases=['execute', 'exec'], rest_is_raw=True)
     @commands.is_owner()
     async def run(self, ctx: Context, *, command: str):
-        '''Run a command from the command prompt.'''
+        """Run a command from the command prompt."""
         result = subprocess.getoutput(command)
         if len(result) + 15 > 2000:
             result = result[:1982] + '...'
@@ -789,14 +811,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def doc(self, ctx: Context, command: commands.Command):
-        '''Check a command's docstring.'''
+        """Check a command's docstring."""
         help = command.help
         await ctx.send(f"Command doc for {command}:\n{help}")
 
     @commands.command()
     @commands.is_owner()
     async def sql(self, ctx: Context, *, query: str):
-        '''Run some sql'''
+        """Run some sql."""
         filemode = False
         if query[:3] == '-f ':
             query = query[3:]  # hardcode but whatever
@@ -805,9 +827,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             result = await cur.execute(query)
             try:
                 data_rows = await result.fetchall()
-                data_column_headers = np.array([column[0] for column in result.get_cursor().description])
-                data_columns = np.array(data_rows,dtype=object)
-                formattable_columns = np.vstack([data_column_headers,data_columns]).T
+                data_column_headers = np.array(
+                    [column[0] for column in result.get_cursor().description])
+                data_columns = np.array(data_rows, dtype=object)
+                formattable_columns = np.vstack(
+                    [data_column_headers, data_columns]).T
                 header = '+'
                 for i, column in enumerate(formattable_columns):
                     max_length = 0
@@ -815,11 +839,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         if len(str(cell)) > max_length:
                             max_length = len(str(cell))
                     for j, cell in enumerate(column):
-                        column[j] = f'{str(cell):{max_length}}'.replace('\t',' ')
+                        column[j] = f'{str(cell):{max_length}}'.replace(
+                            '\t', ' ')
                     formattable_columns[i] = column
-                    header = header + '-'*max_length + '+'
+                    header = header + '-' * max_length + '+'
                 formattable_rows = formattable_columns.T
-                formatted = '|' + '|'.join(formattable_rows[0]) + f'|\n{header}'
+                formatted = '|' + \
+                    '|'.join(formattable_rows[0]) + f'|\n{header}'
                 for row in formattable_rows[1:]:
                     formatted_row = '|' + '|'.join(row) + '|'
                     if not filemode and len(row) + len(formatted) > 1800:
@@ -839,7 +865,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command()
     @commands.is_owner()
     async def loadletters(self, ctx: Context):
-        '''Scrapes individual letters from vanilla sprites.'''
+        """Scrapes individual letters from vanilla sprites."""
         ignored = json.load(open("config/letterignore.json"))
         fetch = await self.bot.db.conn.fetchall(
             f'''
@@ -870,14 +896,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     @commands.command(aliases=['mkdir'])
     @commands.is_owner()
     async def makedir(self, ctx: Context, name: str):
-        '''Makes a directory for sprites to go in.'''
+        """Makes a directory for sprites to go in."""
         os.mkdir(f'data/sprites/{name}')
         with open(f'data/custom/{name}.json', mode='x') as f:
             f.write('[]')
         await ctx.send(f"Made directory `{name}`.")
 
     async def load_letter(self, word: str, tile_type: int):
-        '''Scrapes letters from a sprite.'''
+        """Scrapes letters from a sprite."""
         chars = word[5:]  # Strip "text_" prefix
 
         # Get the number of rows
@@ -893,7 +919,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         # char_pos : [((x1, y1, x2, y2), Image), ...]
         char_sizes: dict[tuple[int, str], Any] = {}
 
-        # Scrape the sprites for the sprite characters in each of the three frames
+        # Scrape the sprites for the sprite characters in each of the three
+        # frames
         for i, plate in enumerate(plates):
             # Get the alpha channel in 1-bit depth
             alpha = Image.open(f"data/sprites/{constants.BABA_WORLD}/{word}_0_{i + 1}.png") \
