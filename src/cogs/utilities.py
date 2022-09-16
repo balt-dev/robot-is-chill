@@ -156,7 +156,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def flags(self, ctx: Context):
-        """Gets help on a render flag."""
+        """Shows a list of render flags."""
         flags = self.bot.flags.list
         await ButtonPages(
             source=FlagPageSource(
