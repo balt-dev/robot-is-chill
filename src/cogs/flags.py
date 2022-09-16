@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import requests
 from PIL import Image
 
-from .. import errors, constants
+from .. import constants
 from ..errors import InvalidFlagError
 from ..types import Context
 

@@ -7,13 +7,11 @@ import os
 import requests
 
 import math
-import random
 from PIL import Image
 import re
 from datetime import datetime
 from io import BytesIO
 from json import load
-from os import listdir
 from time import perf_counter
 from typing import Any, OrderedDict, TYPE_CHECKING
 
@@ -239,7 +237,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         kwargs = {}
         to_delete = []
-        do_embed = False
         for potential_flag, x, y in potential_flags:
             for flag in self.bot.flags.list:
                 to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
@@ -277,7 +274,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Splits "&"-joined words into stacks
         for y, row in enumerate(comma_grid):
             for x, stack in enumerate(row):
-                for l, timeline in enumerate(stack.split('&')):
+                for layer, timeline in enumerate(stack.split('&')):
                     for d, tile in enumerate(timeline.split('>')):
                         if len(tile):
                             assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
@@ -299,16 +296,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         t = await cur.fetchall()
                                         tile = re.sub(
                                             '(.+?)(:.+|$)', t[0][0] + ':4/2:lockhue_before' + r'\2', tile)
-                                layer_grid[d:, l, y, x] = tile
+                                layer_grid[d:, layer, y, x] = tile
                             else:
                                 if len(tile.split(';', 1)) == 2:
-                                    layer_grid[d:, l, y, x] = layer_grid[d, l, y, x].split(';', 1)[
+                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
                                         0] + tile
                                 else:
-                                    layer_grid[d:, l, y, x] = layer_grid[d, l, y, x].split(':', 1)[
+                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
                                         0] + tile
         # Get the dimensions of the grid
-        height, width = layer_grid.shape[2:]
         layer_grid = layer_grid.tolist()
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
@@ -363,11 +359,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
         description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
         if do_embed:
-            embed = discord.Embed(
-                color=self.bot.embed_color,
-                title=None,
-                description=None
-            )
+            embed = discord.Embed(color=self.bot.embed_color)
 
             def rendertime(v):
                 v *= 1000
