@@ -1061,6 +1061,18 @@ class Renderer:
                 )
                 alpha = ImageChops.subtract(plate_alpha, sprite_alpha)
                 sprite = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
+        '''
+        Idea:
+        Filter metaclass with each filter being a subclass
+        Define filter with syntax, desc, and hints
+        Define filter code inside of subclass
+        Make filters be a list[Type[Filter]]
+        for filter in filters:
+            sprite = filter.apply(sprite)
+        
+        Probably gonna have to mess with the variant handlers a bit
+        Maybe check for handlers, then if that fails, filters
+        '''
         for name, value in filters:
             if name == "lockhue_before":
                 sprite = Image.fromarray(
