@@ -231,7 +231,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Check flags
         potential_flags = filter(
-            lambda i: i.startswith("-"),
+            lambda i: i[0].startswith("-"),
             [(word, x, y)
              for y, row in enumerate(word_grid)
              for x, word in enumerate(row)]
@@ -248,6 +248,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         tborders = kwargs.get("tborders", False)
         file_format = kwargs.get('file_format', 'gif')
         global_variant = kwargs.get('global_variant', '')
+        do_embed = kwargs.get('do_embed', False)
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         try:
