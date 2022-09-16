@@ -178,8 +178,8 @@ async def setup(bot: Bot):
                 # except AttributeError:
                 #    raise InvalidFlagError("not actually sure what causes this, if you get this please ping me")
 
-    @flags.register(match=r"(?:--speed)=(\d+)(%)?",
-                    syntax="--speed=<speed: int>[%]",
+    @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
+                    syntax="(--speed | -speed)=<speed: int>[%]",
                     kwargs=["speed"])
     async def speed(match, _):
         """Sets how fast the render is.
