@@ -809,5 +809,14 @@
             "3"
         ],
         "tiling": "4"
+    },
+    {
+        "name": "adotile",
+        "sprite": "adotile",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "1"
     }
 ]

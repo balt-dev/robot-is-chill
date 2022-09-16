@@ -106,5 +106,14 @@
             "4"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "submarine",
+        "sprite": "sub",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

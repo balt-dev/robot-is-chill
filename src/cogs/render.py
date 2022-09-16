@@ -382,6 +382,7 @@ class Renderer:
                 try:
                     before_durations.append(frame.info['duration'])
                     im = frame.convert('RGBA')
+                    im = im.resize((im.width // 2, im.height // 2), Image.NEAREST)
                     new_image = Image.new(
                         'RGBA', (img_width, img_height), (0, 0, 0, 0))
                     new_image.paste(
@@ -500,13 +501,14 @@ class Renderer:
                         sprite = cached_open(
                             path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
                     except FileNotFoundError:
-                        if path_fallback is not None:
+                        try:
+                            assert path_fallback is not None
                             sprite = cached_open(
                                 path_fallback,
                                 cache=raw_sprite_cache,
                                 fn=Image.open).convert("RGBA")
-                        else:
-                            assert 0, f'The tile `{tile.name}` was found, but the files don\'t exist for it.'
+                        except (FileNotFoundError, AssertionError):
+                            raise AssertionError(f'The tile `{tile.name}:{tile.variant_number}` was found, but the files don\'t exist for it.')
                 sprite = sprite.resize(
                     (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
                 computed_hash = hash((
