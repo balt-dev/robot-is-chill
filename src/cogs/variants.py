@@ -374,7 +374,7 @@ async def setup(bot: Bot):
             else:
                 tile.custom_style = "noun"
 
-    def add(ctx, dst, var: object=True):
+    def add(ctx, dst, var: object = True):
         try:
             f = ctx.fields.get("filters")
             return {

@@ -154,7 +154,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     [
                         RawTile.from_str(
                             ("-" if tile ==
-                                    "-" else (tile[5:] if tile.startswith("tile_") else f"text_{tile}"))
+                             "-" else (tile[5:] if tile.startswith("tile_") else f"text_{tile}"))
                         ) if rule else RawTile.from_str(
                             ("-" if tile == "text_-" else tile)
                         )
@@ -244,9 +244,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for flag in self.bot.flags.list:
                 to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
         raw_output = kwargs.get("raw_output", False)
-        default_to_letters = kwargs.get("letters",False)
-        tborders = kwargs.get("tborders",False)
-        file_format = kwargs.get('file_format','gif')
+        default_to_letters = kwargs.get("letters", False)
+        tborders = kwargs.get("tborders", False)
+        file_format = kwargs.get('file_format', 'gif')
         global_variant = kwargs.get('global_variant', '')
         print(kwargs)
         for x, y in reversed(to_delete):
@@ -286,7 +286,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 tilecount += 1
                                 tile = tile.replace('rule_', 'text_')
                                 if (not (tile.find(':ng') != -
-                                1 or tile.find(':noglobal') != -
+                                         1 or tile.find(':noglobal') != -
                                          1)) and tile != "-":
                                     tile = re.sub(
                                         "(.+?)(:.+|$)", rf'\1{global_variant}\2', tile)
@@ -303,10 +303,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                             else:
                                 if len(tile.split(';', 1)) == 2:
                                     layer_grid[d:, l, y, x] = layer_grid[d, l, y, x].split(';', 1)[
-                                                                  0] + tile
+                                        0] + tile
                                 else:
                                     layer_grid[d:, l, y, x] = layer_grid[d, l, y, x].split(':', 1)[
-                                                                  0] + tile
+                                        0] + tile
         # Get the dimensions of the grid
         height, width = layer_grid.shape[2:]
         layer_grid = layer_grid.tolist()
@@ -329,9 +329,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             avgdelta, maxdelta, tiledelta, unique_sprites = await self.bot.renderer.render(
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
-                    palette=kwargs.get("palette",None),
-                    random_animations=kwargs.get("random_animations",None),
-                    gscale=kwargs.get("gscale",1)
+                    palette=kwargs.get("palette", None),
+                    random_animations=kwargs.get("random_animations", None),
+                    gscale=kwargs.get("gscale", 1)
                 ),
                 out=buffer,
                 extra_out=extra_buffer,

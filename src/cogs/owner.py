@@ -103,7 +103,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         with open(f"data/custom/{pack_name}.json", "r") as f:
             sprite_data = json.load(f)
         found = False
-        old_sprite_name = "ALSDFHASDFHSADLFBCASDPFHINsaDLKJFFBSADLFBLSADKASDFNLSADKF" #make sure this doesn't delete anything on accident
+        # make sure this doesn't delete anything on accident
+        old_sprite_name = "ALSDFHASDFHSADLFBCASDPFHINsaDLKJFFBSADLFBLSADKASDFNLSADKF"
         for i in range(len(sprite_data)):
             if sprite_data[i]['name'] == sprite_name:  # this is dumb
                 old_sprite_name = sprite_data[i]['sprite']
