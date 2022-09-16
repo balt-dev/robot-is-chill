@@ -12,10 +12,12 @@ class SplittingException(BabaError):
     args: cause
     """
 
+
 class InvalidFlagError(MiscError):
     """A flag failed to parse.
 
     args: cause"""
+
 
 class BadTileProperty(BabaError):
     """Tried to make a tile a property but it's tooo big.

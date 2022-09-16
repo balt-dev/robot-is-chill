@@ -17,7 +17,16 @@ if TYPE_CHECKING:
 
 
 class Flag:
-    def __init__(self, *, match: str, syntax: str, description: str, kwargs: list[str], mutator=(lambda x, c: x)):
+    def __init__(
+        self,
+        *,
+        match: str,
+        syntax: str,
+        description: str,
+        kwargs: list[str],
+        mutator=(
+            lambda x,
+            c: x)):
         self.pattern = re.compile(match)
         self.syntax = syntax
         self.description = description
@@ -47,7 +56,13 @@ class Flags:
 
     def register(self, match: str, syntax: str, kwargs: list[str]):
         def decorator(f):
-            self.list.append(Flag(match=match, syntax=syntax, description=f.__doc__, kwargs=kwargs, mutator=f))
+            self.list.append(
+                Flag(
+                    match=match,
+                    syntax=syntax,
+                    description=f.__doc__,
+                    kwargs=kwargs,
+                    mutator=f))
 
         return decorator
 
@@ -64,7 +79,8 @@ async def setup(bot: Bot):
         if match.group(1) is not None:
             tx, ty = int(match.group(1)), int(match.group(2))
             if not (0 <= tx < 7 and 0 <= ty < 5):
-                raise InvalidFlagError("The provided background color is invalid.")
+                raise InvalidFlagError(
+                    "The provided background color is invalid.")
             return ((tx, ty),)
         else:
             return ((0, 4),)
@@ -85,7 +101,8 @@ async def setup(bot: Bot):
         if palette == "random":
             palette = random.choice(listdir("data/palettes"))[:-4]
         elif palette + ".png" not in listdir("data/palettes"):
-            raise InvalidFlagError(f"Could not find a palette with name \"{palette}\".")
+            raise InvalidFlagError(
+                f"Could not find a palette with name \"{palette}\".")
         return [palette]
 
     @flags.register(match=r"--raw|-r(?:=(.+))?",
@@ -110,14 +127,16 @@ async def setup(bot: Bot):
         """Makes text default to letters."""
         return [True]
 
-    @flags.register(match=r"(?:--frames|-frames|-f)=([123]+)",
-                    syntax="--frames | -f",
-                    kwargs=["frames"])
+    @flags.register(
+        match=r"(?:--frames|-frames|-f)=([123]+)",
+        syntax="(--frames | -f)=<frame: 1, 2, or 3 (arbitrary # of times)>",
+        kwargs=["frames"])
     async def frames(match, _):
         """Sets which wobble frames to use."""
         frames = []
         for frame in list(match.group(1)):
-            frames.append(int(frame))  # you have no idea how much i wish i could use a yield here
+            # you have no idea how much i wish i could use a yield here
+            frames.append(int(frame))
         return [frames]
 
     @flags.register(match=r"-c|--combine",
@@ -148,15 +167,15 @@ async def setup(bot: Bot):
                 return await ctx.error('None of your commands were found in the last `10` messages.')
         finally:
             if do_finally:
-                #try:
-                    assert int(
-                        requests.head(
-                            msg.attachments[0].url, stream=True).headers.get(
-                            'content-length',
-                            0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-                    return [Image.open(requests.get(
-                        msg.attachments[0].url, stream=True).raw)]
-                #except AttributeError:
+                # try:
+                assert int(
+                    requests.head(
+                        msg.attachments[0].url, stream=True).headers.get(
+                        'content-length',
+                        0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
+                return [Image.open(requests.get(
+                    msg.attachments[0].url, stream=True).raw)]
+                # except AttributeError:
                 #    raise InvalidFlagError("not actually sure what causes this, if you get this please ping me")
 
     @flags.register(match=r"(?:--speed)=(\d+)(%)?",
@@ -199,14 +218,16 @@ Use % to set a percentage of the default render speed."""
                     kwargs=["crop"])
     async def crop(match, _):
         """Crops the render to the bounding box."""
-        return ((int(match.group(1))), (int(match.group(2))), (int(match.group(3))), (int(match.group(4)))),
+        return ((int(match.group(1))), (int(match.group(2))),
+                (int(match.group(3))), (int(match.group(4)))),
 
     @flags.register(match=r"--pad=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--pad=<left: int>/<top: int>/<right: int>/<bottom: int>",
                     kwargs=["pad"])
     async def pad(match, _):
         """Pads the render on each side."""
-        return ((int(match.group(1))), (int(match.group(2))), (int(match.group(3))), (int(match.group(4)))),
+        return ((int(match.group(1))), (int(match.group(2))),
+                (int(match.group(3))), (int(match.group(4)))),
 
     @flags.register(match=r"(?:--scale|-s)=(\d+)",
                     syntax="--scale|-s=<scale: int>",
@@ -233,7 +254,7 @@ Use % to set a percentage of the default render speed."""
                     syntax="--noloop|-nl",
                     kwargs=["loop"])
     async def noloop(_, __):
-        """Shows some extra stats about the render."""
+        """Makes the render not loop."""
         return False,
 
     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",

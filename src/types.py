@@ -41,8 +41,10 @@ class Bot(commands.Bot):
         webhook_id: int,
         prefixes: list[str],
         exit_code: int = 0,
-        **kwargs): super().__init__(*args,**kwargs)
+        **kwargs): super().__init__(*args, **kwargs)
 
-    async def get_context(self, message: discord.Message, **kwargs) -> Coroutine[Any,
-                                                                                 Any,
-                                                                                 Context]: ...
+    async def get_context(self,
+                          message: discord.Message,
+                          **kwargs) -> Coroutine[Any,
+                                                 Any,
+                                                 Context]: ...

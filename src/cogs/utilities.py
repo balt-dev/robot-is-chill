@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import math
 from io import BytesIO
 from pathlib import Path
 
@@ -90,18 +92,22 @@ class HintPageSource(menus.ListPageSource):
 class FlagPageSource(menus.ListPageSource):
     def __init__(
             self, data: Sequence[flags.Flag]):
-        super().__init__(data, per_page=1)
+        super().__init__(data, per_page=7)
 
     async def format_page(self, menu: menus.Menu, entries: Sequence[flags.Flag]) -> discord.Embed:
         embed = discord.Embed(
             color=menu.bot.embed_color,
             title=None,
         )
-        embed.description = str(entries)
+        embed.description = '\n'.join([str(entry) for entry in entries])
+        embed.set_footer(text="Page " + str(menu.current_page +
+                         1) + "/" + str(self.get_max_pages()))
         return embed
 
 
-class ButtonPages(menus.MenuPages, inherit_buttons=False):  # TODO: make these discord.ui buttons
+class ButtonPages(
+        menus.MenuPages,
+        inherit_buttons=False):  # TODO: make these discord.ui buttons
     @button('⏮', position=First())
     async def go_to_first_page(self, payload):
         await self.show_page(0)
@@ -213,13 +219,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         if flags.get("type") is None or flags.get("type") == "tile":
             if plain_query.strip() or any(
                     x in flags for x in (
-                            "sprite",
-                            "text",
-                            "source",
-                            "modded",
-                            "color",
-                            "tiling",
-                            "tag")):
+                        "sprite",
+                        "text",
+                        "source",
+                        "modded",
+                        "color",
+                        "tiling",
+                        "tag")):
                 color = flags.get("color")
                 f_color_x = f_color_y = None
                 if color is not None:
