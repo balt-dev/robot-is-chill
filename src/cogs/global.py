@@ -231,8 +231,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         # Check flags
         potential_flags = filter(
-            lambda i: i is not None,
-            [(word, x, y) if word.startswith("-") else None
+            lambda i: i.startswith("-"),
+            [(word, x, y)
              for y, row in enumerate(word_grid)
              for x, word in enumerate(row)]
         )
