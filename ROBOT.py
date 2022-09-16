@@ -63,6 +63,8 @@ class Bot(commands.Bot):
         self.db = Database()
         self.db_path = db_path
         self.config = config.__dict__
+        self.renderer = None
+        self.flags = None
         super().__init__(*args, **kwargs)
 
         # has to be after __init__
