@@ -184,6 +184,8 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error(f'The overlay `{error}` does not exist.')
             elif isinstance(error, asyncio.exceptions.TimeoutError):
                 return await ctx.error(f'The render took too long, so it was cancelled.')
+            elif isinstance(error, errors.InvalidFlagError):
+                return await ctx.error(f'A flag failed to parse:\n> `{error}`')
             # All other Errors not returned come here... And we can just print
             # the default TraceBack + log
             if os.name == "nt":

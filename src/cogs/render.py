@@ -95,7 +95,7 @@ class Renderer:
             image_source: str = constants.BABA_WORLD,
             out: str | BinaryIO = "target/renders/render.gif",
             background: tuple[int, int] | str | None = None,
-            upscale: int = 1,
+            upscale: int = 2,
             extra_out: str | BinaryIO | None = None,
             extra_name: str | None = None,
             frames: list[int] = (1, 2, 3),
@@ -109,7 +109,8 @@ class Renderer:
             loop: bool = True,
             spacing: int = constants.DEFAULT_SPRITE_SIZE,
             expand: bool = False,
-            boomerang: bool = False
+            boomerang: bool = False,
+            **kwargs
     ):
         """Takes a list of tile objects and generates a gif with the associated
         sprites.
@@ -382,8 +383,7 @@ class Renderer:
             for frame in ImageSequence.Iterator(before_image):
                 try:
                     before_durations.append(frame.info['duration'])
-                    im = frame.convert('RGBA').resize(
-                        (frame.width // 2, frame.height // 2), Image.NEAREST)
+                    im = frame.convert('RGBA')
                     new_image = Image.new(
                         'RGBA', (img_width, img_height), (0, 0, 0, 0))
                     new_image.paste(
@@ -715,6 +715,10 @@ class Renderer:
             gscale: float = 1
     ) -> list[list[list[list[ReadyTile]]]]:
         """Final individual tile processing step."""
+        print(gscale)
+        palette = palette or "default"
+        random_animations = random_animations if random_animations is not None else False
+        gscale = gscale if gscale is not None else 2
         sprite_cache = {}
         self.sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")

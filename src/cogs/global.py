@@ -234,172 +234,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         potential_count = 0
         for y, row in enumerate(word_grid):
             for x, word in enumerate(row):
-                potential_flags.append((word, x, y))
-                potential_count += 1
-        background = None
-        palette = "default"
-        before_image = None
-        raw_name = None
+                if word.startswith("-"):
+                    potential_flags.append((word, x, y))
+                    potential_count += 1
+        kwargs = {}
         to_delete = []
-        raw_output = False
-        default_to_letters = False
-        frames = [1, 2, 3]
-        speed = 200
-        global_variant = ''
-        gscale = 1
-        gridol = None
-        random_animations = True
-        tborders = False
-        animate = (0, None)
-        crop = None
-        upscale = 2
-        pad = (0, 0, 0, 0)
         do_embed = False
-        loop = True
-        file_format = 'gif'
-        spacing = constants.DEFAULT_SPRITE_SIZE
-        expand = False
-        boomerang = False
-        for flag, x, y in potential_flags:
-            if bg_match := re.fullmatch(
-                    r"(?:--background|-b)(?:=(\d)/(\d))?", flag):
-                if bg_match.group(1) is not None:
-                    tx, ty = int(bg_match.group(1)), int(bg_match.group(2))
-                    if not (0 <= tx <= 7 and 0 <= ty <= 5):
-                        return await ctx.error("The provided background color is invalid.")
-                    background = tx, ty
-                else:
-                    background = (0, 4)
-                to_delete.append((x, y))
-                continue
-            if bg_match2 := re.fullmatch(
-                    r"(?:--background|-b)=#([\da-fA-F]{6})", flag):
-                if bg_match2.group(1) is not None:
-                    background = bg_match2.group(1)
-                to_delete.append((x, y))
-                continue
-            if flag_match := re.fullmatch(
-                    r"(?:--palette=|-p=|palette:)(\w+)", flag):
-                palette = flag_match.group(1)
-                if palette == "random":
-                    palette = random.choice(listdir("data/palettes"))[:-4]
-                elif palette + ".png" not in listdir("data/palettes"):
-                    return await ctx.error(f"Could not find a palette with name \"{palette}\".")
-                to_delete.append((x, y))
-            if raw_match := re.fullmatch(r"(?:--raw|-r)(?:=(.+))?", flag):
-                raw_name = raw_match.group(1) if raw_match.group(1) else None
-                upscale = 1
-                raw_output = True
-                to_delete.append((x, y))
-            if re.fullmatch(r"--comment=\"(.*)\"", flag):
-                to_delete.append((x, y))
-            if re.fullmatch(r"--letter", flag):
-                default_to_letters = True
-                to_delete.append((x, y))
-            if re.fullmatch(r"--tileborder|-tb", flag):
-                tborders = True
-                to_delete.append((x, y))
-            frames_match = re.fullmatch(
-                r"(?:--frames|-frames|-f)=([123]).*", flag)
-            if frames_match and frames_match.group(0):
-                frames = []
-                for n in re.finditer(r"[123]", flag):
-                    if n.group(0) in ['1', '2', '3']:
-                        frames.append(int(n.group(0)))
-                to_delete.append((x, y))
-            if re.fullmatch(r"-c", flag) or re.fullmatch(r"--combine", flag):
-                to_delete.append((x, y))
-                msg = None
-                do_finally = True
-                try:
-                    msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-                    if not msg.attachments:
-                        do_finally = False
-                        return await ctx.error(
-                            'The replied message doesn\'t have an attachment. Did you reply to the bot?')
-                except BaseException:
-                    async for m in ctx.channel.history(limit=10):
-                        if m.author.id == self.bot.user.id and m.attachments:
-                            try:
-                                reply = await ctx.channel.fetch_message(m.reference.message_id)
-                                if reply.author == ctx.message.author:
-                                    msg = m
-                                    break
-                            except BaseException:
-                                pass
-                    if msg is None:
-                        do_finally = False
-                        return await ctx.error('None of your commands were found in the last `10` messages.')
-                finally:
-                    if do_finally:
-                        try:
-                            assert int(
-                                requests.head(
-                                    msg.attachments[0].url, stream=True).headers.get(
-                                    'content-length',
-                                    0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-                            before_image = Image.open(requests.get(
-                                msg.attachments[0].url, stream=True).raw)
-                        except AttributeError:
-                            pass
-            if speed_match := re.fullmatch(r"-speed=(\d+)(%)?", flag):
-                speed = int(speed_match.group(1))
-                if speed_match.group(2) is not None:
-                    speed = int(200 // (speed / 100))
-                if speed < 20:
-                    return await ctx.error(
-                        f'Frame delta of {speed} milliseconds is too small for the specified file format to handle.')
-                to_delete.append((x, y))
-            if global_match := re.fullmatch(
-                    r"(?:--global|-global|-g)=(.+)", flag):
-                global_variant = ':' + global_match.group(1)
-                to_delete.append((x, y))
-            if re.fullmatch(r"--consistent|-co|--synchronize|-sync", flag):
-                random_animations = False
-                to_delete.append((x, y))
-            if gridovmatch := re.fullmatch(
-                    r"(?:--grid|-gr)=(\d+)/(\d+)", flag):
-                gridol = (int(gridovmatch.group(1)), int(gridovmatch.group(2)))
-                to_delete.append((x, y))
-            if cropmatch := re.fullmatch(
-                    r"(?:--|-)crop=(\d+)/(\d+)/(\d+)/(\d+)", flag):
-                crop = tuple([*[int(x) for x in cropmatch.groups()]])
-                to_delete.append((x, y))
-            padmatch = re.fullmatch(r"(?:--|-)pad=(\d+)"
-                                    r"/(\d+)/(\d+)/(\d+)", flag)
-            if padmatch:
-                pad = tuple([*[int(x) for x in padmatch.groups()]])
-                to_delete.append((x, y))
-            if gsmatch := re.fullmatch(
-                    r"(?:--scale|-s)=(-?\d+(?:\.\d+)?)", flag):
-                gscale = min(float(gsmatch.group(1)), 8)
-                to_delete.append((x, y))
-            if spmatch := re.fullmatch(
-                    r"(?:--multiplier|-m)=((?:\d*)?(?:\.\d+)?)", flag):
-                upscale = float(spmatch.group(1))
-                to_delete.append((x, y))
-            if re.fullmatch(r'--verbose|-v', flag):
-                do_embed = True
-                to_delete.append((x, y))
-            if re.fullmatch(r'--noloop|-nl', flag):
-                loop = False
-                to_delete.append((x, y))
-            if animmatch := re.fullmatch(r'(?:--anim|-am)=(\d+)/(\d+)', flag):
-                animate = (int(animmatch.group(1)), int(animmatch.group(2)))
-                to_delete.append((x, y))
-            if formatmatch := re.fullmatch(r'(?:--format|-f)=(gif|png)', flag):
-                file_format = formatmatch.group(1)
-                to_delete.append((x, y))
-            if spacingmatch := re.fullmatch(
-                    r'(?:--spacing|-sp)=-?(\d+)', flag):
-                spacing = int(spacingmatch.group(1))
-                to_delete.append((x, y))
-            if re.fullmatch(r'--expand|-ex', flag):
-                expand = True
-                to_delete.append((x, y))
-            if re.fullmatch(r'--boomerang|-br', flag):
-                boomerang = True
-                to_delete.append((x, y))
+        for potential_flag, x, y in potential_flags:
+            for flag in self.bot.flags.list:
+                to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
+        raw_output = kwargs.get("raw_output", False)
+        default_to_letters = kwargs.get("letters",False)
+        tborders = kwargs.get("tborders",False)
+        file_format = kwargs.get('file_format','gif')
+        global_variant = kwargs.get('global_variant', '')
+        print(kwargs)
         for x, y in reversed(to_delete):
             del word_grid[y][x]
         try:
@@ -480,29 +329,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             avgdelta, maxdelta, tiledelta, unique_sprites = await self.bot.renderer.render(
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
-                    palette=palette,
-                    random_animations=random_animations,
-                    gscale=gscale
+                    palette=kwargs.get("palette",None),
+                    random_animations=kwargs.get("random_animations",None),
+                    gscale=kwargs.get("gscale",1)
                 ),
-                before_image=before_image,
-                palette=palette,
-                background=background,
                 out=buffer,
-                upscale=upscale,
                 extra_out=extra_buffer,
-                extra_name=raw_name if raw_output else None,  # type: ignore
-                frames=frames,
-                speed=speed,
-                gridol=gridol,
-                scaleddef=gscale,
-                crop=crop,
-                pad=pad,
-                format=file_format,
-                animation=animate,
-                loop=loop,
-                spacing=spacing,
-                expand=expand,
-                boomerang=boomerang
+                **kwargs
             )
         except errors.TileNotFound as e:
             word = e.args[0]

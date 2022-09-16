@@ -15,8 +15,10 @@ import zipfile
 import glob
 import discord
 from discord.ext import commands, menus
+from discord.ext.menus import button, First, Last
 from PIL import Image, ImageFont, ImageDraw
 
+from . import flags
 from .. import constants
 from ..types import Bot, Context
 
@@ -85,6 +87,44 @@ class HintPageSource(menus.ListPageSource):
         return embed
 
 
+class FlagPageSource(menus.ListPageSource):
+    def __init__(
+            self, data: Sequence[flags.Flag]):
+        super().__init__(data, per_page=1)
+
+    async def format_page(self, menu: menus.Menu, entries: Sequence[flags.Flag]) -> discord.Embed:
+        embed = discord.Embed(
+            color=menu.bot.embed_color,
+            title=None,
+        )
+        embed.description = str(entries)
+        return embed
+
+
+class ButtonPages(menus.MenuPages, inherit_buttons=False):  # TODO: make these discord.ui buttons
+    @button('⏮', position=First())
+    async def go_to_first_page(self, payload):
+        await self.show_page(0)
+
+    @button('◀', position=First(1))
+    async def go_to_previous_page(self, payload):
+        await self.show_checked_page(self.current_page - 1)
+
+    @button('▶', position=Last(1))
+    async def go_to_next_page(self, payload):
+        await self.show_checked_page(self.current_page + 1)
+
+    @button('⏭', position=Last(2))
+    async def go_to_last_page(self, payload):
+        max_pages = self._source.get_max_pages()
+        last_page = max(max_pages - 1, 0)
+        await self.show_page(last_page)
+
+    @button('⏹', position=Last())
+    async def stop_pages(self, payload):
+        self.stop()
+
+
 class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -109,23 +149,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def flags(self, ctx: Context, *, query: str = False):
+    async def flags(self, ctx: Context):
         """Gets help on a render flag."""
-        # i wish i could update this manually but alas i can't without some
-        # EXTREME jank.
-        flaglist = (("-b[=x/y]", "Sets the background to the palette index specified, or 0/0 if not."), ("-p=string", "Sets the palette to the specified palette. (Try `=search type:palette`?)"), ("-r[=name]",
-                                                                                                                                                                                                    "Outputs the render as a raw file, ready to put in Baba Is You. If you specify a name, the tile will be called said name."), ("--letter", "Makes text smaller than 3 long render as big letters by default."), ("--comment=anything", "Just a comment. Does nothing."), ("-f=(comma separated values in [1,2,3])", "Chooses which wobble frames to display."), ("-c",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "Prepends the render in the message you replied to in the render, or the last message you sent in the channel if there is none."), ("-speed=int",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Sets the frame delta of the image to the specified number in milliseconds. Unspecified, the speed is 200ms."), ("-g=string", "Applies the specified string as a variant to every tile in the image"), ("-co", "Disables randomization of tile wobble."), ("-gr=int/int", "Adds a grid overlay, dimensions being the specified numbers."), ("-s=float", "Upscales the image pre-processing."), ("-m=float", "Upscales the image post-processing."), ("-tb", "Makes tiles connect with the edge of the image."), ("-crop=int/int/int/int", "Crops the render to the specified pixels."), ("-pad=int/int/int/int", "Pads the render with the specified pixels."), ("-v", "Gives more information about the render."), ("-f=<gif|png>", "Sets the format of the render output."), ("-am=<a>/<ad>",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Makes the wobble frames independent from the animation.\nThe first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."), ("-nl", "Makes the render not loop.")
-                    # ,("","")
-                    )
-
-        emb = discord.Embed(
-            title=f"Flag list",
-            colour=self.bot.embed_color,
-            description="\n".join([f'`{a}`: {b}' for a, b in flaglist]))
-        return await ctx.reply(embed=emb, mention_author=False)
+        flags = self.bot.flags.list
+        await ButtonPages(
+            source=FlagPageSource(
+                flags
+            ),
+        ).start(ctx)
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
@@ -181,14 +212,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         if flags.get("type") is None or flags.get("type") == "tile":
             if plain_query.strip() or any(
-                x in flags for x in (
-                    "sprite",
-                    "text",
-                    "source",
-                    "modded",
-                    "color",
-                    "tiling",
-                    "tag")):
+                    x in flags for x in (
+                            "sprite",
+                            "text",
+                            "source",
+                            "modded",
+                            "color",
+                            "tiling",
+                            "tag")):
                 color = flags.get("color")
                 f_color_x = f_color_y = None
                 if color is not None:
@@ -329,12 +360,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 if plain_query.lower() in variant.lower():
                     results["variant", variant] = variant
 
-        await menus.MenuPages(
+        await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
                 plain_query
             ),
-            clear_reactions_after=True
         ).start(ctx)
 
     @commands.command()
@@ -493,13 +523,12 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 )
             return await ctx.error(f"No hints found for `{choice.display()}`.")
 
-        await menus.MenuPages(
+        await ButtonPages(
             source=HintPageSource(
                 list(hints.items()),
                 choice,
                 len(levels)
             ),
-            clear_reactions_after=True
         ).start(ctx)
 
 
