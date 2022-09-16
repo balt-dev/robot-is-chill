@@ -105,12 +105,12 @@ class Renderer:
             scaleddef: float = 1,
             crop: tuple[int, int, int, int] | None = None,
             pad: tuple[int, int, int, int] | None = (0, 0, 0, 0),
-            format: str = 'gif',
+            image_format: str = 'gif',
             loop: bool = True,
             spacing: int = constants.DEFAULT_SPRITE_SIZE,
             expand: bool = False,
             boomerang: bool = False,
-            **kwargs
+            **_
     ):
         """Takes a list of tile objects and generates a gif with the associated
         sprites.
@@ -125,7 +125,6 @@ class Renderer:
         """
         animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
-        dur_check = []
         imgs = []
         times = []
         width = len(grid[0][0][0])
@@ -141,7 +140,7 @@ class Renderer:
         if animation:
             frames = np.repeat(frames, animation).tolist()
             frames = (frames * (math.ceil(len(durations) /
-                      animation_delta)))[:len(durations)]
+                                          animation_delta)))[:len(durations)]
 
         def wl(a):
             try:
@@ -163,11 +162,10 @@ class Renderer:
                 np.array(grid)))
         img_width = int(img_width_raw + (2 * padding) + pad[0] + pad[2])
         img_height = int(img_height_raw + (2 * padding) + pad[1] + pad[3])
-        i = 0
         bg_iter = [0] if animation else range(
             steps)  # no iteration on animation
         for _ in bg_iter:
-            for l, frame in enumerate(frames):
+            for layer, frame in enumerate(frames):
                 if images and image_source is not None:
                     img = Image.new("RGBA", (img_width, img_height))
                     # for loop in case multiple background images are used
@@ -194,7 +192,7 @@ class Renderer:
         pad_r = pad_u = pad_l = pad_d = 0
         dframes = animation_delta if animation else len(frames)
         for d, timestep in enumerate(grid):
-            for l, layer in enumerate(timestep):
+            for layer in timestep:
                 for y, row in enumerate(layer):
                     for x, tile in enumerate(row):
                         # i should recode this whole section but i'm too scared
@@ -407,7 +405,7 @@ class Renderer:
                     img[:, row * gridol[1] * 2,
                         :] = ~img[:, row * gridol[1] * 2, :]
                     img[:, row * gridol[1] * 2, 3] = 255
-            if format == 'gif':
+            if image_format == 'gif':
                 img[:, :, :3] = (img[:, :, :3] *
                                  (img[:, :, 3] /
                                   255).repeat(3).reshape(img.shape[:2] +
@@ -432,7 +430,7 @@ class Renderer:
             durations=durations,
             extra_out=extra_out,
             extra_name=extra_name,
-            image_format=format,
+            image_format=image_format,
             loop=loop,
             boomerang=boomerang,
             background=(background is not None)
@@ -470,7 +468,6 @@ class Renderer:
                     style=tile.custom_style or (
                         "noun" if len(tile.name) < 1 else "letter"),
                     direction=tile.custom_direction,
-                    meta_level=tile.meta_level,
                     wobble=wobble,
                     filters=tile.filters,
                     position=(x, y),
@@ -531,10 +528,8 @@ class Renderer:
                         sprite,
                         style=tile.custom_style,
                         direction=tile.custom_direction,
-                        meta_level=tile.meta_level,
                         wobble=wobble,
-                        filters=tile.filters,
-                        gscale=gscale
+                        filters=tile.filters
                     )
                     if "glitch" not in str(tile.filters):
                         self.sprite_cache[computed_hash] = sprite
@@ -752,7 +747,6 @@ class Renderer:
             *,
             style: str,
             direction: int | None,
-            meta_level: int,
             wobble: int,
             seed: int | None = None,
             filters: list,
@@ -956,8 +950,6 @@ class Renderer:
             direction=direction,
             wobble=wobble,
             filters=filters,
-            name="text" + raw,
-            meta_level=meta_level,
             style=style
         )
 
@@ -967,10 +959,8 @@ class Renderer:
             sprite: Image.Image,
             *,
             direction: int | None,
-            meta_level: int,
             wobble: int,
             filters: list,
-            gscale: float,
             style: str
     ) -> Image.Image:
         """Takes an image, taking tile data from its name, and applies the
@@ -988,10 +978,8 @@ class Renderer:
                 original_style=original_style,
                 original_direction=original_direction,
                 direction=direction,
-                meta_level=meta_level,
                 wobble=wobble,
                 filters=filters,
-                name=name,
                 style=style
             )
         except ValueError as e:
@@ -1005,9 +993,7 @@ class Renderer:
             original_style: str,
             original_direction: int | None,
             direction: int | None,
-            meta_level: int,
             wobble: int,
-            name: str,
             style: str | None = None,
             filters: list,  # using list of tuples now
             seed: int | None = None
@@ -1059,10 +1045,10 @@ class Renderer:
                 sprite = sprite.crop(
                     (box[0],
                      box[1],
-                        constants.DEFAULT_SPRITE_SIZE +
-                        box[0],
-                        constants.DEFAULT_SPRITE_SIZE +
-                        box[1]))
+                     constants.DEFAULT_SPRITE_SIZE +
+                     box[0],
+                     constants.DEFAULT_SPRITE_SIZE +
+                     box[1]))
             if style == "property":
                 assert (sprite.height <= constants.DEFAULT_SPRITE_SIZE and sprite.width <=
                         constants.DEFAULT_SPRITE_SIZE), f'Properties can\'t be larger than {constants.DEFAULT_SPRITE_SIZE}x{constants.DEFAULT_SPRITE_SIZE}.'
@@ -1092,10 +1078,6 @@ class Renderer:
                 assert h <= 24 and w <= 24, 'Image too large for 3oo filter!'
 
                 def carve_once(img):
-                    def get_diff(coord1: tuple, coord2: tuple):
-                        return math.dist(
-                            img[coord1[0], coord1[1]], img[coord2[0], coord2[1]])
-
                     lscore = None
                     lpts = None
                     for x in range(img.shape[1]):
@@ -1198,7 +1180,8 @@ class Renderer:
                 brightnessvalue = round(value * 255)
 
                 im[(im[:, :] == [0, 0, 0, 255]).all(2)] = [brightnessvalue, brightnessvalue,
-                                                           brightnessvalue, 255]  # Optimal, "somehow this doesn't fuck up anywhere"
+                                                           brightnessvalue,
+                                                           255]  # Optimal, "somehow this doesn't fuck up anywhere"
 
                 sprite = Image.fromarray(im)
             elif name == 'surround' and isinstance(value, float):
@@ -1234,7 +1217,8 @@ class Renderer:
                 brightnessvalue = round(value * 255)
 
                 im[(im[:, :] == [0, 0, 0, 255]).all(2)] = [brightnessvalue, brightnessvalue,
-                                                           brightnessvalue, 255]  # Optimal, "somehow this doesn't fuck up anywhere"
+                                                           brightnessvalue,
+                                                           255]  # Optimal, "somehow this doesn't fuck up anywhere"
 
                 sprite = Image.fromarray(im)
             elif name == 'colselect' and value is not None:
@@ -1311,23 +1295,22 @@ class Renderer:
                     (math.floor(
                         sprite.width *
                         value[0]),
-                        math.floor(
-                        sprite.height *
-                        value[1])),
+                     math.floor(
+                         sprite.height *
+                         value[1])),
                     resample=Image.NEAREST)
             elif name == 'wrap' and any([x != 0 for x in value]):
                 sprite = Image.fromarray(
                     np.roll(np.array(sprite), value, (1, 0)))
             elif name == 'pixelate':
                 wid, hgt = sprite.size
-                mx, my = value if len(value) == 2 else (value[0], value[0])
                 sprite = sprite.resize(
                     (math.floor(
                         sprite.width /
                         value[0]),
-                        math.floor(
-                        sprite.height /
-                        value[1])),
+                     math.floor(
+                         sprite.height /
+                         value[1])),
                     resample=Image.NEAREST)
                 sprite = sprite.resize((wid, hgt), resample=Image.NEAREST)
             elif name == 'glitch' and all([x != 0 for x in value]):
@@ -1341,31 +1324,31 @@ class Renderer:
                     sprite, fil, absolute=False)
             elif name == 'wavex' and value[1] != 0:
                 numpysprite = np.array(sprite)
-                for l in range(len(numpysprite)):
-                    off = np.sin(((l / numpysprite.shape[0]) * value[2] * np.pi * 2) + (
+                for layer in range(len(numpysprite)):
+                    off = np.sin(((layer / numpysprite.shape[0]) * value[2] * np.pi * 2) + (
                         value[0] / numpysprite.shape[0] * np.pi * 2)) * value[1]
-                    numpysprite[l] = rotate(
-                        numpysprite[l].tolist(), int(off + 0.5))
+                    numpysprite[layer] = rotate(
+                        numpysprite[layer].tolist(), int(off + 0.5))
                 sprite = Image.fromarray(numpysprite)
             elif name == 'wavey' and value[1] != 0:
                 numpysprite = np.array(sprite).swapaxes(0, 1)
-                for l in range(len(numpysprite)):
-                    off = np.sin(((l / numpysprite.shape[0]) * value[2] * np.pi * 2) + (
+                for layer in range(len(numpysprite)):
+                    off = np.sin(((layer / numpysprite.shape[0]) * value[2] * np.pi * 2) + (
                         value[0] / numpysprite.shape[0] * np.pi * 2)) * -value[1]
-                    numpysprite[l] = rotate(
-                        numpysprite[l].tolist(), int(off + 0.5))
+                    numpysprite[layer] = rotate(
+                        numpysprite[layer].tolist(), int(off + 0.5))
                 sprite = Image.fromarray(numpysprite.swapaxes(0, 1))
             elif name == 'gradientx' and value != (1, 1, 1, 1):
                 numpysprite = np.array(sprite).swapaxes(0, 1)
-                for l in range(len(numpysprite)):
-                    v = gradient(l, *(value * np.array([24, 24, 1, 1])))
-                    numpysprite[l] = numpysprite[l] * (v, v, v, 1)
+                for layer in range(len(numpysprite)):
+                    v = gradient(layer, *(value * np.array([24, 24, 1, 1])))
+                    numpysprite[layer] *= v, v, v, 1
                 sprite = Image.fromarray(numpysprite.swapaxes(0, 1))
             elif name == 'gradienty' and value != (1, 1, 1, 1):
                 numpysprite = np.array(sprite)
-                for l in range(len(numpysprite)):
-                    v = gradient(l, *(value * np.array([24, 24, 1, 1])))
-                    numpysprite[l] = numpysprite[l] * (v, v, v, 1)
+                for layer in range(len(numpysprite)):
+                    v = gradient(layer, *(value * np.array([24, 24, 1, 1])))
+                    numpysprite[layer] *= v, v, v, 1
                 sprite = Image.fromarray(numpysprite)
             elif name == 'flipx':
                 sprite = ImageOps.mirror(sprite)
@@ -1397,7 +1380,6 @@ class Renderer:
                         0,
                         1))
                 for i, col in enumerate(sprite_arr):
-                    l = col
                     col_removed = list(filter(lambda a: a[3] != 0, col))
                     while len(col_removed) < len(col):
                         col_removed.insert(0, (0, 0, 0, 0))
@@ -1454,7 +1436,7 @@ class Renderer:
                 arr[:, :, 2] = np.roll(arr[:, :, 2], value[1], 0)
                 arr = arr.astype(np.uint16)
                 arr[:, :, 3] += np.roll(np.roll(arr[:,
-                                                    :, 3], -value[0], 1), -value[1], 0)
+                                                :, 3], -value[0], 1), -value[1], 0)
                 arr[:, :, 3] += np.roll(np.roll(arr[:, :, 3],
                                                 value[0], 1), value[1], 0)
                 arr[arr > 255] = 255
@@ -1554,18 +1536,14 @@ class Renderer:
                                                                                        paddedheight]])
                 srcpoints = np.float32(srcpoints.tolist())
                 dstpoints = np.float32(dstpoints.tolist())
-                Mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
-                spritenumpywarp = np.pad(
-                    spritenumpywarp,
-                    ((paddedheight,
-                      paddedheight),
-                     (paddedwidth,
-                      paddedwidth),
-                        (0,
-                         0)),
-                    'constant',
-                    constant_values=0)
-                warped = cv2.warpPerspective(spritenumpywarp, Mwarp, dsize=(
+                mwarp = cv2.getPerspectiveTransform(srcpoints, dstpoints)
+                spritenumpywarp = np.pad(spritenumpywarp, ((paddedheight,
+                                                            paddedheight),
+                                                           (paddedwidth,
+                                                            paddedwidth),
+                                                           (0,
+                                                            0)), constant_values=0)
+                warped = cv2.warpPerspective(spritenumpywarp, mwarp, dsize=(
                     int((paddedwidth * 2) + sprite.width), int((paddedheight * 2) + sprite.height)),
                     flags=cv2.INTER_NEAREST)
                 sprite = Image.fromarray(warped)
@@ -1618,8 +1596,8 @@ class Renderer:
         zip file there.
         """
         if boomerang and len(imgs) > 2:
-            imgs = imgs + imgs[-2:0:-1]
-            durations = durations + durations[-2:0:-1]
+            imgs += imgs[-2:0:-1]
+            durations += durations[-2:0:-1]
         if image_format == 'gif':
             if not background:
                 for i, im in enumerate(imgs):

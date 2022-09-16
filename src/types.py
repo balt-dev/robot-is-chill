@@ -34,14 +34,16 @@ class Bot(commands.Bot):
     handlers: VariantHandlers
 
     def __init__(
-        self,
-        *args,
-        cogs: list[str],
-        embed_color: discord.Color,
-        webhook_id: int,
-        prefixes: list[str],
-        exit_code: int = 0,
-        **kwargs): super().__init__(*args, **kwargs)
+            self,
+            *args,
+            cogs: list[str],
+            embed_color: discord.Color,
+            webhook_id: int,
+            prefixes: list[str],
+            exit_code: int = 0,
+            **kwargs):
+        super().__init__(*args, **kwargs)
+        self.flags = None
 
     async def get_context(self,
                           message: discord.Message,
