@@ -25,5 +25,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "midspin",
+        "sprite": "midspin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
