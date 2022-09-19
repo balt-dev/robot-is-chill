@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from io import BytesIO
 from pathlib import Path
 
@@ -16,7 +17,7 @@ import zipfile
 import glob
 import discord
 from discord.ext import commands, menus
-from discord.ext.menus.views import ViewMenuPages
+from discord.ext.menus import button, First, Last
 from PIL import Image, ImageFont, ImageDraw
 
 from . import flags
@@ -105,27 +106,27 @@ class FlagPageSource(menus.ListPageSource):
 
 
 class ButtonPages(
-        ViewMenuPages,
-        inherit_buttons=False):
-    @menus.button('⏮', position=menus.First())
+        menus.MenuPages,
+        inherit_buttons=False):  # TODO: make these discord.ui buttons
+    @button('⏮', position=First())
     async def go_to_first_page(self, payload):
         await self.show_page(0)
 
-    @menus.button('◀', position=menus.First(1))
+    @button('◀', position=First(1))
     async def go_to_previous_page(self, payload):
         await self.show_checked_page(self.current_page - 1)
 
-    @menus.button('▶', position=menus.Last(1))
+    @button('▶', position=Last(1))
     async def go_to_next_page(self, payload):
         await self.show_checked_page(self.current_page + 1)
 
-    @menus.button('⏭', position=menus.Last(2))
+    @button('⏭', position=Last(2))
     async def go_to_last_page(self, payload):
         max_pages = self._source.get_max_pages()
         last_page = max(max_pages - 1, 0)
         await self.show_page(last_page)
 
-    @menus.button('⏹', position=menus.Last())
+    @button('⏹', position=Last())
     async def stop_pages(self, payload):
         self.stop()
 

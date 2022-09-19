@@ -13,4 +13,3 @@ grass
 **/.vscode/
 update_ba.bash
 target/renders/levels/*
-.venv/

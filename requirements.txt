@@ -6,7 +6,6 @@ jishaku
 git+https://github.com/Rapptz/asqlite
 discord.py>=2.0.0
 git+https://github.com/Rapptz/discord-ext-menus
-git+https://github.com/oliver-ni/discord-ext-menus-views
 charset-normalizer
 colour-science
 numpy~=1.23.3
