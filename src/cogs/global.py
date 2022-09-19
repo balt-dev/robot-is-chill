@@ -460,7 +460,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         '-t',
                         '--text',
                         '-text'])))
-            await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=30))
+            await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
