@@ -305,6 +305,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
                                         0] + tile
         # Get the dimensions of the grid
+        grid_shape = layer_grid.shape
         layer_grid = layer_grid.tolist()
         # Don't proceed if the request is too large.
         # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
@@ -381,6 +382,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 			Average render time of all tiles: {averagerendertime} ms
 			Maximum render time of any tile: {maxrendertime} ms
 			Cached frames: {unique_sprites}
+            Tile matrix shape: {grid_shape}
 			'''
 
             embed.add_field(name="Render statistics", value=stats)
