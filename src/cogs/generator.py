@@ -21,6 +21,7 @@ from .. import constants
 
 class CharacterGenerator:
     def generate(self, array, **attr):
+        # this is all so hacked together, but this took me too long to care
         if 'seed' not in attr:
             attr['seed'] = random.randint(-sys.maxsize - 1, sys.maxsize)
         r = random.Random()
@@ -56,11 +57,12 @@ class CharacterGenerator:
                 'fluffy']}
         with open('data/generator/eyes/eyes.json') as f:
             eyes_json = json.load(f)
-
+        with open('data/generator/legs/legs.json') as f:
+            legs_json = json.load(f)
         def handle(key, values, setter: function = lambda x: x, *,
                    do_assertion=True):
-            message = f'Invalid value for `{key}`!\nPossible values are: `{", ".join([str(n) for n in values])}`'
-            attr[key] = attr[key] if key in attr else r.choice(values)
+            message = f'Invalid value `{attr.get(key,"You should not see this text.")}` for `{key}`!\nPossible values are: `{", ".join([str(n) for n in values])}`'
+            attr[key] = attr.get(key, r.choice(values))
             try:
                 attr[key] = type(values[0])(attr[key])
             except BaseException:
@@ -76,12 +78,12 @@ class CharacterGenerator:
         handle('shape', list(combinations.keys()))
         handle('eye_count', eyes_json[attr['shape']]['allowed_values'])
         handle('variant', combinations[attr['shape']])
-        handle('eye_shape', ['normal', 'angry'])
+        handle('eye_shape', ['normal', 'angry', 'wide'])
         handle('color', list(color_names[color_names != 'black']), lambda n: (
             n, constants.COLOR_NAMES[n]))
-        handle('legs', range(2, 5))
-        handle('mouth', range(2))
-        handle('ears', range(2))
+        handle('legs', [0] + legs_json[attr['shape']]['allowed_values'])
+        handle('mouth', (0, 1))
+        handle('ears', (0, 1))
         eye_displacement = [0, 0]
         if attr['variant'] in eyes_json[attr['shape']]['special']:
             eye_displacement = eyes_json[attr['shape']
@@ -107,8 +109,9 @@ class CharacterGenerator:
         with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-sleep.png') as f:
             eye_asleep = f.copy()
         final_arr = np.zeros((96, 24, 24, 4), dtype=np.uint8)
-        for dir_name, dir in [('right', 0), ('up', 8),
-                              ('left', 16), ('down', 24)]:
+        for dir_name, dir_a in [('right', 0), ('up', 8),
+                                ('left', 16), ('down', 24)]:
+            dir = dir_a if dir_a != 16 else 0
             for walkcycle_frame in range(-1, 4):
                 for wobble_frame in range(3):
                     with Image.open(
@@ -121,25 +124,59 @@ class CharacterGenerator:
                                     base.paste(ears, mask=ears.getchannel('A'))
                             except FileNotFoundError:
                                 pass
-                        if dir != 8 and attr['eye_count'] != 0:
-                            eye = eye_awake if walkcycle_frame != -1 else eye_asleep
-                            if attr['variant'] != 'belt-like':
-                                eye = np.array(eye, dtype=np.uint8)
-                                eye[:, :, :3] = 0
-                                eye = Image.fromarray(eye)
-                            eye_offset = (
-                                1 if walkcycle_frame == -1 else -1 if walkcycle_frame %
-                                2 == 1 and dir != 24 else 0)
-                            for right_eye in eye_locations[dir_name]['right_eyes'][wobble_frame][attr['eye_count'] - 1]:
-                                base.paste(ImageOps.mirror(eye),
-                                           (np.array(right_eye) -
-                                            [3 - eye_offset, 0]).tolist()[::-1],
-                                           ImageOps.mirror(eye).getchannel(3))
-                            for left_eye in eye_locations[dir_name]['left_eyes'][wobble_frame][attr['eye_count'] - 1]:
-                                base.paste(eye, (np.array(
-                                    left_eye) - [3 - eye_offset, 2]).tolist()[::-1], eye.getchannel(3))
-                        final_arr[(((dir + walkcycle_frame) % 32) *
-                                   3) + wobble_frame] = np.array(base)
+                        if attr['legs']:
+                            try:
+                                with Image.open(
+                                        f'data/generator/legs/{attr["shape"]}-{attr["legs"]}_{(dir + min(walkcycle_frame,0)) % 32}_{wobble_frame + 1}.png') as legs:
+                                    legs = np.array(legs.convert('RGBA'))
+                                    if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
+                                        legs = np.roll(legs, (0, -1), (1, 0))
+                                    offset = legs_json[attr["shape"]]["offset"].get(attr["variant"], legs_json[attr["shape"]]["offset"]["generic"])[dir_name if dir_name != "left" else "right"]
+                                    print(offset)
+                                    legs = np.roll(legs, offset, (1, 0))
+                                    if (attr["variant"] == "belt-like" and dir != 8):
+                                        legs[:-7, :, :] = 0
+                                    legs = Image.fromarray(legs)
+                                    legs.paste(base, mask=base.getchannel('A'))
+                                    base = legs
+                            except FileNotFoundError:
+                                print(f'data/generator/legs/{attr["shape"]}-{attr["legs"]}_{(dir + min(walkcycle_frame,0)) % 32}_{wobble_frame + 1}.png')
+                                raise AssertionError(f'Invalid value for `{attr["legs"]}` with shape `{attr["shape"]}`!')
+                        if dir != 8:
+                            if attr['eye_count'] != 0:
+                                eye = eye_awake if walkcycle_frame != -1 else eye_asleep
+                                if attr['variant'] != 'belt-like':
+                                    eye = np.array(eye, dtype=np.uint8)
+                                    eye[:, :, :3] = 0
+                                    eye = Image.fromarray(eye)
+                                eye_offset = (
+                                    1 if walkcycle_frame == -1 else -1 if walkcycle_frame %
+                                    2 == 1 and dir != 24 else 0)
+                                for right_eye in eye_locations[dir_name if dir_name != "left" else "right"]['right_eyes'][wobble_frame][attr['eye_count'] - 1]:
+                                    base.paste(ImageOps.mirror(eye),
+                                               (np.array(right_eye) -
+                                                [3 - eye_offset, 0]).tolist()[::-1],
+                                               ImageOps.mirror(eye).getchannel(3))
+                                for left_eye in eye_locations[dir_name if dir_name != "left" else "right"]['left_eyes'][wobble_frame][attr['eye_count'] - 1]:
+                                    base.paste(eye, (np.array(
+                                        left_eye) - [3 - eye_offset, 2]).tolist()[::-1], eye.getchannel(3))
+                            if attr['mouth']:
+                                with Image.open(
+                                        f'data/generator/mouths/{attr["shape"]}/{attr["shape"]}_{dir}_{wobble_frame + 1}.png') as mouth:
+                                    mouth = np.array(mouth)
+                                if attr['variant'] == 'belt-like':
+                                    if attr['shape'] == 'tall' and dir == 24:
+                                        mouth = np.roll(mouth, (0, 3), (1, 0))
+                                    mouth[:, :, :3] = 255
+                                if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
+                                    mouth = np.roll(mouth, (0, -1), (1, 0))
+                                mouth = Image.fromarray(mouth)
+                                base.paste(mouth, mask=mouth)
+                        final_image = np.array(base)
+                        if dir_a == 16:
+                            final_image = final_image[:, ::-1, :]
+                        final_arr[(((dir_a + walkcycle_frame) % 32) *
+                                   3) + wobble_frame] = final_image
         if array:
             return final_arr, attr
         else:
@@ -194,16 +231,14 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             # Discord commands don't support **kwargs
             *flags: str
     ):
-        """Randomly generate a character using prefabs."""
+        """Randomly generate a character using prefabs.
+        Try generating a character, you'll get a list of attributes from there.
+        You can specify an attribute with `name`=`value`."""
         await ctx.typing()
-        # keep this off limits for now
-        if not await ctx.bot.is_owner(ctx.author):
-            return await ctx.error(
-                'The bot owner\'s currently remaking =character. Please use =oldcharacter or =oldchar for now.')
         flags = {
             a: b for a,
             b in re.findall(
-                r'--(.+?)=(.+?)\b',
+                r' ?(.+?)=([^ ]+)',
                 ' '.join(flags))}
         if 'seed' in flags and re.match(r'-?\d+', flags['seed']):
             flags['seed'] = int(flags['seed'])
@@ -248,9 +283,15 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         )
         preview_file.seek(0)
         final_zip.seek(0)
-        return await ctx.send("```" + '\n'.join([f'{a}: {b}' for a, b in attributes.items()]) + "```",
-                              files=[discord.File(preview_file, filename='preview.gif'),
-                                     discord.File(final_zip, filename='out.zip')])
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            description=None)
+        embed.description = "```" + '\n'.join([f'{a}: {b}' for a, b in attributes.items()]) + "```"
+        file = discord.File(preview_file, filename="preview.gif")
+        embed.set_image(url=f"attachment://preview.gif")
+        await ctx.reply(embed=embed,
+                        files=[file])
+        return await ctx.send(file=discord.File(final_zip, filename='out.zip'))
 
     # Old code for character generation
     # This code sucks absolute ass but I'm too lazy to redo it

@@ -450,19 +450,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
             task = asyncio.create_task(
-            self.log_exceptions(
-                ctx,
-                self.render_tiles(
+                self.log_exceptions(
                     ctx,
-                    objects=objects,
-                    rule=rule in [
-                        '-r',
-                        '--rule',
-                        '-rule',
-                        '-t',
-                        '--text',
-                        '-text'])))
-            await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
+                    self.render_tiles(
+                        ctx,
+                        objects=objects,
+                        rule=rule in [
+                            '-r',
+                            '--rule',
+                            '-rule',
+                            '-t',
+                            '--text',
+                            '-text'])))
+            await asyncio.get_running_loop().run_in_executor(None,
+                                                             functools.partial(asyncio.wait_for, task, timeout=10))
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
