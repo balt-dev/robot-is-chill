@@ -242,18 +242,6 @@ class Renderer:
                             if y == height - 1:
                                 pad_d = max(
                                     pad_d, y_offset_pad if expand else y_offset)
-                            print(
-                                pad_l,
-                                pad_u,
-                                pad_d,
-                                pad_r,
-                                x_offset,
-                                y_offset,
-                                x_offset_disp,
-                                y_offset_disp,
-                                x_offset_pad,
-                                y_offset_pad,
-                                expand)
                             alpha = sprite.getchannel("A")
                             x_offset_disp -= pad[0]
                             y_offset_disp -= pad[1]
@@ -514,7 +502,7 @@ class Renderer:
                 computed_hash = hash((
                     tile.name,
                     tile.variant_number,
-                    str(np.array(sprite)),
+                    tuple(np.array(sprite).flatten().tolist()),
                     tile.custom_style,
                     tile.custom_direction,
                     tile.meta_level,
@@ -660,7 +648,6 @@ class Renderer:
                 sprite = np.dstack((sprite_rgb, sprite_a))
             for name, value in tile.filters:
                 if name == "lockhue":
-                    print(value)
                     sprite = Image.fromarray(
                         lock(0, np.array(sprite, dtype="uint8"), value))
                 elif name == "locksat":
@@ -712,7 +699,6 @@ class Renderer:
             gscale: float = 1
     ) -> list[list[list[list[ReadyTile]]]]:
         """Final individual tile processing step."""
-        print(gscale)
         palette = palette or "default"
         random_animations = random_animations if random_animations is not None else False
         gscale = gscale if gscale is not None else 2

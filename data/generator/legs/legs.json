@@ -1,0 +1,106 @@
+{
+    "curved": {
+		"allowed_values":[
+			3,
+            4
+		],
+        "offset":{
+            "generic":{
+				"right":[-1,0],
+                "up":[0,0],
+                "down":[-1,0]
+            },
+            "polygonal": {
+				"right":[-1,-1],
+                "up":[0,0],
+                "down":[-1,0]
+            },
+            "fluffy": {
+				"right":[0,-1],
+                "up":[0,0],
+                "down":[-1,0]
+            },
+            "smooth": {
+				"right":[0,-1],
+                "up":[0,0],
+                "down":[-1,0]
+            }
+        }
+    },
+    "tall": {
+		"allowed_values":[
+			2,
+            3
+		],
+        "offset":{
+            "generic":{
+				"right":[0,0],
+                "up":[0,0],
+                "down":[0,0]
+            }
+        }
+    },
+    "long": {
+		"allowed_values":[
+            3,
+            4
+		],
+        "offset":{
+            "generic":{
+				"right":[0,0],
+                "up":[0,0],
+                "down":[0,0]
+            },
+            "skinny": {
+				"right":[0,-3],
+                "up":[0,0],
+                "down":[0,0]
+            },
+            "belt-like": {
+				"right":[0,2],
+                "up":[0,0],
+                "down":[0,0]
+            },
+            "polygonal": {
+				"right":[0,-1],
+                "up":[0,0],
+                "down":[0,0]
+            }
+        }
+    },
+    "round": {
+		"allowed_values":[
+			2,
+            3
+		],
+        "offset":{
+            "generic":{
+				"right":[-1, 0],
+                "up":[-2, -1],
+                "down":[-1, -1]
+            },
+            "polygonal":{
+				"right":[-1, -1],
+                "up":[-1, -1],
+                "down":[-1, -1]
+            }
+        }
+    },
+    "segmented": {
+		"allowed_values":[
+			2
+		],
+		"offset":{
+            "generic":{
+				"right":[0,0],
+                "up":[0,0],
+                "down":[0,0]
+            },
+			"fluffy":{
+				"right":[4, 0],
+                "up":[1, 0],
+                "down":[-1, 1]
+            }
+		}
+    }
+}

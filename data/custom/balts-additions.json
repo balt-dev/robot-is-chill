@@ -108,15 +108,6 @@
         "tiling": "-1"
     },
     {
-        "name": "summun",
-        "sprite": "summun",
-        "tiling": "2",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
         "name": "text_summun",
         "sprite": "text_summun",
         "color": [

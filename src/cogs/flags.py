@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import random
 import re
 from os import listdir
@@ -118,6 +119,7 @@ async def setup(bot: Bot):
                     kwargs=[])
     async def comment(_, __):
         """Just a comment, does nothing."""
+        await asyncio.sleep(1)
         return []
 
     @flags.register(match=r"--letter",
