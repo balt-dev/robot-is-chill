@@ -1339,17 +1339,17 @@ class Renderer:
                         numpysprite[layer].tolist(), int(off + 0.5))
                 sprite = Image.fromarray(numpysprite.swapaxes(0, 1))
             elif name == 'gradientx' and value != (1, 1, 1, 1):
-                numpysprite = np.array(sprite).swapaxes(0, 1)
+                numpysprite = np.array(sprite).astype(np.float64).swapaxes(0, 1)
                 for layer in range(len(numpysprite)):
                     v = gradient(layer, *(value * np.array([24, 24, 1, 1])))
                     numpysprite[layer] *= v, v, v, 1
-                sprite = Image.fromarray(numpysprite.swapaxes(0, 1))
+                sprite = Image.fromarray(numpysprite.swapaxes(0, 1).astype(np.uint8))
             elif name == 'gradienty' and value != (1, 1, 1, 1):
-                numpysprite = np.array(sprite)
+                numpysprite = np.array(sprite).astype(np.float64)
                 for layer in range(len(numpysprite)):
                     v = gradient(layer, *(value * np.array([24, 24, 1, 1])))
                     numpysprite[layer] *= v, v, v, 1
-                sprite = Image.fromarray(numpysprite)
+                sprite = Image.fromarray(numpysprite.astype(np.uint8))
             elif name == 'flipx':
                 sprite = ImageOps.mirror(sprite)
             elif name == 'flipy':

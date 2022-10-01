@@ -1260,24 +1260,6 @@
         "tiling": "-1"
     },
     {
-        "name": "mina",
-        "sprite": "mina",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_mina",
-        "sprite": "text_mina",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_#",
         "sprite": "text_#",
         "color": [

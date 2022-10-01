@@ -115,5 +115,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "snombad",
+        "sprite": "snombad",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
