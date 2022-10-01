@@ -16,5 +16,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kijetesantakalu",
+        "sprite": "kijetesantakalu",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kijetesantakalu",
+        "sprite": "text_kijetesantakalu",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

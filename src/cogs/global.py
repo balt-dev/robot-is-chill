@@ -327,7 +327,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=kwargs.get("palette", None),
-                    random_animations=kwargs.get("random_animations", None),
+                    random_animations=kwargs.get("random_animations", True),
                     gscale=kwargs.get("gscale", 1)
                 ),
                 out=buffer,
