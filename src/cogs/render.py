@@ -262,7 +262,7 @@ class Renderer:
                                     "RGBA", (sprite.width, sprite.height), color=palette_color)
                                 imgs[dst_frame].paste(
                                     sprite,
-
+                                    coord_tuple,
                                     alpha
                                 )
                             elif tile.cut_alpha:

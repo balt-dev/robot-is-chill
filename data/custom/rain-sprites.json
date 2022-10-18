@@ -1,0 +1,29 @@
+[
+    {
+        "name": "toad",
+        "sprite": "toad",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "bloba",
+        "sprite": "bloba",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "battlecat",
+        "sprite": "battlecat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    }
+]

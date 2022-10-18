@@ -34,5 +34,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "clue",
+        "sprite": "clue",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
