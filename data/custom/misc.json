@@ -927,15 +927,6 @@
         "tiling": "1"
     },
     {
-        "name": "toad",
-        "sprite": "toad",
-        "color": [
-            "2",
-            "2"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "text_toad",
         "sprite": "text_toad",
         "color": [
@@ -1222,15 +1213,6 @@
             "3"
         ],
         "tiling": "-1"
-    },
-    {
-        "name": "battlecat",
-        "sprite": "battlecat",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "4"
     },
     {
         "name": "text_battlecat",

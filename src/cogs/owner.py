@@ -697,6 +697,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
             """From config format to db format."""
+            print(f"Loading from {source}")
             inactive = d.pop("color")
             if d.get("active") is not None:
                 d["inactive_color_x"] = inactive[0]
