@@ -25,5 +25,14 @@
             "3"
         ],
         "tiling": "4"
+    },
+    {
+        "name": "truecats",
+        "sprite": "truecats",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "3"
     }
 ]
