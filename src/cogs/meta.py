@@ -159,7 +159,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
         )
         about_embed.add_field(
             name="Links",
-            value=f"[GitHub repository](https://github.com/balt-is-you-and-shift/robot-is-chill)\n[Support guild](https://discord.gg/3DsEJgWQhd)")
+            value=f"[GitHub repository](https://github.com/balt-dev/robot-is-chill)\n[Support guild](https://discord.gg/ktk8XkAfGD)")
         ut = datetime.utcnow() - self.bot.started
         stats = "".join([
                 f"\nGuilds: {len(self.bot.guilds)}",
