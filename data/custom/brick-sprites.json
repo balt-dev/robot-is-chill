@@ -113,5 +113,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "josh",
+        "sprite": "josh",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

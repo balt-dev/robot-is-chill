@@ -106,5 +106,23 @@
             "1"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "pump",
+        "sprite": "pump",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "castle",
+        "sprite": "castle",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
