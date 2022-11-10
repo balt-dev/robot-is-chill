@@ -72,6 +72,13 @@ class Database:
 					tags TEXT NOT NULL DEFAULT "",
 					UNIQUE(name, version)
 				);
+                CREATE TABLE IF NOT EXISTS ServerActivity (
+					id INTEGER NOT NULL,
+					timestamp INTEGER NOT NULL
+				);
+                CREATE TABLE IF NOT EXISTS blacklistedusers (
+					id INTEGER NOT NULL
+				);
 				'''
             )
             # We create different tables for levelpacks and custom levels.
