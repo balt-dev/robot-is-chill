@@ -1,0 +1,20 @@
+[
+    {
+        "name": "mandel",
+        "sprite": "mandel",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_mandel",
+        "sprite": "text_mandel",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]
