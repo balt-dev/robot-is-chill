@@ -1276,5 +1276,23 @@
             "1"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "sed",
+        "sprite": "sed",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_sed",
+        "sprite": "text_sed",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
