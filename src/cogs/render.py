@@ -705,7 +705,6 @@ class Renderer:
         sprite_cache = {}
         self.sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
-
         d = []
         for timestep in grid:
             a = []
@@ -961,7 +960,7 @@ class Renderer:
             original_style = style
             original_direction = direction
         try:
-            return self.apply_options(
+            return await self.apply_options(
                 sprite,
                 original_style=original_style,
                 original_direction=original_direction,
@@ -974,7 +973,7 @@ class Renderer:
             size = e.args[0]
             raise errors.BadTileProperty(name, size)
 
-    def apply_options(
+    async def apply_options(
             self,
             sprite: Image.Image,
             *,
@@ -1061,7 +1060,8 @@ class Renderer:
         Probably gonna have to mess with the variant handlers a bit
         Maybe check for handlers, then if that fails, filters
         '''
-        for name, value in filters:
+        for i, (name, value) in enumerate(filters):
+            print(i, name, value)
             if name == "lockhue_before":
                 sprite = Image.fromarray(
                     lock(

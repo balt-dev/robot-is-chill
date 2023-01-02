@@ -4,6 +4,8 @@ import ast
 import collections
 import functools
 import os
+import signal
+
 import requests
 
 import math
@@ -33,6 +35,16 @@ from ..tile import RawTile
 from ..types import Bot, Context
 
 from .errorhandler import CommandErrorHandler
+
+
+async def start_timeout(function, *args, timeout_multiplier=1, **kwargs):
+    def handler(_signum, _frame):
+        raise AssertionError("The command took too long and was timed out.")
+
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(constants.TIMEOUT_DURATION * timeout_multiplier)
+    await function(*args, **kwargs)
+    signal.alarm(0)
 
 
 def try_index(string: str, value: str) -> int:
@@ -430,14 +442,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        task = asyncio.create_task(
-            self.log_exceptions(
-                ctx,
-                self.render_tiles(
-                    ctx,
-                    objects=objects,
-                    rule=True)))
-        await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
+        await start_timeout(self.render_tiles,
+                            ctx,
+                            objects=objects,
+                            rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -449,21 +457,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            task = asyncio.create_task(
-                self.log_exceptions(
-                    ctx,
-                    self.render_tiles(
-                        ctx,
-                        objects=objects,
-                        rule=rule in [
-                            '-r',
-                            '--rule',
-                            '-rule',
-                            '-t',
-                            '--text',
-                            '-text'])))
-            await asyncio.get_running_loop().run_in_executor(None,
-                                                             functools.partial(asyncio.wait_for, task, timeout=10))
+            await start_timeout(self.render_tiles,
+                                ctx,
+                                objects=objects,
+                                rule=rule in [
+                                    '-r',
+                                    '--rule',
+                                    '-rule',
+                                    '-t',
+                                    '--text',
+                                    '-text'], timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
@@ -496,14 +499,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        task = asyncio.create_task(
-            self.log_exceptions(
-                ctx,
-                self.render_tiles(
-                    ctx,
-                    objects=objects,
-                    rule=False)))
-        await asyncio.get_running_loop().run_in_executor(None, functools.partial(asyncio.wait_for, task, timeout=10))
+        await start_timeout(self.render_tiles,
+                            ctx,
+                            objects=objects,
+                            rule=False)
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(
