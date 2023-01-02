@@ -262,3 +262,5 @@ BABA_WORLD = "baba"
 EXTENSIONS_WORLD = "baba-extensions"
 
 COMBINE_MAX_FILESIZE = 5242880  # in bytes
+
+TIMEOUT_DURATION = 20
