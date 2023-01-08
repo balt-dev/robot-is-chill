@@ -14,3 +14,6 @@ grass
 update_ba.bash
 target/renders/levels/*
 .venv/
+#kurb wuz here
+*.exe
+*.out
