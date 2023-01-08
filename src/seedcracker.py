@@ -17,32 +17,12 @@ def crackseed(
         assert (
             isinstance(
                 color,
-                bool)) or color in [
-            'pink',
-            'red',
-            'maroon',
-            'yellow',
-            'orange',
-            'gold',
-            'brown',
-            'lime',
-            'green',
-            'cyan',
-            'blue',
-            'purple',
-            'white',
-            'silver',
-            'grey']
+                bool)) or color in ['pink','red','maroon','yellow','orange','gold''brown','lime','green','cyan','blue','purple','white','silver','grey']
         assert (
             isinstance(
                 variant,
-                bool)) or variant in [
-            'smooth',
-            'fuzzy',
-            'fluffy',
-            'polygonal',
-            'skinny',
-            'belt']
+                bool)) or variant in ['smooth','fuzzy','fluffy','polygonal','skinny','belt']
+        #so why'd you only word wrap some of these? not my problem though
         assert (isinstance(typ, bool)) or typ in [
             'long', 'tall', 'curved', 'round']
     except Exception as e:
@@ -53,96 +33,13 @@ def crackseed(
     r_legs = rand.choice([0, 0, 1, 2, 2, 2, 3, 4, 4, 4])
     r_eyes = rand.choice([0, 0, 1, 2, 2, 2, 2, 2, 3, 4, 5, 6])
     r_mouth = rand.random() > 0.75
-    r_color = rand.choice(['pink',
-                           'red',
-                           'maroon',
-                           'yellow',
-                           'orange',
-                           'gold',
-                           'brown',
-                           'lime',
-                           'green',
-                           'cyan',
-                           'blue',
-                           'purple',
-                           'white',
-                           'silver',
-                           'grey'])
+    r_color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])
     r_variant = rand.choice(
         ['smooth', 'fuzzy', 'fluffy', 'polygonal', 'skinny', 'belt'])
     r_typ = rand.choice(['long', 'tall', 'curved', 'round'])
-    a = rand.choice(['b',
-                     'c',
-                     'd',
-                     'f',
-                     'g',
-                     'h',
-                     'j',
-                     'k',
-                     'l',
-                     'm',
-                     'p',
-                     'q',
-                     'r',
-                     's',
-                     't',
-                     'v',
-                     'w',
-                     'x',
-                     'y',
-                     'z',
-                     'sh',
-                     'ch',
-                     'th',
-                     'ph',
-                     'cr',
-                     'gr',
-                     'tr',
-                     'br',
-                     'dr',
-                     'pr',
-                     'bl',
-                     'sl',
-                     'pl',
-                     'cl',
-                     'gl',
-                     'fl',
-                     'sk',
-                     'sp',
-                     'st',
-                     'sn',
-                     'sm',
-                     'sw'])
-    b = rand.choice(['a', 'e', 'i', 'o', 'u', 'ei',
-                    'oi', 'ea', 'ou', 'ai', 'au', 'bu'])
-    c = rand.choice(['b',
-                     'c',
-                     'd',
-                     'f',
-                     'g',
-                     'h',
-                     'j',
-                     'k',
-                     'l',
-                     'm',
-                     'p',
-                     'q',
-                     'r',
-                     's',
-                     't',
-                     'v',
-                     'w',
-                     'x',
-                     'y',
-                     'z',
-                     'sh',
-                     'ch',
-                     'ck',
-                     'th',
-                     'ph',
-                     'sk',
-                     'sp',
-                     'st'])
+    a = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','th','ph','cr','gr','tr','br','dr','pr','bl','sl','pl','cl','gl','fl','sk','sp','st','sn','sm','sw'])
+    b = rand.choice(['a', 'e', 'i', 'o', 'u', 'ei', 'oi', 'ea', 'ou', 'ai', 'au', 'bu'])
+    c = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
     r_name = rand.choice([a + b + a + b,
                           a + b,
                           a + b + c,
@@ -170,96 +67,13 @@ def crackseed(
         r_legs = rand.choice([0, 0, 1, 2, 2, 2, 3, 4, 4, 4])
         r_eyes = rand.choice([0, 0, 1, 2, 2, 2, 2, 2, 3, 4, 5, 6])
         r_mouth = rand.random() > 0.75
-        r_color = rand.choice(['pink',
-                               'red',
-                               'maroon',
-                               'yellow',
-                               'orange',
-                               'gold',
-                               'brown',
-                               'lime',
-                               'green',
-                               'cyan',
-                               'blue',
-                               'purple',
-                               'white',
-                               'silver',
-                               'grey'])
+       r_color = rand.choice(['pink','red','maroon','yellow','orange','gold','brown','lime','green','cyan','blue','purple','white','silver','grey'])
         r_variant = rand.choice(
             ['smooth', 'fuzzy', 'fluffy', 'polygonal', 'skinny', 'belt'])
         r_typ = rand.choice(['long', 'tall', 'curved', 'round'])
-        a = rand.choice(['b',
-                         'c',
-                         'd',
-                         'f',
-                         'g',
-                         'h',
-                         'j',
-                         'k',
-                         'l',
-                         'm',
-                         'p',
-                         'q',
-                         'r',
-                         's',
-                         't',
-                         'v',
-                         'w',
-                         'x',
-                         'y',
-                         'z',
-                         'sh',
-                         'ch',
-                         'th',
-                         'ph',
-                         'cr',
-                         'gr',
-                         'tr',
-                         'br',
-                         'dr',
-                         'pr',
-                         'bl',
-                         'sl',
-                         'pl',
-                         'cl',
-                         'gl',
-                         'fl',
-                         'sk',
-                         'sp',
-                         'st',
-                         'sn',
-                         'sm',
-                         'sw'])
-        b = rand.choice(['a', 'e', 'i', 'o', 'u', 'ei',
-                        'oi', 'ea', 'ou', 'ai', 'au', 'bu'])
-        c = rand.choice(['b',
-                         'c',
-                         'd',
-                         'f',
-                         'g',
-                         'h',
-                         'j',
-                         'k',
-                         'l',
-                         'm',
-                         'p',
-                         'q',
-                         'r',
-                         's',
-                         't',
-                         'v',
-                         'w',
-                         'x',
-                         'y',
-                         'z',
-                         'sh',
-                         'ch',
-                         'ck',
-                         'th',
-                         'ph',
-                         'sk',
-                         'sp',
-                         'st'])
+        a = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
+        b = rand.choice(['a', 'e', 'i', 'o', 'u', 'ei','oi', 'ea', 'ou', 'ai', 'au', 'bu'])
+        c = rand.choice(['b','c','d','f','g','h','j','k','l','m','p','q','r','s','t','v','w','x','y','z','sh','ch','ck','th','ph','sk','sp','st'])
         r_name = rand.choice([a + b + a + b,
                               a + b,
                               a + b + c,
@@ -273,5 +87,5 @@ def crackseed(
 
 
 print(crackseed())
-
+##why is this run twice?????
 # ears=2,legs=4,eyes=2,mouth=False,color='white',variant='smooth',typ='long',name='Baba'
