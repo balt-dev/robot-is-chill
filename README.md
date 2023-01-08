@@ -18,3 +18,5 @@ This bot does a lot of stuff, mainly relating to the video game Baba is You, suc
 ## Compiling
 
 Should run fine under most Python interpreters, however this was built under Python 3, so no guarantees.<br>
+
+Go ahead and pipe in your bot token and then `python3 ROBOT.py` and everything should boot up fine.
