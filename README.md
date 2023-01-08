@@ -15,3 +15,6 @@ This bot does a lot of stuff, mainly relating to the video game Baba is You, suc
 
 (Commit messages are most of the time irrelevant, so don't blame me.)
 
+## Compiling
+
+Should run fine under most Python interpreters, however this was built under Python 3, so no guarantees.<br>
