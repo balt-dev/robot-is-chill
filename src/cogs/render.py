@@ -960,7 +960,7 @@ class Renderer:
             original_style = style
             original_direction = direction
         try:
-            return await self.apply_options(
+            return self.apply_options(
                 sprite,
                 original_style=original_style,
                 original_direction=original_direction,
@@ -973,7 +973,7 @@ class Renderer:
             size = e.args[0]
             raise errors.BadTileProperty(name, size)
 
-    async def apply_options(
+    def apply_options(
             self,
             sprite: Image.Image,
             *,
