@@ -75,27 +75,16 @@ async def setup(bot):
         pattern = rf"(?:{'|'.join(aliases)}|{func.__name__}){generate_pattern(types)}"
         syntax = generate_syntax(params)
         class_name = func.__name__.title() + "Variant"
-
-        def apply(self, obj):
-            print(self.args)
-            return func(obj, *self.args)
-
-        def class_init(self, *args):
-            self.args = args
-
-        def class_repr(self):
-            return f"{self.__class__.__name__}({self.args})"
-
         variant_type = tuple(params.keys())[0]
         bot.variants.append(
             type(
                 class_name,
                 (Variant,),
                 {
-                    "__init__": class_init,
+                    "__init__": (lambda self, *args: self.args = args),
                     "__doc__": func.__doc__,
-                    "__repr__": class_repr,
-                    "apply": apply,
+                    "__repr__": (lambda self: f"{self.__class__.__name__}({self.args})"),
+                    "apply": (lambda self, obj: func(obj, *self.args)),
                     "pattern": pattern,
                     "signature": types,
                     "syntax": syntax,
@@ -109,7 +98,6 @@ async def setup(bot):
         def wrapper(func):
             create_variant(func, aliases)
             return func
-
         return wrapper
 
     @add_variant("inv", "i")
