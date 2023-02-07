@@ -29,19 +29,20 @@ def generate_pattern(sign):
     pattern = f""
     for t in sign:
         if isinstance(t, typing.Iterable):
-            pattern += f"\({generate_pattern(t)}\)"
+            pattern += f"/\({generate_pattern(t)}\)"
+        elif typing.get_origin(t) == typing.Union:
+            pattern += f"(?:/{generate_pattern(typing.get_args(t))})?"
         elif t == int:
-            pattern += r"(-?\d+)"
+            pattern += r"/(-?\d+)"
         elif t == float:
-            pattern += r"([+-]?(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))"  # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
+            pattern += r"/([+-]?(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))"  # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
         elif t == str:
-            pattern += r"(.+?)"
+            pattern += r"/(.+?)"
         elif t == bool:
-            pattern += r"(true|false)"
+            pattern += r"/(true|false)"
         else:
             continue
-        pattern += "/"
-    return pattern[:-1]  # Remove ending /
+    return pattern[1:]  # Remove starting /
 
 
 def generate_syntax(params):
