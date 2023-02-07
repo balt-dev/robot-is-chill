@@ -7,117 +7,79 @@ from typing import TYPE_CHECKING, Literal, TypedDict
 from PIL import Image
 import re
 import numpy as np
-from . import errors
-
-if TYPE_CHECKING:
-    # @ps-ignore
-    RawGrid = list(list(list(list('RawTile'))))
-    FullGrid = list(list(list(list('FullTile'))))
-    GridIndex = tuple(int)
+from . import errors, constants
+from .cogs.variants import parse_signature
+from .db import TileData
+from .types import Variant
 
 
 @dataclass
-class RawTile:
-    """Raw tile given from initial pass of +rule and +tile command parsing."""
+class TileSkeleton:
+    """A tile that hasn't been assigned a sprite yet."""
     name: str
-    variants: list[str]
-
-    def __repr__(self) -> str:
-        return self.name
+    variants: dict[str: Variant, str: Variant, str: Variant]
 
     @classmethod
-    def from_str(cls, string: str) -> RawTile:
-        """Parse from user input."""
-        parts = re.split('[;,:]', string)
-        if any(len(part) == 0 for part in parts):
-            if string != '':
-                raise errors.EmptyVariant(parts[0])
-            return RawTile('-', [])
-        return RawTile(parts[0], parts[1:])
-
-    @property
-    def is_text(self) -> bool:
-        """Text is special."""
-        return self.name.startswith("text_") or self.name.startswith("rule_")
-
-
-class TileFields(TypedDict, total=False):
-    sprite: tuple[str, str] | np.ndarray
-    variant_number: int
-    variant_fallback: int
-    color_index: tuple[int, int]
-    color_rgb: tuple[int, int, int]
-    empty: bool
-    cut_alpha: bool
-    mask_alpha: bool
-    meta_level: int
-    custom_direction: int
-    custom_style: Literal["noun", "property", "letter"]
-    custom: bool
-    style_flip: bool
-    filters: list
-    blending: str
-    palette: str
-    overlay: str
-    negative: bool
-    hueshift: float
-    brightness: float
-    grayscale: float
-    filterimage: str
-    displace: tuple
-    channelswap: np.ndarray
-    palette_snap: bool
-    normalize_lightness: bool
+    def parse(cls, ctx, string: str):
+        possible_variants = ctx.bot.variants
+        raw_variants = re.split(r";|:", string)
+        name = raw_variants.pop(0)
+        variants = {"skeleton": [], "sprite": [], "tile": []}
+        for raw_variant in raw_variants:
+            try:
+                final_variant = possible_variants[raw_variant]
+                variant_args = re.fullmatch(final_variant.pattern, raw_variant).groups()
+                final_args = parse_signature(variant_args, final_variant.signature)
+                variants[final_variant.type].append(final_variant(*final_args))
+            except KeyError:
+                raise errors.UnknownVariant(name, raw_variant)
+        return cls(name, variants)
 
 
 @dataclass
-class FullTile:
-    """A tile ready to be rendered."""
-    name: str
-    sprite: tuple[str, str] | np.ndarray = BABA_WORLD, "error"
-    variant_number: int = 0
-    variant_fallback: int = 0
-    color_index: tuple[int, int] = (0, 3)
-    color_rgb: tuple[int, int, int] | None = None
+class Tile:
+    """A tile that's ready for processing."""
+    name: str = "Undefined (if this is showing, something's gone horribly wrong)"
+    sprite: tuple[str, str] | np.ndarray = (constants.BABA_WORLD, "error")
+    frame: tuple[int, int] = 0  # number, fallback
+    color: tuple[int, int] | tuple[int, int, int] = (0, 3)  # x, y / r, g, b
+    empty: bool = True
+    blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK"] = "NORMAL"
     custom: bool = False
-    cut_alpha: bool = False
-    mask_alpha: bool = False
-    style_flip: bool = False
-    empty: bool = False
-    meta_level: int = 0
-    custom_direction: int | None = None
-    custom_style: Literal["noun", "property", "letter"] | None = None
-    blending: str = None
-    palette: str = ""
-    overlay: str = ""
-    grayscale: float = 0
-    filters: list = field(default_factory=list)
-    negative: bool = False
-    hueshift: float = 0
-    brightness: float = 1
-    filterimage: str = ""
-    displace: tuple[int, int] = (0, 0)
-    channelswap: np.ndarray = np.array(
-        [[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    palette_snap: bool = False,
-    normalize_lightness: bool = False
+    custom_style: Literal["noun", "property", "letter"] = "noun"
+    palette: str = "default"
+    overlay: str | None = None
+    hue: float = 1.0
+    gamma: float = 1.0
+    saturation: float = 1.0
+    filterimage: str | None = None
+    displacement: tuple[int, int] = (0, 0)
+    channel_matrix: np.ndarray = np.identity(4)
+    palette_snapping: bool = False
+    normalize_gamma: bool = False
+    variants: dict[str: Variant, str: Variant] = None
 
     @classmethod
-    def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
-        """Create a FullTile from a RawTile and TileFields."""
-        return FullTile(
-            name=tile.name,
-            **fields
-        )
+    def prepare(cls, tile_data_cache: dict[str, TileData], tile: TileSkeleton):
+        name = tile.name
+        if not len(name):
+            return cls(name="<empty>")
+        try:
+            metadata = tile_data_cache[name]
+        except KeyError:
+            raise errors.TileNotFound(name)
+        print(metadata.active_color)
+        value = cls(name=name, sprite=(metadata.source, metadata.sprite), color=metadata.active_color,
+                    variants=tile.variants, empty=False)
+        for variant in value.variants["skeleton"]:
+            variant.apply(value)
+        return value
 
 
 @dataclass
-class ReadyTile:
-    """Tile that's about to be rendered, and already has a prerendered
-    sprite."""
-    frames: tuple[Image.Image, Image.Image, Image.Image] | None
-    cut_alpha: bool = False
-    mask_alpha: bool = False
-    displace: tuple[int, int] = (0, 0)
-    blending: str = None
+class ProcessedTile:
+    """A tile that's been processed, and is ready to render."""
+    frames: tuple[Image, Image, Image] | None = None
+    blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK"] = "NORMAL"
+    displacement: tuple[int, int] = (0, 0)
     delta: float = 0

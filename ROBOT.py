@@ -65,6 +65,7 @@ class Bot(commands.Bot):
         self.config = config.__dict__
         self.renderer = None
         self.flags = None
+        self.variants = None
         super().__init__(*args, **kwargs)
 
         # has to be after __init__
@@ -124,14 +125,20 @@ bot = Bot(
 
 @bot.event
 async def on_command(ctx):
-    webhook = await bot.fetch_webhook(webhooks.logging_id)
     embed = discord.Embed(
-        description=ctx.message.content,
+        title="Disclaimer",
+        description="This is the beta branch prefix. Things will most likely be broken.",
         color=config.logging_color)
-    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
-                     icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
-    embed.set_footer(text=str(ctx.author.id))
-    await webhook.send(embed=embed)
+    await ctx.send(embed=embed, delete_after=3)
+    pass
+    # webhook = await bot.fetch_webhook(webhooks.logging_id)
+    # embed = discord.Embed(
+    #     description=ctx.message.content,
+    #     color=config.logging_color)
+    # embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
+    #                  icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
+    # embed.set_footer(text=str(ctx.author.id))
+    # await webhook.send(embed=embed)
 
 
 bot.run(auth.token, log_handler=None)
