@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import ast
 import collections
-import functools
 import os
 import signal
 
@@ -21,17 +19,14 @@ import numpy as np
 import emoji
 from charset_normalizer import from_bytes
 
-import asyncio
 import aiohttp
 import discord
 from discord.ext import commands
 
-if TYPE_CHECKING:
-    from ..tile import RawGrid
+from ..tile import Tile, TileSkeleton
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
-from ..tile import RawTile
 from ..types import Bot, Context
 
 from .errorhandler import CommandErrorHandler
@@ -155,19 +150,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         else:
             return await ctx.error(f"{msg}.")
 
-    def parse_raw(
-            self, grid: list[list[list[list[str]]]], *, rule: bool) -> RawGrid:
-        """Parses a string grid into a RawTile grid."""
+    async def handle_grid(
+            self, grid: list[list[list[list[TileSkeleton]]]]):
+        """Parses a TileSkeleton grid into a Tile grid."""
+        tile_data_cache = {
+            data.name: data async for data in self.bot.db.tiles(
+                {
+                    tile.name for steps in grid for row in steps for stack in row for tile in stack
+                }
+            )
+        }
         return [
             [
                 [
                     [
-                        RawTile.from_str(
-                            ("-" if tile ==
-                             "-" else (tile[5:] if tile.startswith("tile_") else f"text_{tile}"))
-                        ) if rule else RawTile.from_str(
-                            ("-" if tile == "text_-" else tile)
-                        )
+                        Tile.prepare(tile_data_cache, tile)
                         for tile in row
                     ]
                     for row in layer
@@ -176,23 +173,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             ]
             for timestep in grid
         ]
-
-    # From CenTdemeern1's OpenCountingBot, he gave me permission to use
-    # https://github.com/CenTdemeern1/OpenCountingBot/blob/main/cogs/count.py#L320
-    def parse_and_evaluate_expression(self, expression):
-        try:
-            tree = ast.parse(expression, mode='eval')
-        except SyntaxError:
-            raise AssertionError(
-                f'Invalid syntax in math expression! `{expression}`')
-        if not all(isinstance(node, (ast.Expression,
-                                     ast.UnaryOp, ast.unaryop,
-                                     ast.BinOp, ast.operator,
-                                     ast.Num)) for node in ast.walk(tree)):
-            raise ArithmeticError(
-                f"Sorry, `{expression}` isn't a safe expression.")
-        result = eval(compile(tree, filename='', mode='eval'))
-        return result
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
@@ -256,7 +236,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         default_to_letters = kwargs.get("letters", False)
         tborders = kwargs.get("tborders", False)
         file_format = kwargs.get('file_format', 'gif')
-        global_variant = kwargs.get('global_variant', '')
         do_embed = kwargs.get('do_embed', False)
         for x, y in reversed(to_delete):
             del word_grid[y][x]
@@ -272,69 +251,51 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         tilecount = 0
         maxstack = 1
         maxdelta = 1
-        for row in comma_grid:
-            for stack in row:
-                maxstack = max(maxstack, len(stack.split("&")))
-                for timeline in stack.split("&"):
-                    maxdelta = max(maxdelta, len(timeline.split(">")))
-        w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
-            comma_grid), maxstack, maxdelta  # width, height, depth, time
-        layer_grid = np.full((t, d, h, w), '-', dtype=object)
-        if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
-            return await ctx.error(
-                f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
-        # Splits "&"-joined words into stacks
-        for y, row in enumerate(comma_grid):
-            for x, stack in enumerate(row):
-                for layer, timeline in enumerate(stack.split('&')):
-                    for d, tile in enumerate(timeline.split('>')):
-                        if len(tile):
-                            assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
-                                ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
-                            if len(tile.split(':', 1)[0].split(';', 1)[0]):
-                                tilecount += 1
-                                tile = tile.replace('rule_', 'text_')
-                                if (not (tile.find(':ng') != -
-                                         1 or tile.find(':noglobal') != -
-                                         1)) and tile != "-":
-                                    tile = re.sub(
-                                        "(.+?)(:.+|$)", rf'\1{global_variant}\2', tile)
-                                r = re.fullmatch(r"(.+?)(?::.*)?", tile)
-                                if r is not None and not rule and r.groups(
-                                )[0] == '2':  # hardcoded easter egg
-                                    async with self.bot.db.conn.cursor() as cur:
-                                        await cur.execute(
-                                            '''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
-                                        t = await cur.fetchall()
-                                        tile = re.sub(
-                                            '(.+?)(:.+|$)', t[0][0] + ':4/2:lockhue_before' + r'\2', tile)
-                                layer_grid[d:, layer, y, x] = tile
-                            else:
-                                if len(tile.split(';', 1)) == 2:
-                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
-                                        0] + tile
-                                else:
-                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
-                                        0] + tile
-        # Get the dimensions of the grid
-        grid_shape = layer_grid.shape
-        layer_grid = layer_grid.tolist()
-        # Don't proceed if the request is too large.
-        # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
-        if tilecount > constants.MAX_TILES and not (
-                ctx.author.id in [self.bot.owner_id, 280756504674566144]):
-            return await ctx.error(
-                f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
         try:
-
-            grid = self.parse_raw(layer_grid, rule=rule)
+            for row in comma_grid:
+                for stack in row:
+                    maxstack = max(maxstack, len(stack.split("&")))
+                    for timeline in stack.split("&"):
+                        maxdelta = max(maxdelta, len(timeline.split(">")))
+            w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
+                comma_grid), maxstack, maxdelta  # width, height, depth, time
+            layer_grid = np.full((t, d, h, w), '-', dtype=object)
+            if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
+                return await ctx.error(
+                    f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
+            # Splits "&"-joined words into stacks
+            for y, row in enumerate(comma_grid):
+                for x, stack in enumerate(row):
+                    for layer, timeline in enumerate(stack.split('&')):
+                        for d, tile in enumerate(timeline.split('>')):
+                            if len(tile):
+                                assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
+                                    ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
+                                if len(tile.split(':', 1)[0].split(';', 1)[0]):
+                                    tilecount += 1
+                                    tile = tile.replace('rule_', 'text_')
+                                    layer_grid[d:, layer, y, x] = TileSkeleton.parse(ctx, tile)
+                                else:
+                                    if len(tile.split(';', 1)) == 2:
+                                        layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
+                                            0] + tile
+                                    else:
+                                        layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
+                                                0] + tile
+            # Get the dimensions of the grid
+            grid_shape = layer_grid.shape
+            layer_grid = layer_grid.tolist()
+            # Don't proceed if the request is too large.
+            # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
+            if tilecount > constants.MAX_TILES and not (
+                    ctx.author.id in [self.bot.owner_id, 280756504674566144]):
+                return await ctx.error(
+                    f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
             # Handles variants based on `:` affixes
             buffer = BytesIO()
             extra_buffer = BytesIO() if raw_output else None
             extra_names = [] if raw_output else None
-            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names,
-                                                            default_to_letters=default_to_letters,
-                                                            tile_borders=tborders)
+            full_grid = await self.handle_grid(layer_grid)
             avgdelta, maxdelta, tiledelta, unique_sprites = await self.bot.renderer.render(
                 await self.bot.renderer.render_full_tiles(
                     full_grid,
@@ -431,7 +392,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
         * `tile_` : `tile_object` renders regular objects.
-        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
         * `||` : Marks the output gif as a spoiler.
 
         **Example commands:**

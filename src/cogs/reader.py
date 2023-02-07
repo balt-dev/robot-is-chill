@@ -18,8 +18,8 @@ from PIL import Image
 from src import constants
 from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
+from ..tile import Tile
 
-from ..tile import RawTile, ReadyTile
 from ..types import Bot, Context
 
 
@@ -60,7 +60,7 @@ class Grid:
         # Custom levels
         self.author: str | None = None
 
-    def ready_grid(self) -> list[list[list[ReadyTile]]]:
+    def ready_grid(self) -> list[list[list[list[Tile]]]]:
         """Returns a ready-to-paste version of the grid."""
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
             valid = (sprite, "edge", "level")
@@ -116,7 +116,7 @@ class Grid:
         for y in range(self.height):
             for x in range(self.width):
                 maxstack = max(maxstack, len(self.cells[y * self.width + x]))
-        layer_grid = [[[ReadyTile(None) for _ in range(max([self.width for n in range(
+        layer_grid = [[[Tile(None) for _ in range(max([self.width for n in range(
             self.height)]))] for _ in range(self.height)] for _ in range(maxstack)]
         for i in range(maxstack):
             for y in range(self.height):
@@ -163,7 +163,7 @@ class Grid:
                                     cache=sprite_cache),
                                 color),
                         )
-                        layer_grid[i][y][x] = ReadyTile(frames)
+                        layer_grid[i][y][x] = Tile(frames)
                     except BaseException:
                         pass
         return layer_grid
