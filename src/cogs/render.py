@@ -623,17 +623,6 @@ class Renderer:
                     (int(ifilterimage.width * gscale), int(ifilterimage.height * gscale)), Image.NEAREST), absolute)
                 # except OSError:
                 #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
-            if not np.array_equal(tile.channelswap, np.array(
-                    [[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])):
-                # making it a float for convenience
-                im_np = np.array(sprite, dtype=float) / 255
-                out_np = np.zeros(im_np.shape, dtype=float)
-                for i, channel_dst in enumerate(tile.channelswap):
-                    for j, channel_src in enumerate(channel_dst):
-                        out_np[:, :, i] += im_np[:, :, j] * channel_src
-                out_np = np.array(np.vectorize(lambda n: int(
-                    min(max(n, 0), 1) * 255))(out_np), dtype=np.uint8)
-                sprite = Image.fromarray(out_np)
             if tile.normalize_lightness:
                 arr = np.array(sprite)
                 arr_rgb, sprite_a = arr[:, :, :3], arr[:, :, 3]

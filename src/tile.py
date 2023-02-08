@@ -42,7 +42,7 @@ class RawTile:
 
 
 class TileFields(TypedDict, total=False):
-    sprite: tuple[str, str] | np.ndarray
+    sprite: tuple[str, str]
     variant_number: int
     variant_fallback: int
     color_index: tuple[int, int]
@@ -74,7 +74,7 @@ class TileFields(TypedDict, total=False):
 class FullTile:
     """A tile ready to be rendered."""
     name: str
-    sprite: tuple[str, str] | np.ndarray = BABA_WORLD, "error"
+    sprite: tuple[str, str] = BABA_WORLD, "error"
     variant_number: int = 0
     variant_fallback: int = 0
     color_index: tuple[int, int] = (0, 3)
@@ -97,9 +97,7 @@ class FullTile:
     brightness: float = 1
     filterimage: str = ""
     displace: tuple[int, int] = (0, 0)
-    channelswap: np.ndarray = np.array(
-        [[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    palette_snap: bool = False,
+    palette_snap: bool = False
     normalize_lightness: bool = False
 
     @classmethod
