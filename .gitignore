@@ -17,3 +17,4 @@ target/renders/levels/*
 venv/*/**
 venv/*
 config.py
+nohup.out

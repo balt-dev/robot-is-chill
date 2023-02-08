@@ -278,10 +278,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 else:
                                     if len(tile.split(';', 1)) == 2:
                                         layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
-                                            0] + tile
+                                                                          0] + tile
                                     else:
                                         layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
-                                                0] + tile
+                                                                          0] + tile
             # Get the dimensions of the grid
             grid_shape = layer_grid.shape
             layer_grid = layer_grid.tolist()
@@ -309,11 +309,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             )
         except errors.TileNotFound as e:
             word = e.args[0]
-            if word.name.startswith("tile_") and await self.bot.db.tile(word.name[5:]) is not None:
-                return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word.name[5:]}`?")
-            if await self.bot.db.tile("text_" + word.name) is not None:
+            if word.startswith("tile_") and await self.bot.db.tile(word[5:]) is not None:
+                return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word[5:]}`?")
+            if await self.bot.db.tile("text_" + word) is not None:
                 return await ctx.error(
-                    f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word.name}`?")
+                    f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word}`?")
             return await ctx.error(f"The tile `{word}` could not be found.")
         except errors.BadTileProperty as e:
             return await ctx.error(f"Error! `{e.args[1]}`")
@@ -369,9 +369,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             await ctx.reply(description[:2000], embed=embed, file=image)
 
     # hack
-    async def log_exceptions(self, ctx, awaitable):
+    async def log_exceptions(self, ctx, awaitable, *args, **kwargs):
         try:
-            return await awaitable
+            return await awaitable(*args, **kwargs)
         except Exception as e:
             await CommandErrorHandler(self.bot).on_command_error(ctx, e)
 
@@ -402,10 +402,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await start_timeout(self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=True)
+        await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx, objects=objects, rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -417,16 +414,18 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await start_timeout(self.render_tiles,
-                                ctx,
-                                objects=objects,
-                                rule=rule in [
-                                    '-r',
-                                    '--rule',
-                                    '-rule',
-                                    '-t',
-                                    '--text',
-                                    '-text'], timeout_multiplier=1.5)
+            await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx,
+                                      objects=objects,
+                                      rule=rule in [
+                                          '-r',
+                                          '--rule',
+                                          '-rule',
+                                          '-t',
+                                          '--text',
+                                          '-text'
+                                      ],
+                                      timeout_multiplier=1.5
+                                      )
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
@@ -459,10 +458,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await start_timeout(self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=False)
+        await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx, objects=objects, rule=False)
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(
@@ -479,7 +475,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `world`: Which levelpack / world the level is from.
         """
         levels: OrderedDict[tuple[str, str],
-                            LevelData] = collections.OrderedDict()
+        LevelData] = collections.OrderedDict()
         f_map = flags.get("map")
         f_world = flags.get("world")
         async with self.bot.db.conn.cursor() as cur:
