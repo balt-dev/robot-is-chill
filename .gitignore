@@ -14,3 +14,4 @@ grass
 update_ba.bash
 target/renders/levels/*
 .venv/
+/venv/
