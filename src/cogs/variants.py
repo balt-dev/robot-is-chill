@@ -6,6 +6,16 @@ from PIL import ImageChops
 
 from ..types import Variant, RegexDict
 
+
+"""
+TODO:
+- def f(*args: type)
+- def f(a: Literal["foo","bar"])
+- Directions
+- States
+- Tiling
+"""
+
 def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[typing.Any]:
     out = []
     t = list(t).copy()
@@ -62,6 +72,10 @@ def generate_syntax(params):
 def get_type_tree(types):
     return [get_type_tree([ti for ti in typing.get_args(t)]) if isinstance(t, typing.GenericAlias) else t for t in
             types]
+
+
+def class_init(self, *args):
+    self.args = args
 
 
 async def setup(bot):
