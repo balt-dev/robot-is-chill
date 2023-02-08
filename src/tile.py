@@ -54,7 +54,7 @@ class Tile:
     saturation: float = 1.0
     filterimage: str | None = None
     displacement: tuple[int, int] = (0, 0)
-    channel_matrix: np.ndarray = np.identity(4)
+    channel_matrix: np.ndarray = field(default_factory=(lambda: np.identity(4)))
     palette_snapping: bool = False
     normalize_gamma: bool = False
     variants: dict[str: Variant, str: Variant] = None
