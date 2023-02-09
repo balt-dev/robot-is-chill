@@ -72,14 +72,22 @@ AUTO_REPRESENTATION_VARIANTS = {
 }
 
 AUTO_VARIANTS = {
-    "tr": 1,
-    "tileright": 1,
-    "tu": 2,
-    "tileup": 2,
-    "tl": 4,
-    "tileleft": 4,
-    "td": 8,
-    "tiledown": 8,
+    "tr":            0b10000000,
+    "tileright":     0b10000000,
+    "tu":            0b01000000,
+    "tileup":        0b01000000,
+    "tl":            0b00100000,
+    "tileleft":      0b00100000,
+    "td":            0b00010000,
+    "tiledown":      0b00010000,
+    "tur":           0b11001000,
+    "tileright":     0b11001000,
+    "tul":           0b01100100,
+    "tileupleft":    0b01100100,
+    "tdl":           0b00110010,
+    "tiledownleft":  0b00110010,
+    "tdr":           0b10010001,
+    "tiledownright": 0b10010001,
 }
 
 # colors
@@ -104,43 +112,10 @@ COLOR_NAMES: dict[str, tuple[int, int]] = {
     "brown": (6, 1),
 }
 
-CUSTOM_COLOR_NAMES: dict[str, tuple[int, int, int]] = {
-    "mint": [0x00, 0xee, 0x8a],
-    "blueberry": [0x8f, 0x94, 0xc5],
-    "night": [0x13, 0x14, 0x57],
-    "haten": [0x43, 0x3b, 0xff],
-    "apple": [0xb1, 0x3e, 0x53],
-    "lemon": [0xff, 0xcd, 0x75],
-    "grape": [0x5d, 0x27, 0x5d],
-    "magenta": [0xff, 0x00, 0xff],
-    "cherry": [0xFF, 0x47, 0x50],
-    "rose": [0xFF, 0x84, 0xB9],
-    "azure": [0x00, 0x7f, 0xff],
-    "mud": [0x5C, 0x47, 0x42],
-    "dreamvoyager": [0xdf, 0x4f, 0xe1],
-    "cobalt": [0x20, 0x66, 0x94],
-    "digin": [0x4C, 0xFF, 0x00],
-    "adr": [0xFC, 0xEC, 0x94],
-    "fullest": [0x00, 0xC0, 0x00],
-    "mrld": [0x82, 0xFF, 0x97],
-    "ping": [0xED, 0x42, 0x45],
-    "ocean": [0xb0, 0xe0, 0xd6],
-    "violet": [0x44, 0x22, 0xff],
-    "blurple-old": [0x72, 0x89, 0xda],
-    "blurple": [0x58, 0x65, 0xF2]
-}
-
 COLOR_REPRESENTATION_VARIANTS = {
     "foobarbaz": ", ".join(
         f"{color}" for color in COLOR_NAMES) +
     " (Color names)"}
-
-CUSTOM_COLOR_REPRESENTATION_VARIANTS = {
-    "coom": "\n".join(
-        f"{color}: #{''.join([hex(h)[2:].zfill(2) for h in hx])}" for color,
-        hx in list(
-            CUSTOM_COLOR_NAMES.items())) +
-    "\n(Custom color names)"}
 
 INACTIVE_COLORS: dict[tuple[int, int], tuple[int, int]] = {
     (0, 0): (0, 4),
@@ -189,57 +164,57 @@ DIRECTIONS = {
 }
 
 # for n in [[0,1],[-1,0],[0,-1],[1,0],[-1,1],[-1,-1],[1,-1],[]]
-TILING_VARIANTS: dict[tuple[bool, bool, bool, bool, bool, bool, bool, bool], int] = {
+TILING_VARIANTS: dict[int, int] = {
     #R, U, L, D, E, Q, Z, C
     # Straightforward so far, easy to compute with a bitfield
-    (False, False, False, False, False, False, False, False): 0,
-    (True, False, False, False, False, False, False, False): 1,
-    (False, True, False, False, False, False, False, False): 2,
-    (True, True, False, False, False, False, False, False): 3,
-    (False, False, True, False, False, False, False, False): 4,
-    (True, False, True, False, False, False, False, False): 5,
-    (False, True, True, False, False, False, False, False): 6,
-    (True, True, True, False, False, False, False, False): 7,
-    (False, False, False, True, False, False, False, False): 8,
-    (True, False, False, True, False, False, False, False): 9,
-    (False, True, False, True, False, False, False, False): 10,
-    (True, True, False, True, False, False, False, False): 11,
-    (False, False, True, True, False, False, False, False): 12,
-    (True, False, True, True, False, False, False, False): 13,
-    (False, True, True, True, False, False, False, False): 14,
-    (True, True, True, True, False, False, False, False): 15,
+    0b00000000: 0,
+    0b10000000: 1,
+    0b01000000: 2,
+    0b11000000: 3,
+    0b00100000: 4,
+    0b10100000: 5,
+    0b01100000: 6,
+    0b11100000: 7,
+    0b00010000: 8,
+    0b10010000: 9,
+    0b01010000: 10,
+    0b11010000: 11,
+    0b00110000: 12,
+    0b10110000: 13,
+    0b01110000: 14,
+    0b11110000: 15,
     # Messy from here on, requires hardcoding
-    (True, True, False, False, True, False, False, False): 16,
-    (True, True, True, False, True, False, False, False): 17,
-    (True, True, False, True, True, False, False, False): 18,
-    (True, True, True, True, True, False, False, False): 19,
-    (False, True, True, False, False, True, False, False): 20,
-    (True, True, True, False, False, True, False, False): 21,
-    (False, True, True, True, False, True, False, False): 22,
-    (True, True, True, True, False, True, False, False): 23,
-    (True, True, True, False, True, True, False, False): 24,
-    (True, True, True, True, True, True, False, False): 25,
-    (False, False, True, True, False, False, True, False): 26,
-    (True, False, True, True, False, False, True, False): 27,
-    (False, True, True, True, False, False, True, False): 28,
-    (True, True, True, True, False, False, True, False): 29,
-    (True, True, True, True, True, False, True, False): 30,
-    (False, True, True, True, False, True, True, False): 31,
-    (True, True, True, True, False, True, True, False): 32,
-    (True, True, True, True, True, True, True, False): 33,
-    (True, False, False, True, False, False, False, True): 34,
-    (True, True, False, True, False, False, False, True): 35,
-    (True, False, True, True, False, False, False, True): 36,
-    (True, True, True, True, False, False, False, True): 37,
-    (True, True, False, True, True, False, False, True): 38,
-    (True, True, True, True, True, False, False, True): 39,
-    (True, True, True, True, False, True, False, True): 40,
-    (True, True, True, True, True, True, False, True): 41,
-    (True, False, True, True, False, False, True, True): 42,
-    (True, True, True, True, False, False, True, True): 43,
-    (True, True, True, True, True, False, True, True): 44,
-    (True, True, True, True, False, True, True, True): 45,
-    (True, True, True, True, True, True, True, True): 46,
+    0b11001000: 16,
+    0b11101000: 17,
+    0b11011000: 18,
+    0b11111000: 19,
+    0b01100100: 20,
+    0b11100100: 21,
+    0b01110100: 22,
+    0b11110100: 23,
+    0b11101100: 24,
+    0b11111100: 25,
+    0b00110010: 26,
+    0b10110010: 27,
+    0b01110010: 28,
+    0b11110010: 29,
+    0b11111010: 30,
+    0b01110110: 31,
+    0b11110110: 32,
+    0b11111110: 33,
+    0b10010001: 34,
+    0b11010001: 35,
+    0b10110001: 36,
+    0b11110001: 37,
+    0b11011001: 38,
+    0b11111001: 39,
+    0b11110101: 40,
+    0b11111101: 41,
+    0b10110011: 42,
+    0b11110011: 43,
+    0b11111011: 44,
+    0b11110111: 45,
+    0b11111111: 46
 }
 
 # While not all of these are nouns, their appearance is very noun-like
@@ -264,3 +239,10 @@ EXTENSIONS_WORLD = "baba-extensions"
 COMBINE_MAX_FILESIZE = 5242880  # in bytes
 
 TIMEOUT_DURATION = 20
+
+TILING_NONE = -1
+TILING_DIR  =  0
+TILING_TILE =  1
+TILING_CHAR =  2
+TILING_ADIR =  3
+TILING_ANIM =  4

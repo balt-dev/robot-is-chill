@@ -5,7 +5,7 @@ import random
 import time
 import zipfile
 from io import BytesIO
-from typing import TYPE_CHECKING, BinaryIO
+from typing import TYPE_CHECKING, BinaryIO, Tuple
 
 import cv2
 import numpy as np
@@ -79,8 +79,8 @@ class Renderer:
     """
 
     def __init__(self, bot: Bot) -> None:
-        self.bot = bot
         self.sprite_cache = {}
+        self.bot = bot
 
     async def render(
             self,
@@ -371,7 +371,7 @@ class Renderer:
                     new_image.paste(
                         im, (padding - pad_l, padding - pad_u), mask=im)
                     imgs.insert(bfr, new_image)
-                    bfr += 1  # i dont wanna use an enumerate on an iterator
+                    bfr += 1  # I don't want to use an enumerate on an iterator
                 except KeyError:
                     pass
             durations = before_durations + durations
@@ -420,36 +420,42 @@ class Renderer:
             background=(background is not None)
         )
         if len(times) == 0:
-            return 0, 0, 0, len(self.sprite_cache)
+            return 0, 0, 0
         else:
             return sum(times) / \
-                len(times), max(times), sum(times), len(self.sprite_cache)
+                len(times), max(times), sum(times),
 
     async def render_full_tile(self,
                                tile: Tile,
                                *,
                                position: tuple[int, int],
                                palette_img: Image.Image,
+                               palette: str,
                                random_animations: bool = False,
                                raw_sprite_cache: dict[str, Image.Image],
-                               gscale: float = 1
-                               ) -> ProcessedTile:
+                               gscale: float = 1,
+                               tile_cache: dict[int, Tile] = {}
+                               ) -> ProcessedTile | Tile | tuple[ProcessedTile, int]:
         """woohoo."""
         t = time.perf_counter()
         if tile.empty:
             return ProcessedTile(None)
-        out = []
         x, y = position
+        wobble_hash = (11 * x + 13 * y) % 3 if random_animations else 0
+        tile_hash = hash((tile, wobble_hash, palette, gscale))
+        if tile_hash in tile_cache.keys():
+            return tile_cache[tile_hash]
+        out = []
         for frame in range(3):
             wobble = (
                 11 * x + 13 * y + frame) % 3 if random_animations else frame
-            if tile.custom:
+            if tile.custom and type(tile.sprite) == tuple:
                 sprite = await self.generate_sprite(
                     tile.name,
                     style=tile.custom_style or (
                         "noun" if len(tile.name) < 1 else "letter"),
                     wobble=wobble,
-                    variants=tile.variants,
+                    variants=tile.variants["sprite"],
                     position=(x, y),
                     gscale=gscale
                 )
@@ -473,7 +479,8 @@ class Renderer:
                             source, sprite_name = tile.sprite
                             path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{wobble + 1}.png"
                         try:
-                            path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{wobble + 1}.png"
+                            print(tile.fallback_frame)
+                            path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{wobble + 1}.png"
                         except BaseException:
                             path_fallback = None
                     try:
@@ -490,6 +497,14 @@ class Renderer:
                             raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files don\'t exist for it.')
                 sprite = sprite.resize(
                     (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
+                computed_hash = hash((
+                    tile_hash,
+                    tuple(sprite.getdata()),
+                    wobble,
+                    gscale
+                ))
+                if computed_hash in self.sprite_cache:
+                    sprite = self.sprite_cache[computed_hash]
                 sprite = await self.apply_options_name(
                     tile.name,
                     sprite,
@@ -497,17 +512,19 @@ class Renderer:
                     wobble=wobble,
                     variants=tile.variants["sprite"]
                 )
-            print(tile.variants)
-            for variant in tile.variants["tile"]:
-                variant.apply(tile) # this should replace most of this shit below
+            for variant in tile.variants["post"]:
+                variant.apply(tile) # something like this should replace most of this shit below, maybe tile.variants["post"]?
             # Color augmentation
             if tile.overlay is None:
-                if tile.palette is None:
-                    rgb = tile.color if len(tile.color) == 3 else palette_img.getpixel(
-                        tile.color)
-                else:
-                    rgb = tile.color if len(tile.color) == 3 else Image.open(
-                        f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color)
+                try:
+                    if tile.palette is None:
+                        rgb = tile.color if len(tile.color) == 3 else palette_img.getpixel(
+                            tile.color)
+                    else:
+                        rgb = tile.color if len(tile.color) == 3 else Image.open(
+                            f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color)
+                except IndexError:
+                    raise errors.BadPaletteIndex(tile.name, tile.color)
                 sprite = recolor(sprite, rgb)
             else:
                 try:
@@ -612,13 +629,15 @@ class Renderer:
             sprite = Image.fromarray(numpysprite)
             out.append(sprite)
         f0, f1, f2 = out
-        return ProcessedTile(
+        final_tile = ProcessedTile(
             (f0,
              f1,
              f2),
             tile.blending,
             tile.displacement,
             time.perf_counter() - t)
+        tile_cache[tile_hash] = final_tile
+        return final_tile
 
     async def render_full_tiles(
             self,
@@ -627,14 +646,14 @@ class Renderer:
             palette: str = "default",
             random_animations: bool = False,
             gscale: float = 1
-    ) -> list[list[list[list[ProcessedTile]]]]:
+    ) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
         """Final individual tile processing step."""
         palette = palette or "default"
         random_animations = random_animations if random_animations is not None else False
         gscale = gscale if gscale is not None else 2
         sprite_cache = {}
-        self.sprite_cache = {}
         palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
+        tile_cache = {}
         d = []
         for timestep in grid:
             a = []
@@ -648,15 +667,17 @@ class Renderer:
                                 tile,
                                 position=(x, y),
                                 palette_img=palette_img,
+                                palette=palette,
                                 random_animations=random_animations,
                                 raw_sprite_cache=sprite_cache,
-                                gscale=gscale
+                                gscale=gscale,
+                                tile_cache=tile_cache
                             )
                         )
                     b.append(c)
                 a.append(b)
             d.append(a)
-        return d
+        return d, len(tile_cache)
 
     async def generate_sprite(
             self,

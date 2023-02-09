@@ -18,7 +18,7 @@ from PIL import Image
 from src import constants
 from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
-from ..tile import Tile
+from ..tile import Tile, ProcessedTile
 
 from ..types import Bot, Context
 
@@ -60,7 +60,7 @@ class Grid:
         # Custom levels
         self.author: str | None = None
 
-    def ready_grid(self) -> list[list[list[list[Tile]]]]:
+    def ready_grid(self) -> list[list[list[list[ProcessedTile]]]]:
         """Returns a ready-to-paste version of the grid."""
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
             valid = (sprite, "edge", "level")
@@ -116,7 +116,7 @@ class Grid:
         for y in range(self.height):
             for x in range(self.width):
                 maxstack = max(maxstack, len(self.cells[y * self.width + x]))
-        layer_grid = [[[Tile(None) for _ in range(max([self.width for n in range(
+        layer_grid = [[[ProcessedTile(None) for _ in range(max([self.width for n in range(
             self.height)]))] for _ in range(self.height)] for _ in range(maxstack)]
         for i in range(maxstack):
             for y in range(self.height):
@@ -163,7 +163,7 @@ class Grid:
                                     cache=sprite_cache),
                                 color),
                         )
-                        layer_grid[i][y][x] = Tile(frames)
+                        layer_grid[i][y][x] = ProcessedTile(frames)
                     except BaseException:
                         pass
         return layer_grid
@@ -244,6 +244,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         code should be valid (but is checked regardless)
         """
         async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/raw/l?code={code.upper()}") as resp:
+
             resp.raise_for_status()
             data = await resp.json()
             b64 = data["data"]
