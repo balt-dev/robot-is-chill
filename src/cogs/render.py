@@ -479,7 +479,6 @@ class Renderer:
                             source, sprite_name = tile.sprite
                             path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{wobble + 1}.png"
                         try:
-                            print(tile.fallback_frame)
                             path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{wobble + 1}.png"
                         except BaseException:
                             path_fallback = None

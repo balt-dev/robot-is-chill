@@ -78,7 +78,6 @@ async def setup(bot):
                     name: inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno)
                     for name, anno in zip(name.split('_'), typing.get_args(param.annotation))})})"""
             elif typing.get_origin(param.annotation) is typing.Literal:
-                print(param.annotation)
                 syntax += f"""<{'/'.join([repr(arg) for arg in typing.get_args(param.annotation)])} {name}>"""
             else:
                 syntax += f"<{param.annotation.__name__} {name}>"
