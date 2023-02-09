@@ -37,8 +37,11 @@ class TileSkeleton:
         out.empty = False
         raw_variants = re.split(r";|:", string)
         out.name = raw_variants.pop(0)
+        macro_count = 0
         for raw_variant in raw_variants:
             if raw_variant in macros:
+                assert macro_count < 50, "Too many macros! Did you recurse them somewhere?"
+                macro_count += 1
                 raw_variants.extend(macros[raw_variant].split(":"))
                 continue
             try:
