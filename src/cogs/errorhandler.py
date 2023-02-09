@@ -14,14 +14,17 @@ import requests
 from ..types import Bot, Context
 from .. import errors
 
+class DummyLogger:
+    async def send(self, *args, **kwargs): pass
+
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.webhook_id = bot.webhook_id
-        self.logger = None
+        self.logger = DummyLogger()
 
     async def setup_logger(self, webhook_id: int):
-        return await self.bot.fetch_webhook(webhook_id)
+        return DummyLogger() # await self.bot.fetch_webhook(webhook_id)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: Context, error: Exception):
