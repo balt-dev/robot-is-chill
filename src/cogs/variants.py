@@ -128,6 +128,7 @@ async def setup(bot):
         return wrapper
 
     # --- ANIMATION FRAMES ---
+    
     @add_variant(no_function_name=True)
     def frame(tile, anim_frame: int):
         """Sets the animation frame of a sprite."""
