@@ -31,17 +31,6 @@ from ..types import Bot, Context
 
 from .errorhandler import CommandErrorHandler
 
-
-async def start_timeout(function, *args, timeout_multiplier=1, **kwargs):
-    def handler(_signum, _frame):
-        raise AssertionError("The command took too long and was timed out.")
-
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(constants.TIMEOUT_DURATION * timeout_multiplier)
-    await function(*args, **kwargs)
-    signal.alarm(0)
-
-
 def try_index(string: str, value: str) -> int:
     """Returns the index of a substring within a string.
 
@@ -72,7 +61,15 @@ def split_commas(grid: list[list[str]], prefix: str):
             row[change[0]:change[0] + 1] = change[1]
     return grid
 
+async def start_timeout(ctx, function, *args, timeout_multiplier=1, **kwargs):
+    async def handler(_signum, _frame):
+        await ctx.error("The command took too long and was timed out.")
 
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(constants.TIMEOUT_DURATION * timeout_multiplier)
+    await function(*args, **kwargs)
+    signal.alarm(0)
+        
 class GlobalCog(commands.Cog, name="Baba Is You"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -151,12 +148,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"{msg}.")
 
     async def handle_grid(
-            self, grid: list[list[list[list[TileSkeleton]]]]):
-        """Parses a TileSkeleton grid into a Tile grid."""
+            self, ctx, grid, tile_borders = False):
+        """Parses a TileSkeleton array into a Tile grid."""
         tile_data_cache = {
             data.name: data async for data in self.bot.db.tiles(
                 {
-                    tile.name for steps in grid for row in steps for stack in row for tile in stack
+                    tile.name for tile in grid.flatten()
                 }
             )
         }
@@ -164,14 +161,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             [
                 [
                     [
-                        Tile.prepare(tile_data_cache, tile)
-                        for tile in row
+                        # grid gets passed by reference, as it is mutable
+                        Tile.prepare(tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
+                        for x, tile in enumerate(row)
                     ]
-                    for row in layer
+                    for y, row in enumerate(layer)
                 ]
-                for layer in timestep
+                for z, layer in enumerate(timestep)
             ]
-            for timestep in grid
+            for w, timestep in enumerate(grid)
         ]
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
@@ -201,8 +199,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             tiles = tiles.replace(src, dst)
 
         # Determines if this should be a spoiler
-        spoiler = "|" in tiles
-        tiles = tiles.replace("|", "")
+        spoiler = "||" in tiles
+        tiles = tiles.replace("||", "")
 
         # Check for empty input
         if not tiles:
@@ -234,6 +232,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
         raw_output = kwargs.get("raw_output", False)
         default_to_letters = kwargs.get("letters", False)
+        macros = kwargs.get("macro", {})
         tborders = kwargs.get("tborders", False)
         file_format = kwargs.get('file_format', 'gif')
         do_embed = kwargs.get('do_embed', False)
@@ -259,11 +258,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         maxdelta = max(maxdelta, len(timeline.split(">")))
             w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
                 comma_grid), maxstack, maxdelta  # width, height, depth, time
-            layer_grid = np.full((t, d, h, w), '-', dtype=object)
+            layer_grid = np.full((t, d, h, w), TileSkeleton(), dtype=object)
             if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
                 return await ctx.error(
                     f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
             # Splits "&"-joined words into stacks
+            possible_variants = ctx.bot.variants
             for y, row in enumerate(comma_grid):
                 for x, stack in enumerate(row):
                     for layer, timeline in enumerate(stack.split('&')):
@@ -274,7 +274,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 if len(tile.split(':', 1)[0].split(';', 1)[0]):
                                     tilecount += 1
                                     tile = tile.replace('rule_', 'text_')
-                                    layer_grid[d:, layer, y, x] = TileSkeleton.parse(ctx, tile)
+                                    layer_grid[d:, layer, y, x] = TileSkeleton.parse(possible_variants, tile, rule, macros)
                                 else:
                                     if len(tile.split(';', 1)) == 2:
                                         layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
@@ -284,7 +284,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                                                           0] + tile
             # Get the dimensions of the grid
             grid_shape = layer_grid.shape
-            layer_grid = layer_grid.tolist()
             # Don't proceed if the request is too large.
             # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
             if tilecount > constants.MAX_TILES and not (
@@ -295,14 +294,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             buffer = BytesIO()
             extra_buffer = BytesIO() if raw_output else None
             extra_names = [] if raw_output else None
-            full_grid = await self.handle_grid(layer_grid)
-            avgdelta, maxdelta, tiledelta, unique_sprites = await self.bot.renderer.render(
-                await self.bot.renderer.render_full_tiles(
+            full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
+            full_tiles, unique_tiles = await self.bot.renderer.render_full_tiles(
                     full_grid,
                     palette=kwargs.get("palette", None),
                     random_animations=kwargs.get("random_animations", True),
                     gscale=kwargs.get("gscale", 1)
-                ),
+                )
+            avgdelta, maxdelta, tiledelta = await self.bot.renderer.render(
+                full_tiles,
                 out=buffer,
                 extra_out=extra_buffer,
                 **kwargs
@@ -351,10 +351,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             stats = f'''
 			Total render time: {totalrendertime} ms
 			Active render time: {activerendertime} ms
-			Tiles rendered: {tilecount}
+			Tiles rendered: {unique_tiles}
 			Average render time of all tiles: {averagerendertime} ms
 			Maximum render time of any tile: {maxrendertime} ms
-			Cached frames: {unique_sprites}
             Tile matrix shape: {grid_shape}
 			'''
 
@@ -402,7 +401,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx, objects=objects, rule=True)
+        await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx, objects=objects, rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -414,7 +413,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx,
+            await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx,
                                       objects=objects,
                                       rule=rule in [
                                           '-r',
@@ -458,7 +457,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await self.warn_dangermode(ctx)
-        await self.log_exceptions(ctx, start_timeout, self.render_tiles, ctx, objects=objects, rule=False)
+        await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx, objects=objects, rule=False)
 
     async def warn_dangermode(self, ctx: Context):
         warning_embed = discord.Embed(
@@ -783,7 +782,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             rows = [
                 f"Name: ||{display}|| (by {level.author})"
                 if spoiler else f"Name: {display} (by {level.author})",
-                f"Level code: {path}",
+                f"ID: {path}",
             ]
             if level.subtitle:
                 rows.append(
@@ -808,6 +807,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         mentions = discord.AllowedMentions(
             everyone=False, users=[
                 ctx.author], roles=False)
+
+        gif.spoiler = True
 
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)

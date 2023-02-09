@@ -37,12 +37,14 @@ class Flag:
     async def match(self, ctx: Context, potential_flag: str, x: int, y: int, kwargs: dict, to_delete: list) -> list:
         """Matches the potential flag with the flag.
         Returns the to_delete list passed in, plus the coordinates to delete if matched, and the kwargs."""
-        print(potential_flag)
         if match := self.pattern.fullmatch(potential_flag):
             to_delete.append((x, y))
             values = await self.mutator(match, ctx)
             for kwarg, value in zip(self.kwargs, values):
-                kwargs[kwarg] = value
+                if type(kwargs.get(kwarg, None)) is dict:
+                    kwargs[kwarg] |= value
+                else:
+                    kwargs[kwarg] = value
         return to_delete, kwargs
 
     def __str__(self):
@@ -289,9 +291,24 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
         """Expands the render for tiles displaced with the `:displace` variant."""
         return True,
 
+    @flags.register(match=r"--tileborder|-tb",
+                    syntax="--tileborder|-tb",
+                    kwargs=["tileborder"])
+    async def tileborder(_, __):
+        """Makes the render's border connect to tiles that tile."""
+        return True,
+
     @flags.register(match=r"--boomerang|-br",
                     syntax="--boomerang|-br",
                     kwargs=["boomerang"])
     async def boomerang(_, __):
         """Make the render reverse at the end."""
         return True,
+
+    @flags.register(match=r"(?:--macro|-mc)=(.+?)\|(.+)",
+                    syntax="--macro|-mc=<name: str>|<variants: Variant[]>",
+                    kwargs=["macro"])
+    async def macro(match, __):
+        """Define macros for variants."""
+        assert ";" not in match.group(2), "Can't have persistent variants in macros!"
+        return {match.group(1): match.group(2)},

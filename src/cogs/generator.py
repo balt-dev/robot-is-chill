@@ -132,7 +132,6 @@ class CharacterGenerator:
                                     if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
                                         legs = np.roll(legs, (0, -1), (1, 0))
                                     offset = legs_json[attr["shape"]]["offset"].get(attr["variant"], legs_json[attr["shape"]]["offset"]["generic"])[dir_name if dir_name != "left" else "right"]
-                                    print(offset)
                                     legs = np.roll(legs, offset, (1, 0))
                                     if (attr["variant"] == "belt-like" and dir != 8):
                                         legs[:-7, :, :] = 0
@@ -140,7 +139,6 @@ class CharacterGenerator:
                                     legs.paste(base, mask=base.getchannel('A'))
                                     base = legs
                             except FileNotFoundError:
-                                print(f'data/generator/legs/{attr["shape"]}-{attr["legs"]}_{(dir + min(walkcycle_frame,0)) % 32}_{wobble_frame + 1}.png')
                                 raise AssertionError(f'Invalid value for `{attr["legs"]}` with shape `{attr["shape"]}`!')
                         if dir != 8:
                             if attr['eye_count'] != 0:
