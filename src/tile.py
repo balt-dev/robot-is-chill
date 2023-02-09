@@ -40,7 +40,6 @@ class TileSkeleton:
         for raw_variant in raw_variants:
             if raw_variant in macros:
                 raw_variants.extend(macros[raw_variant].split(":"))
-                print(raw_variants)
                 continue
             try:
                 final_variant = possible_variants[raw_variant]
