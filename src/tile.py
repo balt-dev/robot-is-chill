@@ -101,7 +101,7 @@ class Tile:
     blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK"] = "NORMAL"
     custom: bool = False
     custom_style: Literal["noun", "property", "letter"] = "noun"
-    palette: str = "default"
+    palette: str = None
     overlay: str | None = None
     hue: float = 1.0
     gamma: float = 1.0
