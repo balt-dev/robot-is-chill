@@ -18,7 +18,7 @@ from PIL import Image
 from src import constants
 from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
-from ..tile import Tile, ProcessedTile
+from ..tile import ProcessedTile
 
 from ..types import Bot, Context
 
@@ -60,7 +60,7 @@ class Grid:
         # Custom levels
         self.author: str | None = None
 
-    def ready_grid(self) -> list[list[list[list[ProcessedTile]]]]:
+    def ready_grid(self) -> list[list[list[ProcessedTile]]]:
         """Returns a ready-to-paste version of the grid."""
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
             valid = (sprite, "edge", "level")
@@ -451,12 +451,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             r"\n.*\n.*\n\s*tiling = (-1|\d),"
             r"\n.*"
             r"\n\s*(?:argextra = .*,\n\s*)?(?:argtype = .*,\n\s*)?"
-            r"colour = \{(\d), (\d)\},"
-            r"(?:\n\s*active = \{(\d), (\d)\},)?"
-            r"\n\s*tile = \{(\d+), (\d+)\},"
+            r"colour = \{(\d), (\d)},"
+            r"(?:\n\s*active = \{(\d), (\d)},)?"
+            r"\n\s*tile = \{(\d+), (\d+)},"
             r"\n.*"
             r"\n\s*layer = (\d+),"
-            r"\n\s*\}",
+            r"\n\s*}",
         )
         for match in re.finditer(object_pattern, spanned):
             obj, sprite, tiling, c_x, c_y, a_x, a_y, t_x, t_y, layer = match.groups()

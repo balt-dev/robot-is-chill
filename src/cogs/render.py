@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import glob
 import math
 import random
 import time
 import zipfile
 from io import BytesIO
+from pathlib import Path
 from typing import TYPE_CHECKING, BinaryIO, Tuple
 
 import cv2
@@ -81,6 +83,10 @@ class Renderer:
     def __init__(self, bot: Bot) -> None:
         self.sprite_cache = {}
         self.bot = bot
+        self.palette_cache = {}
+        for path in glob.glob("data/palettes/*.png"):
+            with Image.open(path) as im:
+                self.palette_cache[Path(path).stem] = im.copy()
 
     async def render(
             self,
@@ -429,20 +435,21 @@ class Renderer:
                                tile: Tile,
                                *,
                                position: tuple[int, int],
-                               palette_img: Image.Image,
-                               palette: str,
                                random_animations: bool = False,
                                raw_sprite_cache: dict[str, Image.Image],
                                gscale: float = 1,
-                               tile_cache: dict[int, Tile] = {}
+                               tile_cache=None,
+                               palette_cache=None
                                ) -> ProcessedTile | Tile | tuple[ProcessedTile, int]:
         """woohoo."""
+        if tile_cache is None:
+            tile_cache = {}
         t = time.perf_counter()
         if tile.empty:
             return ProcessedTile(None)
         x, y = position
         wobble_hash = (11 * x + 13 * y) % 3 if random_animations else 0
-        tile_hash = hash((tile, wobble_hash, palette, gscale))
+        tile_hash = hash((tile, wobble_hash, gscale))
         if tile_hash in tile_cache.keys():
             return tile_cache[tile_hash]
         out = []
@@ -451,11 +458,10 @@ class Renderer:
                 11 * x + 13 * y + frame) % 3 if random_animations else frame
             if tile.custom and type(tile.sprite) == tuple:
                 sprite = await self.generate_sprite(
-                    tile.name,
-                    style=tile.custom_style or (
+                    tile,
+                    style=tile.style or (
                         "noun" if len(tile.name) < 1 else "letter"),
                     wobble=wobble,
-                    variants=tile.variants["sprite"],
                     position=(x, y),
                     gscale=gscale
                 )
@@ -493,7 +499,8 @@ class Renderer:
                                 cache=raw_sprite_cache,
                                 fn=Image.open).convert("RGBA")
                         except (FileNotFoundError, AssertionError):
-                            raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files don\'t exist for it.')
+                            raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
+                                                 f'don\'t exist for it.')
                 sprite = sprite.resize(
                     (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
                 computed_hash = hash((
@@ -505,127 +512,26 @@ class Renderer:
                 if computed_hash in self.sprite_cache:
                     sprite = self.sprite_cache[computed_hash]
                 sprite = await self.apply_options_name(
-                    tile.name,
+                    tile,
                     sprite,
-                    style=tile.custom_style,
-                    wobble=wobble,
-                    variants=tile.variants["sprite"]
+                    wobble
                 )
             for variant in tile.variants["post"]:
-                variant.apply(tile) # something like this should replace most of this shit below, maybe tile.variants["post"]?
+                variant.apply(tile)
             # Color augmentation
-            if tile.overlay is None:
+            if not tile.custom_color:
                 try:
-                    if tile.palette is None:
-                        rgb = tile.color if len(tile.color) == 3 else palette_img.getpixel(
-                            tile.color)
+                    if len(tile.color) == 3:
+                        rgb = tile.color
                     else:
-                        rgb = tile.color if len(tile.color) == 3 else Image.open(
-                            f"data/palettes/{tile.palette}.png").convert("RGB").getpixel(tile.color)
+                        if tile.palette not in self.palette_cache:
+                            raise AssertionError(f"Palette {tile.palette} recognized while initializing variants, "
+                                                 f"but not when applying them. This should never happen.")
+                        rgb = self.palette_cache[tile.palette].getpixel(tile.color)
                 except IndexError:
                     raise errors.BadPaletteIndex(tile.name, tile.color)
+
                 sprite = recolor(sprite, rgb)
-            else:
-                try:
-                    overlay = Image.open(
-                        f"data/overlays/{tile.overlay}.png").convert("RGBA")
-                    if overlay.width < sprite.width or overlay.height < sprite.height:
-                        width = math.ceil(sprite.width / overlay.width)
-                        height = math.ceil(sprite.height / overlay.height)
-                        rgb = np.tile(
-                            np.array(overlay), (height, width, 1)) / 255
-                    else:
-                        rgb = np.array(overlay) / 255
-                except FileNotFoundError:
-                    raise errors.OverlayNotFound(tile.overlay)
-                ovsprite = np.array(sprite).astype("float64")
-                ovsprite *= rgb[:ovsprite.shape[0], :ovsprite.shape[1]]
-                ovsprite = ovsprite.astype("uint8")
-                sprite = Image.fromarray(ovsprite)
-            if tile.hue != 0.0:
-                sprite = Image.fromarray(
-                    shift_hue(
-                        np.array(
-                            sprite,
-                            dtype="uint8"),
-                        tile.hue))
-            if tile.gamma != 1:
-                bsprite = np.array(sprite, dtype="float64")
-                bsprite *= (tile.gamma, tile.gamma,
-                            tile.gamma, 1)
-                bsprite[bsprite > 255] = 255
-                bsprite[bsprite < 0] = 0
-                sprite = Image.fromarray(bsprite.astype("uint8"))
-            if tile.palette_snapping is True:  # it defaults to true without this for some reason
-                palette_colors = np.array(Image.open(
-                    f"data/palettes/{tile.palette or 'default'}.png").convert("RGB")).reshape(-1, 3)
-                im = np.array(sprite)
-                im_lab = cv2.cvtColor(
-                    im.astype(
-                        np.float32) / 255,
-                    cv2.COLOR_RGB2Lab)
-                diff_matrix = np.full(
-                    (palette_colors.shape[0], *im.shape[:-1]), 999)
-                for i, color in enumerate(
-                        palette_colors):  # still slow, but faster than iterating through every pixel
-                    filled_color_array = np.array([[color]]).repeat(
-                        im.shape[0], 0).repeat(im.shape[1], 1)
-                    filled_color_array = cv2.cvtColor(
-                        filled_color_array.astype(
-                            np.float32) / 255, cv2.COLOR_RGB2Lab)
-                    im_delta_e = delta_e(im_lab, filled_color_array)
-                    diff_matrix[i] = im_delta_e
-                min_indexes = np.argmin(diff_matrix, 0, keepdims=True).reshape(
-                    diff_matrix.shape[1:])
-                result = np.full(im.shape, 0, dtype=np.uint8)
-                for i, color in enumerate(palette_colors):
-                    result[:, :, :3][min_indexes == i] = color
-                result[:, :, 3] = im[:, :, 3]
-                sprite = Image.fromarray(result)
-            if tile.saturation != 1:
-                sprite = Image.fromarray(
-                    grayscale(
-                        np.array(sprite),
-                        tile.saturation))
-            if tile.filterimage is not None:
-                url = tile.filterimage
-                absolute = False
-                if url.startswith("abs"):
-                    url = url[3:]
-                    absolute = True
-                if url.startswith("db!"):
-                    url = url[3:]
-                    command = "SELECT url FROM filterimages WHERE name == ?;"
-                    args = (url,)
-                    async with self.bot.db.conn.cursor() as cursor:
-                        await cursor.execute(command, args)
-                        results = await cursor.fetchone()
-                        if results is None:
-                            raise requests.exceptions.ConnectionError
-                        url = results[0]
-                p = requests.get(url, stream=True).raw.read()
-                # try:
-                ifilterimage = Image.open(BytesIO(p)).convert("RGBA")
-                sprite = filterimage.apply_filterimage(sprite, ifilterimage.resize(
-                    (int(ifilterimage.width * gscale), int(ifilterimage.height * gscale)), Image.NEAREST), absolute)
-                # except OSError:
-                #    raise AssertionError('Image wasn\'t able to be accessed, or is invalid!')
-            if tile.normalize_gamma:
-                arr = np.array(sprite)
-                arr_rgb, sprite_a = arr[:, :, :3], arr[:, :, 3]
-                arr_hls = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HLS).astype(
-                    np.float64)  # since WHEN was it HLS???? huh?????
-                max_l = np.max(arr_hls[:, :, 1])
-                arr_hls[:, :, 1] *= (255 / max_l)
-                sprite_rgb = cv2.cvtColor(
-                    arr_hls.astype(
-                        np.uint8),
-                    cv2.COLOR_HLS2RGB)  # my question still stands
-                sprite = np.dstack((sprite_rgb, sprite_a))
-            numpysprite = np.array(sprite)
-            numpysprite[np.all(numpysprite[:, :, :3] <= (8, 8, 8), axis=2) & (
-                numpysprite[:, :, 3] > 0), :3] = 8
-            sprite = Image.fromarray(numpysprite)
             out.append(sprite)
         f0, f1, f2 = out
         final_tile = ProcessedTile(
@@ -642,16 +548,12 @@ class Renderer:
             self,
             grid: list[list[list[list[Tile]]]],
             *,
-            palette: str = "default",
             random_animations: bool = False,
-            gscale: float = 1
+            gscale: float = 2
     ) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
         """Final individual tile processing step."""
-        palette = palette or "default"
         random_animations = random_animations if random_animations is not None else False
-        gscale = gscale if gscale is not None else 2
         sprite_cache = {}
-        palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
         tile_cache = {}
         d = []
         for timestep in grid:
@@ -665,11 +567,9 @@ class Renderer:
                             await self.render_full_tile(
                                 tile,
                                 position=(x, y),
-                                palette_img=palette_img,
-                                palette=palette,
                                 random_animations=random_animations,
-                                raw_sprite_cache=sprite_cache,
                                 gscale=gscale,
+                                raw_sprite_cache=sprite_cache,
                                 tile_cache=tile_cache
                             )
                         )
@@ -680,17 +580,16 @@ class Renderer:
 
     async def generate_sprite(
             self,
-            text: str,
+            tile: Tile,
             *,
             style: str,
             wobble: int,
             seed: int | None = None,
-            variants: list[Variant],
             gscale: float,
             position: tuple[int, int]
     ) -> Image.Image:
         """Generates a custom text sprite."""
-        text = text[5:]
+        text = tile.name[5:]
         raw = text.replace("/", "")
         newline_count = text.count("/")
         assert len(text) <= 64, 'Text has a maximum length of `64` characters.'
@@ -880,59 +779,44 @@ class Renderer:
         sprite = sprite.resize(
             (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
         return self.apply_options(
+            tile,
             sprite,
-            original_style="noun",
-            wobble=wobble,
-            variants=variants,
-            style=style
+            wobble
         )
 
     async def apply_options_name(
             self,
-            name: str,
+            tile: Tile,
             sprite: Image.Image,
-            *,
-            wobble: int,
-            variants: list[Variant],
-            style: str
+            wobble: int
     ) -> Image.Image:
         """Takes an image, taking tile data from its name, and applies the
         given options to it."""
-        tile_data = await self.bot.db.tile(name)
-        if tile_data is not None:
-            original_style = constants.TEXT_TYPES[tile_data.text_type]
-        else:  # catch generated sprites
-            original_style = style
         try:
             return self.apply_options(
+                tile,
                 sprite,
-                original_style=original_style,
-                wobble=wobble,
-                variants=variants,
-                style=style
+                wobble
             )
         except ValueError as e:
             size = e.args[0]
-            raise errors.BadTileProperty(name, size)
+            raise errors.BadTileProperty(tile.name, size)
 
     def apply_options(
             self,
+            tile: Tile,
             sprite: Image.Image,
-            *,
-            original_style: str,
             wobble: int,
-            style: str | None = None,
-            variants: list[Variant],
             seed: int | None = None
     ):
         random.seed(seed)
-        for variant in variants:
-            sprite = variant.apply(sprite)
+        for variant in tile.variants["sprite"]:
+            sprite = variant.apply(sprite, tile=tile, wobble=wobble, renderer=self) # NOUN/PROP ARE ANNOYING
         return sprite
 
     def save_frames(
             self,
-            imgs: list[Image.Image],
+            images: list[Image.Image],
             out: str | BinaryIO,
             durations: list[int],
             extra_out: str | BinaryIO | None = None,
@@ -948,12 +832,12 @@ class Renderer:
         buffer. If extra_out is provided, the frames are also saved as a
         zip file there.
         """
-        if boomerang and len(imgs) > 2:
-            imgs += imgs[-2:0:-1]
+        if boomerang and len(images) > 2:
+            images += images[-2:0:-1]
             durations += durations[-2:0:-1]
         if image_format == 'gif':
             if not background:
-                for i, im in enumerate(imgs):
+                for i, im in enumerate(images):
                     np_im = np.array(im.convert("RGBA"))
                     colors = np.unique(np_im.reshape(-1, 4),
                                        axis=0)
@@ -961,13 +845,13 @@ class Renderer:
                                                 != 0][:254, :3].flatten().tolist()
                     dummy = Image.new('P', (16, 16))
                     dummy.putpalette(colors)
-                    imgs[i] = im.convert('RGB').quantize(
+                    images[i] = im.convert('RGB').quantize(
                         palette=dummy, dither=0)
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
                 'save_all': True,
-                'append_images': imgs[1:],
+                'append_images': images[1:],
                 'loop': 0,
                 'duration': durations,
                 'disposal': 2,  # Frames don't overlap
@@ -979,7 +863,7 @@ class Renderer:
                 del kwargs['loop']
             if background:
                 del kwargs['transparency']
-            imgs[0].save(
+            images[0].save(
                 out,
                 **kwargs
             )
@@ -987,14 +871,14 @@ class Renderer:
             kwargs = {
                 'format': "PNG",
                 'save_all': True,
-                'append_images': imgs,
+                'append_images': images,
                 'default_image': True,
                 'loop': 0,
                 'duration': durations
             }
             if not loop:
                 kwargs['loop'] = 1
-            imgs[0].save(
+            images[0].save(
                 out,
                 **kwargs
             )
@@ -1004,7 +888,7 @@ class Renderer:
             extra_name = 'render'
         if extra_out is not None:
             file = zipfile.PyZipFile(extra_out, "x")
-            for i, img in enumerate(imgs):
+            for i, img in enumerate(images):
                 buffer = BytesIO()
                 img.save(buffer, "PNG")
                 file.writestr(
