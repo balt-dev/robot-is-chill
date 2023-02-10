@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import collections
 import os
 import signal
@@ -13,7 +14,7 @@ from datetime import datetime
 from io import BytesIO
 from json import load
 from time import perf_counter
-from typing import Any, OrderedDict, TYPE_CHECKING
+from typing import Any, OrderedDict
 
 import numpy as np
 import emoji
@@ -30,6 +31,7 @@ from ..db import CustomLevelData, LevelData
 from ..types import Bot, Context
 
 from .errorhandler import CommandErrorHandler
+
 
 def try_index(string: str, value: str) -> int:
     """Returns the index of a substring within a string.
@@ -61,15 +63,26 @@ def split_commas(grid: list[list[str]], prefix: str):
             row[change[0]:change[0] + 1] = change[1]
     return grid
 
-async def start_timeout(ctx, function, *args, timeout_multiplier=1, **kwargs):
-    async def handler(_signum, _frame):
-        await ctx.error("The command took too long and was timed out.")
+
+async def start_timeout(ctx, function, *args, timeout_multiplier: float = 1.0, **kwargs):
+    def handler(_signum, _frame):
+        asyncio.ensure_future(CommandErrorHandler(ctx.bot).on_command_error(ctx, AssertionError(
+            "The command took too long and was timed out.")))
 
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(constants.TIMEOUT_DURATION * timeout_multiplier)
+    signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
     await function(*args, **kwargs)
     signal.alarm(0)
-        
+
+
+async def warn_dangermode(ctx: Context):
+    warning_embed = discord.Embed(
+        title="Warning: Danger Mode",
+        color=discord.Color(16711680),
+        description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
+    await ctx.send(embed=warning_embed, delete_after=5)
+
+
 class GlobalCog(commands.Cog, name="Baba Is You"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -148,7 +161,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"{msg}.")
 
     async def handle_grid(
-            self, ctx, grid, tile_borders = False):
+            self, ctx, grid, tile_borders=False):
         """Parses a TileSkeleton array into a Tile grid."""
         tile_data_cache = {
             data.name: data async for data in self.bot.db.tiles(
@@ -264,24 +277,33 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
             # Splits "&"-joined words into stacks
             possible_variants = ctx.bot.variants
+
+            def catch(f, *args, **kwargs):
+                try:
+                    return f(*args, **kwargs)
+                except:
+                    return None
+
             for y, row in enumerate(comma_grid):
                 for x, stack in enumerate(row):
-                    for layer, timeline in enumerate(stack.split('&')):
+                    for l, timeline in enumerate(stack.split('&')):
                         for d, tile in enumerate(timeline.split('>')):
                             if len(tile):
                                 assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
                                     ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
-                                if len(tile.split(':', 1)[0].split(';', 1)[0]):
+                                if catch(tile.index, ":") or catch(tile.index, ";") or ":" not in tile and ";" not in tile:
                                     tilecount += 1
                                     tile = tile.replace('rule_', 'text_')
-                                    layer_grid[d:, layer, y, x] = TileSkeleton.parse(possible_variants, tile, rule, macros)
+                                    layer_grid[d:, l, y, x] = TileSkeleton.parse(
+                                        possible_variants, tile, rule,
+                                        macros, palette=kwargs.get("palette", "default")
+                                    )
                                 else:
-                                    if len(tile.split(';', 1)) == 2:
-                                        layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
-                                                                          0] + tile
-                                    else:
-                                        layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
-                                                                          0] + tile
+                                    layer_grid[d:, l, y, x] = TileSkeleton.parse(
+                                        possible_variants,
+                                        layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[0] + tile,
+                                        rule, macros)
+
             # Get the dimensions of the grid
             grid_shape = layer_grid.shape
             # Don't proceed if the request is too large.
@@ -296,11 +318,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             extra_names = [] if raw_output else None
             full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
             full_tiles, unique_tiles = await self.bot.renderer.render_full_tiles(
-                    full_grid,
-                    palette=kwargs.get("palette", None),
-                    random_animations=kwargs.get("random_animations", True),
-                    gscale=kwargs.get("gscale", 1)
-                )
+                full_grid,
+                random_animations=kwargs.get("random_animations", True),
+                gscale=kwargs.get("gscale", 1)
+            )
             avgdelta, maxdelta, tiledelta = await self.bot.renderer.render(
                 full_tiles,
                 out=buffer,
@@ -400,8 +421,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         `rule baba eat baba - tile_baba tile_baba:l`
         """
         if self.bot.config['danger_mode']:
-            await self.warn_dangermode(ctx)
-        await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx, objects=objects, rule=True)
+            await warn_dangermode(ctx)
+        await start_timeout(ctx, self.render_tiles,
+                            ctx,
+                            objects=objects,
+                            rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -413,18 +437,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx,
-                                      objects=objects,
-                                      rule=rule in [
-                                          '-r',
-                                          '--rule',
-                                          '-rule',
-                                          '-t',
-                                          '--text',
-                                          '-text'
-                                      ],
-                                      timeout_multiplier=1.5
-                                      )
+            await start_timeout(ctx, self.render_tiles,
+                                ctx,
+                                objects=objects,
+                                rule=rule in [
+                                    '-r',
+                                    '--rule',
+                                    '-rule',
+                                    '-t',
+                                    '--text',
+                                    '-text'], timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
@@ -456,15 +478,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         `tile -P=mountain -B baba bird:l`
         """
         if self.bot.config['danger_mode']:
-            await self.warn_dangermode(ctx)
-        await self.log_exceptions(ctx, start_timeout, ctx, self.render_tiles, ctx, objects=objects, rule=False)
-
-    async def warn_dangermode(self, ctx: Context):
-        warning_embed = discord.Embed(
-            title="Warning: Danger Mode",
-            color=discord.Color(16711680),
-            description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
-        await ctx.send(embed=warning_embed, delete_after=5)
+            await warn_dangermode(ctx)
+        await start_timeout(ctx, self.render_tiles,
+                            ctx,
+                            objects=objects,
+                            rule=False)
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         """Finds levels by query.
