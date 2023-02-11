@@ -3,6 +3,7 @@ from __future__ import annotations
 import glob
 import math
 import random
+import re
 import time
 import zipfile
 from io import BytesIO
@@ -139,7 +140,7 @@ class Renderer:
         img_height_raw = max(int(height * (spacing * scaleddef)),
                              (constants.DEFAULT_SPRITE_SIZE * scaleddef))
         durations = [
-            speed] * (len(frames) if animation_delta is None else animation_delta) * steps
+                        speed] * (len(frames) if animation_delta is None else animation_delta) * steps
         if animation:
             frames = np.repeat(frames, animation).tolist()
             frames = (frames * (math.ceil(len(durations) /
@@ -209,7 +210,7 @@ class Renderer:
                             anim_frames = anim_frames[d *
                                                       animation_delta:(d +
                                                                        1) *
-                                                      animation_delta]
+                                                                      animation_delta]
                         for f in anim_frames:
                             tframes.append(tile.frames[f - 1])
                         for frame, sprite in enumerate(tframes[:dframes]):
@@ -389,11 +390,11 @@ class Renderer:
             if gridol is not None:
                 for col in range(img.shape[0] // (gridol[0] * 2)):
                     img[col * gridol[0] * 2, :,
-                        :] = ~img[col * gridol[0] * 2, :, :]
+                    :] = ~img[col * gridol[0] * 2, :, :]
                     img[col * gridol[0] * 2, :, 3] = 255
                 for row in range(img.shape[1] // (gridol[1] * 2)):
                     img[:, row * gridol[1] * 2,
-                        :] = ~img[:, row * gridol[1] * 2, :]
+                    :] = ~img[:, row * gridol[1] * 2, :]
                     img[:, row * gridol[1] * 2, 3] = 255
             if image_format == 'gif':
                 img[:, :, :3] = (img[:, :, :3] *
@@ -429,7 +430,7 @@ class Renderer:
             return 0, 0, 0
         else:
             return sum(times) / \
-                len(times), max(times), sum(times),
+                   len(times), max(times), sum(times),
 
     async def render_full_tile(self,
                                tile: Tile,
@@ -455,7 +456,7 @@ class Renderer:
         out = []
         for frame in range(3):
             wobble = (
-                11 * x + 13 * y + frame) % 3 if random_animations else frame
+                             11 * x + 13 * y + frame) % 3 if random_animations else frame
             if tile.custom and type(tile.sprite) == tuple:
                 sprite = await self.generate_sprite(
                     tile,
@@ -516,22 +517,15 @@ class Renderer:
                     sprite,
                     wobble
                 )
-            for variant in tile.variants["post"]:
-                variant.apply(tile)
-            # Color augmentation
             if not tile.custom_color:
-                try:
-                    if len(tile.color) == 3:
-                        rgb = tile.color
-                    else:
-                        if tile.palette not in self.palette_cache:
-                            raise AssertionError(f"Palette {tile.palette} recognized while initializing variants, "
-                                                 f"but not when applying them. This should never happen.")
-                        rgb = self.palette_cache[tile.palette].getpixel(tile.color)
-                except IndexError:
-                    raise errors.BadPaletteIndex(tile.name, tile.color)
-
+                if len(tile.color) == 3:
+                    rgb = tile.color
+                else:
+                    rgb = self.palette_cache[tile.palette].getpixel(tile.color)
                 sprite = recolor(sprite, rgb)
+            for variant in tile.variants["post"]:
+                sprite = variant.apply(sprite)
+            # Color augmentation
             out.append(sprite)
         f0, f1, f2 = out
         final_tile = ProcessedTile(
@@ -597,28 +591,31 @@ class Renderer:
             seed = int((7 + position[0]) / (3 + position[1]) * 100000000)
         seed_digits = [(seed >> 8 * i) | 0b11111111 for i in range(len(raw))]
         # Get mode and split status
-        if newline_count > 1:
-            raise errors.TooManyLines(text, newline_count)
-        elif newline_count >= 1:
+        if newline_count >= 1:
             fixed = True
             mode = "small"
-            index = text.index("/")
+            indices = []
+            offset = 0
+            for match in re.finditer("/", text):
+                indices.append(match.start() + offset)
+                offset -= 1
         else:
             fixed = False
             mode = "big"
-            index = -1
+            indices = []
             if len(raw) >= 4:
                 mode = "small"
-                index = len(raw) - math.ceil(len(raw) / 2)
+                indices = [len(raw) - math.ceil(len(raw) / 2)]
+
+        indices.insert(0, 0)
+        indices.append(len(raw))  # can't use -1 here because of a range() later on
+        print(indices)
 
         if style == "letter":
             if mode == "big":
                 mode = "letter"
             else:
                 raise errors.BadLetterStyle(text)
-
-        if index == 0 or index == len(raw):
-            raise errors.LeadingTrailingLineBreaks(text)
 
         width_cache: dict[str, list[int]] = {}
         for c in raw:
@@ -646,37 +643,35 @@ class Renderer:
         except KeyError as e:
             raise errors.BadCharacter(text, mode, e.args[0])
 
-        max_width = max(sum(widths[:index]), constants.DEFAULT_SPRITE_SIZE)
+        max_width = constants.DEFAULT_SPRITE_SIZE
+        old_index = 0
+        for index in indices:
+            max_width = max(max_width, sum(widths[old_index:index]))
+            old_index = index
 
-        def check_or_adjust(widths: list[int], index: int) -> int:
+        print("MAX", max_width)
+
+        def check_or_adjust(widths: list[int], indices: list[int]) -> list[int]:
             """Is the arrangement valid?"""
             if mode == "small":
                 if not fixed:
-                    while sum(widths[:index]) > max_width:
-                        index -= 1
-                    while sum(widths[index:]) > max_width:
-                        index += 1
-                    return index
-            return index
-
-        def too_squished(widths: list[int], index: int) -> bool:
-            """Is the arrangement too squished?
-
-            (bad letter spacing)
-            """
-            if mode == "small":
-                top = widths[:index]
-                top_gaps = max_width - sum(top)
-                bottom = widths[index:]
-                bottom_gaps = max_width - sum(bottom)
-                return top_gaps < len(top) - 1 or bottom_gaps < len(bottom) - 1
-            else:
-                gaps = max_width - sum(widths)
-                return gaps < len(widths) - 1
+                    for i in range(1, len(indices) - 1):
+                        width_distance = (sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
+                        old_wd = width_distance
+                        debug_flag = 0
+                        while old_wd > width_distance:
+                            debug_flag += 1
+                            indices[i] -= 1
+                            new_width_distance = (sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
+                            if new_width_distance > width_distance:
+                                indices[i] += 2
+                            assert debug_flag > 200, "Ran into an infinite loop while trying to create a text! " \
+                                                     "This shouldn't happen."
+            return indices
 
         # Check if the arrangement is valid with minimum sizes
         # If allowed, shift the index to make the arrangement valid
-        index = check_or_adjust(widths, index)
+        indices = check_or_adjust(widths, indices)
 
         # Expand widths where possible
         stable = [False for _ in range(len(widths))]
@@ -685,27 +680,26 @@ class Renderer:
                                for i, w in enumerate(widths) if not stable[i])
             try:
                 new_width = width_greater_than(raw[i], old_width)
-            except KeyError:
+                a = max([0] if not len(max_list := [j for j in indices if i >= j]) else max_list)
+                b = min([len(indices)] if not len(min_list := [j for j in indices if i < j]) else min_list)
+                temp_widths = widths[:i] + [old_width + (new_width - old_width) * (b-a)] + widths[i:]  # BAD
+                assert sum(temp_widths[a:b]) <= constants.DEFAULT_SPRITE_SIZE
+            except (KeyError, AssertionError):
                 stable[i] = True
                 continue
             widths[i] = new_width
             try:
-                index = check_or_adjust(widths, index)
+                indices = check_or_adjust(widths, indices)
             except errors.CustomTextTooLong:
                 widths[i] = old_width
                 stable[i] = True
-            else:
-                if too_squished(widths, index):
-                    # We've shown that a "perfect" width already exists below this
-                    # So stick to the "perfect" one
-                    widths[i] = old_width
-                    stable[i] = True
 
         # Arrangement is now the widest it can be
         # Kerning: try for 1 pixel between sprites, and rest to the edges
         gaps: list[int] = []
+        bounds: list[tuple(int, int)] = list(zip(indices[:-1], indices[1:]))
         if mode == "small":
-            rows = [widths[:index], widths[index:]]
+            rows = [widths[a:b] for a, b in bounds]
         else:
             rows = [widths[:]]
         for row in rows:
@@ -742,28 +736,22 @@ class Renderer:
             letters.append(Image.open(buf))
 
         sprite = Image.new("L",
-                           (max(sum(widths[:index]),
+                           (max(max(sum(row) for row in rows),
                                 constants.DEFAULT_SPRITE_SIZE),
-                            constants.DEFAULT_SPRITE_SIZE))
+                            (max(len(rows), 2) * constants.DEFAULT_SPRITE_SIZE) // 2))
         if mode == "small":
-            x = gaps[0]
-            y_center = 6
-            for i in range(index):
-                letter = letters[i]
-                y_top = y_center - letter.height // 2
-                sprite.paste(letter, (x, y_top), mask=letter)
-                x += widths[i]
-                if i != index - 1:
-                    x += gaps[i + 1]
-            x = gaps[index]
-            y_center = 18
-            for i in range(index, len(raw)):
-                letter = letters[i]
-                y_top = y_center - letter.height // 2
-                sprite.paste(letter, (x, y_top), mask=letter)
-                x += widths[i]
-                if i != len(raw) - 1:
-                    x += gaps[i + 1]
+            for j, (a, b) in enumerate(bounds):
+                x = gaps[a]
+                y_center = ((constants.DEFAULT_SPRITE_SIZE // 2) * j) + (constants.DEFAULT_SPRITE_SIZE // 4)
+                print(y_center)
+                print(j, a, b)
+                for i in range(a, b):
+                    letter = letters[i]
+                    y_top = y_center - letter.height // 2
+                    sprite.paste(letter, (x, y_top), mask=letter)
+                    x += widths[i]
+                    if i != b - 1:
+                        x += gaps[i + 1]
         else:
             x = gaps[0]
             y_center = 12
@@ -811,7 +799,7 @@ class Renderer:
     ):
         random.seed(seed)
         for variant in tile.variants["sprite"]:
-            sprite = variant.apply(sprite, tile=tile, wobble=wobble, renderer=self) # NOUN/PROP ARE ANNOYING
+            sprite = variant.apply(sprite, tile=tile, wobble=wobble, renderer=self)  # NOUN/PROP ARE ANNOYING
         return sprite
 
     def save_frames(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 # limits
 MAX_STACK = 2584
 MAX_META_DEPTH = 24
