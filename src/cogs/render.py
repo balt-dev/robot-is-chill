@@ -614,8 +614,6 @@ class Renderer:
         if style == "letter":
             if mode == "big":
                 mode = "letter"
-            else:
-                raise errors.BadLetterStyle(text)
 
         width_cache: dict[str, list[int]] = {}
         for c in raw:
@@ -648,8 +646,6 @@ class Renderer:
         for index in indices:
             max_width = max(max_width, sum(widths[old_index:index]))
             old_index = index
-
-        print("MAX", max_width)
 
         def check_or_adjust(widths: list[int], indices: list[int]) -> list[int]:
             """Is the arrangement valid?"""
@@ -743,8 +739,6 @@ class Renderer:
             for j, (a, b) in enumerate(bounds):
                 x = gaps[a]
                 y_center = ((constants.DEFAULT_SPRITE_SIZE // 2) * j) + (constants.DEFAULT_SPRITE_SIZE // 4)
-                print(y_center)
-                print(j, a, b)
                 for i in range(a, b):
                     letter = letters[i]
                     y_top = y_center - letter.height // 2
