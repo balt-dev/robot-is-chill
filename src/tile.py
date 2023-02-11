@@ -104,7 +104,7 @@ class Tile:
     custom_color: bool = False
     color: tuple[int, int] = (0, 3)
     empty: bool = True
-    blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK", "XOR"] = "NORMAL"
+    blending: constants.BLENDING_MODES = "NORMAL"
     custom: bool = False
     style: Literal["noun", "property", "letter"] = "noun"
     palette: str = None
