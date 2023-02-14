@@ -48,7 +48,7 @@ class TileSkeleton:
                 continue
             try:
                 final_variant = possible_variants[raw_variant]
-                variant_args = re.fullmatch(final_variant.pattern, raw_variant).groups()
+                variant_args = [g for g in re.fullmatch(final_variant.pattern, raw_variant).groups() if g is not None]
                 final_args = parse_signature(variant_args, final_variant.signature)
                 out.variants[final_variant.type].append(final_variant(*final_args))
             except KeyError:

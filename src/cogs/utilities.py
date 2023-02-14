@@ -21,7 +21,7 @@ from PIL import Image, ImageFont, ImageDraw
 
 from . import flags
 from .. import constants
-from ..types import Bot, Context
+from ..types import Bot, Context, Variant
 
 
 class SearchPageSource(menus.ListPageSource):
@@ -100,13 +100,40 @@ class FlagPageSource(menus.ListPageSource):
         )
         embed.description = '\n'.join([str(entry) for entry in entries])
         embed.set_footer(text="Page " + str(menu.current_page +
-                         1) + "/" + str(self.get_max_pages()))
+                                            1) + "/" + str(self.get_max_pages()))
+        return embed
+
+
+type_format = {
+    "sprite": "sprite augmentation",
+    "tile": "tile creation",
+    "post": "tile postprocessing"
+}
+
+class VariantSource(menus.ListPageSource):
+    def __init__(
+            self, data: list[Variant]):
+        super().__init__(data, per_page=4)
+
+    async def format_page(self, menu: menus.Menu, entries: list[Variant]) -> discord.Embed:
+        embed = discord.Embed(
+            color=menu.bot.embed_color
+        )
+        embed.description = "```ansi"
+        for entry in entries:
+            embed.description += f"""
+\u001b[1;4;37m{entry.__name__.removesuffix("Variant")}\u001b[0;30m - \u001b[0;37m{entry.__doc__}\u001b[0m
+\u001b[0;30m- \u001b[0;34mSyntax: {entry.syntax}
+\u001b[0;30m- \u001b[0;34mApplied during \u001b[1;36m{type_format[entry.type]}\u001b[0m
+"""
+        embed.description += "```"
+        embed.set_footer(text=f"{menu.current_page+1}/{self.get_max_pages()}")
         return embed
 
 
 class ButtonPages(
-        ViewMenuPages,
-        inherit_buttons=False):
+    ViewMenuPages,
+    inherit_buttons=False):
     @menus.button('⏮', position=menus.First())
     async def go_to_first_page(self, payload):
         await self.show_page(0)
@@ -199,7 +226,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         match = re.search(flag_pattern, query)
         plain_query = query.lower()
 
-        # Whether or not to use simple string matching
+        # Whether to use simple string matching
         has_flags = bool(match)
 
         # Determine which flags to filter with
@@ -218,13 +245,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         if flags.get("type") is None or flags.get("type") == "tile":
             if plain_query.strip() or any(
                     x in flags for x in (
-                        "sprite",
-                        "text",
-                        "source",
-                        "modded",
-                        "color",
-                        "tiling",
-                        "tag")):
+                            "sprite",
+                            "text",
+                            "source",
+                            "modded",
+                            "color",
+                            "tiling",
+                            "tag")):
                 color = flags.get("color")
                 f_color_x = f_color_y = None
                 if color is not None:
@@ -359,12 +386,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "variant":
-            for variant in self.bot.handlers.all_variants():
-                if plain_query.lower() in variant.lower():
-                    results["variant", variant] = variant
-
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
@@ -375,8 +396,15 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def variants(self, ctx: Context):
-        """Alias for =search type:variant."""
-        await self.search(ctx, query='type:variant')
+        """Shows all the bot's variants."""
+        def sort(variant):
+            print(variant, variant.__name__)
+            return variant.__name__
+        await ButtonPages(
+            source=VariantSource(
+                sorted(ctx.bot.variants._values, key=sort)  # Sort alphabetically
+            ),
+        ).start(ctx)
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)

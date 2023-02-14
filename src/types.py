@@ -54,8 +54,14 @@ class Bot(commands.Bot):
 
 
 class Variant:
-    args = None
-    type = None
+    args: list = None
+    type: str = None
+    pattern: str = None
+    signature = None
+    syntax: str = None
+
+    def apply(self, obj, **kwargs):
+        raise NotImplementedError("Tried to apply an abstract variant!")
 
     def __repr__(self):
         return f"{self.__class__.__name__}{self.args}"
@@ -66,6 +72,15 @@ class Variant:
     def __hash__(self):
         return hash((self.__class__.__name__, *self.args, self.type))
 
+
+class VaryingArgs:
+    """A thin wrapper to tell the argument parser that this is a varying length list."""
+
+    def __init__(self, held_type):
+        self.type = held_type
+
+    def __call__(self, value):
+        return self.type(value)
 
 # https://github.com/LumenTheFairy/regexdict
 # Put here to prevent Python from yelling at me

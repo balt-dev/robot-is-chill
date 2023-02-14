@@ -12,7 +12,7 @@ from PIL import ImageChops, Image, ImageOps, ImageFilter
 
 from . import liquify
 from .. import constants
-from ..types import Variant, RegexDict
+from ..types import Variant, RegexDict, VaryingArgs
 
 """
 TODO:
@@ -28,13 +28,20 @@ def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[ty
     out = []
     t = list(t).copy()
     v = list(v).copy()
+    if v is None or (len(v) and v[0] is None):
+        val = None
     while len(t) > 0:
         curr_type = t.pop(0)
         if typing.get_origin(curr_type) is typing.Union:
             curr_type = typing.get_args(curr_type)[0]
             if v[0] is None:
                 continue
-        if isinstance(curr_type, list):  # tree branch
+        if type(curr_type) is VaryingArgs:
+            print(v)
+            out.extend(parse_signature(v, [curr_type.type] * len(v)))
+            print(out)
+            return out
+        elif isinstance(curr_type, list):  # tree branch
             num_values = len(curr_type)
             val = tuple(parse_signature(v[:num_values], curr_type))
             del v[:num_values]
@@ -45,7 +52,11 @@ def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[ty
             g = v.pop(0)
             val = g == "true"
         else:
-            val = curr_type(v.pop(0))
+            try:
+                raw_val = v.pop(0)
+                val = curr_type(raw_val)
+            except ValueError:
+                val = None
         out.append(val)
     return out
 
@@ -54,22 +65,25 @@ async def setup(bot):
     """Get the variants."""
     bot.variants = []
 
-    def generate_pattern(sign):
+    def generate_pattern(params: list[inspect.Parameter]):
         pattern = f""
-        for t in sign:
-            if typing.get_origin(t) == typing.Union:
-                pattern += f"(?:/{generate_pattern(typing.get_args(t))})?"
-            elif isinstance(t, list) and len(t) > 2:
-                pattern += rf"/\({generate_pattern(t)}\)"
-            elif type(t) is not type:
-                pattern += f"/({'|'.join([str(arg) for arg in t])})"
-            elif t == int:
+        for i, p in enumerate(params):
+            if typing.get_origin(p.annotation) == typing.Literal and len(typing.get_args(p.annotation)) > 2:
+                pattern += f"/({'|'.join([str(arg) for arg in typing.get_args(p.annotation)])})"
+            elif typing.get_origin(p.annotation) == list:
+                pattern += rf"/\({generate_pattern([inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno) for name, anno in zip(p.name.split('_'), typing.get_args(p.annotation))])}\)"
+            elif p.kind == inspect.Parameter.VAR_POSITIONAL:
+                # You can't match a variable number of groups in RegEx.
+                pattern += f"(?:{'/' if i - 1 else ''}{(generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=p.annotation)]).replace('/', '', 1) + '/?')})?" * constants.VAR_POSITIONAL_MAX
+            elif typing.get_origin(p.annotation) == typing.Union:
+                pattern += f"(?:{'/' if i - 1 else ''}{generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=typing.get_args(p.annotation)[0])])})?"
+            elif p.annotation == int:
                 pattern += r"/(-?\d+)"
-            elif t == float:
+            elif p.annotation == float:
                 pattern += r"/([+-]?(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))"  # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
-            elif t == str:
+            elif p.annotation == str:
                 pattern += r"/(.+?)"
-            elif t == bool:
+            elif p.annotation == bool:
                 pattern += r"/(true|false)"
             else:
                 continue
@@ -80,39 +94,53 @@ async def setup(bot):
         for name, param in dict(params).items():
             if param.annotation == inspect.Parameter.empty:
                 continue
-            elif isinstance(param.annotation, list):
-                syntax += f"""({generate_syntax({
+            elif param.kind == inspect.Parameter.VAR_POSITIONAL:
+                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m/[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m/[0;30m..."
+                break
+            elif typing.get_origin(param.annotation) is typing.Union:
+                syntax += f"[0;30m[[1;34m{typing.get_args(param.annotation)[0].__name__} [0;34m{name}[0;30m: [1;37m{repr(param.default)}[0;30m][0m"
+            elif typing.get_origin(param.annotation) == list:
+                syntax += f"""[0;34m({generate_syntax({
                     name: inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno)
-                    for name, anno in zip(name.split('_'), typing.get_args(param.annotation))})})"""
-            elif typing.get_origin(param.annotation) is typing.Literal:
-                syntax += f"""<{'/'.join([repr(arg) for arg in typing.get_args(param.annotation)])} {name}>"""
+                    for name, anno in zip(name.split('_'), typing.get_args(param.annotation))})}[0;34m)[0m"""
+            elif typing.get_origin(param.annotation) == typing.Literal:
+                syntax += f"""[0;30m<[32m{'[0;30m/[32m'.join([repr(arg) for arg in typing.get_args(param.annotation)])} [0;36m{name}[0;30m>[0m"""
             else:
-                syntax += f"<{param.annotation.__name__} {name}>"
+                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m"
             syntax += "/"
-        return syntax[:-1]  # Remove ending /
+        return syntax.rstrip("[0m").rstrip("/")  # Remove ending /
 
     def get_type_tree(unparsed_tree):
         tree = []
-        for t in unparsed_tree:
-            if isinstance(t, typing.GenericAlias):
-                tree.append(get_type_tree(typing.get_args(t)))
-            elif typing.get_origin(t) is typing.Literal:
-                tree.append(tuple(typing.get_args(t)))
+        for i, p in enumerate(unparsed_tree):
+            if p.kind == inspect.Parameter.VAR_POSITIONAL:
+                tree.append(VaryingArgs(p.annotation))
+                return tree
+            elif typing.get_origin(p.annotation) == typing.Literal:
+                tree.append(tuple(typing.get_args(p.annotation)))
+            elif isinstance(p.annotation, typing.GenericAlias):
+                tree.append(get_type_tree(
+                    inspect.Parameter(p.name, p.kind, annotation=anno) for anno in typing.get_args(p.annotation)))
             else:
-                tree.append(t)
+                tree.append(p.annotation)
         return tree
 
     def create_variant(func: typing.Callable, aliases: typing.Iterable[str], no_function_name=False):
         assert func.__doc__ is not None, f"Variant `{func.__name__}` is missing a docstring!"
         sig = inspect.signature(func)
         params = sig.parameters
-        type_tree = get_type_tree(p.annotation for p in params.values() if p.kind != inspect.Parameter.KEYWORD_ONLY)[1:]
         has_kwargs = any([p.kind == inspect.Parameter.KEYWORD_ONLY for p in params.values()])
-        pattern = rf"(?:{'|'.join(aliases)}{'' if no_function_name else f'|{func.__name__}'}){generate_pattern(type_tree)}"
+        if not no_function_name:  # HACKY
+            aliases = list(aliases)
+            aliases.append(func.__name__)
+            aliases = tuple(aliases)
+        pattern = rf"(?:{'|'.join(aliases)}){generate_pattern(list(params.values()))}"
         print(pattern)
-        syntax = generate_syntax(params)
+        syntax = (f"\u001b[0;30m[\u001b[0;35m{'[0;30m|[0;35m'.join(aliases)}[0;30m]" if len(
+            aliases) else "") + generate_syntax(params)
         class_name = func.__name__.replace("_", " ").title().replace(" ", "") + "Variant"
         variant_type = tuple(params.keys())[0]
+        type_tree = get_type_tree([p for p in params.values() if p.kind != inspect.Parameter.KEYWORD_ONLY])[1:]
         bot.variants.append(
             type(
                 class_name,
@@ -139,7 +167,7 @@ async def setup(bot):
 
     # --- SPECIAL ---
 
-    @add_variant("noop", "")
+    @add_variant("", "noop")
     def nothing(tile):
         """Does nothing. Useful for resetting persistent variants."""
         pass
@@ -167,16 +195,16 @@ async def setup(bot):
         tile.surrounding = 0
 
     @add_variant(no_function_name=True)
-    def direction(tile, d: typing.Literal[*tuple(constants.DIRECTION_VARIANTS.keys())]):
+    def direction(tile, direction: typing.Literal[*tuple(constants.DIRECTION_VARIANTS.keys())]):
         """Sets the direction of a tile."""
         tile.altered_frame = True
-        tile.frame = constants.DIRECTION_VARIANTS[d]
+        tile.frame = constants.DIRECTION_VARIANTS[direction]
 
     @add_variant(no_function_name=True)
-    def tiling(tile, d: typing.Literal[*tuple(constants.AUTO_VARIANTS.keys())]):
+    def tiling(tile, tiling: typing.Literal[*tuple(constants.AUTO_VARIANTS.keys())]):
         """Alters the tiling of a tile. Only works on tiles that tile."""
         tile.altered_frame = True
-        tile.surrounding |= constants.AUTO_VARIANTS[d]
+        tile.surrounding |= constants.AUTO_VARIANTS[tiling]
 
     @add_variant("a", no_function_name=True)
     def animation_frame(tile, a_frame: int):
@@ -195,15 +223,15 @@ async def setup(bot):
     palette_names = tuple([Path(p).stem for p in glob.glob("data/palettes/*.png")])
 
     @add_variant("palette/", "p!", no_function_name=True)
-    def set_palette(tile, palette: str):
+    def palette(tile, palette: str):
         """Sets the tile's palette."""
         assert palette in palette_names, f"Palette `{palette}` was not found!"
         tile.palette = palette
 
     @add_variant(no_function_name=True)
-    def palette_color(post, x: int, y: int):
+    def palette_color(tile, x: int, y: int):
         """Sets a color by palette index."""
-        post.color = (x, y)
+        tile.color = (x, y)
 
     @add_variant("#", no_function_name=True)
     def hex_color(tile, color: str):
@@ -221,8 +249,8 @@ async def setup(bot):
 
     # --- TEXT MANIPULATION ---
 
-    @add_variant("noun")
-    def prop(sprite: Image, *, tile, wobble: int, renderer):
+    @add_variant("noun", "prop")
+    def property(sprite, *, tile, wobble, renderer):
         """Applies a property plate to a sprite."""
         plate, box = renderer.bot.db.plate(tile.frame if tile.altered_frame else None, wobble)
         size = (max(sprite.width, plate.width), max(sprite.height, plate.height))
@@ -292,7 +320,7 @@ async def setup(bot):
         return base
 
     @add_variant("mm")
-    def matmul(post,
+    def matrix(post,
                aa_ab_ac_ad: list[float, float, float, float],
                ba_bb_bc_bd: list[float, float, float, float],
                ca_cb_cc_cd: list[float, float, float, float],
@@ -315,7 +343,7 @@ async def setup(bot):
         dummy.paste(sprite.crop((left, top, right, bottom)), displacement)
         return dummy
 
-    # Original code by Charlotte
+    # Original code by Charlotte (CenTdemeern1)
     @add_variant("flood")
     def floodfill(sprite, brightness: typing.Optional[float] = 1.0, inside: typing.Optional[bool] = False):
         """Floodfills either inside or outside a sprite with a given brightness value."""
@@ -341,26 +369,131 @@ async def setup(bot):
         im[(im[:, :] == [0, 0, 0, 255]).all(2)] = [brightness, brightness, brightness, 255]  # Optimal
         return Image.fromarray(im)
 
+    def slice_image(sprite, color_slice: slice):
+        img = np.array(sprite)
+        colors = liquify.get_colors_unsorted(img)
+        if len(colors) > 1:
+            colors = list(sorted(
+                colors,
+                key=lambda color: liquify.count_instances_of_color(img, color),
+                reverse=True
+            ))
+            try:
+                selection = np.arange(len(colors))[color_slice]
+            except IndexError:
+                raise AssertionError(f'The color slice `{color_slice}` is invalid.')
+            if isinstance(selection, np.ndarray):
+                selection = selection.flatten().tolist()
+            else:
+                selection = [selection]
+            # Modulo the value field
+            positivevalue = [(color % len(colors)) for color in selection]
+            # Remove most used color
+            for color_index, color in enumerate(colors):
+                if color_index not in positivevalue:
+                    img = liquify.remove_instances_of_color(img, color)
+
+        # This is indented because we don't need to convert back if
+        # nothing changed
+        return Image.fromarray(img)
+
     @add_variant("csel")
-    # Original code by Charlotte
-    def colselect(sprite, *indices: int):
+    def color_select(sprite, *index: int):
         """Keeps only the selected colors, indexed by their occurrence. This changes per-frame, not per-tile."""
-        sprite = sprite.convert("RGBA")
+        return slice_image(sprite, list(index))
 
-        # Get a dictionary of colors mapped to their frequencies,
-        # and said dictionary's keys sorted by its values to create a histogram
-        color_dict = dict(map(reversed, sprite.getcolors(maxcolors=0xFFFFFF)))
-        colors = np.array(sorted(color_dict, key=color_dict.get, reverse=True))
+    @add_variant("cslice")
+    def color_slice(sprite, start: typing.Optional[int] = None, stop: typing.Optional[int] = None,
+                    step: typing.Optional[int] = None):
+        """Keeps only the selected colors, indexed by their occurrence. This changes per-frame, not per-tile."""
+        return slice_image(sprite, slice(start, stop, step))
 
-        indices = [index % len(colors) for index in indices]
-        colors_to_delete = np.delete(colors[colors[:, 3] != 0], indices, axis=0)
+    @add_variant("abberate")  # misspelling alias because i misspell it all the time
+    def aberrate(post, x: int, y: int):
+        """Abberates the colors of a sprite."""
+        arr = np.array(post)
+        arr = np.pad(arr, ((abs(y), abs(y)), (abs(x), abs(x)), (0, 0)))
+        arr[:, :, 0] = np.roll(arr[:, :, 0], -x, 1)
+        arr[:, :, 2] = np.roll(arr[:, :, 2], x, 1)
+        arr[:, :, 0] = np.roll(arr[:, :, 0], -y, 0)
+        arr[:, :, 2] = np.roll(arr[:, :, 2], y, 0)
+        arr = arr.astype(np.uint16)
+        arr[:, :, 3] += np.roll(np.roll(arr[:, :, 3], -x, 1), -y, 0)
+        arr[:, :, 3] += np.roll(np.roll(arr[:, :, 3], x, 1), y, 0)
+        arr[arr > 255] = 255
+        return Image.fromarray(arr.astype(np.uint8))
 
-        # NOTE: This could be optimized with np.isin or similar.
-        # However, it's 1 AM as I am typing this, and I really do not care.
-        processable_sprite = np.array(sprite)
-        for color in colors_to_delete:
-            liquify.remove_instances_of_color(processable_sprite, color)
-        return Image.fromarray(processable_sprite)
+    @add_variant()
+    def opacity(sprite, amount: float):
+        """Sets the opacity of the sprite, from 0 to 1."""
+        new_sprite = sprite.copy()
+        im_alpha = new_sprite.getchannel("A")
+        new_sprite.putalpha(im_alpha.point(lambda i: int(i * amount)))
+        return new_sprite
+
+    @add_variant("neg")
+    def negative(post):
+        """Inverts the sprite's RGB values."""
+        arr = np.array(post)
+        arr[:, :, :3] = ~arr[:, :, :3]
+        return Image.fromarray(arr)
+
+    @add_variant("hs")
+    def hueshift(post, angle: int):
+        """Shifts the hue of the sprite. 0 to 360."""
+        arr = np.array(post)
+        arr_rgb, arr_a = arr[:, :, :3], arr[:, :, 3]
+        hsv = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HSV)
+        hsv[..., 0] = np.mod(hsv[..., 0] + int(angle // 2), 180)
+        rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+        return Image.fromarray(np.dstack((rgb, arr_a)))
+
+    @add_variant("gamma", "g")
+    def brightness(post, brightness: float):
+        """Sets the brightness of the sprite. Can go above 1.0, does nothing below 0.0."""
+        arr = np.array(post, dtype=np.float64)
+        arr[:, :, :3] *= brightness
+        arr = arr.clip(0.0, 255.0)
+        return Image.fromarray(arr.astype(np.uint8))
+
+    @add_variant("ps")
+    def palette_snap(post, *, tile, palette_cache):
+        """Snaps all the colors in the tile to the specified palette."""
+        palette_colors = np.array(palette_cache[tile.palette].convert("RGB")).reshape(-1, 3)
+        im = np.array(post)
+        im_lab = cv2.cvtColor(im.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
+        diff_matrix = np.full((palette_colors.shape[0], *im.shape[:-1]), 999)
+        for i, color in enumerate(palette_colors):
+            filled_color_array = np.array([[color]]).repeat(
+                im.shape[0], 0).repeat(im.shape[1], 1)
+            filled_color_array = cv2.cvtColor(
+                filled_color_array.astype(
+                    np.float32) / 255, cv2.COLOR_RGB2Lab)
+            im_delta_e = np.sqrt(np.sum((im_lab - filled_color_array) ** 2, axis=-1))
+            diff_matrix[i] = im_delta_e
+        min_indexes = np.argmin(diff_matrix, 0, keepdims=True).reshape(
+            diff_matrix.shape[1:])
+        result = np.full(im.shape, 0, dtype=np.uint8)
+        for i, color in enumerate(palette_colors):
+            result[:, :, :3][min_indexes == i] = color
+        result[:, :, 3] = im[:, :, 3]
+        return Image.fromarray(result)
+
+    @add_variant("sat", "grayscale", "gscale")
+    def saturation(post, saturation: float):
+        """Saturates or desaturates a tile."""
+        return Image.blend(post.convert("RGBA"), post.convert("LA").convert("RGBA"), 1.0 - saturation)
+
+    @add_variant("nl")
+    def normalize_lightness(post):
+        """Normalizes a sprite's HSL lightness, bringing the lightest value up to full brightness."""
+        arr = np.array(post)
+        arr_rgb, sprite_a = arr[:, :, :3], arr[:, :, 3]
+        arr_hls = cv2.cvtColor(arr_rgb, cv2.COLOR_RGB2HLS).astype(np.float64)  # since WHEN was it HLS???? huh?????
+        max_l = np.max(arr_hls[:, :, 1])
+        arr_hls[:, :, 1] *= (255 / max_l)
+        sprite_rgb = cv2.cvtColor(arr_hls.astype(np.uint8), cv2.COLOR_HLS2RGB)  # my question still stands
+        return Image.fromarray(np.dstack((sprite_rgb, sprite_a)))
 
     # --- ADD TO BOT ---
 
