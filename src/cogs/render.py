@@ -62,12 +62,10 @@ def alpha_paste(img1, img2, coords):
 
 def recolor(sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
     """Apply rgb color multiplication (0-255)"""
-    r, g, b = rgb
-    rc, gc, bc, ac = sprite.split()
-    rc = rc.point(lambda i: int(i * (r / 255)))
-    gc = gc.point(lambda i: int(i * (g / 255)))
-    bc = bc.point(lambda i: int(i * (b / 255)))
-    return Image.merge('RGBA', (rc, gc, bc, ac))
+    processable_sprite = np.array(sprite).astype(np.float64)
+    rgb_numpy = np.array(rgb, dtype=np.float64) / 255.0
+    processable_sprite[:, :, :3] *= rgb_numpy
+    return Image.fromarray(processable_sprite.astype(np.uint8))
 
 
 def delta_e(img1, img2):
@@ -517,15 +515,14 @@ class Renderer:
                     sprite,
                     wobble
                 )
-            if not tile.custom_color:
+            if not tile.custom_color:  # Overlays and such
                 if len(tile.color) == 3:
                     rgb = tile.color
                 else:
                     rgb = self.palette_cache[tile.palette].getpixel(tile.color)
                 sprite = recolor(sprite, rgb)
             for variant in tile.variants["post"]:
-                sprite = variant.apply(sprite)
-            # Color augmentation
+                sprite = variant.apply(sprite, tile=tile, palette_cache=self.palette_cache)
             out.append(sprite)
         f0, f1, f2 = out
         final_tile = ProcessedTile(
@@ -609,7 +606,6 @@ class Renderer:
 
         indices.insert(0, 0)
         indices.append(len(raw))  # can't use -1 here because of a range() later on
-        print(indices)
 
         if style == "letter":
             if mode == "big":
