@@ -595,13 +595,6 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         processable_sprite[:, :, 3] *= amount
         return Image.fromarray(np.clip(processable_sprite, 0, 255).astype(np.uint8))
 
-    @add_variant()
-    def opactemp(sprite, amount: float):
-        """Sets the opacity of the sprite, from 0 to 1."""
-        processable_sprite = np.array(sprite, dtype=np.float64)
-        processable_sprite[:, :, 3] -= amount
-        return Image.fromarray(np.clip(processable_sprite, 0, 255).astype(np.uint8))
-
     @add_variant("neg")
     def negative(sprite):
         """Inverts the sprite's RGB values."""
