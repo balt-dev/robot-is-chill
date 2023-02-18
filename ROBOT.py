@@ -80,7 +80,7 @@ class Bot(commands.Bot):
             linewidth=sys.maxsize
         )
         super().__init__(*args, **kwargs)
-
+        self.remove_command('help')
         # has to be after __init__
         async def gather_cogs():
             await asyncio.gather(*(self.load_extension(cog, package='ROBOT') for cog in cogs))

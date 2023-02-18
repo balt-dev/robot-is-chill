@@ -64,7 +64,6 @@ class TileSkeleton:
                 final_args = parse_signature(variant_args, final_variant.signature)
                 out.variants[var_type].append(final_variant(*final_args))
             except KeyError as e:
-                traceback.print_exc()
                 raise errors.UnknownVariant(out.name, raw_variant)
         return out
 
@@ -126,7 +125,7 @@ class Tile:
     gamma: float = 1.0
     saturation: float = 1.0
     filterimage: str | None = None
-    displacement: tuple[int, int] = (0, 0)
+    displacement: list[int, int] = field(default_factory=lambda: [0, 0])
     palette_snapping: bool = False
     normalize_gamma: bool = False
     variants: dict[str, list] = None
@@ -136,7 +135,7 @@ class Tile:
         return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame, self.fallback_frame,
                      self.empty, self.blending, self.custom,
                      self.style, self.palette, self.overlay, self.hue,
-                     self.gamma, self.saturation, self.filterimage, self.displacement,
+                     self.gamma, self.saturation, self.filterimage, tuple(self.displacement),
                      self.palette_snapping, self.normalize_gamma,
                      hash(tuple(self.variants["sprite"])),
                      hash(tuple(self.variants["tile"])),
@@ -177,14 +176,13 @@ class Tile:
             if value.surrounding != 0:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
-        print(value.variants)
         return value
 
 
 @dataclass
 class ProcessedTile:
     """A tile that's been processed, and is ready to render."""
-    frames: tuple[Image, Image, Image] | None = None
+    frames: list[Image, Image, Image] | None = None
     blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK"] = "NORMAL"
-    displacement: tuple[int, int] = (0, 0)
+    displacement: list[int, int] = field(default_factory=lambda: [0, 0])
     delta: float = 0

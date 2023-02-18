@@ -82,6 +82,10 @@ class Renderer:
         for path in glob.glob("data/palettes/*.png"):
             with Image.open(path) as im:
                 self.palette_cache[Path(path).stem] = im.copy()
+        self.overlay_cache = {}
+        for path in glob.glob("data/overlays/*.png"):
+            with Image.open(path) as im:
+                self.overlay_cache[Path(path).stem] = np.array(im.convert("RGBA"))
 
     async def render(
             self,
@@ -108,6 +112,7 @@ class Renderer:
             spacing: int = constants.DEFAULT_SPRITE_SIZE,
             expand: bool = False,
             boomerang: bool = False,
+            random_animations: bool = True,
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated
@@ -139,6 +144,7 @@ class Renderer:
             frames = np.repeat(frames, animation).tolist()
             frames = (frames * (math.ceil(len(durations) /
                                           animation_delta)))[:len(durations)]
+
 
         def wl(a):
             try:
@@ -195,6 +201,7 @@ class Renderer:
                     for x, tile in enumerate(row):
                         # i should recode this whole section but i'm too scared
                         # of breaking something badly
+                        wobble_offset = (11 * x + 13 * y) % 3 if random_animations else 0
                         t = time.perf_counter()
                         if tile.frames is None:
                             continue
@@ -206,7 +213,7 @@ class Renderer:
                                                                        1) *
                                                                       animation_delta]
                         for f in anim_frames:
-                            tframes.append(tile.frames[f - 1])
+                            tframes.append(tile.frames[(f - 1 + wobble_offset) % 3])
                         for frame, sprite in enumerate(tframes[:dframes]):
                             if animation:
                                 dst_frame = (d * animation_delta) + frame
@@ -388,15 +395,85 @@ class Renderer:
             return sum(times) / \
                    len(times), max(times), sum(times),
 
+    async def render_full_frame(self,
+                                tile: Tile,
+                                frame: int,
+                                raw_sprite_cache: dict[str, Image],
+                                gscale: float,
+                                x: int,
+                                y: int,
+                                tile_hash: int,
+                                ) -> Image.Image:
+        if tile.custom and type(tile.sprite) == tuple:
+            sprite = await self.generate_sprite(
+                tile,
+                style=tile.style or (
+                    "noun" if len(tile.name) < 1 else "letter"),
+                wobble=frame,
+                position=(x, y),
+                gscale=gscale
+            )
+        else:
+            if isinstance(tile.sprite, np.ndarray):
+                sprite = Image.fromarray(
+                    tile.sprite[(tile.frame * 3) + frame])
+            else:
+                path_fallback = None
+                if tile.name == "icon":
+                    path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
+                elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
+                    path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
+                elif tile.name == "default":
+                    path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
+                else:
+                    if tile.frame == -1:
+                        source, sprite_name = tile.sprite
+                        path = f"data/sprites/vanilla/error_0_{frame + 1}.png"
+                    else:
+                        source, sprite_name = tile.sprite
+                        path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
+                    try:
+                        path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
+                    except BaseException:
+                        path_fallback = None
+                try:
+                    sprite = cached_open(
+                        path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
+                except FileNotFoundError:
+                    try:
+                        assert path_fallback is not None
+                        sprite = cached_open(
+                            path_fallback,
+                            cache=raw_sprite_cache,
+                            fn=Image.open).convert("RGBA")
+                    except (FileNotFoundError, AssertionError):
+                        raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
+                                             f'don\'t exist for it.')
+            sprite = sprite.resize(
+                (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
+            computed_hash = hash((
+                tile_hash,
+                tuple(sprite.getdata()),
+                frame,
+                gscale
+            ))
+            if computed_hash in self.sprite_cache:
+                sprite = self.sprite_cache[computed_hash]
+        return await self.apply_options_name(
+            tile,
+            sprite,
+            frame
+        )
+
     async def render_full_tile(self,
                                tile: Tile,
                                *,
                                position: tuple[int, int],
-                               random_animations: bool = False,
                                raw_sprite_cache: dict[str, Image.Image],
                                gscale: float = 1,
                                tile_cache=None,
-                               frames: tuple[int] = (1, 2, 3)
+                               frames: tuple[int] = (1, 2, 3),
+                               random_animations: bool = True
                                ) -> ProcessedTile | Tile | tuple[ProcessedTile, int]:
         """woohoo."""
         if tile_cache is None:
@@ -405,91 +482,35 @@ class Renderer:
         if tile.empty:
             return ProcessedTile(None)
         x, y = position
-        wobble_hash = (11 * x + 13 * y) % 3 if random_animations else 0
-        tile_hash = hash((tile, wobble_hash, gscale))
+
+        tile_hash = hash((tile, gscale))
         if tile_hash in tile_cache.keys():
-            return tile_cache[tile_hash]
-        out = [None, None, None]
-        for frame in tuple(set(frames)):
-            frame -= 1
-            wobble = (
-                             11 * x + 13 * y + frame) % 3 if random_animations else frame
-            if tile.custom and type(tile.sprite) == tuple:
-                sprite = await self.generate_sprite(
-                    tile,
-                    style=tile.style or (
-                        "noun" if len(tile.name) < 1 else "letter"),
-                    wobble=wobble,
-                    position=(x, y),
-                    gscale=gscale
-                )
-            else:
-                if isinstance(tile.sprite, np.ndarray):
-                    sprite = Image.fromarray(
-                        tile.sprite[(tile.frame * 3) + wobble])
-                else:
-                    path_fallback = None
-                    if tile.name == "icon":
-                        path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
-                    elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
-                        path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
-                    elif tile.name == "default":
-                        path = f"data/sprites/{constants.BABA_WORLD}/default_{wobble + 1}.png"
-                    else:
-                        if tile.frame == -1:
-                            source, sprite_name = tile.sprite
-                            path = f"data/sprites/vanilla/error_0_{wobble + 1}.png"
-                        else:
-                            source, sprite_name = tile.sprite
-                            path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{wobble + 1}.png"
-                        try:
-                            path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{wobble + 1}.png"
-                        except BaseException:
-                            path_fallback = None
-                    try:
-                        sprite = cached_open(
-                            path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
-                    except FileNotFoundError:
-                        try:
-                            assert path_fallback is not None
-                            sprite = cached_open(
-                                path_fallback,
-                                cache=raw_sprite_cache,
-                                fn=Image.open).convert("RGBA")
-                        except (FileNotFoundError, AssertionError):
-                            raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
-                                                 f'don\'t exist for it.')
-                sprite = sprite.resize(
-                    (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
-                computed_hash = hash((
-                    tile_hash,
-                    tuple(sprite.getdata()),
-                    wobble,
-                    gscale
-                ))
-                if computed_hash in self.sprite_cache:
-                    sprite = self.sprite_cache[computed_hash]
-                sprite = await self.apply_options_name(
-                    tile,
-                    sprite,
-                    wobble
-                )
-            out[frame] = sprite
-        f0, f1, f2 = out
-        final_tile = ProcessedTile(
-            (f0,
-             f1,
-             f2),
-            tile.blending,
-            tile.displacement,
-            time.perf_counter() - t)
-        tile_cache[tile_hash] = final_tile
-        return final_tile
+            processed_tile = tile_cache[tile_hash]
+            done_frames = [frame is not None for frame in processed_tile.frames]
+            for frame in tuple(set(frames)):
+                frame -= 1
+                wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
+                if not done_frames[wobble]:
+                    processed_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y, tile_hash)
+                    processed_tile.delta += time.perf_counter() - t
+            return processed_tile
+        else:
+            out = [None, None, None]
+            for frame in tuple(set(frames)):
+                frame -= 1
+                wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
+                out[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y, tile_hash)
+            final_tile = ProcessedTile(
+                out,
+                tile.blending,
+                tile.displacement,
+                time.perf_counter() - t)
+            tile_cache[tile_hash] = final_tile
+            return final_tile
 
     async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], *, random_animations: bool = False,
                                 gscale: float = 2, frames: tuple[int] = (1, 2, 3)) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
         """Final individual tile processing step."""
-        random_animations = random_animations if random_animations is not None else False
         sprite_cache = {}
         tile_cache = {}
         d = []
@@ -500,8 +521,7 @@ class Renderer:
                 for y, row in enumerate(layer):
                     c = []
                     for x, tile in enumerate(row):
-                        c.append(
-                            await self.render_full_tile(
+                        processed_tile = await self.render_full_tile(
                                 tile,
                                 position=(x, y),
                                 random_animations=random_animations,
@@ -510,6 +530,10 @@ class Renderer:
                                 tile_cache=tile_cache,
                                 frames=frames
                             )
+                        for variant in tile.variants["post"]:
+                            variant.apply(processed_tile, renderer=self)
+                        c.append(
+                            processed_tile
                         )
                     b.append(c)
                 a.append(b)
