@@ -3,6 +3,13 @@ from src.constants import BABA_WORLD
 
 from typing import Callable, List, Optional, Tuple, TypeVar
 from PIL import Image
+import numpy as np
+
+
+def recolor(sprite: Image.Image, rgba: tuple[int, int, int, int]) -> Image.Image:
+    """Apply rgba color multiplication (0-255)"""
+    print(rgba)
+    return Image.fromarray(np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8))
 
 
 class Tile:

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import datetime
+import traceback
 from typing import TYPE_CHECKING, Any, Coroutine, Optional
+
+from . import errors, constants
 from .db import Database
 import re
 
@@ -81,6 +84,7 @@ class VaryingArgs:
 
     def __call__(self, value):
         return self.type(value)
+
 
 # https://github.com/LumenTheFairy/regexdict
 # Put here to prevent Python from yelling at me
@@ -187,3 +191,43 @@ class RegexDict:
 
     # regdictojb(key) can be used as shortcut for apply
     __call__ = apply
+
+
+class Color(tuple):
+    """Helper class for colors in variants."""
+
+    def __new__(cls, value: str):
+        try:
+            assert value[0] == "#"
+            value = value[1:]
+            if len(value) < 6:
+                value = [c * 2 for c in value]
+            color_int = int(value, base=16)
+            if len(value) < 8:
+                color_int <<= 8
+                color_int |= 0xFF
+            return super(Color, cls).__new__(cls, ((color_int & 0xFF000000) >> 24, (color_int & 0xFF0000) >> 16,
+                                                   (color_int & 0xFF00) >> 8, color_int & 0xFF))
+        except (ValueError, AssertionError):
+            if value in constants.COLOR_NAMES:
+                return super(Color, cls).__new__(cls, constants.COLOR_NAMES[value])
+            try:
+                x, y = value.split("/")
+                x = x.lstrip("(")
+                y = y.rstrip(")")
+                return super(Color, cls).__new__(cls, (int(x), int(y)))
+            except ValueError:
+                traceback.print_exc()
+                raise AssertionError("Failed to parse seemingly valid color! This should never happen.")
+
+    @staticmethod
+    def parse(tile, palette_cache, color=None):
+        if color is None:
+            color = tile.color
+        if len(color) == 4:
+            return color
+        else:
+            try:
+                return *palette_cache[tile.palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(tile.name, color)

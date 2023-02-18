@@ -189,7 +189,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         await ctx.typing()
         start = perf_counter()
-        tiles = objects.lower().strip().replace("\\", "").replace("`", "")
+        tiles = objects.strip().replace("\\", "").replace("`", "")
         # Replace some phrases
         tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
         tiles = emoji.demojize(tiles, use_aliases=True)
@@ -247,7 +247,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         default_to_letters = kwargs.get("letters", False)
         macros = kwargs.get("macro", {})
         tborders = kwargs.get("tborders", False)
-        file_format = kwargs.get('file_format', 'gif')
+        image_format = kwargs.get('image_format', 'gif')
         do_embed = kwargs.get('do_embed', False)
         for x, y in reversed(to_delete):
             del word_grid[y][x]
@@ -294,15 +294,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 if catch(tile.index, ":") or catch(tile.index, ";") or ":" not in tile and ";" not in tile:
                                     tilecount += 1
                                     tile = tile.replace('rule_', 'text_')
-                                    layer_grid[d:, l, y, x] = TileSkeleton.parse(
+                                    layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                         possible_variants, tile, rule,
-                                        macros, palette=kwargs.get("palette", "default")
+                                        macros, palette=kwargs.get("palette", "default"), bot=self.bot
                                     )
                                 else:
-                                    layer_grid[d:, l, y, x] = TileSkeleton.parse(
+                                    layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                         possible_variants,
                                         layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[0] + tile,
-                                        rule, macros)
+                                        rule, macros, bot=self.bot)
 
             # Get the dimensions of the grid
             grid_shape = layer_grid.shape
@@ -320,7 +320,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             full_tiles, unique_tiles = await self.bot.renderer.render_full_tiles(
                 full_grid,
                 random_animations=kwargs.get("random_animations", True),
-                gscale=kwargs.get("gscale", 1)
+                gscale=kwargs.get("gscale", 1),
+                frames=kwargs.get("frames", (1, 2, 3))
             )
             avgdelta, maxdelta, tiledelta = await self.bot.renderer.render(
                 full_tiles,
@@ -349,7 +350,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await self.handle_custom_text_errors(ctx, e)
 
         filename = datetime.utcnow().strftime(
-            f"render_%Y-%m-%d_%H.%M.%S.{file_format}")
+            f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
         delta = perf_counter() - start
         image = discord.File(buffer, filename=filename, spoiler=spoiler)
         description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
@@ -707,7 +708,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         custom_level: CustomLevelData | None = None
 
         spoiler = query.count("||") >= 2
-        fine_query = query.lower().strip().replace("|", "")
+        fine_query = query.strip().replace("|", "")
 
         # [abcd-0123]
         if re.match(r"^[a-z\d]{4}-[a-z\d]{4}$", fine_query) and not mobile:

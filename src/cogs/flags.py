@@ -271,7 +271,7 @@ The first number is how many frames are in a wobble frame, and the second is how
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
                     syntax="--format|-f=<format: gif | png>",
-                    kwargs=["file_format"])
+                    kwargs=["image_format"])
     async def format(match, _):
         """Set the format of the render.
 Note that PNG formats won't animate inside of Discord, you'll have to open them in the browser."""

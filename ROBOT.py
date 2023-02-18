@@ -1,16 +1,21 @@
 from __future__ import annotations
 import asyncio
+import glob
 
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import discord
+from PIL import Image
 from discord.ext import commands
 
 import auth
 import config
 import webhooks
 from src.db import Database
+
+from numpy import set_printoptions as numpy_set_printoptions
 
 
 class Context(commands.Context):
@@ -66,6 +71,14 @@ class Bot(commands.Bot):
         self.renderer = None
         self.flags = None
         self.variants = None
+        self.palette_cache = {}
+        for path in glob.glob("data/palettes/*.png"):
+            with Image.open(path) as im:
+                self.palette_cache[Path(path).stem] = im.copy()
+        numpy_set_printoptions(
+            threshold=sys.maxsize,
+            linewidth=sys.maxsize
+        )
         super().__init__(*args, **kwargs)
 
         # has to be after __init__
