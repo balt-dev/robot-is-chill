@@ -122,3 +122,7 @@ class BadCharacter(TextGenerationError):
 
 class CustomTextTooLong(TextGenerationError):
     """Can't fit."""
+
+
+class ScaleError(VariantError):
+    """Can't scale below 0."""

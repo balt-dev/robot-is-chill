@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import glob
 import math
 import random
@@ -18,8 +19,8 @@ from PIL import Image, ImageChops, ImageSequence
 from src.tile import ProcessedTile, Tile
 from . import filterimage
 from .. import constants, errors
-from ..types import Variant
-from ..utils import cached_open
+from ..types import Variant, Color
+from ..utils import cached_open, recolor
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -51,21 +52,16 @@ def grayscale(arr, influence):
     return arr.astype(np.uint8)
 
 
-def alpha_paste(img1, img2, coords):
+def alpha_paste(img1, img2, coords, func=None):
+    if func is None:
+        func = Image.alpha_composite
     imgtemp = Image.new('RGBA', img1.size, (0, 0, 0, 0))
     imgtemp.paste(
         img2,
         coords
     )
-    return Image.alpha_composite(img1, imgtemp)
+    return func(img1, imgtemp)
 
-
-def recolor(sprite: Image.Image, rgb: tuple[int, int, int]) -> Image.Image:
-    """Apply rgb color multiplication (0-255)"""
-    processable_sprite = np.array(sprite).astype(np.float64)
-    rgb_numpy = np.array(rgb, dtype=np.float64) / 255.0
-    processable_sprite[:, :, :3] *= rgb_numpy
-    return Image.fromarray(processable_sprite.astype(np.uint8))
 
 
 def delta_e(img1, img2):
@@ -284,38 +280,6 @@ class Renderer:
                                         coord_tuple,
                                         alpha
                                     )
-                            elif tile.blending == 'ADD':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                imgs[dst_frame] = Image.fromarray(
-                                    cv2.add(np.asarray(imgs[dst_frame]), np.asarray(imgtemp)))
-                            elif tile.blending == 'SUB':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                inmp = np.array(imgtemp)
-                                inmp[:, :, 3] = 0
-                                imgs[dst_frame] = Image.fromarray(
-                                    cv2.absdiff(np.array(imgs[dst_frame]), inmp))
-                            elif tile.blending == 'MAX':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                imgs[dst_frame] = Image.fromarray(
-                                    cv2.max(np.asarray(imgs[dst_frame]), np.asarray(imgtemp)))
                             elif tile.blending == 'XOR':
                                 imgtemp = Image.new(
                                     'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
@@ -330,37 +294,31 @@ class Renderer:
                                 rgb[:, :, 3] = cv2.max(
                                     i1[:, :, 3], i2[:, :, 3])
                                 imgs[dst_frame] = Image.fromarray(rgb)
-                            elif tile.blending == 'MIN':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                imgtempar = np.asarray(imgtemp)
-                                imgtempar[:, :, 3] = np.asarray(
-                                    imgs[dst_frame])[:, :, 3]
-                                imgs[dst_frame] = Image.fromarray(
-                                    cv2.min(np.asarray(imgs[dst_frame]), imgtempar))
-                            elif tile.blending == 'MUL':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (255, 255, 255, 255))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                imgtempar = np.array(
-                                    imgtemp, dtype=np.uint8) / 255
-                                imgtempar[:, :, 3] = 1.0
-                                imgs[dst_frame] = Image.fromarray(
-                                    (np.array(imgs[dst_frame]) * np.array(imgtempar)).astype(np.uint8))
                             else:
+                                def mask(func, keep_a = False):
+                                    def f(a, b):
+                                        if keep_a:
+                                            im = Image.composite(func(a, b), a, a.getchannel("A"))
+                                            im.putalpha(a.getchannel("A"))
+                                            return im
+                                        else:
+                                            return Image.composite(func(a, b), a, b.getchannel("A"))
+                                    return f
                                 imgs[dst_frame] = alpha_paste(
                                     imgs[dst_frame],
                                     sprite,
-                                    coord_tuple
+                                    coord_tuple,
+                                    func={
+                                        "ADD": mask(ImageChops.add),
+                                        "SUB": mask(ImageChops.subtract, True),
+                                        "MAX": mask(ImageChops.lighter),
+                                        "MIN": mask(ImageChops.darker),
+                                        "MUL": mask(ImageChops.multiply),
+                                        "SCRN": mask(ImageChops.screen),
+                                        "SFTLGT": mask(ImageChops.soft_light),
+                                        "HRDLGT": mask(ImageChops.hard_light),
+                                        "OVERLAY": mask(ImageChops.overlay),
+                                    }.get(tile.blending, None)
                                 )
                         times.append(tile.delta + (time.perf_counter() - t))
         if before_image:
@@ -438,7 +396,7 @@ class Renderer:
                                raw_sprite_cache: dict[str, Image.Image],
                                gscale: float = 1,
                                tile_cache=None,
-                               palette_cache=None
+                               frames: tuple[int] = (1, 2, 3)
                                ) -> ProcessedTile | Tile | tuple[ProcessedTile, int]:
         """woohoo."""
         if tile_cache is None:
@@ -451,8 +409,9 @@ class Renderer:
         tile_hash = hash((tile, wobble_hash, gscale))
         if tile_hash in tile_cache.keys():
             return tile_cache[tile_hash]
-        out = []
-        for frame in range(3):
+        out = [None, None, None]
+        for frame in tuple(set(frames)):
+            frame -= 1
             wobble = (
                              11 * x + 13 * y + frame) % 3 if random_animations else frame
             if tile.custom and type(tile.sprite) == tuple:
@@ -515,15 +474,7 @@ class Renderer:
                     sprite,
                     wobble
                 )
-            if not tile.custom_color:  # Overlays and such
-                if len(tile.color) == 3:
-                    rgb = tile.color
-                else:
-                    rgb = self.palette_cache[tile.palette].getpixel(tile.color)
-                sprite = recolor(sprite, rgb)
-            for variant in tile.variants["post"]:
-                sprite = variant.apply(sprite, tile=tile, palette_cache=self.palette_cache)
-            out.append(sprite)
+            out[frame] = sprite
         f0, f1, f2 = out
         final_tile = ProcessedTile(
             (f0,
@@ -535,13 +486,8 @@ class Renderer:
         tile_cache[tile_hash] = final_tile
         return final_tile
 
-    async def render_full_tiles(
-            self,
-            grid: list[list[list[list[Tile]]]],
-            *,
-            random_animations: bool = False,
-            gscale: float = 2
-    ) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
+    async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], *, random_animations: bool = False,
+                                gscale: float = 2, frames: tuple[int] = (1, 2, 3)) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
         """Final individual tile processing step."""
         random_animations = random_animations if random_animations is not None else False
         sprite_cache = {}
@@ -561,7 +507,8 @@ class Renderer:
                                 random_animations=random_animations,
                                 gscale=gscale,
                                 raw_sprite_cache=sprite_cache,
-                                tile_cache=tile_cache
+                                tile_cache=tile_cache,
+                                frames=frames
                             )
                         )
                     b.append(c)
@@ -580,7 +527,7 @@ class Renderer:
             position: tuple[int, int]
     ) -> Image.Image:
         """Generates a custom text sprite."""
-        text = tile.name[5:]
+        text = tile.name[5:].lower()
         raw = text.replace("/", "")
         newline_count = text.count("/")
         assert len(text) <= 64, 'Text has a maximum length of `64` characters.'

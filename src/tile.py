@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import traceback
 from dataclasses import dataclass, field
 
 from typing import Literal
@@ -9,7 +10,7 @@ import numpy as np
 from . import errors, constants
 from .cogs.variants import parse_signature
 from .db import TileData
-from .types import Variant, Context
+from .types import Variant, Context, Color
 
 
 @dataclass
@@ -23,7 +24,7 @@ class TileSkeleton:
     empty: bool = True
 
     @classmethod
-    def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default"):
+    async def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default", bot=None):
         if macros is None:
             macros = {}
         out = cls()
@@ -38,7 +39,17 @@ class TileSkeleton:
         out.raw_string = string
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
-        out.name = raw_variants.pop(0)
+        out.name = raw_variants.pop(0).lower()
+        if out.name == "2" and bot is not None:
+            # Easter egg!
+            async with bot.db.conn.cursor() as cur:
+                await cur.execute("SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE"
+                                  "'text_anni' ORDER BY RANDOM() LIMIT 1")
+                # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
+                out.name = (await cur.fetchall())[0][0]
+            raw_variants.insert(0, "cvtto/HLS")
+            raw_variants.insert(0, "rosy")
+
         macro_count = 0
         for raw_variant in raw_variants:
             if raw_variant in macros:
@@ -48,10 +59,12 @@ class TileSkeleton:
                 continue
             try:
                 final_variant = possible_variants[raw_variant]
+                var_type = final_variant.type
                 variant_args = [g for g in re.fullmatch(final_variant.pattern, raw_variant).groups() if g is not None]
                 final_args = parse_signature(variant_args, final_variant.signature)
-                out.variants[final_variant.type].append(final_variant(*final_args))
-            except KeyError:
+                out.variants[var_type].append(final_variant(*final_args))
+            except KeyError as e:
+                traceback.print_exc()
                 raise errors.UnknownVariant(out.name, raw_variant)
         return out
 
@@ -121,13 +134,14 @@ class Tile:
 
     def __hash__(self):
         return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame, self.fallback_frame,
-                     self.color, self.empty, self.blending, self.custom,
+                     self.empty, self.blending, self.custom,
                      self.style, self.palette, self.overlay, self.hue,
                      self.gamma, self.saturation, self.filterimage, self.displacement,
                      self.palette_snapping, self.normalize_gamma,
                      hash(tuple(self.variants["sprite"])),
                      hash(tuple(self.variants["tile"])),
-                     hash(tuple(self.variants["post"])), self.custom_color, self.palette))
+                     hash(tuple(self.variants["post"])),
+                     self.custom_color, self.palette))
 
     @classmethod
     def prepare(cls, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
@@ -155,11 +169,15 @@ class Tile:
                             sprite=character[0], color=color, palette=tile.palette)
             else:
                 raise errors.TileNotFound(name)
+        value.variants["sprite"].append(
+            ctx.bot.variants["0/3"](value.color, _default_color=True)
+        )
         for variant in value.variants["tile"]:
             variant.apply(value)
             if value.surrounding != 0:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
+        print(value.variants)
         return value
 
 

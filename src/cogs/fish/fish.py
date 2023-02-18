@@ -34,7 +34,6 @@ def fish(img, distortion_coefficient):
         img = np.dstack((img, bw_channel))
         img = np.dstack((img, bw_channel))
     if len(img.shape) == 3 and img.shape[2] == 3:
-        print("RGB to RGBA")
         img = np.dstack((img, np.full((w, h), 255)))
 
     # prepare array for dst image

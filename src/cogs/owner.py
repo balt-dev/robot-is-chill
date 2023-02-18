@@ -49,9 +49,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             not self.bot.config['owner_only_mode'][0], reason]
         await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
 
-    @commands.command(aliases=["load", "reload"])
+    @commands.command(aliases=["rekiad", "relaod", "reloa", "re;pad", "relad", "reolad", "r"])
     @commands.is_owner()
-    async def reloadcog(self, ctx: Context, cog: str = ""):
+    async def reload(self, ctx: Context, cog: str = ""):
         """Reloads extensions within the bot while the bot is running."""
         if not cog:
             extensions = [a for a in self.bot.extensions.keys()]
