@@ -1,4 +1,8 @@
 from __future__ import annotations
+
+from discord.ext import menus
+from discord.ext.menus.views import ViewMenuPages
+
 from src.constants import BABA_WORLD
 
 from typing import Callable, List, Optional, Tuple, TypeVar
@@ -8,7 +12,6 @@ import numpy as np
 
 def recolor(sprite: Image.Image, rgba: tuple[int, int, int, int]) -> Image.Image:
     """Apply rgba color multiplication (0-255)"""
-    print(rgba)
     return Image.fromarray(np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8))
 
 
@@ -55,3 +58,26 @@ def cached_open(path, *, cache: dict[str, T],
         return cache[path]
     cache[path] = result = fn(path)
     return result
+
+class ButtonPages(ViewMenuPages,inherit_buttons=False):
+    @menus.button('⏮', position=menus.First())
+    async def go_to_first_page(self, payload):
+        await self.show_page(0)
+
+    @menus.button('◀', position=menus.First(1))
+    async def go_to_previous_page(self, payload):
+        await self.show_checked_page(self.current_page - 1)
+
+    @menus.button('▶', position=menus.Last(1))
+    async def go_to_next_page(self, payload):
+        await self.show_checked_page(self.current_page + 1)
+
+    @menus.button('⏭', position=menus.Last(2))
+    async def go_to_last_page(self, payload):
+        max_pages = self._source.get_max_pages()
+        last_page = max(max_pages - 1, 0)
+        await self.show_page(last_page)
+
+    @menus.button('⏹', position=menus.Last())
+    async def stop_pages(self, payload):
+        self.stop()

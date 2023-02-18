@@ -23,6 +23,7 @@ from . import flags
 from .. import constants
 from ..tile import Tile
 from ..types import Bot, Context, Variant, Color
+from ..utils import ButtonPages
 
 
 class SearchPageSource(menus.ListPageSource):
@@ -131,32 +132,6 @@ class VariantSource(menus.ListPageSource):
         return embed
 
 
-class ButtonPages(
-    ViewMenuPages,
-    inherit_buttons=False):
-    @menus.button('⏮', position=menus.First())
-    async def go_to_first_page(self, payload):
-        await self.show_page(0)
-
-    @menus.button('◀', position=menus.First(1))
-    async def go_to_previous_page(self, payload):
-        await self.show_checked_page(self.current_page - 1)
-
-    @menus.button('▶', position=menus.Last(1))
-    async def go_to_next_page(self, payload):
-        await self.show_checked_page(self.current_page + 1)
-
-    @menus.button('⏭', position=menus.Last(2))
-    async def go_to_last_page(self, payload):
-        max_pages = self._source.get_max_pages()
-        last_page = max(max_pages - 1, 0)
-        await self.show_page(last_page)
-
-    @menus.button('⏹', position=menus.Last())
-    async def stop_pages(self, payload):
-        self.stop()
-
-
 class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -192,7 +167,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def search(self, ctx: Context, *, query: str):
+    async def search(self, ctx: Context, *, query: str = ""):
         """Searches through bot data based on a query.
 
         This can return tiles, levels, palettes, variants, and sprite mods.
@@ -243,76 +218,67 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         results: dict[tuple[str, str], Any] = {}
 
         if flags.get("type") is None or flags.get("type") == "tile":
-            if plain_query.strip() or any(
-                    x in flags for x in (
-                            "sprite",
-                            "text",
-                            "source",
-                            "modded",
-                            "color",
-                            "tiling",
-                            "tag")):
-                color = flags.get("color")
-                f_color_x = f_color_y = None
-                if color is not None:
-                    match = re.match(r"(\d)/(\d)", color)
-                    if match is None:
-                        z = constants.COLOR_NAMES.get("color")
-                        if z is not None:
-                            f_color_x, f_color_y = z
-                    else:
-                        f_color_x = int(match.group(1))
-                        f_color_y = int(match.group(2))
-                rows = await self.bot.db.conn.fetchall(
-                    f'''
-					SELECT * FROM tiles
-					WHERE name LIKE "%" || :name || "%" AND (
-						CASE :f_text
-							WHEN NULL THEN 1
-							WHEN "false" THEN (name NOT LIKE "text_%")
-							WHEN "true" THEN (name LIKE "text_%")
-							ELSE 1
-						END
-					) AND (
-						:f_source IS NULL OR source == :f_source
-					) AND (
-						CASE :f_modded
-							WHEN NULL THEN 1
-							WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
-							WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
-							ELSE 1
-						END
-					) AND (
-						:f_color_x IS NULL AND :f_color_y IS NULL OR (
-							(
-								inactive_color_x == :f_color_x AND
-								inactive_color_y == :f_color_y
-							) OR (
-								active_color_x == :f_color_x AND
-								active_color_y == :f_color_y
-							)
-						)
-					) AND (
-						:f_tiling IS NULL OR CAST(tiling AS TEXT) == :f_tiling
-					) AND (
-						:f_tag IS NULL OR INSTR(tags, :f_tag)
-					)
-					ORDER BY name, version ASC;
-					''',
-                    dict(
-                        name=plain_query,
-                        f_text=flags.get("text"),
-                        f_source=flags.get("source"),
-                        f_modded=flags.get("modded"),
-                        f_color_x=f_color_x,
-                        f_color_y=f_color_y,
-                        f_tiling=flags.get("tiling"),
-                        f_tag=flags.get("tag")
+            color = flags.get("color")
+            f_color_x = f_color_y = None
+            if color is not None:
+                match = re.match(r"(\d)/(\d)", color)
+                if match is None:
+                    z = constants.COLOR_NAMES.get("color")
+                    if z is not None:
+                        f_color_x, f_color_y = z
+                else:
+                    f_color_x = int(match.group(1))
+                    f_color_y = int(match.group(2))
+            rows = await self.bot.db.conn.fetchall(
+                f'''
+                SELECT * FROM tiles
+                WHERE name LIKE "%" || :name || "%" AND (
+                    CASE :f_text
+                        WHEN NULL THEN 1
+                        WHEN "false" THEN (name NOT LIKE "text_%")
+                        WHEN "true" THEN (name LIKE "text_%")
+                        ELSE 1
+                    END
+                ) AND (
+                    :f_source IS NULL OR source == :f_source
+                ) AND (
+                    CASE :f_modded
+                        WHEN NULL THEN 1
+                        WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
+                        WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
+                        ELSE 1
+                    END
+                ) AND (
+                    :f_color_x IS NULL AND :f_color_y IS NULL OR (
+                        (
+                            inactive_color_x == :f_color_x AND
+                            inactive_color_y == :f_color_y
+                        ) OR (
+                            active_color_x == :f_color_x AND
+                            active_color_y == :f_color_y
+                        )
                     )
+                ) AND (
+                    :f_tiling IS NULL OR CAST(tiling AS TEXT) == :f_tiling
+                ) AND (
+                    :f_tag IS NULL OR INSTR(tags, :f_tag)
                 )
-                for row in rows:
-                    results["tile", row["name"]] = TileData.from_row(row)
-                    results["blank_space", row["name"]] = None
+                ORDER BY name, version ASC;
+                ''',
+                dict(
+                    name=plain_query,
+                    f_text=flags.get("text"),
+                    f_source=flags.get("source"),
+                    f_modded=flags.get("modded"),
+                    f_color_x=f_color_x,
+                    f_color_y=f_color_y,
+                    f_tiling=flags.get("tiling"),
+                    f_tag=flags.get("tag")
+                )
+            )
+            for row in rows:
+                results["tile", row["name"]] = TileData.from_row(row)
+                results["blank_space", row["name"]] = None
 
         if flags.get("type") is None or flags.get("type") == "level":
             if flags.get("custom") is None or flags.get("custom") == "true":
@@ -410,7 +376,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def grabtile(self, ctx: Context, name: str):
+    async def grab(self, ctx: Context, name: str):
         """Gets the files for a specific tile from the bot."""
         #
         async with self.bot.db.conn.cursor() as cur:
