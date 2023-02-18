@@ -231,3 +231,9 @@ class Color(tuple):
                 return *palette_cache[tile.palette].getpixel(color), 0xFF
             except IndexError:
                 raise errors.BadPaletteIndex(tile.name, color)
+
+# NOTE: Due to the inner workings of CPython, the slice class cannot be subclassed.
+class Slice:
+    """Custom slice class for variant parsing."""
+    def __init__(self, *args):
+        self.slice = slice(*args)
