@@ -1,0 +1,11 @@
+[
+    {
+        "name": "winoc",
+        "sprite": "winoc",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    }
+]

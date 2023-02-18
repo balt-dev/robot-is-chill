@@ -159,10 +159,13 @@ INACTIVE_COLORS: dict[tuple[int, int], tuple[int, int]] = {
 
 # other constants
 DIRECTIONS = {
+    None: "blank",
     0: "right",
     8: "up",
     16: "left",
-    24: "down"
+    24: "down",
+    -1: "turn",
+    -2: "deturn"
 }
 
 # for n in [[0,1],[-1,0],[0,-1],[1,0],[-1,1],[-1,-1],[1,-1],[]]
@@ -249,4 +252,20 @@ TILING_CHAR =  2
 TILING_ADIR =  3
 TILING_ANIM =  4
 
-VAR_POSITIONAL_MAX = 16
+VAR_POSITIONAL_MAX = 64
+
+BLENDING_MODES = {
+    "normal": "NORMAL",
+     "add": "ADD",
+     "subtract": "SUB",
+     "multiply": "MUL",
+     "max": "MAX",
+     "min": "MIN",
+     "screen": "SCRN",
+     "softlight": "SFTLGT",
+     "hardlight": "HRDLGT",
+     "overlay": "OVERLAY",
+     "cut": "CUT",
+     "mask": "MASK",
+     "xor": "XOR"
+}

@@ -217,7 +217,7 @@
     },
     {
         "name": "pickdoor",
-        "sprite": "lockpickdoor",
+        "sprite": "pickdoor",
         "color": [
             "3",
             "1"

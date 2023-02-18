@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 from os import listdir
 import os.path
-from typing import Any, Sequence
+from typing import Any, Sequence, Optional
 
 import json
 
@@ -21,7 +21,8 @@ from PIL import Image, ImageFont, ImageDraw
 
 from . import flags
 from .. import constants
-from ..types import Bot, Context, Variant
+from ..tile import Tile
+from ..types import Bot, Context, Variant, Color
 
 
 class SearchPageSource(menus.ListPageSource):
@@ -106,8 +107,7 @@ class FlagPageSource(menus.ListPageSource):
 
 type_format = {
     "sprite": "sprite augmentation",
-    "tile": "tile creation",
-    "post": "tile postprocessing"
+    "tile": "tile creation"
 }
 
 class VariantSource(menus.ListPageSource):
@@ -117,6 +117,7 @@ class VariantSource(menus.ListPageSource):
 
     async def format_page(self, menu: menus.Menu, entries: list[Variant]) -> discord.Embed:
         embed = discord.Embed(
+            title=f"{menu.current_page+1}/{self.get_max_pages()}",
             color=menu.bot.embed_color
         )
         embed.description = "```ansi"
@@ -127,7 +128,6 @@ class VariantSource(menus.ListPageSource):
 \u001b[0;30m- \u001b[0;34mApplied during \u001b[1;36m{type_format[entry.type]}\u001b[0m
 """
         embed.description += "```"
-        embed.set_footer(text=f"{menu.current_page+1}/{self.get_max_pages()}")
         return embed
 
 
@@ -393,16 +393,18 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             ),
         ).start(ctx)
 
-    @commands.command()
+    @commands.command(name="variants", aliases=["var", "vars", "variant"])
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def variants(self, ctx: Context):
+    async def variants(self, ctx: Context, query: Optional[str] = None):
         """Shows all the bot's variants."""
         def sort(variant):
-            print(variant, variant.__name__)
             return variant.__name__
+        variants = ctx.bot.variants._values
+        if query is not None:
+            variants = [var for var in variants if query in var.__name__.lower()]
         await ButtonPages(
             source=VariantSource(
-                sorted(ctx.bot.variants._values, key=sort)  # Sort alphabetically
+                sorted(variants, key=sort)  # Sort alphabetically
             ),
         ).start(ctx)
 
@@ -453,12 +455,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             colour=self.bot.embed_color,
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
-    @commands.command(name="seedcracker", aliases=['cracker'])
-    async def send_seedcracker(self, ctx: Context):
-        """Sends the seedcracker program as a file."""
-        with open('src/seedcracker.py', mode='rb') as f:
-            await ctx.reply(file=discord.File(f, filename='seedcracker.py'))
-
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
     async def show_palette(self, ctx: Context, palette: str = 'default', color: str = None):
@@ -466,27 +462,12 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         This is useful for picking colors from the palette.
         """
-
-        assert palette.find(
-            '..') == -1, 'No looking at the host\'s hard drive, thank you very much.'
-        try:
-            img = Image.open(f"data/palettes/{palette}.png")
-        except FileNotFoundError:
-            img = Image.open(f"data/palettes/default.png")
-            color = palette
-            try:
-                x, y = color.split('/')
-                x, y = min(6, max(int(x), 0)), min(6, max(int(y), 0))
-                r, g, b = img.convert('RGB').getpixel((x, y))
-            except ValueError:
+        p_cache = self.bot.renderer.palette_cache
+        if (img := p_cache.get(palette, None)) is None:
+            if "/" not in palette:
                 return await ctx.error(f'The palette {palette} could not be found.')
-        if color is not None:
-            try:
-                x, y = color.split('/')
-                x, y = min(6, max(int(x), 0)), min(6, max(int(y), 0))
-                r, g, b = img.convert('RGB').getpixel((x, y))
-            except ValueError:
-                return await ctx.error(f'`{color}` is an invalid palette index.')
+            palette = "default"
+            r, g, b, _ = Color.parse(Tile(name="<palette command>"), p_cache, palette)
             d = discord.Embed(
                 color=discord.Color.from_rgb(r, g, b),
                 title=f"Color: #{hex((r << 16) | (g << 8) | b)[2:].zfill(6)}"
@@ -494,47 +475,38 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             return await ctx.reply(embed=d)
         else:
             txtwid, txthgt = img.size
-            img = img.resize(
+            pal_img = img.resize(
                 (img.width * constants.PALETTE_PIXEL_SIZE,
                  img.height * constants.PALETTE_PIXEL_SIZE),
                 resample=Image.NEAREST
-            )
+            ).convert("RGBA")
             font = ImageFont.truetype("data/04b03.ttf", 16)
-            draw = ImageDraw.Draw(img)
+            draw = ImageDraw.Draw(pal_img)
             for y in range(txthgt):
                 for x in range(txtwid):
-                    try:
-                        n = img.getpixel(
+                    n = pal_img.getpixel(
+                        (x * constants.PALETTE_PIXEL_SIZE,
+                         (y * constants.PALETTE_PIXEL_SIZE)))
+                    if (n[0] + n[1] + n[2]) / 3 > 128:
+                        draw.text(
                             (x * constants.PALETTE_PIXEL_SIZE,
-                             (y * constants.PALETTE_PIXEL_SIZE)))
-                        if (n[0] + n[1] + n[2]) / 3 > 128:
-                            draw.text(
-                                (x * constants.PALETTE_PIXEL_SIZE,
-                                 (y * constants.PALETTE_PIXEL_SIZE) - 2),
-                                str(x) + "," + str(y),
-                                (1,
-                                 1,
-                                 1,
-                                 255),
-                                font,
-                                layout_engine=ImageFont.LAYOUT_BASIC)
-                        else:
-                            draw.text(
-                                (x * constants.PALETTE_PIXEL_SIZE,
-                                 (y * constants.PALETTE_PIXEL_SIZE) - 2),
-                                str(x) + "," + str(y),
-                                (255,
-                                 255,
-                                 255,
-                                 255),
-                                font,
-                                layout_engine=ImageFont.LAYOUT_BASIC)
-                    except BaseException:
-                        pass
+                             (y * constants.PALETTE_PIXEL_SIZE) - 2),
+                            f"{x},{y}",
+                            (1, 1, 1, 255),
+                            font,
+                            layout_engine=ImageFont.LAYOUT_BASIC)
+                    else:
+                        draw.text(
+                            (x * constants.PALETTE_PIXEL_SIZE,
+                             (y * constants.PALETTE_PIXEL_SIZE) - 2),
+                            f"{x},{y}",
+                            (255, 255, 255, 255),
+                            font,
+                            layout_engine=ImageFont.LAYOUT_BASIC)
             buf = BytesIO()
-            img.save(buf, format="PNG")
+            pal_img.save(buf, format="PNG")
             buf.seek(0)
-            file = discord.File(buf, filename=f"palette_{palette}.png")
+            file = discord.File(buf, filename=f"{palette}.png")
             await ctx.reply(f"Palette `{palette}`:", file=file)
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
