@@ -3,7 +3,7 @@ from __future__ import annotations
 import traceback
 from dataclasses import dataclass, field
 
-from typing import Literal
+from typing import Literal, Optional
 from PIL import Image
 import re
 import numpy as np
@@ -22,6 +22,7 @@ class TileSkeleton:
         default_factory=lambda: {"sprite": [], "tile": [], "post": []})
     palette: str = "default"
     empty: bool = True
+    easter_egg: bool = False
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default", bot=None):
@@ -39,17 +40,18 @@ class TileSkeleton:
         out.raw_string = string
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
-        out.name = raw_variants.pop(0).lower()
+        out.name = raw_variants.pop(0)
         if out.name == "2" and bot is not None:
             # Easter egg!
+            out.easter_egg = True
             async with bot.db.conn.cursor() as cur:
                 await cur.execute("SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE"
                                   "'text_anni' ORDER BY RANDOM() LIMIT 1")
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
+            raw_variants.insert(0, "cvtfrom/HLS")
+            raw_variants.insert(0, "mm(0/0/0/0)/(0/0.5/0/0.5)/(0/0/0.5/0.5)/(1/0/0/1)")
             raw_variants.insert(0, "cvtto/HLS")
-            raw_variants.insert(0, "rosy")
-
         macro_count = 0
         for raw_variant in raw_variants:
             if raw_variant in macros:
@@ -113,6 +115,7 @@ class Tile:
     surrounding: int = 0b00000000  # RULDEQZC
     frame: int = 0
     fallback_frame: int = 0
+    wobble: int | None = None
     custom_color: bool = False
     color: tuple[int, int] = (0, 3)
     empty: bool = True
@@ -128,22 +131,26 @@ class Tile:
     displacement: list[int, int] = field(default_factory=lambda: [0, 0])
     palette_snapping: bool = False
     normalize_gamma: bool = False
-    variants: dict[str, list] = None
+    variants: dict[str, list] = field(default_factory=lambda: {
+        "sprite": [],
+        "tile": [],
+        "post": []
+    })
     altered_frame: bool = False
 
     def __hash__(self):
         return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame, self.fallback_frame,
                      self.empty, self.blending, self.custom,
-                     self.style, self.palette, self.overlay, self.hue,
+                     self.style, self.palette, self.overlay, self.hue, self.color,
                      self.gamma, self.saturation, self.filterimage, tuple(self.displacement),
-                     self.palette_snapping, self.normalize_gamma,
+                     self.palette_snapping, self.normalize_gamma, self.altered_frame,
                      hash(tuple(self.variants["sprite"])),
                      hash(tuple(self.variants["tile"])),
                      hash(tuple(self.variants["post"])),
                      self.custom_color, self.palette))
 
     @classmethod
-    def prepare(cls, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
+    async def prepare(cls, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
                 position: tuple[int, int, int, int], tile_borders: bool = False, ctx: Context = None):
         if tile.empty:
             return cls(name="<empty>")
@@ -169,7 +176,7 @@ class Tile:
             else:
                 raise errors.TileNotFound(name)
         value.variants["sprite"].append(
-            ctx.bot.variants["0/3"](value.color, _default_color=True)
+            ctx.bot.variants["0/3"]((4, 2) if tile.easter_egg else value.color, _default_color=True)
         )
         for variant in value.variants["tile"]:
             variant.apply(value)
@@ -182,7 +189,9 @@ class Tile:
 @dataclass
 class ProcessedTile:
     """A tile that's been processed, and is ready to render."""
-    frames: list[Image, Image, Image] | None = None
-    blending: Literal["NORMAL", "ADD", "SUB", "MULT", "CUT", "MASK"] = "NORMAL"
+    empty: bool = True
+    frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(default_factory=lambda: [None, None, None])
+    blending: Literal[*tuple(constants.BLENDING_MODES.keys())] = "normal"
     displacement: list[int, int] = field(default_factory=lambda: [0, 0])
-    delta: float = 0
+    def __repr__(self):
+        return f"ProcessedTile(empty={self.empty}, blending={self.blending}, displacement={self.displacement})"

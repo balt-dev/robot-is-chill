@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import signal
 import sqlite3
 import sys
 import traceback
@@ -242,6 +243,8 @@ User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.messag
                 error.__traceback__,
                 file=sys.stderr)
             return
+        finally:
+            signal.alarm(0)
 
 
 async def setup(bot: Bot):

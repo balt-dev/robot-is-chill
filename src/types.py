@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import traceback
+from concurrent.futures import ProcessPoolExecutor
 from typing import TYPE_CHECKING, Any, Coroutine, Optional
 
 from . import errors, constants
@@ -201,7 +202,7 @@ class Color(tuple):
             assert value[0] == "#"
             value = value[1:]
             if len(value) < 6:
-                value = [c * 2 for c in value]
+                value = ''.join(c * 2 for c in value)
             color_int = int(value, base=16)
             if len(value) < 8:
                 color_int <<= 8

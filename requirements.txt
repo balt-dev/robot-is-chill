@@ -12,3 +12,4 @@ colour-science
 numpy~=1.23.3
 aiohttp~=3.8.1
 setuptools~=58.1.0
+visual-center

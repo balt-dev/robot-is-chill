@@ -11,7 +11,7 @@ from PIL import Image
 
 from .. import constants
 from ..errors import InvalidFlagError
-from ..types import Context
+from ..types import Context, Color
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -93,7 +93,7 @@ async def setup(bot: Bot):
                     kwargs=["background"])
     async def background_hex(match, _):
         """Sets the background of a render to a hexadecimal color."""
-        return [match.group(1)]
+        return [Color.parse(None, None, match.group(1))]
 
     @flags.register(match=r"(?:--palette|-p)=(\w+)",
                     syntax="(-p | --palette)=<palette: str>",
@@ -210,13 +210,6 @@ Use % to set a percentage of the default render speed."""
         """Removes the random animation offset."""
         return False,
 
-    @flags.register(match=r"(?:--grid|-gr)=(\d+)/(\d+)",
-                    syntax="--grid|-gr=<width: int>/<height: int>",
-                    kwargs=["gridol"])
-    async def grid(match, _):
-        """Adds a grid overlay."""
-        return ((int(match.group(1))), (int(match.group(2)))),
-
     @flags.register(match=r"(?:--crop)=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--crop=<left: int>/<top: int>/<right: int>/<bottom: int>",
                     kwargs=["crop"])
@@ -265,7 +258,7 @@ Use % to set a percentage of the default render speed."""
                     syntax="--anim|-am=<wobble: int>/<timestep: int>",
                     kwargs=["animation"])
     async def anim(match, _):
-        """Makes the wobble frames independent from the animation.
+        """Makes the wobble frames independent of the animation.
 The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
         return ((int(match.group(1))), (int(match.group(2)))),
 
@@ -283,13 +276,6 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
     async def spacing(match, _):
         """Adds spacing to the render."""
         return (int(match.group(1))),
-
-    @flags.register(match=r"--expand|-ex",
-                    syntax="--expand|-ex",
-                    kwargs=["expand"])
-    async def expand(_, __):
-        """Expands the render for tiles displaced with the `:displace` variant."""
-        return True,
 
     @flags.register(match=r"--tileborder|-tb",
                     syntax="--tileborder|-tb",

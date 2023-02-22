@@ -74,21 +74,21 @@ AUTO_REPRESENTATION_VARIANTS = {
 }
 
 AUTO_VARIANTS = {
-    "tr":            0b10000000,
-    "tileright":     0b10000000,
-    "tu":            0b01000000,
-    "tileup":        0b01000000,
-    "tl":            0b00100000,
-    "tileleft":      0b00100000,
-    "td":            0b00010000,
-    "tiledown":      0b00010000,
-    "tur":           0b11001000,
-    "tileright":     0b11001000,
-    "tul":           0b01100100,
-    "tileupleft":    0b01100100,
-    "tdl":           0b00110010,
-    "tiledownleft":  0b00110010,
-    "tdr":           0b10010001,
+    "tr": 0b10000000,
+    "tileright": 0b10000000,
+    "tu": 0b01000000,
+    "tileup": 0b01000000,
+    "tl": 0b00100000,
+    "tileleft": 0b00100000,
+    "td": 0b00010000,
+    "tiledown": 0b00010000,
+    "tur": 0b11001000,
+    "tileupright": 0b11001000,
+    "tul": 0b01100100,
+    "tileupleft": 0b01100100,
+    "tdl": 0b00110010,
+    "tiledownleft": 0b00110010,
+    "tdr": 0b10010001,
     "tiledownright": 0b10010001,
 }
 
@@ -113,11 +113,6 @@ COLOR_NAMES: dict[str, tuple[int, int]] = {
     "white": (0, 3),
     "brown": (6, 1),
 }
-
-COLOR_REPRESENTATION_VARIANTS = {
-    "foobarbaz": ", ".join(
-        f"{color}" for color in COLOR_NAMES) +
-    " (Color names)"}
 
 INACTIVE_COLORS: dict[tuple[int, int], tuple[int, int]] = {
     (0, 0): (0, 4),
@@ -170,7 +165,7 @@ DIRECTIONS = {
 
 # for n in [[0,1],[-1,0],[0,-1],[1,0],[-1,1],[-1,-1],[1,-1],[]]
 TILING_VARIANTS: dict[int, int] = {
-    #R, U, L, D, E, Q, Z, C
+    # R, U, L, D, E, Q, Z, C
     # Straightforward so far, easy to compute with a bitfield
     0b00000000: 0,
     0b10000000: 1,
@@ -243,29 +238,29 @@ EXTENSIONS_WORLD = "baba-extensions"
 
 COMBINE_MAX_FILESIZE = 5242880  # in bytes
 
-TIMEOUT_DURATION = 20
+TIMEOUT_DURATION = 3
 
 TILING_NONE = -1
-TILING_DIR  =  0
-TILING_TILE =  1
-TILING_CHAR =  2
-TILING_ADIR =  3
-TILING_ANIM =  4
+TILING_DIR = 0
+TILING_TILE = 1
+TILING_CHAR = 2
+TILING_ADIR = 3
+TILING_ANIM = 4
 
 VAR_POSITIONAL_MAX = 64
 
-BLENDING_MODES = {
-    "normal": "NORMAL",
-     "add": "ADD",
-     "subtract": "SUB",
-     "multiply": "MUL",
-     "max": "MAX",
-     "min": "MIN",
-     "screen": "SCRN",
-     "softlight": "SFTLGT",
-     "hardlight": "HRDLGT",
-     "overlay": "OVERLAY",
-     "cut": "CUT",
-     "mask": "MASK",
-     "xor": "XOR"
-}
+BLENDING_MODES = (
+    "normal",
+    "add",
+    "subtract",
+    "multiply",
+    "max",
+    "min",
+    "screen",
+    "softlight",
+    "hardlight",
+    "overlay",
+    "cut",
+    "mask",
+    "xor"
+)
