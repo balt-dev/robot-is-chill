@@ -1009,7 +1009,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     frame.paste(img, (x1 - x1_min, y1 - y1_min))
                     width, height = frame.size
                     buf = BytesIO()
-                    frame.save(buf, format="PNG")
+                    frame.convert("L").save(buf, format="PNG")
                     blobs.append(buf.getvalue())
                 results.append((mode, char, width, *blobs))
 
@@ -1023,11 +1023,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     async def load_ready_letters(self):
         def channel_shenanigans(im: Image.Image) -> Image.Image:
-            if im.mode == "1":
+            if im.mode == "L":
                 return im
-            elif im.mode == "RGB" or im.mode == "L":
-                return im.convert("1")
-            return im.convert("RGBA").getchannel("A").convert("1")
+            elif im.mode in ("RGB", "1"):
+                return im.convert("L")
+            return im.convert("RGBA").getchannel("A")
 
         data = []
         for path in pathlib.Path("data/letters").glob("*/*/*/*_0.png"):

@@ -10,10 +10,16 @@ from PIL import Image
 import numpy as np
 
 
-def recolor(sprite: Image.Image, rgba: tuple[int, int, int, int]) -> Image.Image:
+def recolor(sprite: Image.Image | np.ndarray, rgba: tuple[int, int, int, int]) -> Image.Image:
     """Apply rgba color multiplication (0-255)"""
-    return Image.fromarray(np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8))
+    arr = np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8)
+    if isinstance(sprite, np.ndarray):
+        return arr
+    return Image.fromarray(arr)
 
+
+def composite(a, b, t):
+    return (1.0 - t) * a + t * b
 
 class Tile:
     """Represents a tile object, ready to be rendered."""
