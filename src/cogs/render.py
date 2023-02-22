@@ -20,7 +20,7 @@ from src.tile import ProcessedTile, Tile
 from . import filterimage
 from .. import constants, errors
 from ..types import Variant, Color
-from ..utils import cached_open, recolor
+from ..utils import cached_open, recolor, composite
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -63,7 +63,6 @@ def alpha_paste(img1, img2, coords, func=None):
     return func(img1, imgtemp)
 
 
-
 def delta_e(img1, img2):
     # compute the Euclidean distance with pixels of two images
     return np.sqrt(np.sum((img1 - img2) ** 2, axis=-1))
@@ -76,7 +75,6 @@ class Renderer:
     """
 
     def __init__(self, bot: Bot) -> None:
-        self.sprite_cache = {}
         self.bot = bot
         self.palette_cache = {}
         for path in glob.glob("data/palettes/*.png"):
@@ -96,15 +94,13 @@ class Renderer:
             images: list[str] | None = None,
             image_source: str = constants.BABA_WORLD,
             out: str | BinaryIO = "target/renders/render.gif",
-            background: tuple[int, int] | str | None = None,
+            background: tuple[int] | None = None,
             upscale: int = 2,
             extra_out: str | BinaryIO | None = None,
             extra_name: str | None = None,
             frames: list[int] = (1, 2, 3),
             animation: tuple[int, int] = (0, None),
             speed: int = 200,
-            gridol: tuple[int] = None,
-            scaleddef: float = 1,
             crop: tuple[int, int, int, int] | None = None,
             pad: tuple[int, int, int, int] | None = (0, 0, 0, 0),
             image_format: str = 'gif',
@@ -115,285 +111,107 @@ class Renderer:
             random_animations: bool = True,
             **_
     ):
-        """Takes a list of tile objects and generates a gif with the associated
-        sprites.
-
-        `out` is a file path or buffer. Renders will be saved there, otherwise to `target/renders/render.gif`.
-
-        `palette` is the name of the color palette to refer to when rendering.
-
-        `images` is a list of background image filenames. Each image is retrieved from `data/images/{image_source}/image`.
-
-        `background` is a palette index. If given, the image background color is set to that color, otherwise transparent. Background images overwrite this.
-        """
+        """Takes a list of tile objects and generates a gif with the associated sprites."""
+        start_time = time.perf_counter()
         animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
-        palette_img = Image.open(f"data/palettes/{palette}.png").convert("RGB")
-        imgs = []
-        times = []
-        width = len(grid[0][0][0])
-        height = len(grid[0][0])
-        # don't need depth anywhere
-        steps = len(grid)
-        img_width_raw = max(int(width * (spacing * scaleddef)),
-                            (constants.DEFAULT_SPRITE_SIZE * scaleddef))
-        img_height_raw = max(int(height * (spacing * scaleddef)),
-                             (constants.DEFAULT_SPRITE_SIZE * scaleddef))
-        durations = [
-                        speed] * (len(frames) if animation_delta is None else animation_delta) * steps
+        grid = np.array(grid, dtype=object)
+        durations = [speed] * (len(frames) if animation_delta is None else animation_delta) * grid.shape[0]
         if animation:
             frames = np.repeat(frames, animation).tolist()
             frames = (frames * (math.ceil(len(durations) /
                                           animation_delta)))[:len(durations)]
 
+        def get_first_frame(tile):
+            for frame in tile.frames:
+                if frame is not None:
+                    return frame.shape
+            else:
+                return (0, 0) # Empty tile
 
-        def wl(a):
-            try:
-                return int(a.frames[0].width * scaleddef)
-            except BaseException:
-                return 0
-
-        def hl(a):
-            try:
-                return int(a.frames[0].height * scaleddef)
-            except BaseException:
-                return 0
-
-        padding = np.amax(
-            np.vectorize(
-                lambda tile: max(
-                    hl(tile),
-                    wl(tile)))(
-                np.array(grid)))
-        img_width = int(img_width_raw + (2 * padding) + pad[0] + pad[2])
-        img_height = int(img_height_raw + (2 * padding) + pad[1] + pad[3])
-        bg_iter = [0] if animation else range(
-            steps)  # no iteration on animation
-        for _ in bg_iter:
-            for layer, frame in enumerate(frames):
-                if images and image_source is not None:
-                    img = Image.new("RGBA", (img_width, img_height))
+        sizes = np.array(
+            [get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
+        sizes = (sizes.reshape((*grid.shape, 2)) - spacing)
+        #                     D   L   Y   X   S
+        left = np.max(sizes[:, :, :, 0, 0], (0, 1, 2)) // 2
+        top = np.max(sizes[:, :, 0, :, 1], (0, 1, 2)) // 2
+        right = np.max(sizes[:, :, :, -1, 0], (0, 1, 2)) // 2
+        bottom = np.max(sizes[:, :, -1, :, 1], (0, 1, 2)) // 2
+        default_size = (int(sizes.shape[2] * spacing + top + bottom),
+                        int(sizes.shape[3] * spacing + left + right))
+        steps = np.zeros((grid.shape[0] * len(frames), *default_size, 4), dtype=np.uint8)
+        if images and image_source is not None:
+            for step in range(steps.shape[0]):
+                for frame in frames:
+                    img = Image.new("RGBA", default_size)
                     # for loop in case multiple background images are used
                     # (i.e. baba's world map)
                     for image in images:
                         overlap = Image.open(
                             f"data/images/{image_source}/{image}_{frame}.png")
-                        img.paste(overlap, (padding, padding), mask=overlap)
-                # bg color
-                elif isinstance(background, tuple):
-                    palette_color = palette_img.getpixel(background)
-                    img = Image.new("RGBA", (img_width, img_height), color=tuple(
-                        [max(c, 8) for c in palette_color]))
-                elif isinstance(background, str):
-                    img = Image.new("RGBA", (img_width, img_height), color=tuple(
-                        [max(int(a + b, 16), 8) for a, b in np.reshape(list(background), (3, 2))]))
-                # neither
-                else:
-                    img = Image.new(
-                        "RGBA", (img_width, img_height), color=(
-                            0, 0, 0, 0))
-                imgs.append(img)
-        # keeping track of the amount of padding we can slice off
-        pad_r = pad_u = pad_l = pad_d = 0
-        dframes = animation_delta if animation else len(frames)
-        for d, timestep in enumerate(grid):
-            for layer in timestep:
+                        img.paste(overlap, (0, 0), mask=overlap)
+                    steps[step * len(frames) + frame - 1] = np.asarray(img)
+        else:
+            if background is not None:
+                if len(background) < 4:
+                    background = Color.parse(Tile(palette=palette), self.palette_cache, background)
+                steps += background
+        for t, step in enumerate(grid):
+            for z, layer in enumerate(step):
                 for y, row in enumerate(layer):
                     for x, tile in enumerate(row):
-                        # i should recode this whole section but i'm too scared
-                        # of breaking something badly
-                        wobble_offset = (11 * x + 13 * y) % 3 if random_animations else 0
-                        t = time.perf_counter()
-                        if tile.frames is None:
+                        first_frame = get_first_frame(tile)
+                        if tile.empty:
                             continue
-                        tframes = []
-                        anim_frames = frames
-                        if animation:
-                            anim_frames = anim_frames[d *
-                                                      animation_delta:(d +
-                                                                       1) *
-                                                                      animation_delta]
-                        for f in anim_frames:
-                            tframes.append(tile.frames[(f - 1 + wobble_offset) % 3])
-                        for frame, sprite in enumerate(tframes[:dframes]):
-                            if animation:
-                                dst_frame = (d * animation_delta) + frame
-                            else:
-                                dst_frame = frame + (d * len(frames))
-                            x_offset = int(
-                                (sprite.width - (spacing * scaleddef)) / 2)
-                            y_offset = int(
-                                (sprite.height - (spacing * scaleddef)) / 2)
-                            x_offset_disp = int(
-                                ((sprite.width - (spacing * scaleddef)) / 2) + tile.displacement[
-                                    0] * scaleddef)
-                            y_offset_disp = int(
-                                ((sprite.height - (spacing * scaleddef)) / 2) + tile.displacement[
-                                    1] * scaleddef)
-                            x_offset_pad = int(
-                                ((sprite.width - (spacing * scaleddef)) / 2) - tile.displacement[
-                                    0] * scaleddef)
-                            y_offset_pad = int(
-                                ((sprite.height - (spacing * scaleddef)) / 2) - tile.displacement[
-                                    1] * scaleddef)
-                            if x == 0:
-                                pad_l = max(
-                                    pad_l, x_offset_pad if expand else x_offset)
-                            if x == width - 1:
-                                pad_r = max(
-                                    pad_r, x_offset_pad if expand else x_offset)
-                            if y == 0:
-                                pad_u = max(
-                                    pad_u, y_offset_pad if expand else y_offset)
-                            if y == height - 1:
-                                pad_d = max(
-                                    pad_d, y_offset_pad if expand else y_offset)
-                            alpha = sprite.getchannel("A")
-                            x_offset_disp -= pad[0]
-                            y_offset_disp -= pad[1]
-                            coord_tuple = (
-                                int(x * (spacing * scaleddef) +
-                                    padding - x_offset_disp),
-                                int(y * (spacing * scaleddef) +
-                                    padding - y_offset_disp)
+                        displacement = (x * spacing + (left - (first_frame[1] - spacing) // 2) - tile.displacement[0],
+                                        y * spacing + (top  - (first_frame[0] - spacing) // 2) - tile.displacement[1])
+                        for frame in frames:
+                            wobble = (11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
+                            image = tile.frames[wobble]
+                            # Cut the pasted tile to fit inside the image
+                            a = -max(displacement[1] + first_frame[0] - default_size[0], 0)
+                            b = -max(displacement[0] + first_frame[1] - default_size[1], 0)
+                            dst_slice = (
+                                slice(max(-displacement[1], 0),
+                                      a if a < 0 else None),
+                                slice(max(-displacement[0], 0),
+                                      b if b < 0 else None)
                             )
-                            if tile.blending == "MASK":  # i should really rewrite all of this lmao
-                                alpha = ImageChops.invert(alpha)
-                                if background is not None:
-                                    palette_color = palette_img.getpixel(
-                                        background)
-                                else:
-                                    palette_color = (0, 0, 0, 0)
-                                sprite = Image.new(
-                                    "RGBA", (sprite.width, sprite.height), color=palette_color)
-                                imgs[dst_frame].paste(
-                                    sprite,
-                                    coord_tuple,
-                                    alpha
-                                )
-                            elif tile.blending == "CUT":
-                                if background is not None:
-                                    imgs[dst_frame].paste(
-                                        Image.new(
-                                            "RGBA",
-                                            (sprite.width,
-                                             sprite.height),
-                                            palette_img.getpixel(background)),
-                                        coord_tuple,
-                                        alpha)
-                                else:
-                                    imgs[dst_frame].paste(
-                                        Image.new(
-                                            "RGBA", (sprite.width, sprite.height)),
-                                        coord_tuple,
-                                        alpha
-                                    )
-                            elif tile.blending == 'XOR':
-                                imgtemp = Image.new(
-                                    'RGBA', imgs[dst_frame].size, (0, 0, 0, 0))
-                                imgtemp.paste(
-                                    sprite,
-                                    coord_tuple,
-                                    mask=sprite
-                                )
-                                i1 = np.asarray(imgs[dst_frame])
-                                i2 = np.asarray(imgtemp)
-                                rgb = (i1 ^ i2)
-                                rgb[:, :, 3] = cv2.max(
-                                    i1[:, :, 3], i2[:, :, 3])
-                                imgs[dst_frame] = Image.fromarray(rgb)
-                            else:
-                                def mask(func, keep_a = False):
-                                    def f(a, b):
-                                        if keep_a:
-                                            im = Image.composite(func(a, b), a, a.getchannel("A"))
-                                            im.putalpha(a.getchannel("A"))
-                                            return im
-                                        else:
-                                            return Image.composite(func(a, b), a, b.getchannel("A"))
-                                    return f
-                                imgs[dst_frame] = alpha_paste(
-                                    imgs[dst_frame],
-                                    sprite,
-                                    coord_tuple,
-                                    func={
-                                        "ADD": mask(ImageChops.add),
-                                        "SUB": mask(ImageChops.subtract, True),
-                                        "MAX": mask(ImageChops.lighter),
-                                        "MIN": mask(ImageChops.darker),
-                                        "MUL": mask(ImageChops.multiply),
-                                        "SCRN": mask(ImageChops.screen),
-                                        "SFTLGT": mask(ImageChops.soft_light),
-                                        "HRDLGT": mask(ImageChops.hard_light),
-                                        "OVERLAY": mask(ImageChops.overlay),
-                                    }.get(tile.blending, None)
-                                )
-                        times.append(tile.delta + (time.perf_counter() - t))
-        if before_image:
-            bfr = 0
-            before_durations = []
-            for frame in ImageSequence.Iterator(before_image):
-                try:
-                    before_durations.append(frame.info['duration'])
-                    im = frame.convert('RGBA')
-                    im = im.resize((im.width // 2, im.height // 2), Image.NEAREST)
-                    new_image = Image.new(
-                        'RGBA', (img_width, img_height), (0, 0, 0, 0))
-                    new_image.paste(
-                        im, (padding - pad_l, padding - pad_u), mask=im)
-                    imgs.insert(bfr, new_image)
-                    bfr += 1  # I don't want to use an enumerate on an iterator
-                except KeyError:
-                    pass
-            durations = before_durations + durations
-        outs = []
-        for img in imgs:
-            img = np.array(img, dtype=np.uint8)
-            img[np.all(img[:, :, :3] <= (8, 8, 8), axis=2)
-                & (img[:, :, 3] > 0), :3] = 8
-            if gridol is not None:
-                for col in range(img.shape[0] // (gridol[0] * 2)):
-                    img[col * gridol[0] * 2, :,
-                    :] = ~img[col * gridol[0] * 2, :, :]
-                    img[col * gridol[0] * 2, :, 3] = 255
-                for row in range(img.shape[1] // (gridol[1] * 2)):
-                    img[:, row * gridol[1] * 2,
-                    :] = ~img[:, row * gridol[1] * 2, :]
-                    img[:, row * gridol[1] * 2, 3] = 255
-            if image_format == 'gif':
-                img[:, :, :3] = (img[:, :, :3] *
-                                 (img[:, :, 3] /
-                                  255).repeat(3).reshape(img.shape[:2] +
-                                                         (3,))).astype("uint8")
-            img = Image.fromarray(img)
-            img = img.crop(
-                (padding - pad_l,
-                 padding - pad_u,
-                 img.width - padding + pad_r,
-                 img.height - padding + pad_d))
-            if crop is not None:
-                img = img.crop(
-                    (crop[0], crop[1], img.width - crop[2], img.height - crop[3]))
-            if upscale != 1:
-                img = img.resize(
-                    (int(upscale * img.width), int(upscale * img.height)), resample=Image.NEAREST)
-            outs.append(img)
+                            image = image[*dst_slice]
+                            if image.size < 1:
+                                continue
+                            # Get the part of the image to paste on
+                            src_slice = (
+                                slice(displacement[1], image.shape[0] + displacement[1]),
+                                slice(displacement[0], image.shape[1] + displacement[0])
+                            )
+                            steps[t + wobble, *src_slice] = self.blend(tile.blending, steps[t + wobble, *src_slice], image)
+        comp_ovh = time.perf_counter() - start_time
+        start_time = time.perf_counter()
+        images = []
+        for step in steps:
+            im = Image.fromarray(step)
+            images.append(im.resize((int(im.width * upscale), int(im.height * upscale)), Image.NEAREST))
+        self.save_frames(images,
+                         out,
+                         durations,
+                         extra_out=extra_out,
+                         extra_name=extra_name,
+                         image_format=image_format,
+                         loop=loop,
+                         boomerang=boomerang,
+                         background=background is not None)
+        return comp_ovh, time.perf_counter() - start_time
 
-        self.save_frames(
-            outs,
-            out,
-            durations=durations,
-            extra_out=extra_out,
-            extra_name=extra_name,
-            image_format=image_format,
-            loop=loop,
-            boomerang=boomerang,
-            background=(background is not None)
-        )
-        if len(times) == 0:
-            return 0, 0, 0
-        else:
-            return sum(times) / \
-                   len(times), max(times), sum(times),
+    def blend(self, mode, src, dst) -> np.ndarray:
+        if mode not in ("mask", "cut"):
+            out_a = (src[..., 3] + dst[..., 3] * (1 - src[..., 3] / 255)).astype(np.uint8)
+            if mode == "add":
+                out_rgb = np.clip(src[..., :3].astype(np.int16) + dst[..., :3].astype(np.int16), 0, 255).astype(np.uint8)
+            else:
+                dst_alpha = dst[..., 3].astype(float) / 255
+                dst_alpha = dst_alpha[:, :, np.newaxis]
+                out_rgb = (1.0 - dst_alpha) * src[..., :3] + dst_alpha * dst[..., :3]
+            return np.dstack((out_rgb, out_a[..., np.newaxis]))
 
     async def render_full_frame(self,
                                 tile: Tile,
@@ -402,7 +220,6 @@ class Renderer:
                                 gscale: float,
                                 x: int,
                                 y: int,
-                                tile_hash: int,
                                 ) -> Image.Image:
         if tile.custom and type(tile.sprite) == tuple:
             sprite = await self.generate_sprite(
@@ -415,8 +232,7 @@ class Renderer:
             )
         else:
             if isinstance(tile.sprite, np.ndarray):
-                sprite = Image.fromarray(
-                    tile.sprite[(tile.frame * 3) + frame])
+                sprite = tile.sprite[(tile.frame * 3) + frame]
             else:
                 path_fallback = None
                 if tile.name == "icon":
@@ -449,16 +265,9 @@ class Renderer:
                     except (FileNotFoundError, AssertionError):
                         raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
                                              f'don\'t exist for it.')
-            sprite = sprite.resize(
-                (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
-            computed_hash = hash((
-                tile_hash,
-                tuple(sprite.getdata()),
-                frame,
-                gscale
-            ))
-            if computed_hash in self.sprite_cache:
-                sprite = self.sprite_cache[computed_hash]
+                sprite = np.array(sprite)
+            sprite = cv2.resize(sprite, (int(sprite.shape[1] * gscale), int(sprite.shape[0] * gscale)),
+                                interpolation=cv2.INTER_NEAREST)
         return await self.apply_options_name(
             tile,
             sprite,
@@ -474,46 +283,44 @@ class Renderer:
                                tile_cache=None,
                                frames: tuple[int] = (1, 2, 3),
                                random_animations: bool = True
-                               ) -> ProcessedTile | Tile | tuple[ProcessedTile, int]:
+                               ) -> tuple[ProcessedTile, int]:
         """woohoo."""
         if tile_cache is None:
             tile_cache = {}
-        t = time.perf_counter()
+        final_tile = ProcessedTile()
         if tile.empty:
-            return ProcessedTile(None)
+            return final_tile, 0
+        final_tile.empty = False
+        final_tile.displacement = tile.displacement
+        final_tile.blending = tile.blending
         x, y = position
 
+        rendered_frames = 0
         tile_hash = hash((tile, gscale))
-        if tile_hash in tile_cache.keys():
-            processed_tile = tile_cache[tile_hash]
-            done_frames = [frame is not None for frame in processed_tile.frames]
-            for frame in tuple(set(frames)):
-                frame -= 1
-                wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
-                if not done_frames[wobble]:
-                    processed_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y, tile_hash)
-                    processed_tile.delta += time.perf_counter() - t
-            return processed_tile
-        else:
-            out = [None, None, None]
-            for frame in tuple(set(frames)):
-                frame -= 1
-                wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
-                out[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y, tile_hash)
-            final_tile = ProcessedTile(
-                out,
-                tile.blending,
-                tile.displacement,
-                time.perf_counter() - t)
+        cached = tile_hash in tile_cache.keys()
+        if cached:
+            final_tile = tile_cache[tile_hash]
+        done_frames = [frame is not None for frame in final_tile.frames]
+        frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
+        for frame in frame_range:
+            frame -= 1
+            wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
+            if not done_frames[wobble]:
+                final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y)
+                rendered_frames += 1
+        if not cached:
             tile_cache[tile_hash] = final_tile
-            return final_tile
+        return final_tile, rendered_frames
 
     async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], *, random_animations: bool = False,
-                                gscale: float = 2, frames: tuple[int] = (1, 2, 3)) -> tuple[list[list[list[list[ProcessedTile]]]], int]:
+                                gscale: float = 2, frames: tuple[int] = (1, 2, 3)) -> tuple[
+        list[list[list[list[ProcessedTile]]]], int, int, int]:
         """Final individual tile processing step."""
         sprite_cache = {}
         tile_cache = {}
+        rendered_frames = 0
         d = []
+        render_overhead = time.perf_counter()
         for timestep in grid:
             a = []
             for layer in timestep:
@@ -521,15 +328,16 @@ class Renderer:
                 for y, row in enumerate(layer):
                     c = []
                     for x, tile in enumerate(row):
-                        processed_tile = await self.render_full_tile(
-                                tile,
-                                position=(x, y),
-                                random_animations=random_animations,
-                                gscale=gscale,
-                                raw_sprite_cache=sprite_cache,
-                                tile_cache=tile_cache,
-                                frames=frames
-                            )
+                        processed_tile, new_frames = await self.render_full_tile(
+                            tile,
+                            position=(x, y),
+                            random_animations=random_animations,
+                            gscale=gscale,
+                            raw_sprite_cache=sprite_cache,
+                            tile_cache=tile_cache,
+                            frames=frames
+                        )
+                        rendered_frames += new_frames
                         for variant in tile.variants["post"]:
                             variant.apply(processed_tile, renderer=self)
                         c.append(
@@ -538,7 +346,7 @@ class Renderer:
                     b.append(c)
                 a.append(b)
             d.append(a)
-        return d, len(tile_cache)
+        return d, len(tile_cache), rendered_frames, time.perf_counter() - render_overhead
 
     async def generate_sprite(
             self,
@@ -549,7 +357,7 @@ class Renderer:
             seed: int | None = None,
             gscale: float,
             position: tuple[int, int]
-    ) -> Image.Image:
+    ) -> np.ndarray:
         """Generates a custom text sprite."""
         text = tile.name[5:].lower()
         raw = text.replace("/", "")
@@ -619,13 +427,15 @@ class Renderer:
             if mode == "small":
                 if not fixed:
                     for i in range(1, len(indices) - 1):
-                        width_distance = (sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
+                        width_distance = (
+                                sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
                         old_wd = width_distance
                         debug_flag = 0
                         while old_wd > width_distance:
                             debug_flag += 1
                             indices[i] -= 1
-                            new_width_distance = (sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
+                            new_width_distance = (
+                                    sum(widths[indices[i]:indices[i + 1]]) - sum(widths[indices[i - 1]:indices[i]]))
                             if new_width_distance > width_distance:
                                 indices[i] += 2
                             assert debug_flag > 200, "Ran into an infinite loop while trying to create a text! " \
@@ -645,7 +455,7 @@ class Renderer:
                 new_width = width_greater_than(raw[i], old_width)
                 a = max([0] if not len(max_list := [j for j in indices if i >= j]) else max_list)
                 b = min([len(indices)] if not len(min_list := [j for j in indices if i < j]) else min_list)
-                temp_widths = widths[:i] + [old_width + (new_width - old_width) * (b-a)] + widths[i:]  # BAD
+                temp_widths = widths[:i] + [old_width + (new_width - old_width) * (b - a)] + widths[i:]  # BAD
                 assert sum(temp_widths[a:b]) <= constants.DEFAULT_SPRITE_SIZE
             except (KeyError, AssertionError):
                 stable[i] = True
@@ -698,6 +508,9 @@ class Renderer:
             buf = BytesIO(letter_sprite)
             letters.append(Image.open(buf))
 
+        size = (max(max(sum(row) for row in rows),
+                    constants.DEFAULT_SPRITE_SIZE),
+                (max(len(rows), 2) * constants.DEFAULT_SPRITE_SIZE) // 2)
         sprite = Image.new("L",
                            (max(max(sum(row) for row in rows),
                                 constants.DEFAULT_SPRITE_SIZE),
@@ -729,14 +542,14 @@ class Renderer:
             (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
         return self.apply_options(
             tile,
-            sprite,
+            np.array(sprite),
             wobble
         )
 
     async def apply_options_name(
             self,
             tile: Tile,
-            sprite: Image.Image,
+            sprite: np.ndarray,
             wobble: int
     ) -> Image.Image:
         """Takes an image, taking tile data from its name, and applies the
@@ -754,7 +567,7 @@ class Renderer:
     def apply_options(
             self,
             tile: Tile,
-            sprite: Image.Image,
+            sprite: np.ndarray,
             wobble: int,
             seed: int | None = None
     ):
@@ -812,6 +625,8 @@ class Renderer:
                 del kwargs['loop']
             if background:
                 del kwargs['transparency']
+                del kwargs['background']
+                del kwargs['disposal']
             images[0].save(
                 out,
                 **kwargs

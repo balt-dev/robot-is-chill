@@ -87,7 +87,8 @@ class MetaCog(commands.Cog, name="Other Commands"):
         )
         embed.add_field(
             name="",
-            value="""Welcome to the bot! This help page is still under construction.
+            value="""Welcome to the bot! 
+This help page should be able to guide you to everything you need to know.
 - If you need a list of tiles you can use, look through `search`.
 - If you need a list of commands, look at `commands`.
 - If you need to make a render, look at `commands tile`.

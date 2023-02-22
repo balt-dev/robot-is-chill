@@ -4,6 +4,9 @@ import asyncio
 import collections
 import os
 import signal
+import time
+import traceback
+from functools import partial
 
 import requests
 
@@ -14,7 +17,7 @@ from datetime import datetime
 from io import BytesIO
 from json import load
 from time import perf_counter
-from typing import Any, OrderedDict
+from typing import Any, OrderedDict, Coroutine
 
 import numpy as np
 import emoji
@@ -64,23 +67,19 @@ def split_commas(grid: list[list[str]], prefix: str):
     return grid
 
 
-async def start_timeout(ctx, function, *args, timeout_multiplier: float = 1.0, **kwargs):
-    def handler(_signum, _frame):
-        asyncio.ensure_future(CommandErrorHandler(ctx.bot).on_command_error(ctx, AssertionError(
-            "The command took too long and was timed out.")))
-
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
-    await function(*args, **kwargs)
-    signal.alarm(0)
-
-
 async def warn_dangermode(ctx: Context):
     warning_embed = discord.Embed(
         title="Warning: Danger Mode",
         color=discord.Color(16711680),
         description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
     await ctx.send(embed=warning_embed, delete_after=5)
+
+
+async def coro_part(func, *args, **kwargs):
+    async def wrapper():
+        result = func(*args, **kwargs)
+        return await result
+    return wrapper
 
 
 class GlobalCog(commands.Cog, name="Baba Is You"):
@@ -94,6 +93,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def cog_check(self, ctx):
         """Only if the bot is not loading assets."""
         return not self.bot.loading
+
+    async def start_timeout(self, ctx, *args, timeout_multiplier: float = 1.0, **kwargs):
+        def handler(_signum, _frame):
+            asyncio.ensure_future(CommandErrorHandler(ctx.bot).on_command_error(ctx, AssertionError(
+                "The command took too long and was timed out.")))
+
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
+        await self.render_tiles(ctx, *args, **kwargs)
+
 
     async def handle_variant_errors(self, ctx: Context, err: errors.VariantError):
         """Handle errors raised in a command context by variant handlers."""
@@ -175,7 +184,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 [
                     [
                         # grid gets passed by reference, as it is mutable
-                        Tile.prepare(tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
+                        await Tile.prepare(tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
                         for x, tile in enumerate(row)
                     ]
                     for y, row in enumerate(layer)
@@ -187,214 +196,245 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
-        await ctx.typing()
-        start = perf_counter()
-        tiles = objects.strip().replace("\\", "").replace("`", "")
-        # Replace some phrases
-        tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
-        tiles = emoji.demojize(tiles, use_aliases=True)
-        replace_list = [
-            ['а', 'a'],
-            ['в', 'b'],
-            ['е', 'e'],
-            ['з', '3'],
-            ['к', 'k'],
-            ['м', 'm'],
-            ['н', 'h'],
-            ['о', 'o'],
-            ['р', 'p'],
-            ['с', 'c'],
-            ['т', 't'],
-            ['х', 'x'],
-            ['ⓜ', ':m:']
-        ]
-        for src, dst in replace_list:
-            tiles = tiles.replace(src, dst)
-
-        # Determines if this should be a spoiler
-        spoiler = "||" in tiles
-        tiles = tiles.replace("||", "")
-
-        # Check for empty input
-        if not tiles:
-            return await ctx.error("Input cannot be blank.")
-
-        if rule:
-            tiles = tiles.replace('$', 'tile_')
-        else:
-            tiles = tiles.replace('$', 'text_')
-
-        # Split input into lines
-        word_rows = tiles.splitlines()
-
-        # Split each row into words
-        word_grid = [row.split() for row in word_rows]
-
-        # Check flags
-        potential_flags = filter(
-            lambda i: i[0].startswith("-"),
-            [(word, x, y)
-             for y, row in enumerate(word_grid)
-             for x, word in enumerate(row)]
-        )
-
-        kwargs = {}
-        to_delete = []
-        for potential_flag, x, y in potential_flags:
-            for flag in self.bot.flags.list:
-                to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
-        raw_output = kwargs.get("raw_output", False)
-        default_to_letters = kwargs.get("letters", False)
-        macros = kwargs.get("macro", {})
-        tborders = kwargs.get("tborders", False)
-        image_format = kwargs.get('image_format', 'gif')
-        do_embed = kwargs.get('do_embed', False)
-        for x, y in reversed(to_delete):
-            del word_grid[y][x]
         try:
+            await ctx.typing()
+
+            start = perf_counter()
+            tiles = objects.strip().replace("\\", "").replace("`", "")
+            # Replace some phrases
+            tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
+            tiles = emoji.demojize(tiles, use_aliases=True)
+            replace_list = [
+                ['а', 'a'],
+                ['в', 'b'],
+                ['е', 'e'],
+                ['з', '3'],
+                ['к', 'k'],
+                ['м', 'm'],
+                ['н', 'h'],
+                ['о', 'o'],
+                ['р', 'p'],
+                ['с', 'c'],
+                ['т', 't'],
+                ['х', 'x'],
+                ['ⓜ', ':m:']
+            ]
+            for src, dst in replace_list:
+                tiles = tiles.replace(src, dst)
+
+            # Determines if this should be a spoiler
+            spoiler = "||" in tiles
+            tiles = tiles.replace("||", "")
+
+            # Check for empty input
+            if not tiles:
+                return await ctx.error("Input cannot be blank.")
+
             if rule:
-                comma_grid = split_commas(word_grid, "tile_")
+                tiles = tiles.replace('$', 'tile_')
             else:
-                comma_grid = split_commas(word_grid, "text_")
-        except errors.SplittingException as e:
-            cause = e.args[0]
-            return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
+                tiles = tiles.replace('$', 'text_')
 
-        tilecount = 0
-        maxstack = 1
-        maxdelta = 1
-        try:
-            for row in comma_grid:
-                for stack in row:
-                    maxstack = max(maxstack, len(stack.split("&")))
-                    for timeline in stack.split("&"):
-                        maxdelta = max(maxdelta, len(timeline.split(">")))
-            w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
-                comma_grid), maxstack, maxdelta  # width, height, depth, time
-            layer_grid = np.full((t, d, h, w), TileSkeleton(), dtype=object)
-            if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
-                return await ctx.error(
-                    f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
-            # Splits "&"-joined words into stacks
-            possible_variants = ctx.bot.variants
+            # Split input into lines
+            word_rows = tiles.splitlines()
 
-            def catch(f, *args, **kwargs):
-                try:
-                    return f(*args, **kwargs)
-                except:
-                    return None
+            # Split each row into words
+            word_grid = [row.split() for row in word_rows]
 
-            for y, row in enumerate(comma_grid):
-                for x, stack in enumerate(row):
-                    for l, timeline in enumerate(stack.split('&')):
-                        for d, tile in enumerate(timeline.split('>')):
-                            if len(tile):
-                                assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
-                                    ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
-                                if catch(tile.index, ":") or catch(tile.index, ";") or ":" not in tile and ";" not in tile:
-                                    tilecount += 1
-                                    tile = tile.replace('rule_', 'text_')
-                                    layer_grid[d:, l, y, x] = await TileSkeleton.parse(
-                                        possible_variants, tile, rule,
-                                        macros, palette=kwargs.get("palette", "default"), bot=self.bot
-                                    )
-                                else:
-                                    layer_grid[d:, l, y, x] = await TileSkeleton.parse(
-                                        possible_variants,
-                                        layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[0] + tile,
-                                        rule, macros, bot=self.bot)
-
-            # Get the dimensions of the grid
-            grid_shape = layer_grid.shape
-            # Don't proceed if the request is too large.
-            # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
-            if tilecount > constants.MAX_TILES and not (
-                    ctx.author.id in [self.bot.owner_id, 280756504674566144]):
-                return await ctx.error(
-                    f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
-            # Handles variants based on `:` affixes
-            buffer = BytesIO()
-            extra_buffer = BytesIO() if raw_output else None
-            extra_names = [] if raw_output else None
-            full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
-            full_tiles, unique_tiles = await self.bot.renderer.render_full_tiles(
-                full_grid,
-                random_animations=kwargs.get("random_animations", True),
-                gscale=kwargs.get("gscale", 1),
-                frames=kwargs.get("frames", (1, 2, 3))
+            parsing_overhead = time.perf_counter()
+            # Check flags
+            potential_flags = filter(
+                lambda i: i[0].startswith("-"),
+                [(word, x, y)
+                 for y, row in enumerate(word_grid)
+                 for x, word in enumerate(row)]
             )
-            avgdelta, maxdelta, tiledelta = await self.bot.renderer.render(
-                full_tiles,
-                out=buffer,
-                extra_out=extra_buffer,
-                **kwargs
-            )
-        except errors.TileNotFound as e:
-            word = e.args[0]
-            if word.startswith("tile_") and await self.bot.db.tile(word[5:]) is not None:
-                return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word[5:]}`?")
-            if await self.bot.db.tile("text_" + word) is not None:
+
+            kwargs = {}
+            to_delete = []
+            for potential_flag, x, y in potential_flags:
+                for flag in self.bot.flags.list:
+                    to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
+            raw_output = kwargs.get("raw_output", False)
+            default_to_letters = kwargs.get("letters", False)
+            macros = kwargs.get("macro", {})
+            tborders = kwargs.get("tborders", False)
+            image_format = kwargs.get('image_format', 'gif')
+            do_embed = kwargs.get('do_embed', False)
+            for x, y in reversed(to_delete):
+                del word_grid[y][x]
+            try:
+                if rule:
+                    comma_grid = split_commas(word_grid, "tile_")
+                else:
+                    comma_grid = split_commas(word_grid, "text_")
+            except errors.SplittingException as e:
+                cause = e.args[0]
+                return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
+
+            tilecount = 0
+            maxstack = 1
+            maxdelta = 1
+            try:
+                for row in comma_grid:
+                    for stack in row:
+                        maxstack = max(maxstack, len(stack.split("&")))
+                        for timeline in stack.split("&"):
+                            maxdelta = max(maxdelta, len(timeline.split(">")))
+                w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
+                    comma_grid), maxstack, maxdelta  # width, height, depth, time
+                layer_grid = np.full((t, d, h, w), TileSkeleton(), dtype=object)
+                if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
+                    return await ctx.error(
+                        f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
+                # Splits "&"-joined words into stacks
+                possible_variants = ctx.bot.variants
+
+                def catch(f, *args, **kwargs):
+                    try:
+                        return f(*args, **kwargs)
+                    except:
+                        return None
+
+                for y, row in enumerate(comma_grid):
+                    for x, stack in enumerate(row):
+                        for l, timeline in enumerate(stack.split('&')):
+                            for d, tile in enumerate(timeline.split('>')):
+                                if len(tile):
+                                    assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
+                                        ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
+                                    if catch(tile.index, ":") or catch(tile.index, ";") \
+                                            or ":" not in tile and ";" not in tile:
+                                        tilecount += 1
+                                        tile = tile.replace('rule_', 'text_')
+                                        layer_grid[d:, l, y, x] = await TileSkeleton.parse(
+                                            possible_variants, tile, rule,
+                                            macros, palette=kwargs.get("palette", "default"), bot=self.bot
+                                        )
+                                    else:
+                                        layer_grid[d:, l, y, x] = await TileSkeleton.parse(
+                                            possible_variants,
+                                            layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
+                                                0] + tile,
+                                            rule, macros, bot=self.bot)
+
+                # Get the dimensions of the grid
+                grid_shape = layer_grid.shape
+                # Don't proceed if the request is too large.
+                # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
+                if tilecount > constants.MAX_TILES and not (
+                        ctx.author.id in [self.bot.owner_id, 280756504674566144]):
+                    return await ctx.error(
+                        f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
+                # Handles variants based on `:` affixes
+                buffer = BytesIO()
+                extra_buffer = BytesIO() if raw_output else None
+                extra_names = [] if raw_output else None
+                full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
+                parsing_overhead = time.perf_counter() - parsing_overhead
+                full_tiles, unique_tiles, rendered_frames, render_overhead = await self.bot.renderer.render_full_tiles(
+                    full_grid,
+                    random_animations=kwargs.get("random_animations", True),
+                    gscale=kwargs.get("gscale", 1),
+                    frames=kwargs.get("frames", (1, 2, 3))
+                )
+                composite_overhead, saving_overhead = await self.bot.renderer.render(
+                    full_tiles,
+                    out=buffer,
+                    extra_out=extra_buffer,
+                    **kwargs
+                )
+            except errors.TileNotFound as e:
+                word = e.args[0]
+                if word.startswith("tile_") and await self.bot.db.tile(word[5:]) is not None:
+                    return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word[5:]}`?")
+                if await self.bot.db.tile("text_" + word) is not None:
+                    return await ctx.error(
+                        f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word}`?")
+                return await ctx.error(f"The tile `{word}` could not be found.")
+            except errors.BadTileProperty as e:
+                traceback.print_exc()
+                return await ctx.error(f"Error! `{e.args[1]}`")
+            except errors.EmptyVariant as e:
+                word = e.args[0]
                 return await ctx.error(
-                    f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word}`?")
-            return await ctx.error(f"The tile `{word}` could not be found.")
-        except errors.BadTileProperty as e:
-            return await ctx.error(f"Error! `{e.args[1]}`")
-        except errors.EmptyVariant as e:
-            word = e.args[0]
-            return await ctx.error(
-                f"You provided an empty variant for `{word}`."
-            )
-        except errors.VariantError as e:
-            return await self.handle_variant_errors(ctx, e)
-        except errors.TextGenerationError as e:
-            return await self.handle_custom_text_errors(ctx, e)
+                    f"You provided an empty variant for `{word}`."
+                )
+            except errors.VariantError as e:
+                return await self.handle_variant_errors(ctx, e)
+            except errors.TextGenerationError as e:
+                return await self.handle_custom_text_errors(ctx, e)
 
-        filename = datetime.utcnow().strftime(
-            f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
-        delta = perf_counter() - start
-        image = discord.File(buffer, filename=filename, spoiler=spoiler)
-        description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
-        if do_embed:
-            embed = discord.Embed(color=self.bot.embed_color)
+            filename = datetime.utcnow().strftime(
+                f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
+            image = discord.File(buffer, filename=filename, spoiler=spoiler)
+            description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
+            if do_embed:
+                embed = discord.Embed(color=self.bot.embed_color)
 
-            def rendertime(v):
-                v *= 1000
-                nice = False
-                if math.ceil(v) == 69:
-                    nice = True
-                if objects == "lag":
-                    v *= 100000
-                return f'{v:.4f}' + ("(nice)" if nice else "")
+                def rendertime(v):
+                    v *= 1000
+                    nice = False
+                    if math.ceil(v) == 69:
+                        nice = True
+                    if objects == "lag":
+                        v *= 100000
+                    return f'{v:.4f}' + ("(nice)" if nice else "")
 
-            totalrendertime = rendertime(delta)
-            activerendertime = rendertime(tiledelta)
-            averagerendertime = rendertime(avgdelta)
-            maxrendertime = rendertime(maxdelta)
-            stats = f'''
-			Total render time: {totalrendertime} ms
-			Active render time: {activerendertime} ms
-			Tiles rendered: {unique_tiles}
-			Average render time of all tiles: {averagerendertime} ms
-			Maximum render time of any tile: {maxrendertime} ms
-            Tile matrix shape: {grid_shape}
-			'''
+                stats = f'''
+    Response time: {rendertime(parsing_overhead + render_overhead + composite_overhead + saving_overhead)} ms
+    - Parsing overhead: {rendertime(parsing_overhead)} ms
+    - Rendering overhead: {rendertime(render_overhead)} ms
+    - Compositing overhead: {rendertime(composite_overhead)} ms
+    - Saving overhead: {rendertime(saving_overhead)} ms
+    Tiles rendered: {unique_tiles}
+    Frames rendered: {rendered_frames}
+    Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
+    '''
 
-            embed.add_field(name="Render statistics", value=stats)
-        else:
-            embed = None
-        if extra_buffer is not None and extra_names is not None:
-            extra_buffer.seek(0)
-            await ctx.reply(description[:2000], embed=embed,
-                            files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"), image])
-        else:
-            await ctx.reply(description[:2000], embed=embed, file=image)
+                embed.add_field(name="Render statistics", value=stats)
+            else:
+                embed = None
+            if extra_buffer is not None and extra_names is not None:
+                extra_buffer.seek(0)
+                await ctx.reply(description[:2000] + "\n_Currently rewriting compositing, things may not show_", embed=embed,
+                                files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"), image])
+            else:
+                await ctx.reply(description[:2000] + "\n_Currently rewriting compositing, things may not show_", embed=embed, file=image)
+        finally:
+            signal.alarm(0)
 
-    # hack
-    async def log_exceptions(self, ctx, awaitable, *args, **kwargs):
-        try:
-            return await awaitable(*args, **kwargs)
-        except Exception as e:
-            await CommandErrorHandler(self.bot).on_command_error(ctx, e)
+    @commands.command()
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    async def tile(self, ctx: Context, *, objects: str = ""):
+        """Renders the tiles provided.
+
+        **Flags**
+        * See the `flags` commands for all the valid flags.
+
+        **Variants**
+        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
+
+        **Useful tips:**
+        * `-` : Shortcut for an empty tile.
+        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
+        * `tile_` : `tile_object` renders regular objects.
+        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
+        * `||` : Marks the output gif as a spoiler.
+
+        **Example commands:**
+        `tile baba - keke`
+        `tile --palette=marshmallow keke:d baba:s`
+        `tile text_baba,is,you`
+        `tile baba&flag ||cake||`
+        `tile -P=mountain -B baba bird:l`
+        """
+        if self.bot.config['danger_mode']:
+            await warn_dangermode(ctx)
+        await self.start_timeout(
+            ctx,
+            objects=objects,
+            rule=False)
 
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -423,10 +463,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         if self.bot.config['danger_mode']:
             await warn_dangermode(ctx)
-        await start_timeout(ctx, self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=True)
+        await self.start_timeout(
+                ctx,
+                objects=objects,
+                rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -438,52 +478,19 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await start_timeout(ctx, self.render_tiles,
-                                ctx,
-                                objects=objects,
-                                rule=rule in [
-                                    '-r',
-                                    '--rule',
-                                    '-rule',
-                                    '-t',
-                                    '--text',
-                                    '-text'], timeout_multiplier=1.5)
+            await self.start_timeout(
+                ctx,
+                objects=objects,
+                rule=rule in [
+                    '-r',
+                    '--rule',
+                    '-rule',
+                    '-t',
+                    '--text',
+                    '-text'], timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
-    # Generates an animated gif of the tiles provided, using the default
-    # palette
-    @commands.command()
-    @commands.cooldown(5, 8, type=commands.BucketType.channel)
-    async def tile(self, ctx: Context, *, objects: str = ""):
-        """Renders the tiles provided.
-
-        **Flags**
-        * See the `flags` commands for all the valid flags.
-
-        **Variants**
-        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
-
-        **Useful tips:**
-        * `-` : Shortcut for an empty tile.
-        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `tile_` : `tile_object` renders regular objects.
-        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
-        * `||` : Marks the output gif as a spoiler.
-
-        **Example commands:**
-        `tile baba - keke`
-        `tile --palette=marshmallow keke:d baba:s`
-        `tile text_baba,is,you`
-        `tile baba&flag ||cake||`
-        `tile -P=mountain -B baba bird:l`
-        """
-        if self.bot.config['danger_mode']:
-            await warn_dangermode(ctx)
-        await start_timeout(ctx, self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=False)
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         """Finds levels by query.

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import asyncio
 import glob
 
@@ -143,7 +144,7 @@ async def on_command(ctx):
         description="This is the beta branch prefix. Things will most likely be broken.",
         color=config.logging_color)
     await ctx.send(embed=embed, delete_after=3)
-    pass
+    # pass
     # webhook = await bot.fetch_webhook(webhooks.logging_id)
     # embed = discord.Embed(
     #     description=ctx.message.content,
@@ -152,7 +153,6 @@ async def on_command(ctx):
     #                  icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
     # embed.set_footer(text=str(ctx.author.id))
     # await webhook.send(embed=embed)
-
 
 bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)
