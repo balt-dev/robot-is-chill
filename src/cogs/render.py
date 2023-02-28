@@ -607,11 +607,7 @@ class Renderer:
         sprite = Image.merge("RGBA", (sprite, sprite, sprite, sprite))
         sprite = sprite.resize(
             (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
-        return await self.apply_options(
-            tile,
-            np.array(sprite),
-            wobble
-        )
+        return np.array(sprite)
 
     async def apply_options_name(
             self,

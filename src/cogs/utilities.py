@@ -431,11 +431,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         This is useful for picking colors from the palette.
         """
         p_cache = self.bot.renderer.palette_cache
-        if (img := p_cache.get(palette, None)) is None:
+        img = p_cache.get(palette, None)
+        if img is None:
             if "/" not in palette:
                 return await ctx.error(f'The palette {palette} could not be found.')
-            palette = "default"
-            r, g, b, _ = Color.parse(Tile(name="<palette command>"), p_cache, palette)
+            palette, color = "default", palette
+        if color is not None:
+            r, g, b, _ = Color.parse(Tile(name="<palette command>", palette=palette), p_cache, color)
             d = discord.Embed(
                 color=discord.Color.from_rgb(r, g, b),
                 title=f"Color: #{hex((r << 16) | (g << 8) | b)[2:].zfill(6)}"
