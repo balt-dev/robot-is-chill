@@ -431,7 +431,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         finally:
             signal.alarm(0)
 
-    @commands.command()
+    @commands.command(aliases=["t"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def tile(self, ctx: Context, *, objects: str = ""):
         """Renders the tiles provided.
