@@ -18,7 +18,7 @@ from PIL import Image
 from src import constants
 from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
-from ..tile import Tile
+from ..tile import ProcessedTile
 
 from ..types import Bot, Context
 
@@ -60,7 +60,8 @@ class Grid:
         # Custom levels
         self.author: str | None = None
 
-    def ready_grid(self) -> list[list[list[list[Tile]]]]:
+    # noinspection PyTypeChecker
+    def ready_grid(self) -> list[list[list[ProcessedTile]]]:
         """Returns a ready-to-paste version of the grid."""
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
             valid = (sprite, "edge", "level")
@@ -116,12 +117,13 @@ class Grid:
         for y in range(self.height):
             for x in range(self.width):
                 maxstack = max(maxstack, len(self.cells[y * self.width + x]))
-        layer_grid = [[[Tile(None) for _ in range(max([self.width for n in range(
+        layer_grid = [[[ProcessedTile() for _ in range(max([self.width for _ in range(
             self.height)]))] for _ in range(self.height)] for _ in range(maxstack)]
         for i in range(maxstack):
             for y in range(self.height):
                 for x in range(self.width):
                     try:
+
                         item = sorted(
                             self.cells[y * self.width + x], key=lambda item: item.layer)[i]
                         item: Item
@@ -138,32 +140,32 @@ class Grid:
                             variant = 0
                         color = palette_img.getpixel(item.color)
                         frames = (
-                            recolor(
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     1,
                                     cache=sprite_cache),
-                                color),
-                            recolor(
+                                color)),
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     2,
                                     cache=sprite_cache),
-                                color),
-                            recolor(
+                                color)),
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     3,
                                     cache=sprite_cache),
-                                color),
+                                color)),
                         )
-                        layer_grid[i][y][x] = Tile(frames)
+                        layer_grid[i][y][x] = ProcessedTile(empty=False, frames=frames)
                     except BaseException:
                         pass
         return layer_grid
@@ -244,6 +246,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         code should be valid (but is checked regardless)
         """
         async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/raw/l?code={code.upper()}") as resp:
+
             resp.raise_for_status()
             data = await resp.json()
             b64 = data["data"]
@@ -267,7 +270,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             for row in layer:
                 row.pop(grid.width - 1)
                 row.pop(0)
-        out = f"target/renders/levels/{code}.gif"
+        out = f"target/renders/levels/{code.lower()}.gif"
         await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out)
 
         data = CustomLevelData(
@@ -450,12 +453,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             r"\n.*\n.*\n\s*tiling = (-1|\d),"
             r"\n.*"
             r"\n\s*(?:argextra = .*,\n\s*)?(?:argtype = .*,\n\s*)?"
-            r"colour = \{(\d), (\d)\},"
-            r"(?:\n\s*active = \{(\d), (\d)\},)?"
-            r"\n\s*tile = \{(\d+), (\d+)\},"
+            r"colour = \{(\d), (\d)},"
+            r"(?:\n\s*active = \{(\d), (\d)},)?"
+            r"\n\s*tile = \{(\d+), (\d+)},"
             r"\n.*"
             r"\n\s*layer = (\d+),"
-            r"\n\s*\}",
+            r"\n\s*}",
         )
         for match in re.finditer(object_pattern, spanned):
             obj, sprite, tiling, c_x, c_y, a_x, a_y, t_x, t_y, layer = match.groups()
@@ -760,59 +763,6 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 except IndexError:
                     # huh?
                     break
-
-    @commands.command(name="printlevel", hidden=False)
-    @commands.cooldown(1, 7, type=commands.BucketType.channel)
-    async def print_map(self, ctx: Context, source: str, filename: str):
-        """Loads a level and parses it as a command."""
-        assert filename.find('/') == -1 and filename.find('\\') == -1 and source.find('/') == - \
-            1 and source.find(
-                '\\') == -1, 'No looking at the host\'s hard drive, thank you very much.'
-        grid = self.read_map(filename, source=source)
-        grid = await self.read_metadata(grid, initialize_level_tree=True)
-        layers = set()
-        for y, row in enumerate(grid.cells):
-            for x, cell in enumerate(row):
-                layers.add(cell.layer)
-        layers = sorted(layers)
-        layers = dict([(v, i) for i, v in enumerate(layers)])
-        # Numpy requires strings to be a fixed length so can't use it
-        gridf = [[['' for _ in range(max(layers.values()) + 1)]
-                  for _ in range(grid.width)] for _ in range(grid.height)]
-        for y, row in enumerate(
-            np.array(
-                grid.cells, dtype=Item).reshape(
-                grid.height, grid.width)):
-            for x, cell in enumerate(row):
-                if not all([len(tile.sprite) == '' for tile in cell]):
-                    for tile in cell:
-                        if tile.tiling in constants.DIRECTION_TILINGS:
-                            variant = tile.direction * 8
-                        else:
-                            variant = 0
-                        async with self.bot.db.conn.cursor() as cur:
-                            await cur.execute(f'SELECT active_color_x, active_color_y FROM tiles WHERE name LIKE \'{tile.sprite}\'')
-                            default_colors = tuple(dict(await cur.fetchone()).values())
-                        gridf[y][x][layers[tile.layer]] = tile.sprite + (";" + '/'.join([str(n) for n in tile.color]) if tile.color != default_colors else '') + (
-                            ";" + str(variant) if variant != 0 and tile.tiling != 1 else '')
-                else:
-                    gridf[y][x] = ['-']
-        for r, row in enumerate(gridf):
-            for i, cell in enumerate(row):
-                if all([cell == ['-'] for cell in row[i:]]) and r != 0:
-                    gridf[r] = row[:i + 1]
-                for j in range(len(cell)):
-                    if all([tile == '' for tile in cell[j:]]):
-                        gridf[r][i] = cell[:j] if j != 0 else ['-']
-                        break
-        nl = '\n'
-        with io.BytesIO() as b:
-            b.write(
-                bytes(
-                    f"-tb -p={grid.palette} -b {nl.join([' '.join(['&'.join(c) if len(c) != 0 else '-' for c in b[1:-1]]) for b in gridf[1:-1]])}",
-                    encoding='utf-8'))
-            b.seek(0)
-            await ctx.send(file=discord.File(b, filename=f'{filename}.txt'))
 
 
 async def setup(bot: Bot):

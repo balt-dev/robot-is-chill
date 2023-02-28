@@ -60,7 +60,7 @@ class Bot(commands.Bot):
         self.embed_color = embed_color
         self.webhook_id = webhook_id
         self.prefixes = prefixes
-        self.db = Database()
+        self.db = Database(self)
         self.db_path = db_path
         self.config = config.__dict__
         self.renderer = None
