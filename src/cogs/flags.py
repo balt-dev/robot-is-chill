@@ -11,6 +11,7 @@ from PIL import Image
 
 from .. import constants
 from ..errors import InvalidFlagError
+from ..tile import Tile
 from ..types import Context, Color
 
 if TYPE_CHECKING:
@@ -52,6 +53,9 @@ class Flag:
 > `{self.syntax}`
 {self.description}"""
 
+    def __repr__(self):
+        return str(self)
+
 
 class Flags:
     def __init__(self):
@@ -74,32 +78,25 @@ async def setup(bot: Bot):
     flags = Flags()
     bot.flags = flags
 
-    @flags.register(match=r"(?:--background|-b)(?:=(\d)/(\d))?",
-                    syntax="(-b | --background)[=<x: int>/<y: int>]",
+    @flags.register(match=r"(?:--background|-b)(?:=("
+                         rf"(?:#(?:[0-9A-Fa-f]{{2}}){{3,4}})|"
+                         rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
+                         rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
+                         rf"(?:-?\d+\/-?\d+)))?",
+                    syntax="(-b | --background)=#<color: Color>",
                     kwargs=["background"])
     async def background(match, _):
-        """Sets the background of a render to a palette color."""
-        if match.group(1) is not None:
-            tx, ty = int(match.group(1)), int(match.group(2))
-            if not (0 <= tx < 7 and 0 <= ty < 5):
-                raise InvalidFlagError(
-                    "The provided background color is invalid.")
-            return ((tx, ty),)
-        else:
-            return ((0, 4),)
-
-    @flags.register(match=r"(?:--background|-b)=#([\da-fA-F]{6})",
-                    syntax="(-b | --background)=#<color: hex>",
-                    kwargs=["background"])
-    async def background_hex(match, _):
-        """Sets the background of a render to a hexadecimal color."""
-        return [Color.parse(None, None, match.group(1))]
+        """Sets the background of a render to a color."""
+        m = match.group(1)
+        if m is None:
+            m = "0/4"
+        return [Color.parse(Tile(palette="default"), bot.renderer.palette_cache, m)]
 
     @flags.register(match=r"(?:--palette|-p)=(\w+)",
                     syntax="(-p | --palette)=<palette: str>",
                     kwargs=["palette"])
     async def palette(match, _):
-        """Sets the palette to use for the render."""
+        """Sets the palette to use for the render. For a list of palettes, try `search type:palette`."""
         palette = match.group(1)
         if palette == "random":
             palette = random.choice(listdir("data/palettes"))[:-4]
@@ -139,13 +136,12 @@ async def setup(bot: Bot):
         """Sets which wobble frames to use."""
         frames = []
         for frame in list(match.group(1)):
-            # you have no idea how much i wish i could use a yield here
             frames.append(int(frame))
         return [frames]
 
     @flags.register(match=r"-c|--combine",
                     syntax="-c | --combine",
-                    kwargs=["before_image"])
+                    kwargs=["before_images"])
     async def combine(_, ctx):
         """Sets an image to combine this render with."""  # god this one's so jank.
         msg = None
@@ -177,10 +173,12 @@ async def setup(bot: Bot):
                         msg.attachments[0].url, stream=True).headers.get(
                         'content-length',
                         0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-                return [Image.open(requests.get(
-                    msg.attachments[0].url, stream=True).raw)]
-                # except AttributeError:
-                #    raise InvalidFlagError("not actually sure what causes this, if you get this please ping me")
+                with Image.open(requests.get(msg.attachments[0].url, stream=True).raw) as im:
+                    out = []
+                    for frame in range(im.n_frames):
+                        im.seek(frame)
+                        out.append(im.copy())
+                    return tuple(out),
 
     @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
                     syntax="(--speed | -speed)=<speed: int>[%]",
@@ -214,7 +212,7 @@ Use % to set a percentage of the default render speed."""
                     syntax="--crop=<left: int>/<top: int>/<right: int>/<bottom: int>",
                     kwargs=["crop"])
     async def crop(match, _):
-        """Crops the render to the bounding box."""
+        """Crops the render on each side."""
         return ((int(match.group(1))), (int(match.group(2))),
                 (int(match.group(3))), (int(match.group(4)))),
 
@@ -253,6 +251,13 @@ Use % to set a percentage of the default render speed."""
     async def noloop(_, __):
         """Makes the render not loop."""
         return False,
+
+    @flags.register(match=r"--expand|-ex",
+                    syntax="--expand|-ex",
+                    kwargs=["expand"])
+    async def expand(_, __):
+        """Expands the render for tiles displaced with the `:displace` variant."""
+        return True,
 
     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
                     syntax="--anim|-am=<wobble: int>/<timestep: int>",

@@ -108,13 +108,14 @@ class FlagPageSource(menus.ListPageSource):
 
 type_format = {
     "sprite": "sprite augmentation",
-    "tile": "tile creation"
+    "tile": "tile creation",
+    "post": "compositing"
 }
 
 class VariantSource(menus.ListPageSource):
     def __init__(
             self, data: list[Variant]):
-        super().__init__(data, per_page=4)
+        super().__init__(data, per_page=3)
 
     async def format_page(self, menu: menus.Menu, entries: list[Variant]) -> discord.Embed:
         embed = discord.Embed(

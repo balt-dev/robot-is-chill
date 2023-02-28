@@ -9,7 +9,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 import visual_center
-from PIL import ImageChops, Image, ImageOps
+from PIL import Image
 
 from . import liquify
 from ..utils import recolor, composite
@@ -18,7 +18,14 @@ from ..types import Variant, RegexDict, VaryingArgs, Color, Slice
 
 CARD_KERNEL = np.array(((0, 1, 0), (1, 0, 1), (0, 1, 0)))
 OBLQ_KERNEL = np.array(((1, 0, 1), (0, 0, 0), (1, 0, 1)))
-EDGE_KERNEL = np.array(((1, 1, 1), (1, -8, 1), (1, 1, 1)))
+META_KERNELS = {
+    "full":   np.array([[1,  1,  1],
+                        [1, -8,  1],
+                        [1,  1,  1]]),
+    "edge":   np.array([[0,  1,  0],
+                        [1, -4,  1],
+                        [0,  1,  0]])
+}
 
 def class_init(self, *args, **kwargs):
     self.args = args
@@ -81,7 +88,7 @@ async def setup(bot):
             elif get_origin(p.annotation) == Literal and len(get_args(p.annotation)) > 1:
                 pattern += f"/({'|'.join([str(arg) for arg in get_args(p.annotation)])})"
             elif get_origin(p.annotation) == list:
-                pattern += rf"/\({generate_pattern([inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno) for name, anno in zip(p.name.split('_'), get_args(p.annotation))])}\)"
+                pattern += rf"\/?\(?{generate_pattern([inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno) for name, anno in zip(p.name.split('_'), get_args(p.annotation))])}\)?"
             elif get_origin(p.annotation) == Union:
                 pattern += f"(?:{'/' if i - 1 else ''}{generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=get_args(p.annotation)[0])])})?"
             elif p.annotation in (patterns := {
@@ -144,7 +151,7 @@ async def setup(bot):
                 tree.append(p.annotation)
         return tree
 
-    def create_variant(func: Callable, aliases: Iterable[str], no_function_name=False):
+    def create_variant(func: Callable, aliases: Iterable[str], no_function_name=False) -> type[Variant]:
         assert func.__doc__ is not None, f"Variant `{func.__name__}` is missing a docstring!"
         sig = inspect.signature(func)
         params = sig.parameters
@@ -192,50 +199,51 @@ async def setup(bot):
     # --- SPECIAL ---
 
     @add_variant("", "noop")
-    def nothing(tile):
+    async def nothing(tile):
         """Does nothing. Useful for resetting persistent variants."""
         pass
 
     @add_variant(no_function_name=True)
-    def blending(tile, mode: Literal[*constants.BLENDING_MODES]):
+    async def blending(post, mode: Literal[*constants.BLENDING_MODES], keep_alpha: Optional[bool] = True):
         """Sets the blending mode for the tile."""
-        tile.blending = mode
+        post.blending = mode
+        post.keep_alpha = keep_alpha and mode != "mask"
 
     # --- ANIMATION FRAMES ---
 
     @add_variant(no_function_name=True)
-    def frame(tile, anim_frame: int):
+    async def frame(tile, anim_frame: int):
         """Sets the animation frame of a sprite."""
         tile.altered_frame = True
         tile.frame = anim_frame
         tile.surrounding = 0
 
     @add_variant(no_function_name=True)
-    def direction(tile, direction: Literal[*tuple(constants.DIRECTION_VARIANTS.keys())]):
+    async def direction(tile, direction: Literal[*tuple(constants.DIRECTION_VARIANTS.keys())]):
         """Sets the direction of a tile."""
         tile.altered_frame = True
         tile.frame = constants.DIRECTION_VARIANTS[direction]
 
     @add_variant(no_function_name=True)
-    def tiling(tile, tiling: Literal[*tuple(constants.AUTO_VARIANTS.keys())]):
+    async def tiling(tile, tiling: Literal[*tuple(constants.AUTO_VARIANTS.keys())]):
         """Alters the tiling of a tile. Only works on tiles that tile."""
         tile.altered_frame = True
         tile.surrounding |= constants.AUTO_VARIANTS[tiling]
 
     @add_variant("a", no_function_name=True)
-    def animation_frame(tile, a_frame: int):
+    async def animation_frame(tile, a_frame: int):
         """Sets the animation frame of a tile."""
         tile.altered_frame = True
         tile.frame += a_frame
 
     @add_variant("s", "sleep", no_function_name=True)
-    def sleep(tile):
+    async def sleep(tile):
         """Makes the tile fall asleep. Only functions correctly on character tiles."""
         tile.altered_frame = True
         tile.frame = (tile.frame - 1) % 32
 
     @add_variant("f")
-    def freeze(tile, frame: Optional[int] = 1):
+    async def freeze(tile, frame: Optional[int] = 1):
         """Freezes the wobble of the tile to the specified frame."""
         assert frame in range(1, 4), f"Wobble frame of `{frame}` is outside of the supported range!"
         tile.wobble = frame - 1
@@ -245,13 +253,13 @@ async def setup(bot):
     palette_names = tuple([Path(p).stem for p in glob.glob("data/palettes/*.png")])
 
     @add_variant("palette/", "p!", no_function_name=True)
-    def palette(tile, palette: str):
-        """Sets the tile's palette."""
+    async def palette(tile, palette: str):
+        """Sets the tile's palette. For a list of palettes, try `search type:palette`."""
         assert palette in palette_names, f"Palette `{palette}` was not found!"
         tile.palette = palette
 
     @add_variant("ac", "~")
-    def apply(sprite, *, tile, wobble, renderer):
+    async def apply(sprite, *, tile, wobble, renderer):
         """Immediately applies the sprite's default color."""
         tile.custom_color = True
         rgba = *renderer.palette_cache[tile.palette].getpixel(tile.color), 0xFF
@@ -259,7 +267,7 @@ async def setup(bot):
         return sprite
 
     @add_variant(no_function_name=True)
-    def color(sprite, color: Color, *, tile, wobble, renderer, _default_color=False):
+    async def color(sprite, color: Color, *, tile, wobble, renderer, _default_color=False):
         """Sets the tile's color.
 Can take:
 - A hexadecimal RGB/RGBA value, as #RGB, #RGBA, #RRGGBB, or #RRGGBBAA
@@ -277,7 +285,7 @@ Can take:
         return recolor(sprite, rgba)
 
     @add_variant("grad")
-    def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
+    async def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
                  offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
                  extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
         """Applies a gradient to a tile.
@@ -291,14 +299,14 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             dst = np.hstack((cv2.cvtColor(np.array([[dst[:3]]], dtype=np.uint8), cv2.COLOR_RGB2Luv)[0, 0], dst[3]))
         # thank you hutthutthutt#3295 you are a lifesaver
         scale = math.cos(math.radians(angle % 90)) + math.sin(math.radians(angle % 90))
-        maxside = max(sprite.width, sprite.height) + 1
+        maxside = max(*sprite.shape[:2]) + 1
         grad = np.mgrid[offset:width + offset:maxside * 1j]
         grad = np.tile(grad[..., np.newaxis], (maxside, 1, 4))
         if not extrapolate:
             grad = np.clip(grad, 0, 1)
         grad_center = maxside / 2, maxside / 2
         rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
-        warped_grad = cv2.warpAffine(grad, rot_mat, (sprite.width, sprite.height), flags=cv2.INTER_LINEAR)
+        warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[:2], flags=cv2.INTER_LINEAR)
         if steps:
             warped_grad = np.round(warped_grad * steps) / steps
         mult_grad = np.clip(((1 - warped_grad) * src + warped_grad * dst), 0, 255)
@@ -309,19 +317,19 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return (sprite * mult_grad).astype(np.uint8)
 
     @add_variant("overlay/", "o!", no_function_name=True)
-    def overlay(sprite, overlay: str, *, tile, wobble, renderer):
+    async def overlay(sprite, overlay: str, *, tile, wobble, renderer):
         """Applies an overlay to a sprite."""
         tile.custom_color = True
         assert overlay in renderer.overlay_cache, f"`{overlay}` isn't a valid overlay!"
         overlay_image = renderer.overlay_cache[overlay]
-        tile_amount = np.ceil(overlay_image.shape / sprite.shape)
-        overlay_image = np.tile(overlay_image, (*tile_amount, 1))[:sprite.shape[0], :sprite.shape[1]]
-        return ImageChops.multiply(sprite, overlay_image)
+        tile_amount = np.ceil(overlay_image.shape[:2] / np.array(sprite.shape[:2]))  # Convert sprite.shape to ndarray to allow vectorized math
+        overlay_image = np.tile(overlay_image, (*tile_amount, 1))[:sprite.shape[0], :sprite.shape[1]].astype(float)
+        return np.multiply(sprite, overlay_image / 255, casting="unsafe").astype(np.uint8)
 
     # --- TEXT MANIPULATION ---
 
     @add_variant("noun", "prop")
-    def property(sprite, plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
+    async def property(sprite, plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
                  tile, wobble, renderer):
         """Applies a property plate to a sprite."""
         if plate is None:
@@ -329,47 +337,42 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         else:
             plate = {v: k for k, v in constants.DIRECTIONS.items()}[plate]
         sprite = sprite[:, :, 3] > 0
-        plate, box = renderer.bot.db.plate(plate, wobble)
-        size = (max(sprite.shape[1], plate.width), max(sprite.shape[0], plate.height))
-        dummy = Image.new("1", size)
-        delta = (plate.size[0] - sprite.size[0]) // 2, \
-                (plate.size[0] - sprite.size[1]) // 2
-        plate_dummy = Image.new("1", size)
-        plate_dummy.paste(
-            plate.getchannel("A").convert("1", dither=Image.NONE),
-            (max((sprite.shape[1] - plate.width) // 2, 0), max((sprite.shape[0] - plate.height) // 2, 0))
-        )
-        dummy.paste(
-            Image.new("1", sprite.shape[::-1], 1),
-            delta,
-            Image.fromarray(sprite)
-        )
-        band = ImageChops.logical_and(ImageChops.logical_xor(dummy, plate_dummy), plate_dummy).convert("L")
-        return Image.merge("RGBA", (band, band, band, band))
+        plate, _ = renderer.bot.db.plate(plate, wobble)
+        plate = np.array(plate)[..., 3] > 0
+        size = tuple(max(a, b) for a, b in zip(sprite.shape[:2], plate.shape))
+        dummy = np.zeros(size, dtype=bool)
+        delta = ((plate.shape[0] - sprite.shape[0]) // 2,
+                 (plate.shape[1] - sprite.shape[1]) // 2)
+        p_delta = (max(-delta[0], 0), max(-delta[1], 0))
+        dummy[p_delta[0]:p_delta[0]+plate.shape[0],
+              p_delta[1]:p_delta[1]+plate.shape[1]] = plate
+        dummy[delta[0]:delta[0]+sprite.shape[0],
+              delta[1]:delta[1]+sprite.shape[1]] &= ~sprite
+        return np.dstack([dummy[..., np.newaxis].astype(np.uint8) * 255] * 4)
 
     @add_variant()
-    def custom(tile):
+    async def custom(tile):
         """Forces custom generation of the text."""
         tile.custom = True
         tile.style = "noun"
 
     @add_variant("let")
-    def letter(tile):
-        """Makes 1 or 2 letter custom words appear as letter groups."""
+    async def letter(tile):
+        """Makes custom words appear as letter groups."""
         tile.style = "letter"
 
     @add_variant()
-    def hide(tile):
+    async def hide(tile):
         """Hides the tile."""
         tile.empty = True
 
     # --- FILTERS ---
 
     @add_variant("rot")
-    def rotate(sprite, angle: float, expand: Optional[bool] = False):
+    async def rotate(sprite, angle: float, expand: Optional[bool] = False):
         """Rotates a sprite."""
         if expand:
-            scale = math.cos(math.radians(-angle)) + math.sin(math.radians(-angle))
+            scale = math.cos(math.radians(-angle % 90)) + math.sin(math.radians(-angle % 90))
             sprite = np.pad(sprite, ((int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
                                (int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
                                (0, 0)))
@@ -377,8 +380,45 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         rot_mat = cv2.getRotationMatrix2D(image_center, -angle, 1.0)
         return cv2.warpAffine(sprite, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
 
+    @add_variant("rot3d")
+    async def rotate3d(sprite, phi: float, theta: float, gamma: float):
+        """Rotates a sprite in 3D space."""
+        phi, theta, gamma = math.radians(phi), math.radians(theta), math.radians(gamma)
+        d = np.sqrt(sprite.shape[1] ** 2 + sprite.shape[0] ** 2)
+        f = d / (2 * math.sin(gamma) if math.sin(gamma) != 0 else 1)
+        w, h = sprite.shape[1::-1]
+        proj_23 = np.array([[1, 0, -w / 2],
+                            [0, 1, -h / 2],
+                            [0, 0,      1],
+                            [0, 0,      1]])
+        rot_mat = np.dot(np.dot(
+            np.array([[1, 0, 0, 0],
+                       [0, math.cos(theta), -math.sin(theta), 0],
+                       [0, math.sin(theta), math.cos(theta), 0],
+                       [0, 0, 0, 1]]),
+            np.array([[math.cos(phi), 0, -math.sin(phi), 0],
+                       [0, 1, 0, 0],
+                       [np.sin(phi), 0, math.cos(phi), 0],
+                       [0, 0, 0, 1]])),
+            np.array([[math.cos(gamma), -math.sin(gamma), 0, 0],
+                       [math.sin(gamma), math.cos(gamma), 0, 0],
+                       [0, 0, 1, 0],
+                       [0, 0, 0, 1]]))
+        trans_mat = np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, f],
+            [0, 0, 0, 1]])
+        proj_32 = np.array([
+            [f, 0, w / 2, 0],
+            [0, f, h / 2, 0],
+            [0, 0,     1, 0]
+        ])
+        final_matrix = np.dot(proj_32, np.dot(trans_mat, np.dot(rot_mat, proj_23)))
+        return cv2.warpPerspective(sprite, final_matrix, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
+
     @add_variant()
-    def scale(sprite, w: float, h: Optional[float] = None):
+    async def scale(sprite, w: float, h: Optional[float] = None):
         """Scales a sprite by the given multipliers."""
         if h is None:
             h = w
@@ -390,12 +430,12 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return cv2.resize(sprite, dim[::-1], interpolation=cv2.INTER_NEAREST)
 
     @add_variant()
-    def pad(sprite, left: int, top: int, right: int, bottom: int):
+    async def pad(sprite, left: int, top: int, right: int, bottom: int):
         """Pads the sprite by the specified values."""
         return np.pad(sprite, ((top, bottom), (left, right), (0, 0)))
 
     @add_variant()
-    def pixelate(sprite, x: int, y: Optional[int] = None):
+    async def pixelate(sprite, x: int, y: Optional[int] = None):
         """Pixelates the sprite."""
         if y is None:
             y = x
@@ -404,21 +444,28 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return cv2.resize(sprite, size, interpolation=Image.NEAREST).resize(sprite, old_size, interpolation=Image.NEAREST)
 
     @add_variant("m")
-    def meta(sprite, level: Optional[int] = 1) -> Image.Image:
+    async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
         """Applies a meta filter to an image."""
         assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
-        orig = sprite.copy()
-        base = sprite[:, :, 3]
+        # Not padding at negative values is intentional
+        padding = max(level, 0)
+        orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
+        base = orig[..., 3]
         if level < 0:
-            level = abs(level)
-            base = ImageOps.invert(base)
-        for _ in range(level):
-            base = cv2.filter2D(src=base, ddepth=0, kernel=EDGE_KERNEL)
+            base = 255 - base
+        kernel = META_KERNELS[kernel]
+        for _ in range(abs(level)):
+            base = cv2.filter2D(src=base, ddepth=-1, kernel=kernel)
         base = np.dstack((base, base, base, base))
+        mask = orig[..., 3] > 0
+        if not (level % 2) and level > 0:
+            base[mask, ...] = orig[mask, ...]
+        else:
+            base[mask ^ (level < 0), ...] = 0
         return base
 
     @add_variant()
-    def land(post, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
+    async def land(post, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
         """Removes all space between the tile and its bounding box on the specified side."""
         frame = next(filter(lambda f: f is not None, post.frames), None)
         if frame is None:
@@ -432,7 +479,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         post.displacement[index] += displacement
 
     @add_variant()
-    def warp(sprite, x1_y1: list[int, int], x2_y2: list[int, int], x3_y3: list[int, int], x4_y4: list[int, int]):
+    async def warp(sprite, x1_y1: list[int, int], x2_y2: list[int, int], x3_y3: list[int, int], x4_y4: list[int, int]):
         """Warps the sprite by displacing the bounding box's corners.
     Point 1 is top-left, point 2 is top-right, point 3 is bottom-right, and point 4 is bottom-left.
     If the sprite grows past its original bounding box, it will need to be recentered manually."""
@@ -469,10 +516,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             M = cv2.getAffineTransform(source.astype(np.float32), destination.astype(np.float32))
             warped_arr = cv2.warpAffine(sprite, M, new_shape[::-1], flags=cv2.INTER_NEAREST)
             final_arr[clip] = warped_arr[clip]
-        return Image.fromarray(final_arr)
+        return final_arr
 
     @add_variant("mm")
-    def matrix(sprite,
+    async def matrix(sprite,
                aa_ab_ac_ad: list[float, float, float, float],
                ba_bb_bc_bd: list[float, float, float, float],
                ca_cb_cc_cd: list[float, float, float, float],
@@ -485,7 +532,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return immul.reshape(img.shape)
 
     @add_variant()
-    def neon(sprite, strength: Optional[float] = 0.714):
+    async def neon(sprite, strength: Optional[float] = 0.714):
         """Darkens the inside of each region of color."""
         # This is approximately 2.14x faster than Charlotte's neon, profiling at strength 0.5 with 2500 iterations on baba/frog_0_1.png.
         unique_colors = liquify.get_colors(sprite)
@@ -499,11 +546,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             final_mask[oblq_mask == 4] -= strength / 2
         if strength < 0:
             final_mask = np.abs(1 - final_mask)
-        sprite[:, :, 3] *= np.clip(final_mask, 0, 1)
+        sprite[:, :, 3] = np.multiply(sprite[:, :, 3], np.clip(final_mask, 0, 1), casting="unsafe")
         return sprite.astype(np.uint8)
 
     @add_variant()
-    def scan(sprite, axis: Literal["x", "y"], on: Optional[int] = 1, off: Optional[int] = 1, offset: Optional[int] = 0):
+    async def scan(sprite, axis: Literal["x", "y"], on: Optional[int] = 1, off: Optional[int] = 1, offset: Optional[int] = 0):
         """Removes rows or columns of pixels to create a scan line effect."""
         assert on >= 0 and off >= 0 and on + off > 0, f"Scan mask of `{on}` on and `{off}` off is invalid!"
         axis = ("y", "x").index(axis)
@@ -517,7 +564,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return sprite[:, :, 3] * mask
 
     @add_variant()
-    def flip(sprite, *axis: Literal["x", "y"]):
+    async def flip(sprite, *axis: Literal["x", "y"]):
         """Flips the sprite along the specified axes."""
         for a in axis:
             if a == "x":
@@ -527,7 +574,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return sprite
 
     @add_variant()
-    def mirror(sprite, axis: Literal["x", "y"], half: Literal["back", "front"]):
+    async def mirror(sprite, axis: Literal["x", "y"], half: Literal["back", "front"]):
         """Mirrors the sprite along the specified direction."""
         # NOTE: This code looks ugly, but it's fast and worked first try.
         if axis == "x":
@@ -542,25 +589,25 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return sprite
 
     @add_variant("norm")
-    def normalize(sprite):
+    async def normalize(sprite):
         """Centers the sprite on its visual bounding box."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
         left, right = np.where(rows)[0][[0, -1]]
         top, bottom = np.where(cols)[0][[0, -1]]
-        sprite_center = sprite.shape // 2
+        sprite_center = sprite.shape[0] // 2, sprite.shape[1] // 2
         center = int((top + bottom) // 2), int((left + right) // 2)
         displacement = sprite_center[0] - center[0] + top, sprite_center[1] - center[1] + left
         return np.roll(sprite, displacement)
 
     @add_variant("disp")
-    def displace(tile, x: int, y: int):
+    async def displace(post, x: int, y: int):
         """Displaces the tile by the specified coordinates."""
-        tile.displacement = [tile.displacement[0] - x, tile.displacement[1] - y]
+        post.displacement = [post.displacement[0] - x, post.displacement[1] - y]
 
     # Original code by Charlotte (CenTdemeern1)
     @add_variant("flood")
-    def floodfill(sprite, brightness: Optional[float] = 1.0, inside: Optional[bool] = False):
+    async def floodfill(sprite, brightness: Optional[float] = 1.0, inside: Optional[bool] = False):
         """Floodfills either inside or outside a sprite with a given brightness value."""
         brightness = int(brightness * 255)
         sprite[sprite[:, :, 3] == 0] = 0  # Optspriteal
@@ -570,7 +617,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         # where the sprite touches the edge of the bounding box.
         sprite_alpha = np.pad(sprite_alpha, ((1, 1), (1, 1)))
         sprite_flooded = cv2.floodFill(
-            spriteage=sprite_alpha,
+            image=sprite_alpha,
             mask=None,
             seedPoint=(0, 0),
             newVal=255
@@ -610,18 +657,18 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return sprite
 
     @add_variant("csel", "c")
-    def color_select(sprite, *index: int):
+    async def color_select(sprite, *index: int):
         """Keeps only the selected colors, indexed by their occurrence. This changes per-frame, not per-tile."""
         return slice_image(sprite, list(index))
 
     @add_variant("cslice", "cs")
-    def color_slice(sprite, s: Slice):
+    async def color_slice(sprite, s: Slice):
         """Keeps only the slice of colors, indexed by their occurrence. This changes per-frame, not per-tile.
 Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, with stop and step being omittable."""
         return slice_image(sprite, s.slice)
 
     @add_variant("cshift", "csh")
-    def color_shift(sprite, s: Slice):
+    async def color_shift(sprite, s: Slice):
         """Shifts the colors of a sprite around, by index of occurence."""
         unique_colors = liquify.get_colors(sprite)
         unique_colors = np.spriteay(
@@ -648,24 +695,25 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant()
-    def opacity(sprite, amount: float):
+    async def opacity(sprite, amount: float):
         """Sets the opacity of the sprite, from 0 to 1."""
-        sprite[:, :, 3] = np.multiply(sprite[:, :, 3], amount, casting="unsafe").astype(np.uint8)
+        sprite[:, :, 3] = np.multiply(sprite[:, :, 3], amount, casting="unsafe")
         return sprite
 
     @add_variant("neg")
-    def negative(sprite):
-        """Inverts the sprite's RGB values."""
-        sprite[:, :, :3] = ~sprite[:, :, :3]
+    async def negative(sprite, alpha: bool = False):
+        """Inverts the sprite's RGB or RGBA values."""
+        sl = slice(None, None if alpha else 3)
+        sprite[..., sl] = 255 - sprite[..., sl]
         return sprite
 
     @add_variant()
-    def wrap(sprite, x: int, y: int):
+    async def wrap(sprite, x: int, y: int):
         """Wraps the sprite around its image box."""
         return np.roll(sprite, (y, x), (0, 1))
 
     @add_variant()
-    def melt(sprite, side: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
+    async def melt(sprite, side: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
         """Removes transparent pixels from each row/column and shifts the remaining ones to the end."""
         is_vertical = side in ("top", "bottom")
         at_end = side in ("right", "bottom")
@@ -680,7 +728,7 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant()
-    def wave(sprite, axis: Literal["x", "y"], amplitude: int, offset: int, frequency: float):
+    async def wave(sprite, axis: Literal["x", "y"], amplitude: int, offset: int, frequency: float):
         """Displaces the sprite by a wave. All values are percentages of the sprite's heighu"""
         if axis == "y":
             sprite = np.rot90(sprite)
@@ -693,7 +741,7 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant("hs")
-    def hueshift(sprite, angle: int):
+    async def hueshift(sprite, angle: int):
         """Shifts the hue of the sprite. 0 to 360."""
         hsv = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HSV)
         hsv[..., 0] = np.mod(hsv[..., 0] + int(angle // 2), 180)
@@ -701,14 +749,14 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant("gamma", "g")
-    def brightness(sprite, brightness: float):
+    async def brightness(sprite, brightness: float):
         """Sets the brightness of the sprite."""
         sprite[:, :, :3] *= brightness
         sprite = sprite.clip(-255.0, 255.0) % 255
         return sprite
 
     @add_variant("ps")
-    def palette_snap(sprite, *, tile, wobble, renderer):
+    async def palette_snap(sprite, *, tile, wobble, renderer):
         """Snaps all the colors in the tile to the specified palette."""
         palette_colors = np.array(renderer.palette_cache[tile.palette].convert("RGB")).reshape(-1, 3)
         sprite_lab = cv2.cvtColor(sprite.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
@@ -730,18 +778,29 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return result
 
     @add_variant("sat", "grayscale", "gscale")
-    def saturation(sprite, saturation: Optional[float] = 0):
+    async def saturation(sprite, saturation: Optional[float] = 0):
         """Saturates or desaturates a sprite."""
         return composite(sprite, sprite.convert("LA").convert("RGBA"), 1.0 - saturation)
 
     @add_variant()
-    def blank(sprite):
+    async def blank(sprite):
         """Sets a sprite to pure white."""
         sprite[:, :, :3] = 255
         return sprite
 
+    @add_variant("liquify", no_function_name=True)
+    async def liquify_variant(sprite):
+        """"Liquifies" the tile by melting every color except the main color and distributing the main color downwards."""
+        return liquify.liquify(sprite)
+
+    @add_variant()
+    async def planet(sprite):
+        """Turns the tile into a planet by melting every color except the main color and distributing the main color in a circle."""
+        a = liquify.planet(sprite)
+        return a
+
     @add_variant("nl")
-    def normalize_lightness(sprite):
+    async def normalize_lightness(sprite):
         """Normalizes a sprite's HSL lightness, bringing the lightest value up to full brightness."""
         arr_hls = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HLS).astype(np.float64)  # since WHEN was it HLS???? huh?????
         max_l = np.max(arr_hls[:, :, 1])
@@ -750,12 +809,12 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant("3oo", "skul")
-    def threeoo(sprite, scale: float):
+    async def threeoo(sprite, scale: float):
         """Content-aware scales the sprite downwards."""
-        assert 0, "i still need to find a way of doing this that isn't O(n^3) -balt\n(If you're seeing this outside of beta, PLEASE go yell at the dev.)"
+        assert 0, "Due to both extremely little use and extreme difficulty to program, 3oo isn't in the bot anymore. Sorry!"
 
     @add_variant()
-    def crop(sprite, x_y: list[int, int], u_v: list[int, int], true: Optional[bool] = False):
+    async def crop(sprite, x_y: list[int, int], u_v: list[int, int], true: Optional[bool] = False):
         """Crops the sprite to the specified bounding box."""
         (x, y), (u, v) = x_y, u_v
         if true:
@@ -766,14 +825,14 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
             return dummy
 
     @add_variant()
-    def snip(sprite, x_y: list[int, int], u_v: list[int, int], true: Optional[bool] = False):
+    async def snip(sprite, x_y: list[int, int], u_v: list[int, int], true: Optional[bool] = False):
         """Snips the specified box out from the sprite."""
         (x, y), (u, v) = x_y, u_v
         sprite[y:v, x:u] = 0
         return sprite
 
     @add_variant()
-    def croppoly(sprite, *x_y: list[int, int]):
+    async def croppoly(sprite, *x_y: list[int, int]):
         """Crops the sprite to the specified polygon."""
         pts = np.array([x_y], dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
         clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
@@ -781,7 +840,7 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return np.multiply(sprite, clip_poly, casting="unsafe").astype(np.uint8)
 
     @add_variant("cvt")
-    def convert(sprite, direction: Literal["to", "from"],
+    async def convert(sprite, direction: Literal["to", "from"],
                 space: Literal["BGR", "HSV", "HLS", "YUV", "YCrCb", "XYZ", "Lab", "Luv"]):
         """Converts the sprite's color space to or from RGB. Mostly for use with :matrix."""
         space_conversion = {
@@ -810,7 +869,7 @@ Slices are notated as [30m([36mstart[30m|[36mstop[30m|[36mstep[30m)[0m, 
         return sprite
 
     @add_variant()
-    def threshold(sprite, r: float, g: Optional[float] = None, b: Optional[float] = None, a: Optional[float] = 0.0):
+    async def threshold(sprite, r: float, g: Optional[float] = None, b: Optional[float] = None, a: Optional[float] = 0.0):
         """Removes all pixels below a threshold.
 This can be used in conjunction with blur, opacity, and additive blending to create a bloom effect!
 If a value is negative, it removes pixels above the threshold instead."""
@@ -825,7 +884,7 @@ If a value is negative, it removes pixels above the threshold instead."""
         return np.dstack((im_r, im_g, im_b, im_a))
 
     @add_variant()
-    def blur(sprite, radius: int, gaussian: Optional[bool] = False):
+    async def blur(sprite, radius: int, gaussian: Optional[bool] = False):
         """Blurs a sprite. Uses box blur by default, though gaussian blur can be used with the boolean toggle."""
         arr = np.pad(sprite, ((radius, radius), (radius, radius), (0, 0)))
         assert radius > 0, f"Blur radius of {radius} is too small!"
@@ -834,7 +893,57 @@ If a value is negative, it removes pixels above the threshold instead."""
         else:
             arr = cv2.boxFilter(arr, -1, (radius * 2 + 1, radius * 2 + 1))
         return arr
+    
+    @add_variant("fish")
+    async def fisheye(sprite, strength: float):
+        """Applies a fisheye effect."""
+        size = np.array(sprite.shape[:2])
+        filt = np.indices(sprite.shape[:2], dtype=np.float32) / size[:, np.newaxis, np.newaxis]
+        filt = (2 * filt) - 1
+        abs_filt = np.linalg.norm(filt, axis=0)
+        filt /= (1 - (strength / 2) * (abs_filt[np.newaxis, ...]))
+        filt += 1
+        filt /= 2
+        filt = filt * np.array(sprite.shape)[:2, np.newaxis, np.newaxis]
+        filt = np.float32(filt)
+        mapped = cv2.remap(sprite, filt[1], filt[0],
+                           interpolation=cv2.INTER_NEAREST,
+                           borderMode=cv2.BORDER_CONSTANT,
+                           borderValue=0).astype(float)
+        return np.uint8(mapped)
 
+    @add_variant("filter", "fi!")
+    async def filterimage(sprite, filter_url: str, absolute: Optional[bool] = None, *, tile, wobble, renderer):
+        """Applies a filter image to a sprite. For information about filter images, look at the filterimage command."""
+        filt, abs_db = await renderer.bot.db.get_filter(filter_url)
+        absolute = absolute if absolute is not None else \
+            abs_db if abs_db is not None else False
+        filt = np.float32(filt)
+        filt[..., :2] -= 0x80
+        if not absolute:
+            filt[..., :2] += np.indices(filt.shape[:2]).T
+        mapped = cv2.remap(sprite, filt[..., 0], filt[..., 1],
+                           interpolation=cv2.INTER_NEAREST,
+                           borderMode=cv2.BORDER_WRAP).astype(float)
+        filt /= 255
+        mapped[..., :3] *= filt[..., 2, np.newaxis]
+        mapped[..., 3] *= filt[..., 3]
+        return np.uint8(mapped)
+
+    @add_variant()
+    async def glitch(sprite, distance: int, chance: Optional[float] = 1.0, seed: Optional[int] = None, *, tile, wobble, renderer):
+        """Randomly displaces a sprite's pixels. An RNG seed is created using the tile's attributes if not specified."""
+        if seed is None:
+            seed = abs(hash(tile))
+        dst = np.indices(sprite.shape[:2], dtype=np.float32)
+        rng = np.random.default_rng(seed * 3 + wobble)
+        displacement = rng.uniform(-distance, distance, dst.shape)
+        mask = rng.uniform(0, 1, dst.shape)
+        displacement[mask > chance] = 0
+        dst += displacement
+        return cv2.remap(sprite, dst[1], dst[0],
+                           interpolation=cv2.INTER_NEAREST,
+                           borderMode=cv2.BORDER_WRAP)
     # --- ADD TO BOT ---
 
     bot.variants = RegexDict([(variant.pattern, variant) for variant in bot.variants])

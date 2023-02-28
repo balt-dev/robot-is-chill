@@ -456,8 +456,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         """
         self.bot.loading = True
         if flag:
-            # Flush the tile database since it all gets reconstructed anyways
+            # Flush the tile database since it all gets reconstructed anyway
             await self.bot.db.conn.execute('DELETE FROM tiles')
+        del self.bot.db.filter_cache  # Just to make absolutely sure that it gets flushed
+        self.bot.db.filter_cache = {}
         await self.load_initial_tiles()
         await self.load_editor_tiles()
         await self.load_custom_tiles()

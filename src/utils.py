@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import cv2
 from discord.ext import menus
 from discord.ext.menus.views import ViewMenuPages
 
@@ -9,14 +10,12 @@ from typing import Callable, List, Optional, Tuple, TypeVar
 from PIL import Image
 import numpy as np
 
-
 def recolor(sprite: Image.Image | np.ndarray, rgba: tuple[int, int, int, int]) -> Image.Image:
     """Apply rgba color multiplication (0-255)"""
     arr = np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8)
     if isinstance(sprite, np.ndarray):
         return arr
     return Image.fromarray(arr)
-
 
 def composite(a, b, t):
     return (1.0 - t) * a + t * b
@@ -46,9 +45,7 @@ class Tile:
         self.images = images or []
 
     def __repr__(self) -> str:
-        if self.custom:
-            return f"<Custom tile {self.name}>"
-        return f"<Tile {self.name} : {self.variant} with {self.color} from {self.source}>"
+        return f"<Tile {self.name} : {self.variant} with {self.color} from {'[generated]' if self.custom else self.source}>"
 
 
 T = TypeVar("T")
