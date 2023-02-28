@@ -60,6 +60,7 @@ class Grid:
         # Custom levels
         self.author: str | None = None
 
+    # noinspection PyTypeChecker
     def ready_grid(self) -> list[list[list[ProcessedTile]]]:
         """Returns a ready-to-paste version of the grid."""
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
@@ -116,12 +117,13 @@ class Grid:
         for y in range(self.height):
             for x in range(self.width):
                 maxstack = max(maxstack, len(self.cells[y * self.width + x]))
-        layer_grid = [[[ProcessedTile(None) for _ in range(max([self.width for n in range(
+        layer_grid = [[[ProcessedTile() for _ in range(max([self.width for _ in range(
             self.height)]))] for _ in range(self.height)] for _ in range(maxstack)]
         for i in range(maxstack):
             for y in range(self.height):
                 for x in range(self.width):
                     try:
+
                         item = sorted(
                             self.cells[y * self.width + x], key=lambda item: item.layer)[i]
                         item: Item
@@ -138,32 +140,32 @@ class Grid:
                             variant = 0
                         color = palette_img.getpixel(item.color)
                         frames = (
-                            recolor(
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     1,
                                     cache=sprite_cache),
-                                color),
-                            recolor(
+                                color)),
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     2,
                                     cache=sprite_cache),
-                                color),
-                            recolor(
+                                color)),
+                            np.array(recolor(
                                 open_sprite(
                                     self.world,
                                     item.sprite,
                                     variant,
                                     3,
                                     cache=sprite_cache),
-                                color),
+                                color)),
                         )
-                        layer_grid[i][y][x] = ProcessedTile(frames)
+                        layer_grid[i][y][x] = ProcessedTile(empty=False, frames=frames)
                     except BaseException:
                         pass
         return layer_grid
@@ -268,7 +270,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             for row in layer:
                 row.pop(grid.width - 1)
                 row.pop(0)
-        out = f"target/renders/levels/{code}.gif"
+        out = f"target/renders/levels/{code.lower()}.gif"
         await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out)
 
         data = CustomLevelData(

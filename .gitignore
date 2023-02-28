@@ -12,7 +12,7 @@ grass
 **/.idea/
 **/.vscode/
 update_ba.bash
-target/renders/levels/*
+/target/renders/levels/*
 .venv/
 venv/*/**
 venv/*

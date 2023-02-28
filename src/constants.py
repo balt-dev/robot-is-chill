@@ -254,13 +254,17 @@ BLENDING_MODES = (
     "add",
     "subtract",
     "multiply",
+    "divide",
     "max",
     "min",
     "screen",
     "softlight",
     "hardlight",
     "overlay",
-    "cut",
     "mask",
-    "xor"
+    "dodge",
+    "burn",
+    "cut"
 )
+
+FILTER_MAX_SIZE = 524288

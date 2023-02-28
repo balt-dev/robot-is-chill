@@ -25,7 +25,8 @@ class TileSkeleton:
     easter_egg: bool = False
 
     @classmethod
-    async def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default", bot=None):
+    async def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default",
+                    bot=None):
         if macros is None:
             macros = {}
         out = cls()
@@ -119,7 +120,6 @@ class Tile:
     custom_color: bool = False
     color: tuple[int, int] = (0, 3)
     empty: bool = True
-    blending: constants.BLENDING_MODES = "NORMAL"
     custom: bool = False
     style: Literal["noun", "property", "letter"] = "noun"
     palette: str = None
@@ -128,7 +128,6 @@ class Tile:
     gamma: float = 1.0
     saturation: float = 1.0
     filterimage: str | None = None
-    displacement: list[int, int] = field(default_factory=lambda: [0, 0])
     palette_snapping: bool = False
     normalize_gamma: bool = False
     variants: dict[str, list] = field(default_factory=lambda: {
@@ -140,18 +139,17 @@ class Tile:
 
     def __hash__(self):
         return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame, self.fallback_frame,
-                     self.empty, self.blending, self.custom,
-                     self.style, self.palette, self.overlay, self.hue, self.color,
-                     self.gamma, self.saturation, self.filterimage, tuple(self.displacement),
+                     self.empty, self.custom, self.color,
+                     self.style, self.palette, self.overlay, self.hue,
+                     self.gamma, self.saturation, self.filterimage,
                      self.palette_snapping, self.normalize_gamma, self.altered_frame,
                      hash(tuple(self.variants["sprite"])),
                      hash(tuple(self.variants["tile"])),
-                     hash(tuple(self.variants["post"])),
                      self.custom_color, self.palette))
 
     @classmethod
     async def prepare(cls, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
-                position: tuple[int, int, int, int], tile_borders: bool = False, ctx: Context = None):
+                      position: tuple[int, int, int, int], tile_borders: bool = False, ctx: Context = None):
         if tile.empty:
             return cls(name="<empty>")
         name = tile.name
@@ -179,7 +177,7 @@ class Tile:
             ctx.bot.variants["0/3"]((4, 2) if tile.easter_egg else value.color, _default_color=True)
         )
         for variant in value.variants["tile"]:
-            variant.apply(value)
+            await variant.apply(value)
             if value.surrounding != 0:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
@@ -190,8 +188,15 @@ class Tile:
 class ProcessedTile:
     """A tile that's been processed, and is ready to render."""
     empty: bool = True
-    frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(default_factory=lambda: [None, None, None])
+    name: str = "?"
+    frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(
+        default_factory=lambda: [None, None, None])
     blending: Literal[*tuple(constants.BLENDING_MODES.keys())] = "normal"
     displacement: list[int, int] = field(default_factory=lambda: [0, 0])
+    keep_alpha: bool = True
+
     def __repr__(self):
         return f"ProcessedTile(empty={self.empty}, blending={self.blending}, displacement={self.displacement})"
+
+    def copy(self):
+        return ProcessedTile(self.empty, self.name, self.frames, self.blending, self.displacement)
