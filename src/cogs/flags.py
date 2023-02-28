@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 import requests
 from PIL import Image
-from tldextract import tldextract
 
 from .. import constants
 from ..errors import InvalidFlagError
@@ -93,24 +92,6 @@ async def setup(bot: Bot):
             m = "0/4"
         return [Color.parse(Tile(palette="default"), bot.renderer.palette_cache, m)]
 
-    @flags.register(match=r"(?:--background|-b)=(.+)",
-                    syntax="(-b | --background)=<url: str>",
-                    kwargs=["images"])
-    async def background(match, _):
-        """Sets the background of a render to a specified image."""
-        url = match.group(1)
-        assert tldextract.extract(url).domain == "discordapp", \
-            "Only files uploaded from Discord are allowed as backgrounds."
-        result = f"https://" + url
-        assert int(requests.head(result, stream=True).headers.get('content-length', 0)) <= constants.COMBINE_MAX_FILESIZE, \
-            f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-        with Image.open(requests.get(result, stream=True).raw) as im:
-            out = []
-            for frame in range(im.n_frames):
-                im.seek(frame)
-                out.append(im.copy())
-        return tuple(out),
-
     @flags.register(match=r"(?:--palette|-p)=(\w+)",
                     syntax="(-p | --palette)=<palette: str>",
                     kwargs=["palette"])
@@ -137,7 +118,15 @@ async def setup(bot: Bot):
                     kwargs=[])
     async def comment(_, __):
         """Just a comment, does nothing."""
+        await asyncio.sleep(1)
         return []
+
+    @flags.register(match=r"--letter",
+                    syntax="--letter",
+                    kwargs=["letters"])
+    async def letters(_, __):
+        """Makes text default to letters."""
+        return [True]
 
     @flags.register(
         match=r"(?:--frames|-frames|-f)=([123]+)",
@@ -210,7 +199,6 @@ Use % to set a percentage of the default render speed."""
                     kwargs=["global_variant"])
     async def global_variant(match, _):
         """Applies a variant to every tile."""
-        assert ';' not in match.group(1), "Persistent variants can't be global."
         return ':' + match.group(1),
 
     @flags.register(match=r"--consistent|-co|--synchronize|-sync",
@@ -307,3 +295,11 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
     async def boomerang(_, __):
         """Make the render reverse at the end."""
         return True,
+
+    @flags.register(match=r"(?:--macro|-mc)=(.+?)\|(.+)",
+                    syntax="--macro|-mc=<name: str>|<variants: Variant[]>",
+                    kwargs=["macro"])
+    async def macro(match, __):
+        """Define macros for variants."""
+        assert ";" not in match.group(2), "Can't have persistent variants in macros!"
+        return {match.group(1): match.group(2)},
