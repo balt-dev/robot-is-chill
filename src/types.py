@@ -233,7 +233,7 @@ class Color(tuple):
             try:
                 return *palette_cache[tile.palette].getpixel(color), 0xFF
             except IndexError:
-                raise errors.BadPaletteIndex(tile.name, color)
+                raise AssertionError(f"The palette index `{color}` is outside of the palette.")
 
 # NOTE: Due to the inner workings of CPython, the slice class cannot be subclassed.
 class Slice:

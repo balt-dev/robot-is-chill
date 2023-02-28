@@ -13,7 +13,7 @@ from PIL import Image
 
 from . import liquify
 from ..utils import recolor, composite
-from .. import constants
+from .. import constants, errors
 from ..types import Variant, RegexDict, VaryingArgs, Color, Slice
 
 CARD_KERNEL = np.array(((0, 1, 0), (1, 0, 1), (0, 1, 0)))
@@ -273,6 +273,7 @@ Can take:
 - A hexadecimal RGB/RGBA value, as #RGB, #RGBA, #RRGGBB, or #RRGGBBAA
 - A color name, as is (think the color properties from the game)
 - A palette index, as an x/y coordinate"""
+        print(color)
         if _default_color:
             if tile.custom_color:
                 return sprite
@@ -281,7 +282,10 @@ Can take:
         if len(color) == 4:
             rgba = color
         else:
-            rgba = *renderer.palette_cache[tile.palette].getpixel(color), 0xFF
+            try:
+                rgba = *renderer.palette_cache[tile.palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(tile.name, color)
         return recolor(sprite, rgba)
 
     @add_variant("grad")
@@ -304,7 +308,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         grad = np.tile(grad[..., np.newaxis], (maxside, 1, 4))
         if not extrapolate:
             grad = np.clip(grad, 0, 1)
-        grad_center = maxside / 2, maxside / 2
+        grad_center = maxside // 2, maxside // 2
         rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
         warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[:2], flags=cv2.INTER_LINEAR)
         if steps:
