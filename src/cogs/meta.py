@@ -3,9 +3,12 @@ from __future__ import annotations
 import asyncio
 import colorsys
 import os
+import typing
+from copy import copy
 from functools import reduce
 import itertools
 from datetime import datetime
+from inspect import Parameter
 from subprocess import PIPE, STDOUT, TimeoutExpired, run
 from time import time
 from typing import Optional, Sequence
@@ -22,15 +25,45 @@ from ..utils import ButtonPages
 
 class CommandPageSource(menus.ListPageSource):
     def __init__(self, data: Sequence[tuple[Command]]):
-        super().__init__(data, per_page=1)
+        data = copy(data)  # Just to be safe
+        new_data = list(data)
+        for i, command in enumerate(data):
+            if isinstance(command, commands.Group) and not command.hidden and command.name != "jishaku":
+                children = []
+                for child in command.commands:
+                    child.name = f"{command.name} {child.name}"
+                    child.aliases = tuple(f"{command.name} {alias}" for alias in child.aliases)
+                    children.append(child)
+                new_data[i + 1:i + 1] = children
+        super().__init__(new_data, per_page=1)
 
     async def format_page(self, menu: menus.Menu, entry: Command) -> discord.Embed:
+        arguments = ""
+        for name, param in entry.params.items():
+            arguments += name
+            if param.annotation:
+                arguments += ": "
+                if typing.get_origin(param.annotation) == typing.Literal:
+                    arguments += str([arg for arg in typing.get_args(param.annotation)])
+                else:
+                    arguments += param.annotation.__name__
+            if param.default is not Parameter.empty:
+                arguments += f" = {repr(param.default)}"
+            arguments += ", "
+        arguments = arguments.rstrip(", ")
         embed = discord.Embed(
             color=menu.bot.embed_color,
             title=entry.name,
-            description=entry.help
+            description=(f"> _aka {', '.join(entry.aliases)}_\n" if len(entry.aliases) else "") +
+                        f"> Arguments: `{arguments}`\n" if len(arguments) else ""
         )
+        embed.add_field(
+            name="",
+            value=entry.help
+        )
+        embed.set_footer(text=f"{menu.current_page + 1}/{self.get_max_pages()}")
         return embed
+
 
 class MetaCog(commands.Cog, name="Other Commands"):
     def __init__(self, bot: Bot):
@@ -40,12 +73,13 @@ class MetaCog(commands.Cog, name="Other Commands"):
     async def cog_check(self, ctx: Context):
         return not self.bot.loading
 
-
     @commands.command(aliases=["pong"])
     @commands.cooldown(5, 8, commands.BucketType.channel)
     async def ping(self, ctx: Context):
         """Returns bot latency."""
+
         def clamp(val, mn, mx): return max(min(val, mx), mn)
+
         pingns = int(self.bot.latency * 1000)
         color = reduce(
             lambda a, b: (a << 8) + b,
@@ -62,16 +96,20 @@ class MetaCog(commands.Cog, name="Other Commands"):
     async def cmds(self, ctx: Context, query: Optional[str] = None):
         """Lists the bot's commands. You are here!
     Commands can be specified through a regular expression."""
-        if query is None:
-            query = ""
-        elif query == "list":
-            names = sorted((cmd.name for cmd in self.bot.commands if not cmd.hidden))
+        new_query = query
+        if query is None or query == "list":
+            new_query = ""
+        cmds = sorted((cmd for cmd in self.bot.commands if re.match(new_query, cmd.name) and not cmd.hidden),
+                      key=lambda cmd: cmd.name)
+        if query == "list":
+            names = [cmd.name for cmd in cmds]
             nl = "\n"
             return await ctx.send(f"""```
 {nl.join(names)}```""")
+        assert len(cmds) > 0, f"No commands found for the query `{query}`!"
         await ButtonPages(
             source=CommandPageSource(
-                sorted((cmd for cmd in self.bot.commands if re.match(query, cmd.name) and not cmd.hidden), key=lambda cmd: cmd.name)
+                cmds
             ),
         ).start(ctx)
 
@@ -80,7 +118,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
     async def help(self, ctx: Context, query: Optional[str] = None):
         """Directs new users on what they can do and where they can go."""
         if query is not None:
-            return self.cmds(ctx, query)
+            return await ctx.invoke(self.bot.get_command("cmds"), query=query)
         embed = discord.Embed(
             title="ROBOT IS CHILL",
             color=self.bot.embed_color
@@ -96,15 +134,18 @@ This help page should be able to guide you to everything you need to know.
 - If you need to look at a level, look at `level`.""",
             inline=False
         )
-        ut = datetime.utcnow() - self.bot.started
+        ut = (datetime.utcnow() - self.bot.started).seconds
         async with self.bot.db.conn.cursor() as cur:
             await cur.execute("SELECT COUNT(DISTINCT name) FROM tiles")
             tile_amount = (await cur.fetchone())[0]
+        days, remainder = divmod(ut, 86400)
+        hours, remainder = divmod(remainder, 3600)
+        minutes, seconds = divmod(remainder, 60)
         embed.add_field(
             name="Statistics",
-            value=f"""Guilds: {len(self.bot.guilds)}
+            value=f"""Guilds: {len(self.bot.guilds)}/100
 Channels: {sum(len(g.channels) for g in self.bot.guilds)}
-Uptime: {str(ut).split('.', 1)[0]}
+Uptime: {days}:{hours:02}:{minutes:02}:{seconds:02}
 Tiles: {tile_amount}""",
             inline=True
         )
@@ -184,6 +225,7 @@ _RocketRace#0798_ - Original lead
                         return (None, timeout.output)
                 else:
                     return (None, None)
+
         return_code, output = await self.bot.loop.run_in_executor(None, interpret_babalang)
 
         too_long = False

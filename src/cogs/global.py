@@ -3,10 +3,13 @@ from __future__ import annotations
 import asyncio
 import collections
 import os
+import random
 import signal
 import time
 import traceback
 from functools import partial
+from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 
@@ -17,7 +20,7 @@ from datetime import datetime
 from io import BytesIO
 from json import load
 from time import perf_counter
-from typing import Any, OrderedDict, Coroutine
+from typing import Any, OrderedDict, Coroutine, Literal
 
 import numpy as np
 import emoji
@@ -25,8 +28,9 @@ from charset_normalizer import from_bytes
 
 import aiohttp
 import discord
-from discord.ext import commands
+from discord.ext import commands, menus
 
+from src.utils import ButtonPages
 from ..tile import Tile, TileSkeleton
 
 from .. import constants, errors
@@ -79,7 +83,34 @@ async def coro_part(func, *args, **kwargs):
     async def wrapper():
         result = func(*args, **kwargs)
         return await result
+
     return wrapper
+
+
+class FilterQuerySource(menus.ListPageSource):
+    def __init__(
+            self, data: list[str]):
+        super().__init__(data, per_page=45)
+
+    async def format_page(self, menu: menus.Menu, entries: list[str]) -> discord.Embed:
+        embed = discord.Embed(
+            title=f"{menu.current_page + 1}/{self.get_max_pages()}",
+            color=menu.bot.embed_color
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        )
+        while len(entries) > 0:
+            field = ""
+            for entry in entries[:15]:
+                field += f"{entry}\n"
+            embed.add_field(
+                name="",
+                value=field,
+                inline=True
+            )
+            del entries[:15]
+        return embed
 
 
 class GlobalCog(commands.Cog, name="Baba Is You"):
@@ -102,7 +133,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
         await self.render_tiles(ctx, *args, **kwargs)
-
 
     async def handle_variant_errors(self, ctx: Context, err: errors.VariantError):
         """Handle errors raised in a command context by variant handlers."""
@@ -256,9 +286,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for flag in self.bot.flags.list:
                     to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
             raw_output = kwargs.get("raw_output", False)
-            default_to_letters = kwargs.get("letters", False)
             macros = kwargs.get("macro", {})
-            tborders = kwargs.get("tborders", False)
             image_format = kwargs.get('image_format', 'gif')
             do_embed = kwargs.get('do_embed', False)
             for x, y in reversed(to_delete):
@@ -329,7 +357,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 # Handles variants based on `:` affixes
                 buffer = BytesIO()
                 extra_buffer = BytesIO() if raw_output else None
-                extra_names = [] if raw_output else None
                 full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
                 parsing_overhead = time.perf_counter() - parsing_overhead
                 full_tiles, unique_tiles, rendered_frames, render_overhead = await self.bot.renderer.render_full_tiles(
@@ -395,12 +422,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 embed.add_field(name="Render statistics", value=stats)
             else:
                 embed = None
-            if extra_buffer is not None and extra_names is not None:
+            if extra_buffer is not None:
                 extra_buffer.seek(0)
-                await ctx.reply(description[:2000] + "\n_Currently rewriting compositing, things may not show_", embed=embed,
-                                files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"), image])
+                await ctx.reply(description[:2000], embed=embed,
+                                files=[discord.File(extra_buffer, filename=f"raw.zip"), image])
             else:
-                await ctx.reply(description[:2000] + "\n_Currently rewriting compositing, things may not show_", embed=embed, file=image)
+                await ctx.reply(description[:2000], embed=embed, file=image)
         finally:
             signal.alarm(0)
 
@@ -464,9 +491,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         if self.bot.config['danger_mode']:
             await warn_dangermode(ctx)
         await self.start_timeout(
-                ctx,
-                objects=objects,
-                rule=True)
+            ctx,
+            objects=objects,
+            rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -490,7 +517,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     '-text'], timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
-
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         """Finds levels by query.
@@ -718,7 +744,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         fine_query = query.strip().replace("|", "")
 
         # [abcd-0123]
-        if re.match(r"^[a-z\d]{4}-[a-z\d]{4}$", fine_query) and not mobile:
+        if re.match(r"^[A-Za-z\d]{4}-[A-Za-z\d]{4}$", fine_query) and not mobile:
             row = await self.bot.db.conn.fetchone(
                 '''
 				SELECT * FROM custom_levels WHERE code == ?;
@@ -839,242 +865,152 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # Send the result
         await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
 
-    @commands.command(aliases=["filterimages", "fi"])
-    @commands.cooldown(5, 8, commands.BucketType.channel)
-    async def filterimage(self, ctx: Context, *, query: str = ""):
+    @commands.group(aliases=["fi", "filter"], pass_context=True, invoke_without_command=True)
+    async def filterimage(self, ctx: Context):
         """Performs filterimage-related actions like template creation,
         conversion and accessing the database."""
-        name = None
-        if query.startswith("convert "):
-            query = query.split(" ")
-            url = query[2]
-            if url.startswith("http://"):
-                url = url[7:]
-            if not url.startswith("https://"):
-                url = "https://" + url
-            relative = (query[1] in ("relative", "rel"))
-            ifilterimage = Image.open(requests.get(
-                url, stream=True).raw).convert("RGBA")
-            fil = np.array(ifilterimage)
-            if relative:
-                fil[:, :, 0] -= np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T -
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            else:
-                fil[:, :, 0] += np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T +
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            ifilterimage = Image.fromarray(fil)
-            out = BytesIO()
-            ifilterimage.save(out, format="png", optimize=False)
-            out.seek(0)
-            file = discord.File(out, filename="filterimage.png")
-            await ctx.reply(
-                f'Converted filterimage from {"absolute" if relative else "relative"} to {"relative" if relative else "absolute"}:',
-                file=file
-            )
-        elif query == "convert":
-            await ctx.reply("""Converts a filterimage to relative or absolute from the other type.
-Usage:
-```filterimage convert [<relative|rel|absolute|abs> <URL>]```
-URL can be supplied with or without http(s) in this command, since it's not limited by colon separation.""")
-        elif query.startswith("create "):
-            query = query.split(" ")
-            size = query[2].split(",")
-            size = int(size[0]), int(size[1])
-            relative = (query[1] in ("relative", "rel"))
-            fil = np.zeros(size + (4,), dtype="uint8")
-            fil[:, :] = (128, 128, 255, 255)
-            if not relative:
-                fil[:, :, 0] += np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T +
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            ifilterimage = Image.fromarray(fil)
-            out = BytesIO()
-            ifilterimage.save(out, format="png", optimize=False)
-            out.seek(0)
-            file = discord.File(out, filename="filterimage.png")
-            await ctx.reply(
-                f'Created filterimage template of size {size} in mode {"relative" if relative else "absolute"}:',
-                file=file
-            )
-        elif query == "create":
-            await ctx.reply("""Creates a filterimage template.
-Usage:
-```filterimage create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
-        elif query == "db" or query == "database":
-            embed = discord.Embed(
-                title=f"Sub-commands",
-                color=discord.Color(8421631)).set_author(
-                name="Filterimage Database",
-                icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-            embed.add_field(
-                name="Add a new filterimage to the database",
-                value="filterimage database register <name> <relative> <absolute> <url>",
-                inline=False)
-            embed.add_field(
-                name="Find a filterimage in the database",
-                value="filterimage database get <name>",
-                inline=False)
-            embed.add_field(
-                name="Delete an entry from the database",
-                value="filterimage database delete <name>",
-                inline=False)
-            embed.add_field(
-                name="Search the database",
-                value="filterimage database search <query>",
-                inline=False)
-            embed.add_field(
-                name="Count filterimages from the database",
-                value="filterimage database count",
-                inline=False)
-            await ctx.reply(embed=embed)
-        elif query.startswith("db") or query.startswith("database"):
-            query = query.split(" ")
-            if query[1] == "register":
-                if len(query) > 6:
-                    await ctx.reply("ERROR: Too many arguments (wrong command / syntax / accidental space somewhere?)")
-                    return
-                if len(query) < 6:
-                    await ctx.reply("ERROR: Not enough arguments (wrong command / syntax / forgot some arguments?)")
-                    return
-                name = query[2].lower()
-                truthy = ("yes", "true", "1")
-                relative = query[3].lower() in truthy
-                absolute = query[4].lower() in truthy
-                url = query[5]
-                if url.startswith("http://"):
-                    url = url[7:]
-                if not url.startswith("https://"):
-                    url = "https://" + url
-                async with self.bot.db.conn.cursor() as cursor:
-                    command = "SELECT name FROM filterimages WHERE url == ?;"
-                    args = (url,)
-                    await cursor.execute(command, args)
-                    dname = await cursor.fetchone()
-                    if dname:
-                        await ctx.reply(f"Filterimage already exists in the filterimage database with name `{dname}`!")
-                        return
-                command = "INSERT INTO filterimages VALUES (?, ?, ?, ?, ?);"
-                args = (name, relative, absolute, url, ctx.author.id)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                await ctx.reply(f"Success! Registered filterimage `{name}` in the filterimage database!")
-            elif query[1] == "get":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    await ctx.reply("ERROR: No name provided.")
-                    return
-                name = query[2].lower()
-                command = "SELECT * FROM filterimages WHERE name == ?;"
-                args = (name,)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchone()
-                    if results is None:
-                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
-                        return
-                    name, relative, absolute, url, userid = results
-                if url.startswith("http://"):
-                    url = url[7:]
-                if not url.startswith("https://"):
-                    url = "https://" + url
-                truefalseemoji = (
-                    ":negative_squared_cross_mark:",
-                    ":white_check_mark:")
-                description = f"""(Right click to copy url!)
-Relative: {truefalseemoji[int(relative)]}
-Absolute: {truefalseemoji[int(absolute)]}"""
-                user = await self.bot.fetch_user(userid)
-                embed = discord.Embed(
-                    title=f"Name: {name}",
-                    color=discord.Color(8421631),
-                    description=description,
-                    url=url).set_image(
-                    url=url).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                try:
-                    embed.set_author(name=user.name, icon_url=user.avatar.url)
-                except AttributeError:
-                    embed.set_author(name="[Icon unavailable] " + user.name)
-                await ctx.reply(embed=embed)
-            elif query[1] == "delete":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    await ctx.reply("ERROR: No name provided.")
-                    return
-                name = query[2].lower()
-                command = "SELECT * FROM filterimages WHERE name == ? AND creator == ?;"
-                args = (name, ctx.author.id)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchone()
-                    if results is None:
-                        await ctx.reply(
-                            f"Could not find filterimage `{name}` in the database! Does the entry exist, and did you create it?")
-                        return
-                command = "DELETE FROM filterimages WHERE name == ? AND creator == ?;"
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                await ctx.reply("Success!")
-            elif query[1] == "search":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    command = "SELECT name FROM filterimages"
-                    args = tuple()
-                else:
-                    command = "SELECT name FROM filterimages WHERE INSTR(name,?)<>0;"
-                    name = query[2].lower()
-                    args = (name,)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchall()
-                    if results is None:
-                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
-                        return
-                description = '\n'.join(''.join(str(value)
-                                                for value in row) for row in results)
-                embed = discord.Embed(
-                    title=f"Filterimage Database search results",
-                    color=discord.Color(8421631),
-                    description=description).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                await ctx.reply(embed=embed)
-            elif query[1] == "count":
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages;")
-                    countall = (await cursor.fetchone())[0]
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE relative==1;")
-                    countrelative = (await cursor.fetchone())[0]
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE absolute==1;")
-                    countabsolute = (await cursor.fetchone())[0]
-                embed = discord.Embed(
-                    title=f"Filterimage Database numbers",
-                    color=discord.Color(8421631)).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                embed.add_field(name="Total filterimages", value=int(countall))
-                embed.add_field(
-                    name="Relative filterimages",
-                    value=int(countrelative))
-                embed.add_field(
-                    name="Absolute filterimages",
-                    value=int(countabsolute))
-                await ctx.reply(embed=embed)
-        else:
-            await ctx.reply("""Sub-commands:
-```convert [<relative|rel|absolute|abs> <URL>]
-create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]
-database [...]```""")
+        await ctx.error("Invalid subcommand specified! Use `commands filterimage` to see what subcommmands there are.")
 
+    @filterimage.command(aliases=["cvt"])
+    async def convert(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"]):
+        """Converts a filter to its opposing mode. An attachment with the filter is required."""
+        # Get the attached image, or throw an error
+        try:
+            filter_url = ctx.message.attachments[0].url
+        except IndexError:
+            return await ctx.error("The filter to be converted wasn't attached.")
+        filter_headers = requests.head(filter_url, timeout=3).headers
+        assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
+        with Image.open(requests.get(filter_url, stream=True).raw) as im:
+            fil = np.array(im.convert("RGBA"))
+        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * (1 if target_mode.startswith("abs") else -1)
+        out = BytesIO()
+        Image.fromarray(fil).save(out, format="png", optimize=False)
+        out.seek(0)
+        filename = f"{Path(ctx.message.attachments[0].filename).stem}-{target_mode}.png"
+        file = discord.File(out, filename=filename)
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Converted!",
+            description=f'Converted filterimage to {target_mode}.'
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        ).set_image(url=f"attachment://{filename}")
+        await ctx.reply(embed=emb, file=file)
+
+    @filterimage.command(aliases=["make", "mk"])
+    async def create(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"], width: int,
+                     height: int):
+        """Creates a template filter."""
+        size = (width, height)
+        fil = np.ones((*size[::-1], 4), dtype=np.uint8) * 0xFF
+        fil[..., :2] -= 0x7F
+        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * target_mode.startswith("abs")
+        out = BytesIO()
+        Image.fromarray(fil).save(out, format="png", optimize=False)
+        out.seek(0)
+        filename = f"filter-{size[0]}x{size[1]}-{target_mode}.png"
+        file = discord.File(out, filename=filename)
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Created!",
+            description=f'Created filterimage template of size {size} in mode {target_mode}.'
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        ).set_image(url=f"attachment://{filename}")
+        await ctx.reply(embed=emb, file=file)
+
+    @filterimage.command(aliases=["reg"])
+    async def register(self, ctx: Context, name: str, target_mode: Literal["abs", "absolute", "rel", "relative"]):
+        """Adds a filter to the database! Requires an attachment.
+    Keep in mind that if the message sent to create this filter is deleted, it will no longer work."""
+        assert len(ctx.message.attachments), "An image to be registered has to be supplied!"
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
+            dname = await cursor.fetchone()
+            if dname is not None:
+                return await ctx.error(f"Filter of name `{name}` already exists in the database!")
+            command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
+            args = (name, target_mode.startswith("abs"), ctx.message.attachments[0].url, ctx.author.id)
+            await cursor.execute(command, args)
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title="Registered!",
+                description=f'Registered filter `{name}` in the filterimage database!'
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            )
+            await ctx.reply(embed=emb)
+
+    @filterimage.command()
+    async def get(self, ctx: Context, name: str):
+        """Gets information about a filter."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT * FROM filterimages WHERE name == ?;", name)
+            attrs = await cursor.fetchone()
+            if attrs is None:
+                return await ctx.error(f"Filter of name `{name}` isn't in the filterimage!")
+            name, mode, url, author = attrs
+            mode = "absolute" if mode else "relative"
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title=name,
+                description=f"Mode: `{mode}`"
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            ).set_image(url=url)
+            user = await ctx.bot.fetch_user(author)
+            emb.set_author(name=f"{user.name}#{user.discriminator}",
+                           icon_url=user.avatar.url if user.avatar is not None else
+                           f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
+            await ctx.reply(embed=emb)
+
+    @filterimage.command(aliases=["del", "remove", "rm"])
+    async def delete(self, ctx: Context, name: str):
+        """Removes a filter from the database. You must have made it to do this."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute(
+                f"DELETE FROM filterimages WHERE name == ?{'' if ctx.author.id == ctx.bot.owner_id else ' AND creator == ?'};",
+                (name,) if ctx.author.id == ctx.bot.owner_id else (name, ctx.author.id))
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title="Deleted!",
+                description=f"Removed the filter {name} from the database (if it existed in the first place)."
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            )
+            await ctx.reply(embed=emb)
+
+    @filterimage.command(aliases=["?", "query", "find", "list"])
+    async def search(self, ctx: Context, pattern: str = ".*"):
+        """Lists filters that match a regular expression."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT name FROM filterimages WHERE name REGEXP ?", pattern)
+            names = [row[0] for row in await cursor.fetchall()]
+        return await ButtonPages(FilterQuerySource(sorted(names))).start(ctx)
+
+    @filterimage.command(aliases=["#"])
+    async def count(self, ctx: Context):
+        """Gets the amount of filters in the database."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT COUNT(*) FROM filterimages;")
+            count = (await cursor.fetchone())[0]
+            await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE absolute == 1;")
+            count_abs = (await cursor.fetchone())[0]
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Stats",
+            description=f"There are {count} filters in the database, {count_abs} absolute and {count - count_abs} relative."
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        )
+        await ctx.reply(embed=emb)
 
 async def setup(bot: Bot):
     await bot.add_cog(GlobalCog(bot))

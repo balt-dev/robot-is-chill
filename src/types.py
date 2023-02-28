@@ -225,6 +225,8 @@ class Color(tuple):
     def parse(tile, palette_cache, color=None):
         if color is None:
             color = tile.color
+        if type(color) == str:
+            color = tuple(Color(color))
         if len(color) == 4:
             return color
         else:
