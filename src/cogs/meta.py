@@ -51,11 +51,12 @@ class CommandPageSource(menus.ListPageSource):
                 arguments += f" = {repr(param.default)}"
             arguments += ", "
         arguments = arguments.rstrip(", ")
+        print(entry.aliases, entry.params)
         embed = discord.Embed(
             color=menu.bot.embed_color,
             title=entry.name,
             description=(f"> _aka {', '.join(entry.aliases)}_\n" if len(entry.aliases) else "") +
-                        f"> Arguments: `{arguments}`\n" if len(arguments) else ""
+                        (f"> Arguments: `{arguments}`\n" if len(arguments) else "")
         )
         embed.add_field(
             name="",

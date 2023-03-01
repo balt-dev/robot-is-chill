@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import traceback
 from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Coroutine, Optional
 
 from . import errors, constants
@@ -48,6 +49,7 @@ class Bot(commands.Bot):
             exit_code: int = 0,
             **kwargs):
         super().__init__(*args, **kwargs)
+        self.macros: dict = None
         self.flags = None
 
     async def get_context(self,
@@ -240,3 +242,9 @@ class Slice:
     """Custom slice class for variant parsing."""
     def __init__(self, *args):
         self.slice = slice(*args)
+
+@dataclass
+class Macro:
+    value: str
+    description: str
+    author: int

@@ -96,7 +96,7 @@ class Renderer:
             *,
             before_images: list[Image] = [],
             palette: str = "default",
-            images: list[str] | None = None,
+            images: list[str] | list[Image] | None = None,
             image_source: str = constants.BABA_WORLD,
             out: str | BinaryIO = "target/renders/render.gif",
             background: tuple[int] | None = None,
@@ -157,17 +157,23 @@ class Renderer:
         default_size = (int(sizes.shape[2] * spacing + top + bottom),
                         int(sizes.shape[3] * spacing + left + right))
         steps = np.zeros((grid.shape[0] * len(frames), *default_size, 4), dtype=np.uint8)
-        if images and image_source is not None:
-            for step in range(steps.shape[0]):
+        if images and ((bg_images := isinstance(images[0], Image.Image)) or image_source is not None):
+            for step in range(0, steps.shape[0], len(frames)):
                 for frame in frames:
-                    img = Image.new("RGBA", default_size)
+                    img = Image.new("RGBA", default_size[::-1])
                     # for loop in case multiple background images are used
                     # (i.e. baba's world map)
-                    for image in images:
-                        overlap = Image.open(
-                            f"data/images/{image_source}/{image}_{frame}.png")
+                    if bg_images:
+                        bg_img: Image.Image = images[frame - 1].convert("RGBA")
+                        bg_img = bg_img.resize((bg_img.width // upscale, bg_img.height // upscale), Image.NEAREST)
+                        img.paste(bg_img, (0, 0), mask=bg_img)
+                    else:
+                        # Legacy behavior, too lazy to remove
+                        for image in images:
+                            overlap = Image.open(
+                                f"data/images/{image_source}/{image}_{frame}.png").convert("RGBA")
                         img.paste(overlap, (0, 0), mask=overlap)
-                    steps[step * len(frames) + frame - 1] = np.asarray(img)
+                    steps[step + frame - 1] = np.array(img)
         for t, step in enumerate(grid):
             for z, layer in enumerate(step):
                 for y, row in enumerate(layer):
@@ -178,7 +184,7 @@ class Renderer:
                         displacement = (y * spacing - int((first_frame[0] - spacing) / 2) + top - tile.displacement[1],
                                         x * spacing - int((first_frame[1] - spacing) / 2) + left - tile.displacement[0])
                         for frame in frames:
-                            wobble = (11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
+                            wobble = tile.wobble if tile.wobble is not None else (11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
                             image = tile.frames[wobble]
                             dslice = (default_size - (first_frame + displacement))
                             dst_slice = (
@@ -313,11 +319,10 @@ class Renderer:
                 elif tile.name == "default":
                     path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
                 else:
+                    source, sprite_name = tile.sprite
                     if tile.frame == -1:
-                        source, sprite_name = tile.sprite
                         path = f"data/sprites/vanilla/error_0_{frame + 1}.png"
                     else:
-                        source, sprite_name = tile.sprite
                         path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
                     try:
                         path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
@@ -370,11 +375,12 @@ class Renderer:
         cached = tile_hash in tile_cache.keys()
         if cached:
             final_tile = tile_cache[tile_hash]
+        final_tile.wobble = tile.wobble
         done_frames = [frame is not None for frame in final_tile.frames]
         frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
         for frame in frame_range:
             frame -= 1
-            wobble = (11 * x + 13 * y + frame) % 3 if random_animations else frame
+            wobble = tile.wobble if tile.wobble is not None else (11 * x + 13 * y + frame) % 3 if random_animations else frame
             if not done_frames[wobble]:
                 final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y)
                 rendered_frames.append(wobble)

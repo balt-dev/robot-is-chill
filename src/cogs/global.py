@@ -286,7 +286,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for flag in self.bot.flags.list:
                     to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
             raw_output = kwargs.get("raw_output", False)
-            macros = kwargs.get("macro", {})
             image_format = kwargs.get('image_format', 'gif')
             do_embed = kwargs.get('do_embed', False)
             for x, y in reversed(to_delete):
@@ -334,17 +333,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     if catch(tile.index, ":") or catch(tile.index, ";") \
                                             or ":" not in tile and ";" not in tile:
                                         tilecount += 1
-                                        tile = tile.replace('rule_', 'text_')
                                         layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                             possible_variants, tile, rule,
-                                            macros, palette=kwargs.get("palette", "default"), bot=self.bot
+                                            palette=kwargs.get("palette", "default"), bot=self.bot
                                         )
                                     else:
                                         layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                             possible_variants,
                                             layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
                                                 0] + tile,
-                                            rule, macros, bot=self.bot)
+                                            rule, bot=self.bot)
 
                 # Get the dimensions of the grid
                 grid_shape = layer_grid.shape
@@ -867,8 +865,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     @commands.group(aliases=["fi", "filter"], pass_context=True, invoke_without_command=True)
     async def filterimage(self, ctx: Context):
-        """Performs filterimage-related actions like template creation,
-        conversion and accessing the database."""
+        """Performs filterimage-related actions like template creation, conversion and accessing the database.
+Filterimages are formatted as follows:
+- R: X offset of pixel's UV (-127 to 128)
+- G: Y offset of pixel's UV (-127 to 128)
+- B: Brightness of pixel (0 to 255)
+- A: Alpha of pixel (0 to 255)"""
         await ctx.error("Invalid subcommand specified! Use `commands filterimage` to see what subcommmands there are.")
 
     @filterimage.command(aliases=["cvt"])
@@ -882,8 +884,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         filter_headers = requests.head(filter_url, timeout=3).headers
         assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
         with Image.open(requests.get(filter_url, stream=True).raw) as im:
-            fil = np.array(im.convert("RGBA"))
-        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * (1 if target_mode.startswith("abs") else -1)
+            fil = np.array(im.convert("RGBA"), dtype=np.uint8)
+        fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(1 if target_mode.startswith("abs") else -1)
         out = BytesIO()
         Image.fromarray(fil).save(out, format="png", optimize=False)
         out.seek(0)
@@ -903,14 +905,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def create(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"], width: int,
                      height: int):
         """Creates a template filter."""
-        size = (width, height)
-        fil = np.ones((*size[::-1], 4), dtype=np.uint8) * 0xFF
+        assert width > 0 and height > 0, "Can't create a filter with a non-positive area!"
+        size = (height, width)
+        fil = np.ones((*size, 4), dtype=np.uint8) * 0xFF
         fil[..., :2] -= 0x7F
-        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * target_mode.startswith("abs")
+        fil[..., :2] += np.indices(fil.shape[1::-1], dtype=np.uint8).T * target_mode.startswith("abs")
         out = BytesIO()
         Image.fromarray(fil).save(out, format="png", optimize=False)
         out.seek(0)
-        filename = f"filter-{size[0]}x{size[1]}-{target_mode}.png"
+        filename = f"filter-{size[1]}x{size[0]}-{target_mode}.png"
         file = discord.File(out, filename=filename)
         emb = discord.Embed(
             color=ctx.bot.embed_color,
@@ -932,13 +935,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             dname = await cursor.fetchone()
             if dname is not None:
                 return await ctx.error(f"Filter of name `{name}` already exists in the database!")
+            url = ctx.message.attachments[0].url
+            await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
             command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
-            args = (name, target_mode.startswith("abs"), ctx.message.attachments[0].url, ctx.author.id)
+            args = (name, target_mode.startswith("abs"), url, ctx.author.id)
             await cursor.execute(command, args)
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Registered!",
-                description=f'Registered filter `{name}` in the filterimage database!'
+                description=f'Registered filter `{name}` in the filterimage database!\n_Keep in mind that if the message sent to create this filter is deleted, it will no longer work._'
             ).set_footer(
                 text="Filters by CenTdemeern1",
                 icon_url="https://sno.mba/assets/filter_icon.png"
@@ -952,7 +957,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             await cursor.execute("SELECT * FROM filterimages WHERE name == ?;", name)
             attrs = await cursor.fetchone()
             if attrs is None:
-                return await ctx.error(f"Filter of name `{name}` isn't in the filterimage!")
+                return await ctx.error(f"Filter of name `{name}` isn't in the database!")
             name, mode, url, author = attrs
             mode = "absolute" if mode else "relative"
             emb = discord.Embed(
@@ -974,12 +979,16 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Removes a filter from the database. You must have made it to do this."""
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute(
-                f"DELETE FROM filterimages WHERE name == ?{'' if ctx.author.id == ctx.bot.owner_id else ' AND creator == ?'};",
-                (name,) if ctx.author.id == ctx.bot.owner_id else (name, ctx.author.id))
+                f"SELECT url FROM filterimages WHERE name == ?{'' if await ctx.bot.is_owner(ctx.author) else ' AND creator == ?'};",
+                (name,) if await ctx.bot.is_owner(ctx.author) else (name, ctx.author.id))
+            url = (await cursor.fetchone())
+            assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
+            url = url[0]
+            await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Deleted!",
-                description=f"Removed the filter {name} from the database (if it existed in the first place)."
+                description=f"Removed the filter {name} from the database."
             ).set_footer(
                 text="Filters by CenTdemeern1",
                 icon_url="https://sno.mba/assets/filter_icon.png"

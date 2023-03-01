@@ -368,7 +368,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             return variant.__name__
         variants = ctx.bot.variants._values
         if query is not None:
-            variants = [var for var in variants if query in var.__name__.lower()]
+            variants = [var for var in variants if query in var.__name__.lower() and not var.hidden]
+        assert len(variants) > 0, f"No variants were found with the query `{query}`!"
         await ButtonPages(
             source=VariantSource(
                 sorted(variants, key=sort)  # Sort alphabetically

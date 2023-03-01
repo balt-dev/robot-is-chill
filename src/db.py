@@ -37,8 +37,10 @@ class Database:
         # not checking for same thread probably is a terrible idea but
         # whateverrr
         self.conn = await asqlite.connect(db, check_same_thread=False)
+
         def regexp(x, y):
             return bool(re.search(x, y))
+
         self.conn.get_connection().create_function('regexp', 2, regexp)
         print("Initialized database connection.")
         await self.create_tables()
@@ -171,7 +173,16 @@ class Database:
 				);
 				'''
             )
-
+            await cur.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS macros (
+                    name TEXT UNIQUE PRIMARY KEY,
+                    value TEXT,
+                    description TEXT,
+                    creator INT
+                );
+                '''
+            )
     async def tile(self, name: str, *, maximum_version: int = 1000) -> TileData | None:
         """Convenience method to fetch a single thing of tile data.
 
@@ -217,12 +228,12 @@ class Database:
         if direction is None:
             return (
                 Image.open(
-                    f"data/plates/plate_property_0_{wobble+1}.png").convert("RGBA"),
+                    f"data/plates/plate_property_0_{wobble + 1}.png").convert("RGBA"),
                 (0, 0)
             )
         return (
             Image.open(
-                f"data/plates/plate_property{DIRECTIONS[direction]}_0_{wobble+1}.png").convert("RGBA"),
+                f"data/plates/plate_property{DIRECTIONS[direction]}_0_{wobble + 1}.png").convert("RGBA"),
             (3, 3)
         )
 
@@ -239,8 +250,9 @@ class Database:
                 if result is None:
                     if "." not in url:
                         raise AssertionError(f"Filter `{url}` wasn't found in the database!")
-                    assert tldextract.extract(url).domain == "discordapp", "In light of a potential security hazard, only files uploaded from Discord are allowed as filters."
-                    result = f"https://"+url
+                    assert tldextract.extract(
+                        url).domain == "discordapp", "Only files uploaded from Discord are allowed as filters."
+                    result = f"https://" + url
                     absolute = None
                 else:
                     result, absolute = result
@@ -248,7 +260,8 @@ class Database:
                     filter_headers = requests.head(result, timeout=3).headers
                 except requests.exceptions.ConnectionError:
                     raise AssertionError(f"Filter `{url}` isn't a valid URL (or didn't respond in time)!")
-                assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter `{url}` is too big!"
+                assert int(
+                    filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter `{url}` is too big!"
                 buffer = requests.get(result, stream=True).raw.read()
                 try:
                     with Image.open(BytesIO(buffer)) as im:
@@ -258,6 +271,7 @@ class Database:
                 except IOError:
                     raise AssertionError(f"Filter `{url}` couldn't be parsed as an image!")
         return self.filter_cache[url]
+
 
 @dataclass
 class TileData:
