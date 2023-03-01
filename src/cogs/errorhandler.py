@@ -189,6 +189,8 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error(f'The render took too long, so it was cancelled.')
             elif isinstance(error, errors.InvalidFlagError):
                 return await ctx.error(f'A flag failed to parse:\n> `{error}`')
+            elif isinstance(error, commands.BadLiteralArgument):
+                return await ctx.error(f"An argument for the command wasn't in the allowed values of `{', '.join(repr(o) for o in error.literals)}`.")
             # All other Errors not returned come here... And we can just print
             # the default TraceBack + log
             if os.name == "nt":

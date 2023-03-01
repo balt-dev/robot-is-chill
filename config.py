@@ -21,6 +21,7 @@ cogs = [
 	"src.cogs.generator",
 	"src.cogs.event",
 	"src.cogs.flags",
+	"src.cogs.macros",
 	"jishaku"
 ]
 danger_mode = False

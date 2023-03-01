@@ -25,10 +25,8 @@ class TileSkeleton:
     easter_egg: bool = False
 
     @classmethod
-    async def parse(cls, possible_variants, string: str, rule: bool = True, macros=None, palette: str = "default",
+    async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
                     bot=None):
-        if macros is None:
-            macros = {}
         out = cls()
         if string == "-":
             return out
@@ -55,10 +53,14 @@ class TileSkeleton:
             raw_variants.insert(0, "cvtto/HLS")
         macro_count = 0
         for raw_variant in raw_variants:
-            if raw_variant in macros:
-                assert macro_count < 50, "Too many macros! Did you recurse them somewhere?"
+            if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
+                assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
                 macro_count += 1
-                raw_variants.extend(macros[raw_variant].split(":"))
+                raw_macro, *macro_args = raw_variant[2:].split("/")
+                macro = bot.macros[raw_macro].value
+                for i, arg in enumerate(macro_args):
+                    macro = macro.replace(f"${i+1}", arg)
+                raw_variants.extend(macro.split(":"))
                 continue
             try:
                 final_variant = possible_variants[raw_variant]
@@ -144,7 +146,7 @@ class Tile:
                      self.gamma, self.saturation, self.filterimage,
                      self.palette_snapping, self.normalize_gamma, self.altered_frame,
                      hash(tuple(self.variants["sprite"])),
-                     hash(tuple(self.variants["tile"])),
+                     hash(tuple(var for var in self.variants["tile"] if var.hashed)),
                      self.custom_color, self.palette))
 
     @classmethod
@@ -156,7 +158,7 @@ class Tile:
         try:
             metadata = tile_data_cache[name]
             style = constants.TEXT_TYPES[metadata.text_type]
-            value = cls(name=name, sprite=(metadata.source, metadata.sprite), tiling=metadata.tiling,
+            value = cls(name=tile.name, sprite=(metadata.source, metadata.sprite), tiling=metadata.tiling,
                         color=metadata.active_color, variants=tile.variants, empty=False, style=style,
                         palette=tile.palette)
             if metadata.tiling == constants.TILING_TILE:
@@ -173,14 +175,14 @@ class Tile:
                             sprite=character[0], color=color, palette=tile.palette)
             else:
                 raise errors.TileNotFound(name)
-        value.variants["sprite"].append(
-            ctx.bot.variants["0/3"]((4, 2) if tile.easter_egg else value.color, _default_color=True)
-        )
         for variant in value.variants["tile"]:
             await variant.apply(value)
             if value.surrounding != 0:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
+        value.variants["sprite"].append(
+            ctx.bot.variants["0/3"]((4, 2) if tile.easter_egg else value.color, _default_color=True)
+        )
         return value
 
 
@@ -189,6 +191,7 @@ class ProcessedTile:
     """A tile that's been processed, and is ready to render."""
     empty: bool = True
     name: str = "?"
+    wobble: int | None = None
     frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(
         default_factory=lambda: [None, None, None])
     blending: Literal[*tuple(constants.BLENDING_MODES.keys())] = "normal"
@@ -199,4 +202,4 @@ class ProcessedTile:
         return f"ProcessedTile(empty={self.empty}, blending={self.blending}, displacement={self.displacement})"
 
     def copy(self):
-        return ProcessedTile(self.empty, self.name, self.frames, self.blending, self.displacement)
+        return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement, self.keep_alpha)

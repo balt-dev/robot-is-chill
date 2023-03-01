@@ -14,6 +14,7 @@ from discord.ext import commands
 import auth
 import config
 import webhooks
+from src.types import Macro
 from src.db import Database
 
 from numpy import set_printoptions as numpy_set_printoptions
@@ -73,6 +74,7 @@ class Bot(commands.Bot):
         self.flags = None
         self.variants = None
         self.palette_cache = {}
+        self.macros = {}
         for path in glob.glob("data/palettes/*.png"):
             with Image.open(path) as im:
                 self.palette_cache[Path(path).stem] = im.copy()
@@ -97,6 +99,11 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         await self.db.connect(self.db_path)
+        print("Loading macros...")
+        async with self.db.conn.cursor() as cur:
+            await cur.execute("SELECT * from macros")
+            for (name, value, description, author) in await cur.fetchall():
+                self.macros[name] = Macro(value, description, author)
         print(f"Logged in as {self.user}!")
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
