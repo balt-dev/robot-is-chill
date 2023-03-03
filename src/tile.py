@@ -26,7 +26,7 @@ class TileSkeleton:
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
-                    bot=None):
+                    bot=None, global_variant=""):
         out = cls()
         if string == "-":
             return out
@@ -40,6 +40,7 @@ class TileSkeleton:
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
+        raw_variants[0:0] = global_variant.split(":")
         if out.name == "2" and bot is not None:
             # Easter egg!
             out.easter_egg = True
@@ -48,9 +49,7 @@ class TileSkeleton:
                                   "'text_anni' ORDER BY RANDOM() LIMIT 1")
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
-            raw_variants.insert(0, "cvtfrom/HLS")
-            raw_variants.insert(0, "mm(0/0/0/0)/(0/0.5/0/0.5)/(0/0/0.5/0.5)/(1/0/0/1)")
-            raw_variants.insert(0, "cvtto/HLS")
+            raw_variants.insert(0, "m!2ify")
         macro_count = 0
         for raw_variant in raw_variants:
             if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
@@ -181,7 +180,7 @@ class Tile:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
         value.variants["sprite"].append(
-            ctx.bot.variants["0/3"]((4, 2) if tile.easter_egg else value.color, _default_color=True)
+            ctx.bot.variants["0/3"](value.color, _default_color=True)
         )
         return value
 
@@ -193,13 +192,10 @@ class ProcessedTile:
     name: str = "?"
     wobble: int | None = None
     frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(
-        default_factory=lambda: [None, None, None])
+        default_factory=lambda: [None, None, None], repr=False)
     blending: Literal[*tuple(constants.BLENDING_MODES.keys())] = "normal"
     displacement: list[int, int] = field(default_factory=lambda: [0, 0])
     keep_alpha: bool = True
-
-    def __repr__(self):
-        return f"ProcessedTile(empty={self.empty}, blending={self.blending}, displacement={self.displacement})"
 
     def copy(self):
         return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement, self.keep_alpha)

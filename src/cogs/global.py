@@ -127,9 +127,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def start_timeout(self, ctx, *args, timeout_multiplier: float = 1.0, **kwargs):
         def handler(_signum, _frame):
-            asyncio.ensure_future(CommandErrorHandler(ctx.bot).on_command_error(ctx, AssertionError(
-                "The command took too long and was timed out.")))
-
+            raise AssertionError("The command took too long and was timed out.")
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
         await self.render_tiles(ctx, *args, **kwargs)
@@ -232,7 +230,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             start = perf_counter()
             tiles = objects.strip().replace("\\", "").replace("`", "")
             # Replace some phrases
-            tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
+            print(tiles)
+            tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = emoji.demojize(tiles, use_aliases=True)
             replace_list = [
                 ['а', 'a'],
@@ -288,6 +287,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             raw_output = kwargs.get("raw_output", False)
             image_format = kwargs.get('image_format', 'gif')
             do_embed = kwargs.get('do_embed', False)
+            global_variant = kwargs.get('global_variant', "")
             for x, y in reversed(to_delete):
                 del word_grid[y][x]
             try:
@@ -335,7 +335,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         tilecount += 1
                                         layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                             possible_variants, tile, rule,
-                                            palette=kwargs.get("palette", "default"), bot=self.bot
+                                            palette=kwargs.get("palette", "default"), bot=self.bot,
+                                            global_variant=global_variant
                                         )
                                     else:
                                         layer_grid[d:, l, y, x] = await TileSkeleton.parse(
@@ -871,7 +872,7 @@ Filterimages are formatted as follows:
 - G: Y offset of pixel's UV (-127 to 128)
 - B: Brightness of pixel (0 to 255)
 - A: Alpha of pixel (0 to 255)"""
-        await ctx.error("Invalid subcommand specified! Use `commands filterimage` to see what subcommmands there are.")
+        await ctx.invoke(ctx.bot.get_command("cmds"), "filterimage")
 
     @filterimage.command(aliases=["cvt"])
     async def convert(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"]):

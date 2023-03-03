@@ -19,13 +19,14 @@ from ..types import Variant, RegexDict, VaryingArgs, Color, Slice
 CARD_KERNEL = np.array(((0, 1, 0), (1, 0, 1), (0, 1, 0)))
 OBLQ_KERNEL = np.array(((1, 0, 1), (0, 0, 0), (1, 0, 1)))
 META_KERNELS = {
-    "full":   np.array([[1,  1,  1],
-                        [1, -8,  1],
-                        [1,  1,  1]]),
-    "edge":   np.array([[0,  1,  0],
-                        [1, -4,  1],
-                        [0,  1,  0]])
+    "full": np.array([[1, 1, 1],
+                      [1, -8, 1],
+                      [1, 1, 1]]),
+    "edge": np.array([[0, 1, 0],
+                      [1, -4, 1],
+                      [0, 1, 0]])
 }
+
 
 def class_init(self, *args, **kwargs):
     self.args = args
@@ -65,7 +66,7 @@ def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[An
         else:
             try:
                 raw_val = v.pop(0)
-                if curr_type is float:
+                if curr_type is float or curr_type is int:
                     raw_val = "-" * (raw_val.count("-") % 2) + raw_val.lstrip("-")
                 val = curr_type(raw_val)
             except ValueError:
@@ -115,7 +116,7 @@ async def setup(bot):
             if param.annotation == inspect.Parameter.empty:
                 continue
             elif param.kind == inspect.Parameter.VAR_POSITIONAL:
-                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m" \
+                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m/" \
                           f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m" \
                           f"/[0;30m..."
                 break
@@ -151,7 +152,8 @@ async def setup(bot):
                 tree.append(p.annotation)
         return tree
 
-    def create_variant(func: Callable, aliases: Iterable[str], no_function_name=False, hashed=True, hidden=False) -> type[Variant]:
+    def create_variant(func: Callable, aliases: Iterable[str], no_function_name=False, hashed=True, hidden=False) -> \
+    type[Variant]:
         assert func.__doc__ is not None, f"Variant `{func.__name__}` is missing a docstring!"
         sig = inspect.signature(func)
         params = sig.parameters
@@ -273,8 +275,14 @@ async def setup(bot):
         sprite = recolor(sprite, rgba)
         return sprite
 
+    @add_variant("dcol", "dc", "%")
+    async def default_color(tile, color: Color):
+        """Overrides the tile's default color."""
+        assert len(color) == 2, "Can't override the default with a hexadecimal color!"
+        tile.color = tuple(color)
+
     @add_variant(no_function_name=True)
-    async def color(sprite, color: Color, *, tile, wobble, renderer, _default_color=False):
+    async def color(sprite, color: Color, *, tile, wobble, renderer, _default_color = False):
         """Sets the tile's color.
 Can take:
 - A hexadecimal RGB/RGBA value, as #RGB, #RGBA, #RRGGBB, or #RRGGBBAA
@@ -283,6 +291,7 @@ Can take:
         if _default_color:
             if tile.custom_color:
                 return sprite
+            color = tile.color
         else:
             tile.custom_color = True
         if len(color) == 4:
@@ -302,8 +311,8 @@ Can take:
 
     @add_variant("grad")
     async def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
-                 offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
-                 extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
+                       offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
+                       extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
         """Applies a gradient to a tile.
 Interpolates color through CIELUV color space by default. This can be toggled with [0;36mraw[0m.
 If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%."""
@@ -338,15 +347,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         tile.custom_color = True
         assert overlay in renderer.overlay_cache, f"`{overlay}` isn't a valid overlay!"
         overlay_image = renderer.overlay_cache[overlay]
-        tile_amount = np.ceil(overlay_image.shape[:2] / np.array(sprite.shape[:2]))  # Convert sprite.shape to ndarray to allow vectorized math
+        tile_amount = np.ceil(np.array(sprite.shape[:2]) / overlay_image.shape[:2]).astype(
+            int)  # Convert sprite.shape to ndarray to allow vectorized math
         overlay_image = np.tile(overlay_image, (*tile_amount, 1))[:sprite.shape[0], :sprite.shape[1]].astype(float)
         return np.multiply(sprite, overlay_image / 255, casting="unsafe").astype(np.uint8)
 
     # --- TEXT MANIPULATION ---
 
     @add_variant("noun", "prop")
-    async def property(sprite, plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
-                 tile, wobble, renderer):
+    async def property(sprite,
+                       plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
+                       tile, wobble, renderer):
         """Applies a property plate to a sprite."""
         if plate is None:
             plate = tile.frame if tile.altered_frame else None
@@ -360,10 +371,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         delta = ((plate.shape[0] - sprite.shape[0]) // 2,
                  (plate.shape[1] - sprite.shape[1]) // 2)
         p_delta = (max(-delta[0], 0), max(-delta[1], 0))
-        dummy[p_delta[0]:p_delta[0]+plate.shape[0],
-              p_delta[1]:p_delta[1]+plate.shape[1]] = plate
-        dummy[delta[0]:delta[0]+sprite.shape[0],
-              delta[1]:delta[1]+sprite.shape[1]] &= ~sprite
+        dummy[p_delta[0]:p_delta[0] + plate.shape[0],
+        p_delta[1]:p_delta[1] + plate.shape[1]] = plate
+        dummy[delta[0]:delta[0] + sprite.shape[0],
+        delta[1]:delta[1] + sprite.shape[1]] &= ~sprite
         return np.dstack([dummy[..., np.newaxis].astype(np.uint8) * 255] * 4)
 
     @add_variant()
@@ -389,9 +400,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Rotates a sprite."""
         if expand:
             scale = math.cos(math.radians(-angle % 90)) + math.sin(math.radians(-angle % 90))
-            sprite = np.pad(sprite, ((int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
-                               (int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
-                               (0, 0)))
+            sprite = np.pad(sprite,
+                            ((int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
+                             (int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
+                             (0, 0)))
         image_center = tuple(np.array(sprite.shape[1::-1]) / 2)
         rot_mat = cv2.getRotationMatrix2D(image_center, -angle, 1.0)
         return cv2.warpAffine(sprite, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
@@ -405,21 +417,21 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         w, h = sprite.shape[1::-1]
         proj_23 = np.array([[1, 0, -w / 2],
                             [0, 1, -h / 2],
-                            [0, 0,      1],
-                            [0, 0,      1]])
+                            [0, 0, 1],
+                            [0, 0, 1]])
         rot_mat = np.dot(np.dot(
             np.array([[1, 0, 0, 0],
-                       [0, math.cos(theta), -math.sin(theta), 0],
-                       [0, math.sin(theta), math.cos(theta), 0],
-                       [0, 0, 0, 1]]),
+                      [0, math.cos(theta), -math.sin(theta), 0],
+                      [0, math.sin(theta), math.cos(theta), 0],
+                      [0, 0, 0, 1]]),
             np.array([[math.cos(phi), 0, -math.sin(phi), 0],
-                       [0, 1, 0, 0],
-                       [np.sin(phi), 0, math.cos(phi), 0],
-                       [0, 0, 0, 1]])),
+                      [0, 1, 0, 0],
+                      [np.sin(phi), 0, math.cos(phi), 0],
+                      [0, 0, 0, 1]])),
             np.array([[math.cos(gamma), -math.sin(gamma), 0, 0],
-                       [math.sin(gamma), math.cos(gamma), 0, 0],
-                       [0, 0, 1, 0],
-                       [0, 0, 0, 1]]))
+                      [math.sin(gamma), math.cos(gamma), 0, 0],
+                      [0, 0, 1, 0],
+                      [0, 0, 0, 1]]))
         trans_mat = np.array([
             [1, 0, 0, 0],
             [0, 1, 0, 0],
@@ -428,7 +440,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         proj_32 = np.array([
             [f, 0, w / 2, 0],
             [0, f, h / 2, 0],
-            [0, 0,     1, 0]
+            [0, 0, 1, 0]
         ])
         final_matrix = np.dot(proj_32, np.dot(trans_mat, np.dot(rot_mat, proj_23)))
         return cv2.warpPerspective(sprite, final_matrix, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
@@ -455,7 +467,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Pixelates the sprite."""
         if y is None:
             y = x
-        return sprite[y-1::y, x-1::x].repeat(y, axis=0).repeat(x, axis=1)
+        return sprite[y - 1::y, x - 1::x].repeat(y, axis=0).repeat(x, axis=1)
 
     @add_variant("m")
     async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
@@ -479,18 +491,34 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return base
 
     @add_variant()
-    async def land(post, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
-        """Removes all space between the tile and its bounding box on the specified side."""
-        frame = next(filter(lambda f: f is not None, post.frames), None)
-        if frame is None:
-            return post
-        rows = np.any(frame[:, :, 3], axis=1)
-        cols = np.any(frame[:, :, 3], axis=0)
-        left, right = np.where(rows)[0][[0, -1]]
-        top, bottom = np.where(cols)[0][[0, -1]]
-        displacement = {"left": left, "top": top, "right": -right, "bottom": -bottom}[direction]
+    async def land(sprite, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
+        """Removes all space between the sprite and its bounding box on the specified side."""
+        rows = np.any(sprite[:, :, 3], axis=1)
+        cols = np.any(sprite[:, :, 3], axis=0)
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        displacement = {"left": left, "top": top, "right": right+1-sprite.shape[1], "bottom": bottom+1-sprite.shape[0]}[direction]
         index = {"left": 0, "top": 1, "right": 0, "bottom": 1}[direction]
-        post.displacement[index] += displacement
+        return await wrap(sprite, ((1 - index) * displacement), index * displacement)
+
+    @add_variant()
+    async def bbox(sprite):
+        """Puts the sprite's bounding box behind it. Useful for debugging."""
+        rows = np.any(sprite[:, :, 3], axis=1)
+        cols = np.any(sprite[:, :, 3], axis=0)
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        out = np.zeros_like(sprite).astype(float)
+        out[top:bottom,   left:right] = (0xFF, 0xFF, 0xFF, 0x80)
+        out[top,          left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[bottom,       left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[top:bottom,   left      ] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[top:bottom+1, right     ] = (0xFF, 0xFF, 0xFF, 0xc0)
+        sprite = sprite.astype(float)
+        mult = sprite[..., 3, np.newaxis] / 255
+        sprite[..., :3] = (1 - mult) * out[..., :3] + mult * sprite[..., :3]
+        sprite[...,  3] = (sprite[..., 3] + out[..., 3] * (1 - mult[..., 0]))
+        return sprite.astype(np.uint8)
 
     @add_variant()
     async def warp(sprite, x1_y1: list[int, int], x2_y2: list[int, int], x3_y3: list[int, int], x4_y4: list[int, int]):
@@ -525,7 +553,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         dst += before_padding
         new_shape = (src_shape + before_padding + after_padding).astype(np.uint32)[::-1]
         final_arr = np.zeros((*new_shape, 4), dtype=np.uint8)
-        for source, destination in zip(src, dst): # Iterate through the four triangles
+        for source, destination in zip(src, dst):  # Iterate through the four triangles
             clip = cv2.fillConvexPoly(np.zeros(new_shape, dtype=np.uint8), destination, 1).astype(bool)
             M = cv2.getAffineTransform(source.astype(np.float32), destination.astype(np.float32))
             warped_arr = cv2.warpAffine(sprite, M, new_shape[::-1], flags=cv2.INTER_NEAREST)
@@ -534,10 +562,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
 
     @add_variant("mm")
     async def matrix(sprite,
-               aa_ab_ac_ad: list[float, float, float, float],
-               ba_bb_bc_bd: list[float, float, float, float],
-               ca_cb_cc_cd: list[float, float, float, float],
-               da_db_dc_dd: list[float, float, float, float]):
+                     aa_ab_ac_ad: list[float, float, float, float],
+                     ba_bb_bc_bd: list[float, float, float, float],
+                     ca_cb_cc_cd: list[float, float, float, float],
+                     da_db_dc_dd: list[float, float, float, float]):
         """Multiplies the sprite by the given RGBA matrix."""
         matrix = np.array((aa_ab_ac_ad, ba_bb_bc_bd, ca_cb_cc_cd, da_db_dc_dd)).T
         img = sprite.astype(np.float64) / 255.0
@@ -565,13 +593,14 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
 
     @add_variant()
     async def convolve(sprite, width: int, height: int, *cell: float):
-        """Convolves the sprite with the given 2D convolution matrix."""
-        assert width*height == len(cell), f"Can't fit {len(cell)} values into a matrix that's {width}x{height}!"
+        """Convolves the sprite with the given 2D convolution matrix. Information on these can be found at https://en.wikipedia.org/wiki/Kernel_(image_processing)"""
+        assert width * height == len(cell), f"Can't fit {len(cell)} values into a matrix that's {width}x{height}!"
         kernel = np.array(cell).reshape((height, width))
         return cv2.filter2D(src=sprite, ddepth=-1, kernel=kernel)
 
     @add_variant()
-    async def scan(sprite, axis: Literal["x", "y"], on: Optional[int] = 1, off: Optional[int] = 1, offset: Optional[int] = 0):
+    async def scan(sprite, axis: Literal["x", "y"], on: Optional[int] = 1, off: Optional[int] = 1,
+                   offset: Optional[int] = 0):
         """Removes rows or columns of pixels to create a scan line effect."""
         assert on >= 0 and off >= 0 and on + off > 0, f"Scan mask of `{on}` on and `{off}` off is invalid!"
         axis = ("y", "x").index(axis)
@@ -614,16 +643,18 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Centers the sprite on its visual bounding box."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
-        left, right = np.where(rows)[0][[0, -1]]
-        top, bottom = np.where(cols)[0][[0, -1]]
-        sprite_center = sprite.shape[0] // 2, sprite.shape[1] // 2
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        sprite_center = sprite.shape[0] // 2 - 1, sprite.shape[1] // 2 - 1
         center = int((top + bottom) // 2), int((left + right) // 2)
-        displacement = sprite_center[0] - center[0] + top, sprite_center[1] - center[1] + left
-        return np.roll(sprite, displacement)
+        displacement = np.array((sprite_center[0] - center[0], sprite_center[1] - center[1]))
+        print(left, top, right, bottom, center, sprite_center, displacement)
+        return np.roll(sprite, displacement, axis=(0, 1))
 
     @add_variant("disp")
     async def displace(post, x: int, y: int):
         """Displaces the tile by the specified coordinates."""
+        print("disp", (x, y), post)
         post.displacement = [post.displacement[0] - x, post.displacement[1] - y]
 
     # Original code by Charlotte (CenTdemeern1)
@@ -703,7 +734,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         return out.astype(np.uint8)
 
     @add_variant("abberate")  # misspelling alias because i misspell it all the time
-    def aberrate(sprite, x: int, y: int):
+    async def aberrate(sprite, x: int, y: int):
         """Abberates the colors of a sprite."""
         sprite = np.pad(sprite, ((abs(y), abs(y)), (abs(x), abs(x)), (0, 0)))
         sprite[:, :, 0] = np.roll(sprite[:, :, 0], -x, 1)
@@ -744,20 +775,37 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         # NOTE: I couldn't find a way to do this without at least one Python loop :/
         for i in range(sprite.shape[0]):
             sprite_slice = sprite[i, sprite[i, :, 3] != 0]
-            sprite[i] = np.pad(sprite_slice, ((sprite[i].shape[0] - sprite_slice.shape[0], 0)[::2 * at_end - 1], (0, 0)))
+            sprite[i] = np.pad(sprite_slice,
+                               ((sprite[i].shape[0] - sprite_slice.shape[0], 0)[::2 * at_end - 1], (0, 0)))
         if is_vertical:
             sprite = np.swapaxes(sprite, 0, 1)
         return sprite
 
     @add_variant()
-    async def wave(sprite, axis: Literal["x", "y"], amplitude: int, offset: int, frequency: float):
-        """Displaces the sprite by a wave. All values are percentages of the sprite's heighu"""
+    async def bend(sprite, axis: Literal["x", "y"], amplitude: int, offset: float, frequency: float):
+        """Displaces the sprite by a wave. Frequency is a percentage of the sprite's size along the axis."""
         if axis == "y":
             sprite = np.rot90(sprite)
-        offset = ((np.sin(np.linspace(offset, np.pi * 2 * frequency + offset, sprite.shape[0])) / 2) * amplitude).astype(
+        offset = ((np.sin(
+            np.linspace(offset, np.pi * 2 * (frequency + offset), sprite.shape[0])) / 2) * amplitude).astype(
             int)
         # NOTE: np.roll can't be element wise :/
-        sprite[:] = sprite[np.mod(np.arange(sprite.shape[0]) + offset, sprite.shape[0])]
+        sprite[:] = sprite[np.mod(np.arange(sprite.shape[0]) + offset, sprite.shape[1])]
+        if axis == "y":
+            sprite = np.rot90(sprite, -1)
+        return sprite
+
+    @add_variant()
+    async def wave(sprite, axis: Literal["x", "y"], amplitude: int, offset: float, frequency: float):
+        """Displaces the sprite per-slice by a wave. Frequency is a percentage of the sprite's size along the axis."""
+        if axis == "y":
+            sprite = np.rot90(sprite)
+        offset = ((np.sin(
+            np.linspace(offset, np.pi * 2 * (frequency + offset), sprite.shape[0])) / 2) * amplitude).astype(
+            int)
+        # NOTE: np.roll can't be element wise :/
+        for row in range(sprite.shape[0]):
+            sprite[row] = np.roll(sprite[row], offset[row], axis=0)
         if axis == "y":
             sprite = np.rot90(sprite, -1)
         return sprite
@@ -803,7 +851,9 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     @add_variant("sat", "grayscale", "gscale")
     async def saturation(sprite, saturation: Optional[float] = 0):
         """Saturates or desaturates a sprite."""
-        return composite(sprite, sprite.convert("LA").convert("RGBA"), 1.0 - saturation)
+        gray_sprite = sprite.copy()
+        gray_sprite[..., :3] = (sprite[..., 0] * 0.299 + sprite[..., 1] * 0.587 + sprite[..., 2] * 0.114)[..., np.newaxis]
+        return composite(gray_sprite, sprite, saturation)
 
     @add_variant()
     async def blank(sprite):
@@ -825,7 +875,8 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     @add_variant("nl")
     async def normalize_lightness(sprite):
         """Normalizes a sprite's HSL lightness, bringing the lightest value up to full brightness."""
-        arr_hls = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HLS).astype(np.float64)  # since WHEN was it HLS???? huh?????
+        arr_hls = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HLS).astype(
+            np.float64)  # since WHEN was it HLS???? huh?????
         max_l = np.max(arr_hls[:, :, 1])
         arr_hls[:, :, 1] *= (255 / max_l)
         sprite[:, :, :3] = cv2.cvtColor(arr_hls.astype(np.uint8), cv2.COLOR_HLS2RGB)  # my question still stands
@@ -839,7 +890,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     @add_variant()
     async def crop(sprite, x_y: list[int, int], u_v: list[int, int], change_bbox: Optional[bool] = False):
         """Crops the sprite to the specified bounding box.
-    If the [36mchange_bbox[0m toggle is on, then the sprite's bounding box is altered, as opposed to removing pixels."""
+    If the [36mchange_bbox[0m toggle is on, then the sprite's bounding box is altered, as opposed to removing pixels."""
         (x, y), (u, v) = x_y, u_v
         if change_bbox:
             return sprite[y:v, x:u]
@@ -866,7 +917,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
 
     @add_variant("cvt")
     async def convert(sprite, direction: Literal["to", "from"],
-                space: Literal["BGR", "HSV", "HLS", "YUV", "YCrCb", "XYZ", "Lab", "Luv"]):
+                      space: Literal["BGR", "HSV", "HLS", "YUV", "YCrCb", "XYZ", "Lab", "Luv"]):
         """Converts the sprite's color space to or from RGB. Mostly for use with :matrix."""
         space_conversion = {
             "to": {
@@ -894,7 +945,8 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         return sprite
 
     @add_variant()
-    async def threshold(sprite, r: float, g: Optional[float] = None, b: Optional[float] = None, a: Optional[float] = 0.0):
+    async def threshold(sprite, r: float, g: Optional[float] = None, b: Optional[float] = None,
+                        a: Optional[float] = 0.0):
         """Removes all pixels below a threshold.
 This can be used in conjunction with blur, opacity, and additive blending to create a bloom effect!
 If a value is negative, it removes pixels above the threshold instead."""
@@ -918,7 +970,7 @@ If a value is negative, it removes pixels above the threshold instead."""
         else:
             arr = cv2.boxFilter(arr, -1, (radius * 2 + 1, radius * 2 + 1))
         return arr
-    
+
     @add_variant("fish")
     async def fisheye(sprite, strength: float):
         """Applies a fisheye effect."""
@@ -956,7 +1008,8 @@ If a value is negative, it removes pixels above the threshold instead."""
         return np.uint8(mapped)
 
     @add_variant()
-    async def glitch(sprite, distance: int, chance: Optional[float] = 1.0, seed: Optional[int] = None, *, tile, wobble, renderer):
+    async def glitch(sprite, distance: int, chance: Optional[float] = 1.0, seed: Optional[int] = None, *, tile, wobble,
+                     renderer):
         """Randomly displaces a sprite's pixels. An RNG seed is created using the tile's attributes if not specified."""
         if seed is None:
             seed = abs(hash(tile))
@@ -967,8 +1020,9 @@ If a value is negative, it removes pixels above the threshold instead."""
         displacement[mask > chance] = 0
         dst += displacement
         return cv2.remap(sprite, dst[1], dst[0],
-                           interpolation=cv2.INTER_NEAREST,
-                           borderMode=cv2.BORDER_WRAP)
+                         interpolation=cv2.INTER_NEAREST,
+                         borderMode=cv2.BORDER_WRAP)
+
     # --- ADD TO BOT ---
 
     bot.variants = RegexDict([(variant.pattern, variant) for variant in bot.variants])
