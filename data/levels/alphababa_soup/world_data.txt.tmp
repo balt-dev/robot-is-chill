@@ -1,0 +1,14 @@
+[levels]
+rolling_levelid=4
+levelid=144
+
+[general]
+mods=1
+name=alphababa soup
+firstlevel=introduction
+author=randomiser
+start=introduction
+prize_max=101
+clear_max=9
+bonus_max=1
+

@@ -1,0 +1,11 @@
+[general]
+name=Super Museum 2023 Turbo
+author=Hempuli
+start=106level
+clear_max=0
+prize_max=236
+bonus_max=0
+firstlevel=0level
+[levels]
+levelid=209
+rolling_levelid=8

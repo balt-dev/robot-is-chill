@@ -1,0 +1,27 @@
+[general]
+customparent=
+levels=0
+leveltype=0
+music=garden
+name=the climb
+palette=garden.png
+paletteroot=1
+particles=pollen
+paths=0
+selectorX=-1
+selectorY=-1
+specials=0
+unlockcount=0
+[tiles]
+changed=object111,object110,object079,object036,object046,
+object111_image=text_spike
+object111_name=text_spike
+object110_image=spike
+object110_name=spike
+object110_tiling=-1
+object079_image=tree2
+object079_root=0
+object036_colour=0,2
+object036_activecolour=0,3
+object046_activecolour=6,2
+object046_colour=6,1

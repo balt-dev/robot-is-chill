@@ -1,0 +1,240 @@
+hey! thanks for downloading!!
+
+this pack heavily features the manipulation of letters in ways that shouldn't work in unmodded baba. this is because i've created work arounds using hidden text and the like to create the illusion that the features are modded in. so to clarify, there are no mods in this pack!
+
+something to note too - please play with your sound on as i have put a lot of effort into creating the music. thank you :) 
+
+
+
+
+
+
+*spoilers*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+included is:
+ - 54 levels!!
+ - 4 worlds
+ - lots of music composed by yours truly, as well as seperate remixes of all of the various worlds themes in a different style that show up for the Extra levels
+ - custom palettes
+ - custom sprites!! not many but theres a few :D
+
+also important to mention: anyone is free to use any of the custom stuff (music, sprites, palettes) in this levelpack so long as i am credited!
+
+
+
+LEVEL LIST:
+
+	OVERWORLD
+
+1. Welcome!
+2. Ring a Roses
+3. Fishy Business
+4. Safety Hazard
+5. To the Moon and Back
+
+
+	ABANDONED VILLAGE
+
+1. Rockblock
+2. Memory Lane
+3. Kids These Days
+4. Flying Solo
+5. You're Invited Too
+6. Shortcut
+7. Breakout
+8. Electric Shuffle
+9. Levitation
+10. Excuse Me
+
+Remix Extra of 2. Delinquent
+Vanilla Extra of 10. Excuses, Excuses (original solution by Randomiser)
+
+
+	FROSTY GLACIER
+
+1. Abbreviation
+2. Time Capsule
+3. Hungry
+4. Colder Waters
+5. Pack Mentality
+6. BFFs
+7. Abstract Playground
+8. B.Is.Y Day
+9. Log Cabin
+10. Through Fire and Float
+11. Pit Of Trials
+12. (N)Ice House
+
+Remix Extra of 9. Dog Cabin
+Vanilla Extra of 10. Over and Under
+
+
+	GLOWSHROOM CAVERN
+
+1. Hieroglyphics
+2. The Final Nail
+3. Hidden Meanings
+4. Bat Bog
+5. Sharing is Caring
+6. Fragile Kitty
+7. Vampire Bite
+8. Corner Shop
+9. Limited Edition
+10. Wordsearch
+
+Remix Extra of 9. Collectors Edition
+Vanilla Extra of 8. Reasonably Roomy
+
+
+	DEVOID BEACH
+
+1. Technical Difficulties
+2. Never Enough
+3. Split
+4. Spelling Bee
+5. Nightmare
+
+END. Taste of Victory
+
+Extra 1. Fraternal
+Extra 2. Dot the I, Cross the Gap
+
+A. Put the Kettle On
+B. All Too Quiet
+
+Vanilla Extra of 3. Rupture (original solution by IMaginatory)
+
+
+	EXTRAS
+
+A. To the Moon and Back - BTS
+B. You're Invited Too - BTS
+C. Wordsearch - BTS
+
+final count is 57/4/0
+
+
+
+update log!!
+
+
+V1.8
+(theres a 99% chance this is the "definitive edition" of the pack? if theres no bugs of course HAHA lets hope i havent broken anything again)
+ - Reasonably Roomy cheese fixed through the addition of a single AND
+ - world 2 music still needs work, but for now it should be a bit quieter. maybe ill return to it one day after learning more about different types of music compression
+ - devoid beach completion changed from 10 puffs to 8
+ - general improvements
+
+
+V1.7
+ - Excuse me is now a mess of restrictions: MOON IS NOT VASE, VASE IS VASE, VASE IS NOT BROKEN, good luck beating it if you haven't already lmfao. its also wider now to compensate for the extra rule (VASE IS VASE)
+ - LOTS of small visual changes - ?'s in world 4 are always phantom, "letter" shows up in the objects list for world 3, hidden text has been moved to prevent accidental rule making, that kind of thing.
+
+
+V1.6
+ - 3-vanilla should be accessable now :,)
+ - altered Excuses, Excuses to both minimize potential cheeseage and make the solution more interesting
+ - tweak to Excuse me, again
+ - CRAB and PLUS added to the object palette of w4, purely visual as they dont do anything
+ - replaced some of the ice in B.Is.Y Day with a wall to prevent unexpected rules being created (which could be used to exploit it)
+ - (N)Ice House should be significantly harder, as a K has been removed
+ - beating extra 4 on the world map shouldn't unlock w4 early before, oops
+ - a few visual changes here and there as usual :)
+
+
+V1.5
+ - introducing vanilla levels! like the remix levels, theres one in each world, and its a remaster of a previous level. the soltuions to vanilla levels completely ignore all of the rules from letters+ (in fact, all hidden text on these levels are removed). 100% a world to unlock the vanilla level from it!
+ - made the cursor different colours on the world maps
+other fixes include:
+ - small tweak for Excuse Me
+ - duct tapey fix for Pit of Trials, prevents ALGAE HAS ALGAE
+ - Wordsearch is the bane of my existence. pulling arrow off of a pillar/ice would break PILLAR IS DEFEAT. this is fixed.
+ - FUNGUS IS STOP in Dot The I, Cross The Gap
+
+
+V1.4
+ - Excuse Me fixed for the final time (???)
+ - Colder Waters actually fixed properly lol
+ - added an extra box to Dog Cabin to prevent ICE IS WIN
+ - overhauled the system in Through Fire and Float - all this means is that snowman can become ice, and ice can become snowman
+ - FIRE IS FIRE now present in Dot The I, Cross The Gap
+ - small visual stuff
+
+
+V1.3
+ - so um. remember when i said Wordsearch was finally fixed. well, famous last words: it should be fixed for good now.
+ - Excuse Me has another restriction on vase to prevent more cheese
+ - no more breaking the rule on the side in Colder Waters >:(
+ - B.Is.Y Day, all 3 main objects are now stop
+ - ironically, turning house into 2 keys via skull housing is no longer viable in (N)Ice House 
+ - small visual stuff that people bought up on the discord. thanks!!!
+
+
+V1.2
+ - WHOOPS the previous "fix" for Wordsearch actually completely broke the level. that has been actually fixed
+ - world 4 is such a mess - somehow forgot to add a whole level and one of the levels wasn't even accessable
+ - in Split it was possible to make TEXT NEAR PLUS IS CRAB and then break ? IS STOP
+ - how did i not see you can make LEVEL IS YOU in Spelling Bee, which immediately lets you win due to the flag, lol
+ - removed cheese for Excuse Me
+ - other general quality of life improvements way too boring to mention (tiny visual stuff)
+
+
+V1.1
+ - transforming Fraternal previously would still leave a bucket in its place. this has been fixed so the pack is actually beatable !!
+ - Fishy Business visual mishap (BABA IS FISH turned baba into a bird)
+ - added restrictions to make the win condition for The Final Nail only be the working one, lol
+ - ARROW IS ARROW now present in Wordsearch since i forgot about it the first time
+ - tweaked layout of Corner Shop
+ - tweaked Collectors Edition to prevent obvious cheese
+ - a few other small visual changes
+
+
+V1.0
+ - pack exists now, oh yeah!! if there's any problems please don't be afraid to contact me :D discord tag is @olie7701

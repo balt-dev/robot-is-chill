@@ -1,0 +1,20 @@
+[tiles]
+object001_layer=20
+object119_type=3
+object119_image=text_idle
+object119_name=text_idle
+changed=object119,object001,object000,
+
+[general]
+selectorY=-1
+unlockcount=0
+selectorX=-1
+leveltype=0
+specials=0
+paths=0
+levels=0
+palette=default.png
+customparent=
+paletteroot=1
+name=bug catcher
+
