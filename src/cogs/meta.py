@@ -24,16 +24,21 @@ from ..utils import ButtonPages
 
 
 class CommandPageSource(menus.ListPageSource):
-    def __init__(self, data: Sequence[tuple[Command]]):
+    def __init__(self, data: Sequence[tuple[Command]], pattern: str):
         data = copy(data)  # Just to be safe
-        new_data = list(data)
+        new_data = [command for command in data if re.search(pattern, command.name)]
+        assert len(new_data), "Search query didn't find any commands!"
         for i, command in enumerate(data):
-            if isinstance(command, commands.Group) and not command.hidden and command.name != "jishaku":
+            if isinstance(command, commands.Group) \
+                    and not command.hidden \
+                    and command.name != "jishaku":
                 children = []
                 for child in command.commands:
-                    child.name = f"{command.name} {child.name}"
-                    child.aliases = tuple(f"{command.name} {alias}" for alias in child.aliases)
-                    children.append(child)
+                    if re.search(pattern, f"{command.name} {child.name}"):
+                        new_child = copy(child)
+                        new_child.name = f"{command.name} {child.name}"
+                        new_child.aliases = tuple(f"{command.name} {alias}" for alias in child.aliases)
+                        children.append(new_child)
                 new_data[i + 1:i + 1] = children
         super().__init__(new_data, per_page=1)
 
@@ -100,7 +105,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
         new_query = query
         if query is None or query == "list":
             new_query = ""
-        cmds = sorted((cmd for cmd in self.bot.commands if re.match(new_query, cmd.name) and not cmd.hidden),
+        cmds = sorted((cmd for cmd in self.bot.commands if not cmd.hidden),
                       key=lambda cmd: cmd.name)
         if query == "list":
             names = [cmd.name for cmd in cmds]
@@ -110,7 +115,8 @@ class MetaCog(commands.Cog, name="Other Commands"):
         assert len(cmds) > 0, f"No commands found for the query `{query}`!"
         await ButtonPages(
             source=CommandPageSource(
-                cmds
+                cmds,
+                new_query
             ),
         ).start(ctx)
 
@@ -130,6 +136,8 @@ class MetaCog(commands.Cog, name="Other Commands"):
 This help page should be able to guide you to everything you need to know.
 - If you need a list of tiles you can use, look through `search`.
 - If you need a list of commands, look at `commands`.
+- If you need to search through variants, look at `variants`.
+- If you need to make a macro, look at `macro`.
 - If you need to make a render, look at `commands tile`.
 - If you need help on a level, look at `hints <level name>`.
 - If you need to look at a level, look at `level`.""",

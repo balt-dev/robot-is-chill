@@ -353,6 +353,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
+        if "variant" in query:
+            await ctx.reply("_Looking for variants? They've moved to the `variants` command._", delete_after=10, mention_author=False)
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),

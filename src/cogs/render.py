@@ -4,6 +4,7 @@ import glob
 import math
 import random
 import re
+import sys
 import time
 import zipfile
 from io import BytesIO
@@ -18,6 +19,10 @@ from src.tile import ProcessedTile, Tile
 from .. import constants, errors
 from ..types import Color
 from ..utils import cached_open
+
+import cProfile
+import pstats
+from pstats import SortKey
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -183,7 +188,7 @@ class Renderer:
                             continue
                         displacement = (y * spacing - int((first_frame[0] - spacing) / 2) + top - tile.displacement[1],
                                         x * spacing - int((first_frame[1] - spacing) / 2) + left - tile.displacement[0])
-                        for frame in frames:
+                        for i, frame in enumerate(frames):
                             wobble = tile.wobble if tile.wobble is not None else (11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
                             image = tile.frames[wobble]
                             dslice = (default_size - (first_frame + displacement))
@@ -199,7 +204,7 @@ class Renderer:
                                 slice(max(displacement[0], 0), image.shape[0] + max(displacement[0], 0)),
                                 slice(max(displacement[1], 0), image.shape[1] + max(displacement[1], 0))
                             )
-                            index = (t * len(frames)) + frame - 1, *src_slice
+                            index = (t * len(frames)) + i - 1, *src_slice
                             steps[index] = self.blend(tile.blending, steps[index], image, tile.keep_alpha)
         comp_ovh = time.perf_counter() - start_time
         start_time = time.perf_counter()
@@ -222,11 +227,15 @@ class Renderer:
                 step = np.multiply(step[..., :3], np.dstack([step_a] * 3).astype(float) / 255,
                                    casting="unsafe").astype(np.uint8)
                 true_rgb = step.astype(float) * (step_a.astype(float) / 255).reshape(*step.shape[:2], 1)
-                too_dark_mask = np.logical_and(np.all(true_rgb < 4, axis=2), step_a != 0)
-                step[too_dark_mask, 2] = 4  # Blue has the least luminosity
-            im = Image.fromarray(step)
-            assert im.height * im.width > 0, "Tried to save a frame with 0 area! Check your flags and tiles."
-            images.append(im.resize((int(im.width * upscale), int(im.height * upscale)), Image.NEAREST))
+                too_dark_mask = np.logical_and(np.all(true_rgb < 8, axis=2), step_a != 0)
+                step[too_dark_mask, 2] = 8  # Blue has the least luminosity
+            images.append(
+                cv2.resize(
+                    step,
+                    (int(step.shape[1] * upscale), int(step.shape[0] * upscale)),
+                    interpolation=cv2.INTER_NEAREST
+                )
+            )
         self.save_frames(images,
                          out,
                          durations,
@@ -374,7 +383,8 @@ class Renderer:
         tile_hash = hash((tile, gscale))
         cached = tile_hash in tile_cache.keys()
         if cached:
-            final_tile = tile_cache[tile_hash]
+            final_tile.frames = tile_cache[tile_hash]
+            print(final_tile)
         final_tile.wobble = tile.wobble
         done_frames = [frame is not None for frame in final_tile.frames]
         frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
@@ -385,7 +395,7 @@ class Renderer:
                 final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y)
                 rendered_frames.append(wobble)
         if not cached:
-            tile_cache[tile_hash] = final_tile.copy()
+            tile_cache[tile_hash] = final_tile.frames.copy()
         return final_tile, rendered_frames, cached
 
     async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], *, random_animations: bool = False,
@@ -647,7 +657,7 @@ class Renderer:
 
     def save_frames(
             self,
-            images: list[Image.Image],
+            images: list[np.ndarray],
             out: str | BinaryIO,
             durations: list[int],
             extra_out: str | BinaryIO | None = None,
@@ -663,22 +673,26 @@ class Renderer:
         buffer. If extra_out is provided, the frames are also saved as a
         zip file there.
         """
+        print(".?")
         if boomerang and len(images) > 2:
             images += images[-2:0:-1]
             durations += durations[-2:0:-1]
         if image_format == 'gif':
-            gif_images = images.copy()
-            if not background:
+            print("..?")
+            if background:
+                gif_images = [Image.fromarray(im) for im in images]
+            else:
+                gif_images = []
                 for i, im in enumerate(images):
-                    np_im = np.array(im.convert("RGBA"))
-                    colors = np.unique(np_im.reshape(-1, 4),
-                                       axis=0)
-                    colors = [0, 0, 0] + colors[colors[:, 3]
-                                                != 0][:254, :3].flatten().tolist()
+                    # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
+                    colors = np.unique(im.reshape(-1, 4), axis=0)
+
+                    palette_colors = [0, 0, 0]
+                    palette_colors.extend(colors[colors[:, 3] != 0][:254, :3].flatten())
                     dummy = Image.new('P', (16, 16))
-                    dummy.putpalette(colors)
-                    gif_images[i] = im.convert('RGB').quantize(
-                        palette=dummy, dither=0)
+                    dummy.putpalette(palette_colors)
+                    gif_images.append(Image.fromarray(im).convert('RGB').quantize(
+                        palette=dummy, dither=0))
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
@@ -702,6 +716,7 @@ class Renderer:
                 **kwargs
             )
         elif image_format == 'png':
+            images = [Image.fromarray(im) for im in images]
             kwargs = {
                 'format': "PNG",
                 'save_all': True,
