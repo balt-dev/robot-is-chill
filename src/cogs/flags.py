@@ -137,15 +137,7 @@ async def setup(bot: Bot):
                     kwargs=[])
     async def comment(_, __):
         """Just a comment, does nothing."""
-        await asyncio.sleep(1)
         return []
-
-    @flags.register(match=r"--letter",
-                    syntax="--letter",
-                    kwargs=["letters"])
-    async def letters(_, __):
-        """Makes text default to letters."""
-        return [True]
 
     @flags.register(
         match=r"(?:--frames|-frames|-f)=([123]+)",
@@ -218,6 +210,7 @@ Use % to set a percentage of the default render speed."""
                     kwargs=["global_variant"])
     async def global_variant(match, _):
         """Applies a variant to every tile."""
+        assert ';' not in match.group(1), "Persistent variants can't be global."
         return ':' + match.group(1),
 
     @flags.register(match=r"--consistent|-co|--synchronize|-sync",
@@ -278,13 +271,13 @@ Use % to set a percentage of the default render speed."""
         """Expands the render for tiles displaced with the `:displace` variant."""
         return True,
 
-    @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
-                    syntax="--anim|-am=<wobble: int>/<timestep: int>",
-                    kwargs=["animation"])
-    async def anim(match, _):
-        """Makes the wobble frames independent of the animation.
-The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
-        return ((int(match.group(1))), (int(match.group(2)))),
+#     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
+#                     syntax="--anim|-am=<wobble: int>/<timestep: int>",
+#                     kwargs=["animation"])
+#     async def anim(match, _):
+#         """Makes the wobble frames independent of the animation.
+# The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
+#         return ((int(match.group(1))), (int(match.group(2)))),
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
                     syntax="--format|-f=<format: gif | png>",

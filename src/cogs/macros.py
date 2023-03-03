@@ -11,6 +11,7 @@ import re
 class MacroQuerySource(menus.ListPageSource):
     def __init__(
             self, data: list[str]):
+        self.count = len(data)
         super().__init__(data, per_page=45)
 
     async def format_page(self, menu: menus.Menu, entries: list[str]) -> discord.Embed:
@@ -18,7 +19,7 @@ class MacroQuerySource(menus.ListPageSource):
             title="Search results",
             # color=menu.bot.embed_color  I think the theme color suits it better.
         ).set_footer(
-            text=f"Page {menu.current_page + 1} of {self.get_max_pages()}",
+            text=f"Page {menu.current_page + 1} of {self.get_max_pages()}   ({self.count} entries)",
         )
         while len(entries) > 0:
             field = ""
@@ -47,7 +48,7 @@ class MacroCog(commands.Cog, name='Macros'):
     rendering `baba:m!transpose/45/2` would give you `baba:rot45:scale2`.
     Important to note, double negatives are valid inputs to variants, so
     something like `baba:scale--2` would give the same as `baba:scale2`."""
-        await ctx.error("Invalid subcommand specified! Use `commands macros` to see what subcommmands there are.")
+        await ctx.invoke(ctx.bot.get_command("cmds"), "macro")
 
     @macro.command(aliases=["r"])
     @commands.is_owner()
