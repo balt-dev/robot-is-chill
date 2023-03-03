@@ -1,0 +1,14 @@
+[general]
+name=The Web
+themecount=0
+start=0_0_map
+author=Maildropfolder
+firstlevel=1_0_Start
+prize_max=10
+clear_max=1
+bonus_max=6
+
+[levels]
+levelid=11
+rolling_levelid=5
+

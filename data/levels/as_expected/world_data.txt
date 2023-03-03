@@ -1,0 +1,10 @@
+[levels]
+rolling_levelid=56
+levelid=49
+
+[general]
+firstlevel=4level
+start=8level
+author=hutthutthutt
+name=as expected
+

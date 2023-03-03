@@ -1,0 +1,6 @@
+[general]
+name=ruins
+palette=ruins.png
+paletteroot=1
+[tiles]
+changed=
