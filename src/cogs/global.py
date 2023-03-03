@@ -8,6 +8,7 @@ import signal
 import time
 import traceback
 from functools import partial
+from multiprocessing import Process
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -227,10 +228,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             await ctx.typing()
 
-            start = perf_counter()
             tiles = objects.strip().replace("\\", "").replace("`", "")
             # Replace some phrases
-            print(tiles)
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = emoji.demojize(tiles, use_aliases=True)
             replace_list = [
@@ -326,25 +325,31 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
                         for l, timeline in enumerate(stack.split('&')):
-                            for d, tile in enumerate(timeline.split('>')):
+                            for d, tile in enumerate(timeline_split := timeline.split('>')):
                                 if len(tile):
                                     assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
                                         ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
                                     if catch(tile.index, ":") or catch(tile.index, ";") \
                                             or ":" not in tile and ";" not in tile:
                                         tilecount += 1
-                                        layer_grid[d:, l, y, x] = await TileSkeleton.parse(
-                                            possible_variants, tile, rule,
-                                            palette=kwargs.get("palette", "default"), bot=self.bot,
-                                            global_variant=global_variant
-                                        )
+                                        # This is done to prevent setting everything to one instance of an object.
+                                        layer_grid[d:, l, y, x] = [
+                                            await TileSkeleton.parse(
+                                                possible_variants, tile, rule,
+                                                palette=kwargs.get("palette", "default"), bot=self.bot,
+                                                global_variant=global_variant
+                                            )
+                                            for _ in range(layer_grid.shape[0] - d)
+                                        ]
                                     else:
-                                        layer_grid[d:, l, y, x] = await TileSkeleton.parse(
+                                        layer_grid[d:, l, y, x] = [
+                                            await TileSkeleton.parse(
                                             possible_variants,
                                             layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
                                                 0] + tile,
                                             rule, bot=self.bot)
-
+                                            for _ in range(layer_grid.shape[0] - d)
+                                        ]
                 # Get the dimensions of the grid
                 grid_shape = layer_grid.shape
                 # Don't proceed if the request is too large.
@@ -364,7 +369,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     gscale=kwargs.get("gscale", 1),
                     frames=kwargs.get("frames", (1, 2, 3))
                 )
-                composite_overhead, saving_overhead = await self.bot.renderer.render(
+                composite_overhead, saving_overhead, im_size = await self.bot.renderer.render(
                     full_tiles,
                     out=buffer,
                     extra_out=extra_buffer,
@@ -386,6 +391,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 return await ctx.error(
                     f"You provided an empty variant for `{word}`."
                 )
+            except errors.TooLargeTile as e:
+                return await ctx.error(f"A tile of size `{e.args[0]}` is larger than the maximum allowed size of `{constants.MAX_TILE_SIZE}`.")
             except errors.VariantError as e:
                 return await self.handle_variant_errors(ctx, e)
             except errors.TextGenerationError as e:
@@ -416,6 +423,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     Tiles rendered: {unique_tiles}
     Frames rendered: {rendered_frames}
     Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
+    Image size: {im_size}
     '''
 
                 embed.add_field(name="Render statistics", value=stats)
