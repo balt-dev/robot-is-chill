@@ -1,0 +1,14 @@
+[general]
+prize_max=42
+firstlevel=047level
+author=hillexed
+name=Zelbaba: a linkeke between words
+bonus_max=3
+themecount=1
+clear_max=5
+start=047level
+
+[levels]
+levelid=72
+rolling_levelid=8
+

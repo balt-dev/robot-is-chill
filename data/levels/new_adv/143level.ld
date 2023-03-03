@@ -22,6 +22,7 @@ unlockcount=0
 currobjlist_total=22
 selectorX=-1
 selectorY=-1
+customruleword=
 [images]
 total=0
 [icons]
@@ -333,8 +334,10 @@ saved=1
 9X=0
 9Y=7
 9fixed=0
+[levels]
+levelid=
 [tiles]
-changed=object046,object022,object075,object070,object072,object001,object032,object012,object045,object034,object097,object005,object047,object036,object000,object023,object096,object058,object002,object059,object020,object069,
+changed=object046,object022,object075,object070,object072,object001,object032,object012,object045,object034,object000,object047,object005,object036,object023,object059,object096,object058,object002,object097,object020,object069,
 object070_layer=17
 object070_activecolour=0,3
 object001_unittype=text
@@ -350,4 +353,4 @@ object000_activecolour=0,3
 object023_activecolour=0,3
 object002_activecolour=0,3
 changed_count=1
-changed_short=046,022,075,070,072,001,032,012,045,034,097,005,047,036,000,023,096,058,002,059,020,069,
+changed_short=046,022,075,070,072,001,032,012,045,034,000,047,005,036,023,059,096,058,002,097,020,069,

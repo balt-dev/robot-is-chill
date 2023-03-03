@@ -1,0 +1,226 @@
+
+
+ 	>  EVERYPENCE by olie  <
+
+
+
+ hey! thanks for downloading B)
+
+it's advised that you beat the main game before playing, and are at least a bit familiar with the new words from new adventures (mostly just EAT, although FEELING, STILL, and AUTO are in a few levels). most of the time, when the new adventures words *are* used they're placed in unchangeable rules within a level, so even if you're unfamiliar with them you should be fine as they're pretty self explanatory :)
+
+
+
+ some (spoiler free) info about the pack:
+
+  > it's completely unmodded! all of the new things are made using hidden text and the like, so feel free to tear it apart using the editor to see how it works :)
+
+  > this is an extention of a MUCH shorter pack i made for the baba is you discord competition Keep It Simple. progress from that pack won't carry over, sorry!
+
+  > contains an original soundtrack; playing with sound on is highly advised!
+
+  > all the music, concepts, art, new sprites + palettes are created by me!! use it in whatever you want,,, as long as i am credited, of course.
+
+
+
+
+	> SPOILERS FOR THE WHOLE PACK BELOW <
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ here we go!!!!
+
+
+	WORLD MAP
+
+ \ = Opening
+ 1 > Fens of Fog
+ 2 > Machines of Malware
+ 3 > Temples of Treasure
+ 4 > Avenues of Ash
+ 5 > Town Centre
+
+
+	1 > FENS OF FOG
+
+ 1 - Until Further Notice
+ 2 - Foggy Memory
+ 3 - Thunderstorm
+ 4 - Timmmmberrrr!
+ 5 - Another Day
+ 6 - Aftermath
+ 7 - Curious Channel
+ 8 - Fumigation Services
+ 9 - Ball of Fluff
+ 10 - Takes Two to Tango
+ 11 - Smoke Machine
+ X = Tales - The Fens
+ O = Heads - The Fens
+
+
+	2 > MACHINES OF MALWARE
+
+ 1 - Parallel Universe
+ 2 - "It's A Feature"
+ 3 - PC Only
+ 4 - Worldwide
+ 5 - Trojan Horse
+ 6 - Ad Blocker
+ 7 - Pull the Plug
+ 8 - Bit by Bit
+ 9 - Executable
+ 10 - Bluescreened
+ X = Tales - The Machines
+ O = Heads - The Machines
+
+
+	3 > TEMPLES OF TREASURE
+
+ 1 - All For Myself
+ 2 - Wishing You Well
+ 3 - Do Not Touch
+ 4 - Perfectly Legal
+ 5 - Sworn Protection
+ 6 - Restricted Access
+ 7 - Lunar Eclipse
+ 8 - This Land, Mine
+ 9 - Just Dropping By
+ . - Early Access (extra of Restricted Access, solution by Randomiser)
+ X = Tales - The Temple
+ O = Heads - The Temple
+
+
+	4 > AVENUE OF ASH
+
+ 1 - Interpretation
+ 2 - Wrong Neighbourhood
+ 3 - Thorn In My Side
+ 4 - Extinction Event
+ 5 - Bottleneck
+ 6 - Null
+ 7 - Peak Performance
+ 8 - Air Conditioning
+ 9 - Misery Lagoon
+ X = Tales - The Avenue
+ O = Heads - The Avenue
+
+
+	5 > TOWN CENTRE
+
+ c = Intermission
+ 1 - Pick up the Pieces
+ 2 - Satisfactory Reset
+ 3 - Look Around
+ 4 - Chimney Sweep
+ \ = A New Day
+
+
+
+		UPDATE LOG :)
+
+
+
+	V1.5
+
+ - changed wincon object in Another Day. not a big change but should alleviate confusion
+ - behind-the-scenes change in Perfectly Legal. making paper YOU should no longer break absolutely everything
+ - tweaked Extinction Event to prevent bypassing ALL IS EMPTY via SKULL IS LIZARD
+
+	V1.4
+
+ - very slightly changed the solution to Sworn Protection, based on cheese found by Pixlate
+ - visual fix in Look Around (a wand hidden offscreen could accidentally SINK)
+
+	V1.3
+
+tiny changes! baby changes! don't underestimate them! they're important!
+
+ - tiny fix for Perfectly Legal where, if you acquired a paper object, it couldn't transform
+ - altered environment in Null to account for COAL IS COAL (among other cheese solutions)
+ - forced the solution by adding WAND IS NOT YOU in Satisfactory Reset
+ - WAND IS GREEDY should now work even if there are no wand objects in Look Around
+ - slightly altered design of Chimney Sweep to prevent TEXT IS YOU from being possible
+
+
+	V1.2
+
+ah, the old "the previous update actually caused more problems than it fixed" tactic. very smart, olie.
+
+	BUG FIXES:
+ - fixed issue in Executable that caused a LOOPing object to be destroyed if a PUSH object was on the destination tile
+ - Perfectly Legal should no longer have a visible paper object... oops!
+ - fixed bug in Sworn Protection that made the intended solution impossible
+
+	LEVEL CHANGES:
+ - Misery Lagoon cheese fix #4734839 (CLIFF IS STOP should no longer be accessibile)
+ - updated Bluescreened to remove one of the monitors. this makes it harder to solve
+
+
+	V1.1 - HOTFIX
+
+a lot of cheese preventation, bug fixes, and the removal of immersion breaking inconsistancies! there were less gamebreaking bugs than i thought, which is a relief. oh, also, this pack won't have any major content updates outside of bug fixes. i *may* add a new level here and there in the future (if you have any ideas for potential puzzles feel free to share them) but i can't see myself adding much more in terms of content anytime soon.
+
+	BUG FIXES:
+ - tweaked a few spots along the border in world 2 (and the world 2 level of world 5!) where LOOP wouldn't work correctly
+ - a few niche rules in world 3 wouldn't be stolen by GREEDY. this has been fixed
+ - fixed a bunch of tiny problems in Misery Lagoon
+
+	LEVEL CHANGES:
+ - you can no longer create an unkillable virus using VIRUS HAS VIRUS in Trojan Horse (VIRUS HAS NOT VIRUS)
+ - added hedges in Restricted Access and Early Access to prevent breaking JIJI IS PUSH. also tweaked the level to account for *another* cheese solution where SHIFTing the background tiles allowed you to create a vehicle
+ - shuffled around the starting position of objects in Lunar Eclipse so the solution isn't as painfully obvious. also fixed the very easy solution of forming STAR IS FLOAT while pulling the star right and off the dust
+ - altered the design of Misery Lagoon juuust slightly, to prevent unintended solves.
+ - patched a very intricate solution to Satisfactory Reset which involved breaking TILE IS DEFEAT
+ - added an extra wand object in Look Around. i must have accidentally deleted it and the level was impossible before??? oh no????
+
+
+	V1.0!!
+
+woah! an extended version of the original december competition entry, Lost + Found? no way!! so, funny story... the idea of a lua-less pack that introduces new properties has been rattling around in my brain as early as october 2021; the Lost + Found pack was probably the middle of finding out what on earth i wanted it to be. i actually made the original prototype for the pack *before* releasing strangeland. because it's been so long, there's a whooole lot of history that this pack has had compared to my other ones, and i'd like to share why it took so dang long in the future (major contributing factor to it taking so long was the *incredibly intelligent decision* to add two cutscenes per world, each with custom art and an overarching story. as someone who had no prior experience in doing any of that, it was not a good idea. at all.) i'd possibly present it as it's own pack, or a text document, or a ???powerpoint presentation??? lol idk but i have a lot to say on the matter
+
+but i won't get into it any more today! for now, please sit back and enjoy! or sit forward. i won't assume your preferred gaming position. go have fun goddamnit!!!
+
+
+
+
+
+
+ fun links for the curious:
+
+
+ youtube, for pack walkthroughs:		https://www.youtube.com/channel/UCFAHPSET8_TH-iriFUZqxOw
+
+ itch.io, for downloading my other packs:	https://itsolie.itch.io/
+
+ soundcloud, for the soundtrack:		https://soundcloud.com/itsolie
+
+ discord, to contact me:			olie#7701
+
+
+feel free to hit me up with any queries, questions, feedback... or if you just wanna talk!

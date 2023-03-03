@@ -274,11 +274,11 @@ total=0
 0data=sign_lang=museum_296level_1a=museum_296level_1b=museum_296level_1c
 [hotbar]
 saved=1
-0target=object002
-0X=-1
-0Y=-1
+0target=object017
+0X=5
+0Y=5
 0fixed=0
-1target=
+1target=object002
 1X=-1
 1Y=-1
 1fixed=0
@@ -317,9 +317,10 @@ saved=1
 [levels]
 levelid=
 [tiles]
-changed=object022,object029,object075,object097,object057,object001,object017,object103,object045,object008,object021,object056,object005,object036,object000,object047,object058,object003,object002,object059,object020,object023,
+changed=object022,object029,object075,object097,object057,object001,object017,object023,object045,object103,object021,object056,object047,object036,object000,object059,object058,object003,object002,object008,object020,object005,
 object001_activecolour=0,3
 object017_activecolour=0,3
+object023_activecolour=0,3
 object000_activecolour=0,3
 object003_image=text_sign
 object003_colour=6,1
@@ -330,6 +331,5 @@ object002_image=sign
 object002_colour=6,1
 object002_name=sign
 object002_activecolour=0,3
-object023_activecolour=0,3
 changed_count=1
-changed_short=022,029,075,097,057,001,017,103,045,008,021,056,005,036,000,047,058,003,002,059,020,023,
+changed_short=022,029,075,097,057,001,017,023,045,103,021,056,047,036,000,059,058,003,002,008,020,005,

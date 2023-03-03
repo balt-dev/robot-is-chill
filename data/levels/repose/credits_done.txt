@@ -1,0 +1,31 @@
+$3,3
+$3,3
+$3,3
+$2,3Thanks For Playing
+$3,4Repose
+$2,3By Regal
+$3,3
+$3,3
+$3,3
+$1,3You've done it!
+$1,3You beat my levelpack!
+$3,3
+$3,3
+$3,3
+$1,3Thanks for stickin'
+$1,3around and getting this far!
+$3,3
+$1,3You should be
+$1,3proud of yourself!
+$3,3
+$1,3If you happen to be curious,
+$1,3totals are 162, 8, 8.
+$3,3
+$1,3Anyway,
+$1,3Hope ya had fun :)
+$3,3
+$3,3
+$3,3
+$1,1z
+$1,1z
+$1,1z

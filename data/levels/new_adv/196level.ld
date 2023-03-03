@@ -1,5 +1,5 @@
 [general]
-name=Next to
+name=Lesson in adjacency
 customparent=
 palette=default.png
 paletteroot=1

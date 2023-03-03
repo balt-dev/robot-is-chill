@@ -1,5 +1,5 @@
 [general]
-name=Boom B
+name=Demolitionwork
 customparent=
 palette=default.png
 paletteroot=1

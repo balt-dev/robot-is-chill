@@ -588,8 +588,10 @@ saved=1
 19root=
 [images]
 total=0
+[levels]
+levelid=
 [tiles]
-changed=object004,object048,object090,object066,object055,object050,object099,object059,object019,object021,object047,object036,object058,object060,object018,object071,object020,object069,object046,object031,object022,object075,object024,object068,object026,object023,object001,object017,object096,object045,object025,object003,object011,object005,object084,object000,object043,object042,object091,object044,object009,object100,object008,
+changed=object004,object048,object090,object066,object055,object050,object099,object059,object019,object021,object047,object036,object058,object060,object018,object071,object020,object069,object046,object031,object022,object075,object024,object068,object026,object023,object001,object017,object096,object045,object025,object003,object011,object005,object084,object042,object043,object000,object091,object044,object009,object100,object008,
 object004_unittype=text
 object004_image=text_fungi
 object004_layer=20
@@ -664,4 +666,4 @@ object008_type=0
 object008_name=text_grass
 object008_activecolour=5,3
 changed_count=1
-changed_short=004,048,090,066,055,050,099,059,019,021,047,036,058,060,018,071,020,069,046,031,022,075,024,068,026,023,001,017,096,045,025,003,011,005,084,000,043,042,091,044,009,100,008,
+changed_short=004,048,090,066,055,050,099,059,019,021,047,036,058,060,018,071,020,069,046,031,022,075,024,068,026,023,001,017,096,045,025,003,011,005,084,042,043,000,091,044,009,100,008,

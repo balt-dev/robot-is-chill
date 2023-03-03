@@ -4,6 +4,8 @@ author=hempuli
 start=85level
 firstlevel=101level
 clear_max=3
+prize_max=85
+bonus_max=0
 [levels]
-levelid=112
-rolling_levelid=4
+levelid=115
+rolling_levelid=5

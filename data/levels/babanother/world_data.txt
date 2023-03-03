@@ -1,0 +1,13 @@
+[general]
+author=napier
+start=106level
+name=babanother
+themecount=27
+prize_max=183
+clear_max=12
+bonus_max=2
+
+[levels]
+levelid=237
+rolling_levelid=49
+

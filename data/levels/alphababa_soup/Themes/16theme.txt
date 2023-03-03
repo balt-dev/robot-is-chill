@@ -1,0 +1,10 @@
+[tiles]
+changed=object079,
+object079_image=tree2
+object079_root=0
+
+[general]
+palette=garden.png
+paletteroot=1
+name=garden
+

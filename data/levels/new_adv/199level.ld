@@ -1,5 +1,5 @@
 [general]
-name=Seeing C
+name=Seeing trouble
 customparent=
 palette=space.png
 paletteroot=1

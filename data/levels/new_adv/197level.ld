@@ -1,5 +1,5 @@
 [general]
-name=Boom C
+name=Cornered victory
 customparent=
 palette=default.png
 paletteroot=1

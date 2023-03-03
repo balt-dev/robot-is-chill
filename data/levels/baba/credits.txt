@@ -47,9 +47,9 @@ $1,4Martin Kvale
 $1,4Niilo Takalainen
  
 #credits_translation
-$1,4Traditional Chinese$0,3 $0,4-$4,2 Active Gaming Media
+$1,4Traditional Chinese$0,3 $4,0-$4,2 Active Gaming Media
 $1,4Čeština$0,3 $4,0-$4,2 Eva Jany
-$1,4中文 (简体 )$0,3 $4,0-$4,2 旋律星萤 $4,0&$4,2 User670
+$1,4中文 (简体 )$0,3 $4,0-$4,2 旋律星萤   $4,0&$4,2 User670
 $1,4Deutsch$0,3 $4,0-$4,2 pepperonisecret & Tobias Gut
 $1,4Esperanto$0,3 $4,0-$4,2 REESE RIVERS (M.Z.A.)
 $1,4Español$0,3 $4,0-$4,2 Álex Hernández-Puertas

@@ -24,6 +24,7 @@ selectorY=-1
 subtitle=
 levelz=20
 levelid=29
+customruleword=
 [currobjlist]
 1id=165
 1name=text_is
@@ -326,8 +327,10 @@ saved=1
 19root=
 [images]
 total=0
+[levels]
+levelid=0200
 [tiles]
-changed=object046,object022,object006,object075,object013,object028,object001,object004,object023,object021,object003,object045,object040,object117,object005,object036,object000,object047,object058,object109,object002,object071,object020,object048,
+changed=object046,object022,object006,object075,object013,object028,object001,object004,object021,object003,object045,object000,object040,object117,object005,object036,object023,object109,object058,object047,object002,object071,object020,object048,
 object006_unittype=object
 object006_layer=18
 object006_image=keke
@@ -350,9 +353,9 @@ object004_layer=20
 object004_colour=1,1
 object004_name=text_pipe
 object004_activecolour=0,1
-object023_activecolour=0,3
-object117_activecolour=0,3
 object000_activecolour=0,3
+object117_activecolour=0,3
+object023_activecolour=0,3
 object002_layer=14
 object002_image=pipe
 object002_colour=1,1
@@ -361,4 +364,4 @@ object002_name=pipe
 object002_activecolour=0,3
 object071_activecolour=0,3
 changed_count=1
-changed_short=046,022,006,075,013,028,001,004,023,021,003,045,040,117,005,036,000,047,058,109,002,071,020,048,
+changed_short=046,022,006,075,013,028,001,004,021,003,045,000,040,117,005,036,023,109,058,047,002,071,020,048,

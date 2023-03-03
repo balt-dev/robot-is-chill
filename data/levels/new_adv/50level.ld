@@ -371,7 +371,7 @@ disableshake=0
 [images]
 total=0
 [levels]
-levelid=
+levelid=0189
 [icons]
 0file=
 0root=
@@ -456,7 +456,7 @@ saved=1
 9Y=-1
 9fixed=0
 [tiles]
-changed=object004,object102,object053,object008,object077,object059,object098,object047,object036,object023,object087,object007,object025,object020,object069,object107,object022,object029,object006,object075,object024,object097,object035,object041,object001,object017,object083,object003,object082,object101,object005,object000,object046,object045,object002,object092,object065,object058,
+changed=object004,object102,object053,object008,object077,object059,object098,object047,object036,object023,object087,object007,object025,object020,object069,object107,object022,object029,object006,object075,object024,object097,object035,object041,object001,object017,object083,object003,object082,object101,object005,object000,object058,object065,object002,object092,object045,object046,
 object004_layer=14
 object004_image=pipe
 object004_colour=0,1
@@ -494,12 +494,12 @@ object003_name=text_robot
 object003_activecolour=0,2
 object101_activecolour=0,3
 object000_activecolour=0,3
+object065_activecolour=0,3
 object002_layer=17
 object002_image=robot
 object002_colour=0,2
 object002_tiling=2
 object002_name=robot
 object002_activecolour=0,3
-object065_activecolour=0,3
 changed_count=1
-changed_short=004,102,053,008,077,059,098,047,036,023,087,007,025,020,069,107,022,029,006,075,024,097,035,041,001,017,083,003,082,101,005,000,046,045,002,092,065,058,
+changed_short=004,102,053,008,077,059,098,047,036,023,087,007,025,020,069,107,022,029,006,075,024,097,035,041,001,017,083,003,082,101,005,000,058,065,002,092,045,046,

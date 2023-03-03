@@ -1,5 +1,5 @@
 [general]
-name=Boom A
+name=Boom!
 customparent=
 palette=default.png
 paletteroot=1
