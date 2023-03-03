@@ -233,7 +233,8 @@ class Color(tuple):
             return color
         else:
             try:
-                return *palette_cache[tile.palette].getpixel(color), 0xFF
+                pal = palette_cache[tile.palette].convert("RGBA")
+                return pal.getpixel(color)
             except IndexError:
                 raise AssertionError(f"The palette index `{color}` is outside of the palette.")
 

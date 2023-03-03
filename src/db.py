@@ -324,9 +324,6 @@ class LevelData:
         if self.map_id is not None and self.map_id != "<empty>":
             return f"{self.parent}-{self.map_id}: {self.name}"
         if self.style is not None and self.number is not None:
-            if self.style == 0:
-                # numbers
-                return f"{self.parent}-{self.number}: {self.name}"
             if self.style == 1:
                 # letters
                 letter = string.ascii_lowercase[self.number]
@@ -334,6 +331,10 @@ class LevelData:
             if self.style == 2:
                 # extra dots
                 return f"{self.parent}-extra {self.number + 1}: {self.name}"
+            else:
+                # numbers
+                return f"{self.parent}-{self.number}: {self.name}"
+        print(self)
         raise RuntimeError("Level is in a bad state")
 
     def unique(self) -> str:

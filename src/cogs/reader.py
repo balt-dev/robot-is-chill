@@ -5,6 +5,10 @@ import base64
 import configparser
 import io
 import re
+import shutil
+import sys
+import time
+import warnings
 import zlib
 import discord
 from dataclasses import dataclass
@@ -21,6 +25,18 @@ from src.utils import cached_open
 from ..tile import ProcessedTile
 
 from ..types import Bot, Context
+
+from itertools import chain, islice
+
+
+# https://stackoverflow.com/a/49411335/13290530
+def ichunked(seq, chunksize):
+    it = iter(seq)
+    while True:
+        try:
+            yield chain([next(it)], islice(it, chunksize - 1))
+        except StopIteration:
+            return
 
 
 def flatten(x: int, y: int, width: int) -> int:
@@ -63,6 +79,7 @@ class Grid:
     # noinspection PyTypeChecker
     def ready_grid(self) -> list[list[list[ProcessedTile]]]:
         """Returns a ready-to-paste version of the grid."""
+
         def is_adjacent(sprite: str, x: int, y: int) -> bool:
             valid = (sprite, "edge", "level")
             if x == 0 or x == self.width - 1:
@@ -131,10 +148,10 @@ class Grid:
                             variant = item.direction * 8
                         elif item.tiling in constants.AUTO_TILINGS:
                             variant = (
-                                is_adjacent(item.sprite, x + 1, y) * 1 +
-                                is_adjacent(item.sprite, x, y - 1) * 2 +
-                                is_adjacent(item.sprite, x - 1, y) * 4 +
-                                is_adjacent(item.sprite, x, y + 1) * 8
+                                    is_adjacent(item.sprite, x + 1, y) * 1 +
+                                    is_adjacent(item.sprite, x, y - 1) * 2 +
+                                    is_adjacent(item.sprite, x - 1, y) * 4 +
+                                    is_adjacent(item.sprite, x, y + 1) * 8
                             )
                         else:
                             variant = 0
@@ -236,7 +253,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         self.defaults_by_object: dict[str, Item] = {}
         self.defaults_by_name: dict[str, Item] = {}
         self.parent_levels: dict[str,
-                                 tuple[str, dict[str, tuple[int, int]]]] = {}
+        tuple[str, dict[str, tuple[int, int]]]] = {}
 
         self.read_objects()
 
@@ -245,14 +262,16 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
         code should be valid (but is checked regardless)
         """
-        async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/raw/l?code={code.upper()}") as resp:
+        async with aiohttp.request("GET",
+                                   f"https://baba-is-bookmark.herokuapp.com/api/level/raw/l?code={code.upper()}") as resp:
 
             resp.raise_for_status()
             data = await resp.json()
             b64 = data["data"]
             decoded = base64.b64decode(b64)
             raw_l = io.BytesIO(decoded)
-        async with aiohttp.request("GET", f"https://baba-is-bookmark.herokuapp.com/api/level/raw/ld?code={code.upper()}") as resp:
+        async with aiohttp.request("GET",
+                                   f"https://baba-is-bookmark.herokuapp.com/api/level/raw/ld?code={code.upper()}") as resp:
             resp.raise_for_status()
             data = await resp.json()
             raw_s = data["data"]
@@ -328,6 +347,8 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             image_source=grid.world,
             background=background,
             out=f"target/renders/{grid.world}/{grid.filename}.gif",
+            upscale=1,
+            _disable_limit=True
         )
         # Return level metadata
         return LevelData(filename, source, grid.name, grid.subtitle,
@@ -355,6 +376,10 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         for map_id, child_levels in self.parent_levels.values():
             remove = []
             for child_id in child_levels:
+                if child_id not in metadata:
+                    warnings.warn(f"Child {child_id} of level {map_id} does not exist!")
+                    remove.append(child_id)
+                    continue
                 # remove levels which point to maps themselves (i.e. don't mark map as "lake-blah: map")
                 # as a result of this, every map will have no parent in its name - so it'll just be
                 # something like "chasm" or "center"
@@ -387,8 +412,8 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="loadworld")
     @commands.is_owner()
-    async def load_world(self, ctx: Context, world: str = constants.BABA_WORLD, also_mobile: bool = True):
-        """Loads and renders levels in a world and its mobile variant.
+    async def load_world(self, ctx: Context, world: str = constants.BABA_WORLD):
+        """Loads and renders levels in a world.
 
         Initializes the level tree unless otherwise specified. Cuts off
         borders from rendered levels unless otherwise specified.
@@ -400,36 +425,30 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         message = await ctx.reply("Loading maps...")
         if not path.exists(f'target/renders/{world}'):
             mkdir(f'target/renders/{world}')
-        if not path.exists(f'data/images/{world}'):
-            mkdir(f'data/images/{world}')
+        if not path.exists(f'data/images/{world}') and path.exists(f"data/levels/{world}/Images"):
+            shutil.copytree(f"data/levels/{world}/Images", f"data/images/{world}")
         metadatas = {}
-        total = len(levels)
-        for i, level in enumerate(levels):
-            metadata = await self.render_level(
-                level,
-                source=world,
-                initialize=True,
-                remove_borders=True,
-                keep_background=True,
-            )
-            if also_mobile:
-                try:
-                    await self.render_level(
-                        level,
-                        source=f"{world}_m",
-                        initialize=False,
-                        remove_borders=True,
-                        keep_background=True,
-                    )
-                except FileNotFoundError:
-                    pass
-            metadatas[level] = metadata
+
+        async def cb_render(coro, lvl):
+            nonlocal metadatas
+            metadatas[lvl] = await coro
+            sys.__stdout__.write(f"{lvl}, ")
             await asyncio.sleep(0)
-            if i and i % 10 == 0:
-                percent = int((i / total) * 100)
-                loadbar = '[' + ('#' * int((percent // 2.5))) + \
-                    (' ' * (40 - int(percent // 2.5))) + ']'
-                await message.edit(content=f"Loading maps... {i}/{total}\n`{loadbar}` ({percent}% done)")
+        print("--------\n\n\n\n")
+        for i, levels_slice in enumerate(ichunked(levels, 8)):
+            tasks = []
+            for level in levels_slice:
+                tasks.append(asyncio.create_task(cb_render(self.render_level(
+                    level,
+                    source=world,
+                    initialize=True,
+                    remove_borders=True,
+                    keep_background=True,
+                ), level)))
+            await asyncio.gather(*tasks)
+            await asyncio.sleep(0.5)
+            await message.edit(content=f"Loading maps... {(i + 1) * 8}/{len(levels)}")
+
         await message.edit(content=f"All maps loaded.\nUpdating database...")
         await self.clean_metadata(metadatas)
         await message.reply(content=f"{ctx.author.mention} Database updated. Done.", mention_author=False)
@@ -510,7 +529,8 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             self.read_layer(stream, grid)
         return grid
 
-    async def read_metadata(self, grid: Grid, initialize_level_tree: bool = False, data: TextIO | None = None, custom: bool = False) -> Grid:
+    async def read_metadata(self, grid: Grid, initialize_level_tree: bool = False, data: TextIO | None = None,
+                            custom: bool = False) -> Grid:
         """Add everything that's not just basic tile positions & IDs."""
         # We've added the basic objects & their directions.
         # Now we add everything else:
@@ -529,7 +549,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             "general",
             "palette",
             fallback="default.png")[
-            :-4]  # strip .png
+                       :-4]  # strip .png
         grid.subtitle = config.get("general", "subtitle", fallback=None)
         grid.map_id = config.get("general", "mapid", fallback=None)
 
@@ -588,11 +608,11 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             style = config.getint("levels", f"{i}style", fallback=0)
             number = config.getint("levels", f"{i}number", fallback=0)
             # "custom" style
-            if style == -1:
+            if style == -1 and "icons" in config:
                 icon = Item.icon(config.get("icons", f"{number}file"))
                 grid.cells[pos].append(icon)
             # "dot" style
-            elif style == 2 and number >= 10:
+            elif (style == 2 or "icons" not in config) and number >= 10:
                 icon = Item.icon("icon")
                 grid.cells[pos].append(icon)
             else:
@@ -751,7 +771,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             buffer = stream.read(4)
             compressed_size = int.from_bytes(
                 buffer, byteorder="little") & (
-                2**32 - 1)
+                                      2 ** 32 - 1)
 
             zobj = zlib.decompressobj()
             dirs_buffer = zobj.decompress(stream.read(compressed_size))

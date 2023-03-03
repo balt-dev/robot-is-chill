@@ -23,6 +23,7 @@ class TileSkeleton:
     palette: str = "default"
     empty: bool = True
     easter_egg: bool = False
+    id: int = None
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
@@ -69,6 +70,7 @@ class TileSkeleton:
                 out.variants[var_type].append(final_variant(*final_args))
             except KeyError as e:
                 raise errors.UnknownVariant(out.name, raw_variant)
+        out.id = id(out)
         return out
 
 

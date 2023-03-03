@@ -91,6 +91,10 @@ class BadLetterVariant(VariantError):
 class UnknownVariant(VariantError):
     """Not a valid variant."""
 
+
+class TooLargeTile(VariantError):
+    """Tile exceeds the limit."""
+
 # === Custom text ===
 
 

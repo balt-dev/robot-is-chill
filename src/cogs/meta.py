@@ -63,10 +63,14 @@ class CommandPageSource(menus.ListPageSource):
             description=(f"> _aka {', '.join(entry.aliases)}_\n" if len(entry.aliases) else "") +
                         (f"> Arguments: `{arguments}`\n" if len(arguments) else "")
         )
-        embed.add_field(
-            name="",
-            value=entry.help
-        )
+        entry_help = entry.help
+        while len(entry_help) > 0:
+            embed.add_field(
+                name="",
+                value=entry_help[:1024],
+                inline=False
+            )
+            entry_help = entry_help[1024:]
         embed.set_footer(text=f"{menu.current_page + 1}/{self.get_max_pages()}")
         return embed
 
