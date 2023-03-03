@@ -75,6 +75,11 @@ def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[An
     return out
 
 
+def check_size(*dst_size):
+    if dst_size[0] > constants.MAX_TILE_SIZE or dst_size[1] > constants.MAX_TILE_SIZE:
+        raise errors.TooLargeTile(dst_size)
+
+
 async def setup(bot):
     """Get the variants."""
     bot.variants = []
@@ -400,9 +405,12 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Rotates a sprite."""
         if expand:
             scale = math.cos(math.radians(-angle % 90)) + math.sin(math.radians(-angle % 90))
+            padding = int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[1] * ((scale - 1) / 2))
+            dst_size = sprite.shape[0] + padding[0], sprite.shape[1] + padding[1]
+            check_size(*dst_size)
             sprite = np.pad(sprite,
-                            ((int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
-                             (int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[0] * ((scale - 1) / 2))),
+                            (padding,
+                             padding,
                              (0, 0)))
         image_center = tuple(np.array(sprite.shape[1::-1]) / 2)
         rot_mat = cv2.getRotationMatrix2D(image_center, -angle, 1.0)
@@ -450,9 +458,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Scales a sprite by the given multipliers."""
         if h is None:
             h = w
-        if int(w * sprite.shape[0]) <= 0 or int(h * sprite.shape[1]) <= 0:
+        dst_size = (int(w * sprite.shape[0]), int(h * sprite.shape[1]))
+        if dst_size[0] <= 0 or dst_size[1] <= 0:
             raise AssertionError(
                 f"Can't scale a tile to `{int(w * sprite.shape[0])}x{int(h * sprite.shape[1])}`, as it has a non-positive target area.")
+        check_size(*dst_size)
         dim = sprite.shape[:2] * np.array((h, w))
         dim = dim.astype(int)
         return cv2.resize(sprite, dim[::-1], interpolation=cv2.INTER_NEAREST_EXACT)
@@ -460,6 +470,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
     @add_variant()
     async def pad(sprite, left: int, top: int, right: int, bottom: int):
         """Pads the sprite by the specified values."""
+        check_size(sprite.shape[1] + max(left, 0) + max(right, 0), sprite.shape[0] + max(top, 0) + max(bottom, 0))
         return np.pad(sprite, ((top, bottom), (left, right), (0, 0)))
 
     @add_variant("px")
@@ -476,6 +487,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         # Not padding at negative values is intentional
         padding = max(level, 0)
         orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
+        check_size(*orig.shape[1::-1])
         base = orig[..., 3]
         if level < 0:
             base = 255 - base
@@ -552,6 +564,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         ])
         dst += before_padding
         new_shape = (src_shape + before_padding + after_padding).astype(np.uint32)[::-1]
+        check_size(*new_shape)
         final_arr = np.zeros((*new_shape, 4), dtype=np.uint8)
         for source, destination in zip(src, dst):  # Iterate through the four triangles
             clip = cv2.fillConvexPoly(np.zeros(new_shape, dtype=np.uint8), destination, 1).astype(bool)
@@ -736,6 +749,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     @add_variant("abberate")  # misspelling alias because i misspell it all the time
     async def aberrate(sprite, x: int, y: int):
         """Abberates the colors of a sprite."""
+        check_size(sprite.shape[0] + abs(x) * 2, sprite.shape[1] + abs(y) * 2)
         sprite = np.pad(sprite, ((abs(y), abs(y)), (abs(x), abs(x)), (0, 0)))
         sprite[:, :, 0] = np.roll(sprite[:, :, 0], -x, 1)
         sprite[:, :, 2] = np.roll(sprite[:, :, 2], x, 1)
@@ -963,6 +977,7 @@ If a value is negative, it removes pixels above the threshold instead."""
     @add_variant()
     async def blur(sprite, radius: int, gaussian: Optional[bool] = False):
         """Blurs a sprite. Uses box blur by default, though gaussian blur can be used with the boolean toggle."""
+        check_size(sprite.shape[0] + radius * 2, sprite.shape[1] + radius * 2)
         arr = np.pad(sprite, ((radius, radius), (radius, radius), (0, 0)))
         assert radius > 0, f"Blur radius of {radius} is too small!"
         if gaussian:
@@ -993,6 +1008,7 @@ If a value is negative, it removes pixels above the threshold instead."""
     async def filterimage(sprite, filter_url: str, absolute: Optional[bool] = None, *, tile, wobble, renderer):
         """Applies a filter image to a sprite. For information about filter images, look at the filterimage command."""
         filt, abs_db = await renderer.bot.db.get_filter(filter_url)
+        check_size(*filt.shape[:2])
         absolute = absolute if absolute is not None else \
             abs_db if abs_db is not None else False
         filt = np.float32(filt)

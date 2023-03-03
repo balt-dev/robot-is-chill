@@ -119,6 +119,7 @@ class Renderer:
             boomerang: bool = False,
             random_animations: bool = True,
             expand: bool = False,
+            _disable_limit: bool = False,
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
@@ -142,10 +143,10 @@ class Renderer:
         top_sizes =    sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
         right_sizes =  sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
         bottom_sizes = sizes[..., 0] + bottom_influence.reshape((1, 1, -1, 1))
-        left = (np.max(left_sizes - spacing) // 2) + pad[0]
-        top = (np.max(top_sizes - spacing) // 2) + pad[1]
-        right = (np.max(right_sizes - spacing) // 2) + pad[2]
-        bottom = (np.max(bottom_sizes - spacing) // 2) + pad[3]
+        left =   max((np.max(left_sizes   - spacing) // 2) + pad[0], 0)
+        top =    max((np.max(top_sizes    - spacing) // 2) + pad[1], 0)
+        right =  max((np.max(right_sizes  - spacing) // 2) + pad[2], 0)
+        bottom = max((np.max(bottom_sizes - spacing) // 2) + pad[3], 0)
         if expand:
             displacements = np.array(
                 [tile.displacement if not (tile is None or tile.empty) else (0, 0)
@@ -159,13 +160,16 @@ class Renderer:
             top +=    max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
             right -=  min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
             bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
-        default_size = (int(sizes.shape[2] * spacing + top + bottom),
-                        int(sizes.shape[3] * spacing + left + right))
+        default_size = np.array((int(sizes.shape[2] * spacing + top + bottom),
+                        int(sizes.shape[3] * spacing + left + right)))
+        true_size = default_size * upscale
+        if not _disable_limit:
+            assert all(true_size <= constants.MAX_IMAGE_SIZE), f"Image of size {true_size} is larger than the maximum allowed size of {constants.MAX_IMAGE_SIZE}!"
         steps = np.zeros((grid.shape[0] * len(frames), *default_size, 4), dtype=np.uint8)
         if images and ((bg_images := isinstance(images[0], Image.Image)) or image_source is not None):
             for step in range(0, steps.shape[0], len(frames)):
                 for frame in frames:
-                    img = Image.new("RGBA", default_size[::-1])
+                    img = Image.new("RGBA", tuple(default_size[::-1]))
                     # for loop in case multiple background images are used
                     # (i.e. baba's world map)
                     if bg_images:
@@ -175,8 +179,12 @@ class Renderer:
                     else:
                         # Legacy behavior, too lazy to remove
                         for image in images:
-                            overlap = Image.open(
-                                f"data/images/{image_source}/{image}_{frame}.png").convert("RGBA")
+                            try:
+                                overlap = Image.open(
+                                    f"data/images/{image_source}/{image}_{frame}.png").convert("RGBA")
+                            except FileNotFoundError:
+                                overlap = Image.open(
+                                    f"data/images/{image_source}/{image}_1.png").convert("RGBA")
                         img.paste(overlap, (0, 0), mask=overlap)
                     steps[step + frame - 1] = np.array(img)
         for t, step in enumerate(grid):
@@ -245,7 +253,7 @@ class Renderer:
                          loop=loop,
                          boomerang=boomerang,
                          background=background is not None)
-        return comp_ovh, time.perf_counter() - start_time
+        return comp_ovh, time.perf_counter() - start_time, images[0].shape[1::-1]
 
     def blend(self, mode, src, dst, keep_alpha: bool = True) -> np.ndarray:
         keep_alpha &= mode not in ("mask", "cut")
@@ -384,7 +392,6 @@ class Renderer:
         cached = tile_hash in tile_cache.keys()
         if cached:
             final_tile.frames = tile_cache[tile_hash]
-            print(final_tile)
         final_tile.wobble = tile.wobble
         done_frames = [frame is not None for frame in final_tile.frames]
         frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
@@ -653,6 +660,8 @@ class Renderer:
         random.seed(seed)
         for variant in tile.variants["sprite"]:
             sprite = await variant.apply(sprite, tile=tile, wobble=wobble, renderer=self)  # NOUN/PROP ARE ANNOYING
+            if not all(np.array(sprite.shape[:2]) <= constants.MAX_TILE_SIZE):
+                raise errors.TooLargeTile(sprite.shape[1::-1])
         return sprite
 
     def save_frames(
@@ -673,12 +682,10 @@ class Renderer:
         buffer. If extra_out is provided, the frames are also saved as a
         zip file there.
         """
-        print(".?")
         if boomerang and len(images) > 2:
             images += images[-2:0:-1]
             durations += durations[-2:0:-1]
         if image_format == 'gif':
-            print("..?")
             if background:
                 gif_images = [Image.fromarray(im) for im in images]
             else:
@@ -686,7 +693,6 @@ class Renderer:
                 for i, im in enumerate(images):
                     # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
                     colors = np.unique(im.reshape(-1, 4), axis=0)
-
                     palette_colors = [0, 0, 0]
                     palette_colors.extend(colors[colors[:, 3] != 0][:254, :3].flatten())
                     dummy = Image.new('P', (16, 16))

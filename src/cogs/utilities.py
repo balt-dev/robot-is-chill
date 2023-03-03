@@ -55,7 +55,7 @@ class SearchPageSource(menus.ListPageSource):
                 continue
             else:
                 lines.append(f"({type}) {short}")
-            lines.append("\n\n")
+            lines.append("\n")
 
         if len(lines) > 1:
             lines[-1] = "```"
@@ -189,7 +189,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         * `author`: For custom levels, filters by the author.
 
         You can also filter by the result type:
-        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, or `mod`.
+        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, `world`, or `mod`.
 
         **Example commands:**
         `search baba`
@@ -349,6 +349,15 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             out = []
             for path in Path("data/custom").glob(q):
                 out.append((("mod", path.parts[-1][:-5]), path.parts[-1][:-5]))
+            out.sort()
+            for a, b in out:
+                results[a] = b
+
+        if flags.get("type") is None and plain_query or flags.get(
+                "type") == "world":
+            out = []
+            for path in Path("data/levels").glob("*"):
+                out.append((("world", path.stem), path.stem))
             out.sort()
             for a, b in out:
                 results[a] = b

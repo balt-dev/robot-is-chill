@@ -14,7 +14,8 @@ from discord.ext import commands
 import requests
 
 from ..types import Bot, Context
-from .. import errors
+from .. import errors, constants
+
 
 class DummyLogger:
     async def send(self, *args, **kwargs): pass
