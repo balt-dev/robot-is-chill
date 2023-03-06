@@ -6,6 +6,7 @@ import glob
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Coroutine
 
 import discord
 from PIL import Image
@@ -21,12 +22,18 @@ from numpy import set_printoptions as numpy_set_printoptions
 
 
 class Context(commands.Context):
-    async def error(self, msg: str, embed: discord.Embed | None = None) -> discord.Message:
+    silent: bool = False
+
+    async def error(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+        try:
+            self.silent
+        except KeyError:
+            self.silent = False
         await self.message.add_reaction("\u26a0\ufe0f")
         if embed is not None:
-            return await self.reply(msg, embed=embed)
+            return await self.reply(msg, embed=embed, silent=self.silent)
         else:
-            return await self.reply(msg)
+            return await self.reply(msg, silent=self.silent)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
@@ -148,9 +155,12 @@ bot = Bot(
 async def on_command(ctx):
     embed = discord.Embed(
         title="Disclaimer",
-        description="This is the beta branch prefix. Things will most likely be broken.",
+        description="This is the beta branch prefix. Some things may be changed.",
         color=config.logging_color)
     await ctx.send(embed=embed, delete_after=3)
+    nl = '\n'
+    print(f"""{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) in {"DMs" if ctx.guild is None else ctx.guild.name} | {ctx.author.public_flags.all()}
+    {(nl + '    ').join(ctx.message.content.split(nl))}""")
     # pass
     # webhook = await bot.fetch_webhook(webhooks.logging_id)
     # embed = discord.Embed(

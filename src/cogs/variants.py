@@ -9,7 +9,6 @@ from pathlib import Path
 import cv2
 import numpy as np
 import visual_center
-from PIL import Image
 
 from . import liquify
 from ..utils import recolor, composite
@@ -287,12 +286,13 @@ async def setup(bot):
         tile.color = tuple(color)
 
     @add_variant(no_function_name=True)
-    async def color(sprite, color: Color, *, tile, wobble, renderer, _default_color = False):
+    async def color(sprite, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, tile, wobble, renderer, _default_color = False):
         """Sets the tile's color.
 Can take:
 - A hexadecimal RGB/RGBA value, as #RGB, #RGBA, #RRGGBB, or #RRGGBBAA
 - A color name, as is (think the color properties from the game)
-- A palette index, as an x/y coordinate"""
+- A palette index, as an x/y coordinate
+If [0;36minactive[0m is set and the color isn't hexadecimal, the color will switch to its "inactive" form, which is the color an inactive text object would take on if it had that color in the game."""
         if _default_color:
             if tile.custom_color:
                 return sprite
@@ -302,6 +302,8 @@ Can take:
         if len(color) == 4:
             rgba = color
         else:
+            if inactive is not None:
+                color = constants.INACTIVE_COLORS[color]
             try:
                 rgba = *renderer.palette_cache[tile.palette].getpixel(color), 0xFF
             except IndexError:
@@ -661,13 +663,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         sprite_center = sprite.shape[0] // 2 - 1, sprite.shape[1] // 2 - 1
         center = int((top + bottom) // 2), int((left + right) // 2)
         displacement = np.array((sprite_center[0] - center[0], sprite_center[1] - center[1]))
-        print(left, top, right, bottom, center, sprite_center, displacement)
         return np.roll(sprite, displacement, axis=(0, 1))
 
     @add_variant("disp")
     async def displace(post, x: int, y: int):
         """Displaces the tile by the specified coordinates."""
-        print("disp", (x, y), post)
         post.displacement = [post.displacement[0] - x, post.displacement[1] - y]
 
     # Original code by Charlotte (CenTdemeern1)

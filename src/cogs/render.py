@@ -99,7 +99,7 @@ class Renderer:
             self,
             grid: list[list[list[list[ProcessedTile]]]],
             *,
-            before_images: list[Image] = [],
+            before_images=None,
             palette: str = "default",
             images: list[str] | list[Image] | None = None,
             image_source: str = constants.BABA_WORLD,
@@ -123,6 +123,8 @@ class Renderer:
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
+        if before_images is None:
+            before_images = []
         start_time = time.perf_counter()
         animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
         grid = np.array(grid, dtype=object)
@@ -216,7 +218,7 @@ class Renderer:
                             steps[index] = self.blend(tile.blending, steps[index], image, tile.keep_alpha)
         comp_ovh = time.perf_counter() - start_time
         start_time = time.perf_counter()
-        images = list(before_images)
+        images = [np.array(image.convert("RGBA")) for image in before_images]
         l, u, r, d = crop
         r = r
         d = d
@@ -236,7 +238,8 @@ class Renderer:
                                    casting="unsafe").astype(np.uint8)
                 true_rgb = step.astype(float) * (step_a.astype(float) / 255).reshape(*step.shape[:2], 1)
                 too_dark_mask = np.logical_and(np.all(true_rgb < 8, axis=2), step_a != 0)
-                step[too_dark_mask, 2] = 8  # Blue has the least luminosity
+                step[too_dark_mask, :3] = 4
+                step = np.dstack((step, step_a))
             images.append(
                 cv2.resize(
                     step,
@@ -745,7 +748,7 @@ class Renderer:
             file = zipfile.PyZipFile(extra_out, "x")
             for i, img in enumerate(images):
                 buffer = BytesIO()
-                img.save(buffer, "PNG")
+                Image.fromarray(img).save(buffer, "PNG")
                 file.writestr(
                     f"{extra_name}_{i // 3}_{(i % 3) + 1}.png",
                     buffer.getvalue())

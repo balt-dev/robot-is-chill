@@ -56,7 +56,6 @@ class CommandPageSource(menus.ListPageSource):
                 arguments += f" = {repr(param.default)}"
             arguments += ", "
         arguments = arguments.rstrip(", ")
-        print(entry.aliases, entry.params)
         embed = discord.Embed(
             color=menu.bot.embed_color,
             title=entry.name,
