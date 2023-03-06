@@ -227,11 +227,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
-
+            ctx.silent = ctx.message.flags.silent
             tiles = objects.strip().replace("\\", "").replace("`", "")
             # Replace some phrases
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
-            tiles = emoji.demojize(tiles, use_aliases=True)
+            tiles = emoji.demojize(tiles, language='alias')
             replace_list = [
                 ['а', 'a'],
                 ['в', 'b'],
@@ -994,6 +994,7 @@ Filterimages are formatted as follows:
             assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
             url = url[0]
             await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
+            del self.bot.db.filter_cache[name]
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Deleted!",

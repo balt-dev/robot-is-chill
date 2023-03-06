@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import traceback
 from dataclasses import dataclass, field
 
 from typing import Literal, Optional
-from PIL import Image
 import re
 import numpy as np
 from . import errors, constants
 from .cogs.variants import parse_signature
 from .db import TileData
-from .types import Variant, Context, Color
+from .types import Variant, Context
 
 
 @dataclass
@@ -52,15 +50,19 @@ class TileSkeleton:
                 out.name = (await cur.fetchall())[0][0]
             raw_variants.insert(0, "m!2ify")
         macro_count = 0
-        for raw_variant in raw_variants:
+        # Allow the index to be changed while iterating
+        i = 0
+        while i < len(raw_variants):
+            raw_variant = raw_variants[i]
             if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
                 assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
                 macro_count += 1
                 raw_macro, *macro_args = raw_variant[2:].split("/")
                 macro = bot.macros[raw_macro].value
-                for i, arg in enumerate(macro_args):
-                    macro = macro.replace(f"${i+1}", arg)
-                raw_variants.extend(macro.split(":"))
+                for j, arg in enumerate(macro_args):
+                    macro = macro.replace(f"${j+1}", arg)
+                del raw_variants[i]
+                raw_variants[i:i] = macro.split(":")  # Extend at index i
                 continue
             try:
                 final_variant = possible_variants[raw_variant]
@@ -70,6 +72,7 @@ class TileSkeleton:
                 out.variants[var_type].append(final_variant(*final_args))
             except KeyError as e:
                 raise errors.UnknownVariant(out.name, raw_variant)
+            i += 1
         out.id = id(out)
         return out
 

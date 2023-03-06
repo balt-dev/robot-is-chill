@@ -434,7 +434,6 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             metadatas[lvl] = await coro
             sys.__stdout__.write(f"{lvl}, ")
             await asyncio.sleep(0)
-        print("--------\n\n\n\n")
         for i, levels_slice in enumerate(ichunked(levels, 8)):
             tasks = []
             for level in levels_slice:
