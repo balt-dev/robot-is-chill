@@ -334,7 +334,6 @@ class LevelData:
             else:
                 # numbers
                 return f"{self.parent}-{self.number}: {self.name}"
-        print(self)
         raise RuntimeError("Level is in a bad state")
 
     def unique(self) -> str:
