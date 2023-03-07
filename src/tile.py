@@ -5,11 +5,11 @@ from dataclasses import dataclass, field
 from typing import Literal, Optional
 import re
 import numpy as np
+
 from . import errors, constants
 from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context
-
 
 @dataclass
 class TileSkeleton:
@@ -21,7 +21,6 @@ class TileSkeleton:
     palette: str = "default"
     empty: bool = True
     easter_egg: bool = False
-    id: int = None
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
@@ -32,8 +31,12 @@ class TileSkeleton:
         if rule:
             if string[:5] == "tile_":
                 string = string[5:]
+            elif string[0] == "$":
+                string = string[1:]
             else:
                 string = "text_" + string
+        elif string[0] == "$":
+            string = "text_" + string[1:]
         out.empty = False
         out.raw_string = string
         out.palette = palette
@@ -70,10 +73,9 @@ class TileSkeleton:
                 variant_args = [g for g in re.fullmatch(final_variant.pattern, raw_variant).groups() if g is not None]
                 final_args = parse_signature(variant_args, final_variant.signature)
                 out.variants[var_type].append(final_variant(*final_args))
-            except KeyError as e:
+            except KeyError:
                 raise errors.UnknownVariant(out.name, raw_variant)
             i += 1
-        out.id = id(out)
         return out
 
 
