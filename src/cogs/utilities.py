@@ -462,7 +462,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                  img.height * constants.PALETTE_PIXEL_SIZE),
                 resample=Image.NEAREST
             ).convert("RGBA")
-            font = ImageFont.truetype("data/04b03.ttf", 16)
+            font = ImageFont.truetype("data/misc/04b03.ttf", 16)
             draw = ImageDraw.Draw(pal_img)
             for y in range(txthgt):
                 for x in range(txtwid):

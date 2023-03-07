@@ -228,10 +228,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             await ctx.typing()
             ctx.silent = ctx.message.flags.silent
-            tiles = objects.strip().replace("\\", "").replace("`", "")
-            # Replace some phrases
+            tiles = emoji.demojize(objects.strip(), language='alias')
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
-            tiles = emoji.demojize(tiles, language='alias')
+            tiles = re.sub(r"\\(?=[:<])", "", tiles).replace("`", "")
+
+            # Replace some phrases
             replace_list = [
                 ['а', 'a'],
                 ['в', 'b'],
@@ -256,12 +257,20 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
             # Check for empty input
             if not tiles:
-                return await ctx.error("Input cannot be blank.")
+                return await ctx.error("Input cannot have 0 tiles.")
 
-            if rule:
-                tiles = tiles.replace('$', 'tile_')
-            else:
-                tiles = tiles.replace('$', 'text_')
+            old_tiles = tiles
+
+            offset = 0
+            for match in re.finditer(r"\"(.*?)\"", tiles, flags=re.RegexFlag.DOTALL):
+                a, b = match.span()
+                text = match.group(1)
+                prefix = "tile_" if rule else "text_"
+                sliced = re.split("([\n ]|$)", text)
+                zipped = zip(sliced[1::2], sliced[:-1:2])
+                text = "".join(f"{prefix}{t}{joiner}" if t != "-" else "-" for joiner, t in zipped)
+                tiles = tiles[:a - offset] + text + tiles[b - offset:]
+                offset += (b - a) - len(text)
 
             # Split input into lines
             word_rows = tiles.splitlines()
@@ -401,7 +410,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             filename = datetime.utcnow().strftime(
                 f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
             image = discord.File(buffer, filename=filename, spoiler=spoiler)
-            description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
+            description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
             if do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)
 
@@ -452,9 +461,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         **Useful tips:**
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `tile_` : `tile_object` renders regular objects.
-        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
+        * `$` : `$object` renders text objects.
+        * `,` : `$x,y,...` is expanded into `$x $y ...`
         * `||` : Marks the output gif as a spoiler.
+        * `""`: `"x y ..."` is expanded into `$x $y $...`
 
         **Example commands:**
         `tile baba - keke`
@@ -486,8 +496,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         **Useful tips:**
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `tile_` : `tile_object` renders regular objects.
+        * `$` : `$object` renders tile objects.
+        * `,` : `$x,y,...` is expanded into `$x $y ...`
         * `||` : Marks the output gif as a spoiler.
+        * `""`: `"x y ..."` is expanded into `$x $y $...`
 
         **Example commands:**
         `rule baba is you`
