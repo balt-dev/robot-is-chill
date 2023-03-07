@@ -14,15 +14,15 @@ from typing import TYPE_CHECKING, BinaryIO, Optional
 import cv2
 import numpy as np
 from PIL import Image
+from PIL.ImageDraw import ImageDraw
+import PIL.ImageFont as ImageFont
 
 from src.tile import ProcessedTile, Tile
 from .. import constants, errors
 from ..types import Color
 from ..utils import cached_open
 
-import cProfile
-import pstats
-from pstats import SortKey
+FONT = ImageFont.truetype("data/misc/OpenSans-Regular.ttf", constants.DEFAULT_SPRITE_SIZE // 2)
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -318,15 +318,16 @@ class Renderer:
                                 x: int,
                                 y: int,
                                 ) -> Image.Image:
-        if tile.custom and type(tile.sprite) == tuple:
-            sprite = await self.generate_sprite(
-                tile,
-                style=tile.style or (
-                    "noun" if len(tile.name) < 1 else "letter"),
-                wobble=frame,
-                position=(x, y),
-                gscale=gscale
-            )
+        if tile.custom:
+            if type(tile.sprite) == tuple:
+                sprite = await self.generate_sprite(
+                    tile,
+                    style=tile.style or (
+                        "noun" if len(tile.name) < 1 else "letter"),
+                    wobble=frame,
+                    position=(x, y),
+                    gscale=gscale
+                )
         else:
             if isinstance(tile.sprite, np.ndarray):
                 sprite = tile.sprite[(tile.frame * 3) + frame]
