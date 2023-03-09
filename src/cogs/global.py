@@ -2,14 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import collections
+import glob
 import os
 import random
 import signal
 import time
 import traceback
+from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Process
-from pathlib import Path
+from pathlib import Path, PurePath
 from urllib.parse import urlparse
 
 import requests
@@ -21,7 +23,7 @@ from datetime import datetime
 from io import BytesIO
 from json import load
 from time import perf_counter
-from typing import Any, OrderedDict, Coroutine, Literal
+from typing import Any, OrderedDict, Coroutine, Literal, Optional
 
 import numpy as np
 import emoji
@@ -31,15 +33,30 @@ import aiohttp
 import discord
 from discord.ext import commands, menus
 
+from src.cogs.variants import parse_signature
 from src.utils import ButtonPages
-from ..tile import Tile, TileSkeleton
+from ..tile import Tile, TileSkeleton, parse_variants
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
-from ..types import Bot, Context
+from ..types import Bot, Context, Color, RegexDict
 
 from .errorhandler import CommandErrorHandler
 
+@dataclass
+class SignText:
+    time_start: int = 0
+    time_end: int = 0
+    x: int = 0
+    y: int = 0
+    text: str = "null"
+    size: float = 1.0
+    xo: int = 0
+    yo: int = 0
+    color: tuple[int, int, int, int] = (255, 255, 255, 255)
+    font: Optional[str] = None
+    alignment: Optional[str] = None
+    stroke: tuple[tuple[int, int, int, int], int] = (0, 0, 0, 0), 0
 
 def try_index(string: str, value: str) -> int:
     """Returns the index of a substring within a string.
@@ -61,12 +78,12 @@ def split_commas(grid: list[list[str]], prefix: str):
         for i, word in enumerate(row):
             if "," in word:
                 if word.startswith(prefix):
-                    each = word.split(",")
+                    each = re.split(r'(?<!\\),', word)
                     expanded = [each[0]]
                     expanded.extend([prefix + segment for segment in each[1:]])
                     to_add.append((i, expanded))
                 else:
-                    raise errors.SplittingException(word)
+                    pass
         for change in reversed(to_add):
             row[change[0]:change[0] + 1] = change[1]
     return grid
@@ -199,7 +216,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(f"{msg}.")
 
     async def handle_grid(
-            self, ctx, grid, tile_borders=False):
+            self, ctx, grid, possible_variants, tile_borders=False):
         """Parses a TileSkeleton array into a Tile grid."""
         tile_data_cache = {
             data.name: data async for data in self.bot.db.tiles(
@@ -213,7 +230,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 [
                     [
                         # grid gets passed by reference, as it is mutable
-                        await Tile.prepare(tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
+                        await Tile.prepare(possible_variants, tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
                         for x, tile in enumerate(row)
                     ]
                     for y, row in enumerate(layer)
@@ -228,9 +245,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             await ctx.typing()
             ctx.silent = ctx.message.flags.silent
-            tiles = emoji.demojize(objects.strip(), language='alias')
+            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:","♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
-            tiles = re.sub(r"\\(?=[:<])", "", tiles).replace("`", "")
+            tiles = re.sub(r"\\(?=[:<])", "", tiles)
 
             # Replace some phrases
             replace_list = [
@@ -262,13 +279,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             old_tiles = tiles
 
             offset = 0
-            for match in re.finditer(r"\"(.*?)\"", tiles, flags=re.RegexFlag.DOTALL):
+            for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
                 a, b = match.span()
                 text = match.group(1)
                 prefix = "tile_" if rule else "text_"
                 sliced = re.split("([\n ]|$)", text)
                 zipped = zip(sliced[1::2], sliced[:-1:2])
-                text = "".join(f"{prefix}{t}{joiner}" if t != "-" else "-" for joiner, t in zipped)
+                text = "".join(f"{prefix}{t}{joiner}" if t != "-" else f"-{joiner}" for joiner, t in zipped)
                 tiles = tiles[:a - offset] + text + tiles[b - offset:]
                 offset += (b - a) - len(text)
 
@@ -276,7 +293,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             word_rows = tiles.splitlines()
 
             # Split each row into words
-            word_grid = [row.split() for row in word_rows]
+            word_grid = [re.split(r"(?<!\\) ", row) for row in word_rows]
 
             parsing_overhead = time.perf_counter()
             # Check flags
@@ -296,6 +313,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             image_format = kwargs.get('image_format', 'gif')
             do_embed = kwargs.get('do_embed', False)
             global_variant = kwargs.get('global_variant', "")
+            word_grid = split_commas(word_grid, "char_")
             for x, y in reversed(to_delete):
                 del word_grid[y][x]
             try:
@@ -307,23 +325,26 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 cause = e.args[0]
                 return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
 
+            sign_texts = []
+
             tilecount = 0
             maxstack = 1
             maxdelta = 1
             try:
                 for row in comma_grid:
                     for stack in row:
-                        maxstack = max(maxstack, len(stack.split("&")))
-                        for timeline in stack.split("&"):
-                            maxdelta = max(maxdelta, len(timeline.split(">")))
+                        maxstack = max(maxstack, len(re.split(r'(?<!\\)&', stack)))
+                        for timeline in re.split(r'(?<!\\)&', stack):
+                            maxdelta = max(maxdelta, len(re.split(r'(?<!\\)>', timeline)))
                 w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
                     comma_grid), maxstack, maxdelta  # width, height, depth, time
                 layer_grid = np.full((t, d, h, w), TileSkeleton(), dtype=object)
                 if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
                     return await ctx.error(
                         f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
-                # Splits "&"-joined words into stacks
-                possible_variants = ctx.bot.variants
+
+                possible_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
+                font_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
 
                 def catch(f, *args, **kwargs):
                     try:
@@ -331,21 +352,46 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     except:
                         return None
 
+                pal = kwargs.get("palette", "default")
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
-                        for l, timeline in enumerate(stack.split('&')):
-                            for d, tile in enumerate(timeline_split := timeline.split('>')):
+                        for l, timeline in enumerate(re.split(r'(?<!\\)&', stack)):
+                            for d, tile in enumerate(timeline_split := re.split(r'(?<!\\)>', timeline)):
                                 if len(tile):
+                                    if (match := re.fullmatch(r"\{(.*)}(.*)", tile)) is not None:
+                                        sign_text = SignText(text=match.group(1), x=x, y=y, time_start=d)
+                                        variants = [variant for variant in match.group(2).split(":") if len(variant)]
+                                        variants = parse_variants(font_variants, variants, self.bot).get("sign", [])
+                                        for variant in variants:
+                                            await variant.apply(sign_text, bot=self.bot, palette=pal)
+                                        layer_grid[d:, l, y, x] = TileSkeleton()
+                                        for o in range(1, maxdelta - d):
+                                            try:
+                                                text = timeline_split[d+o]
+                                                if len(text):
+                                                    print(text, o)
+                                                    break
+                                            except IndexError:
+                                                continue
+                                        else:
+                                            o = maxdelta - d
+                                        sign_text.time_end = d + o
+                                        # Sign texts sadly cannot respect layers.
+                                        sign_texts.append(sign_text)
+                                        print(d, d+o)
+                                        continue
+                                    tile = re.sub(r"\\(.)", r"\1", tile)
                                     assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
                                         ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
                                     if catch(tile.index, ":") or catch(tile.index, ";") \
                                             or ":" not in tile and ";" not in tile:
                                         tilecount += 1
+                                        print(range(layer_grid.shape[0] - d))
                                         # This is done to prevent setting everything to one instance of an object.
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
                                                 possible_variants, tile, rule,
-                                                palette=kwargs.get("palette", "default"), bot=self.bot,
+                                                palette=pal, bot=self.bot,
                                                 global_variant=global_variant
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
@@ -370,7 +416,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 # Handles variants based on `:` affixes
                 buffer = BytesIO()
                 extra_buffer = BytesIO() if raw_output else None
-                full_grid = await self.handle_grid(ctx, layer_grid, kwargs.get("tileborder", False))
+                full_grid = await self.handle_grid(ctx, layer_grid, possible_variants, kwargs.get("tileborder", False))
                 parsing_overhead = time.perf_counter() - parsing_overhead
                 full_tiles, unique_tiles, rendered_frames, render_overhead = await self.bot.renderer.render_full_tiles(
                     full_grid,
@@ -382,6 +428,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     full_tiles,
                     out=buffer,
                     extra_out=extra_buffer,
+                    sign_texts=sign_texts,
                     **kwargs
                 )
             except errors.TileNotFound as e:

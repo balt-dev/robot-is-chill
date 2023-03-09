@@ -222,6 +222,51 @@ async def setup(bot):
         """Applies a variant macro to the tile. Check the macros command for details."""
         assert 0, f"Macro `{name}` not found in the database!"
 
+    # --- SIGN TEXT ---
+
+    @add_variant("font!", no_function_name=True)
+    async def font(sign, name: Literal[*tuple(Path(f).stem for f in glob.glob('data/fonts/*'))]):
+        """Applies a font to a sign text object."""
+        sign.font = name
+
+    @add_variant("scale", no_function_name=True)
+    async def sign_scale(sign, size: float):
+        """Sets the font size of a sign text object."""
+        sign.size *= size
+
+    @add_variant("disp", "displace", no_function_name=True)
+    async def sign_displace(sign, x: float, y: float):
+        """Displaces a sign text object."""
+        sign.xo += x
+        sign.yo += y
+
+    @add_variant(no_function_name=True)
+    async def sign_color(sign, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, bot, palette):
+        """Sets the sign text's color. See the sprite counterpart for details."""
+        if len(color) < 4:
+            if inactive is not None:
+                color = constants.INACTIVE_COLORS[color]
+            try:
+                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(sign.text, color)
+        sign.color = color
+
+    @add_variant("align!", "a!", no_function_name=True)
+    async def alignment(sign, alignment: Literal["left", "center", "right"]):
+        """Sets the sign text's alignment."""
+        sign.alignment = alignment
+
+    @add_variant()
+    async def stroke(sign, color: Color, size: int, *, bot, palette):
+        """Sets the sign text's stroke."""
+        if len(color) < 4:
+            try:
+                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(sign.text, color)
+        sign.stroke = color, size
+
     # --- ANIMATION FRAMES ---
 
     @add_variant(no_function_name=True)
@@ -377,7 +422,9 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         dummy = np.zeros(size, dtype=bool)
         delta = ((plate.shape[0] - sprite.shape[0]) // 2,
                  (plate.shape[1] - sprite.shape[1]) // 2)
-        p_delta = (max(-delta[0], 0), max(-delta[1], 0))
+        print(delta)
+        p_delta = max(-delta[0], 0), max(-delta[1], 0)
+        delta = max(delta[0], 0), max(delta[1], 0)
         dummy[p_delta[0]:p_delta[0] + plate.shape[0],
         p_delta[1]:p_delta[1] + plate.shape[1]] = plate
         dummy[delta[0]:delta[0] + sprite.shape[0],
@@ -394,6 +441,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
     async def letter(tile):
         """Makes custom words appear as letter groups."""
         tile.style = "letter"
+
+    @add_variant("let")
+    async def oneline(tile):
+        """Makes custom words appear in one line."""
+        tile.style = "oneline"
 
     @add_variant()
     async def hide(tile):
