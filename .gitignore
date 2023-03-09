@@ -14,7 +14,6 @@ grass
 .venv/
 venv/*/**
 venv/*
-config.py
 nohup.out
 data/themes/*
 data/editor_objectlist.lua
