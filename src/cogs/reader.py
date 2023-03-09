@@ -5,7 +5,11 @@ import base64
 import configparser
 import io
 import re
+import shutil
 import zlib
+from glob import glob
+from pathlib import PurePath
+
 import discord
 from dataclasses import dataclass
 from os import listdir, mkdir, path
@@ -22,6 +26,7 @@ from ..tile import ProcessedTile
 
 from ..types import Bot, Context
 
+from more_itertools import ichunked
 
 def flatten(x: int, y: int, width: int) -> int:
     """Return the flattened position of a coordinate in a grid of specified
@@ -328,6 +333,9 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             image_source=grid.world,
             background=background,
             out=f"target/renders/{grid.world}/{grid.filename}.gif",
+            upscale=1,
+            _disable_limit=True,
+            sign_texts=[]
         )
         # Return level metadata
         return LevelData(filename, source, grid.name, grid.subtitle,
@@ -393,43 +401,40 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         Initializes the level tree unless otherwise specified. Cuts off
         borders from rendered levels unless otherwise specified.
         """
-        levels = [l[:-2]
-                  for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
-
         # Parse and render the level map
         message = await ctx.reply("Loading maps...")
-        if not path.exists(f'target/renders/{world}'):
-            mkdir(f'target/renders/{world}')
-        if not path.exists(f'data/images/{world}'):
-            mkdir(f'data/images/{world}')
-        metadatas = {}
-        total = len(levels)
-        for i, level in enumerate(levels):
-            metadata = await self.render_level(
-                level,
-                source=world,
-                initialize=True,
-                remove_borders=True,
-                keep_background=True,
-            )
-            if also_mobile:
-                try:
-                    await self.render_level(
+
+        world_glob = [PurePath(p).stem for p in glob(f"data/levels/{world}")]
+        if not len(world_glob):
+            return await ctx.error(f"No worlds found for `{world}`!")
+        for world in world_glob:
+            levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
+
+            if not path.exists(f'target/renders/{world}'):
+                mkdir(f'target/renders/{world}')
+            if not path.exists(f'data/images/{world}') and path.exists(f"data/levels/{world}/Images"):
+                shutil.copytree(f"data/levels/{world}/Images", f"data/images/{world}")
+            metadatas = {}
+
+            async def cb_render(coro, lvl):
+                nonlocal metadatas
+                metadatas[lvl] = await coro
+                await asyncio.sleep(0)
+
+            for i, levels_slice in enumerate(ichunked(levels, 8)):
+                tasks = []
+                for level in levels_slice:
+                    tasks.append(asyncio.create_task(cb_render(self.render_level(
                         level,
-                        source=f"{world}_m",
-                        initialize=False,
+                        source=world,
+                        initialize=True,
                         remove_borders=True,
                         keep_background=True,
-                    )
-                except FileNotFoundError:
-                    pass
-            metadatas[level] = metadata
-            await asyncio.sleep(0)
-            if i and i % 10 == 0:
-                percent = int((i / total) * 100)
-                loadbar = '[' + ('#' * int((percent // 2.5))) + \
-                    (' ' * (40 - int(percent // 2.5))) + ']'
-                await message.edit(content=f"Loading maps... {i}/{total}\n`{loadbar}` ({percent}% done)")
+                    ), level)))
+                await asyncio.gather(*tasks)
+                await asyncio.sleep(0.5)
+                await message.edit(content=f"Loading maps from `{world}`... {(i + 1) * 8}/{len(levels)}")
+
         await message.edit(content=f"All maps loaded.\nUpdating database...")
         await self.clean_metadata(metadatas)
         await message.reply(content=f"{ctx.author.mention} Database updated. Done.", mention_author=False)

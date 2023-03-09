@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import glob
 import math
 import random
@@ -121,7 +122,7 @@ class Renderer:
             random_animations: bool = True,
             expand: bool = False,
             _disable_limit: bool = False,
-            sign_texts: list,
+            sign_texts: list = [],
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
