@@ -11,7 +11,6 @@ webhooks.py
 grass
 **/.idea/
 **/.vscode/
-/target/renders/levels/*
 .venv/
 venv/*/**
 venv/*
@@ -29,3 +28,4 @@ data/levels/debug/
 data/levels/museum/
 data/levels/new_adv/
 data/images/**/*
+target/
