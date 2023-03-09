@@ -6,6 +6,7 @@ import random
 import re
 import sys
 import time
+import warnings
 import zipfile
 from io import BytesIO
 from pathlib import Path
@@ -22,7 +23,7 @@ from .. import constants, errors
 from ..types import Color
 from ..utils import cached_open
 
-FONT = ImageFont.truetype("data/misc/OpenSans-Regular.ttf", constants.DEFAULT_SPRITE_SIZE // 2)
+FONT = ImageFont.truetype("data/fonts/default.ttf")
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -109,7 +110,7 @@ class Renderer:
             extra_out: str | BinaryIO | None = None,
             extra_name: str | None = None,
             frames: list[int] = (1, 2, 3),
-            animation: tuple[int, int] = (0, None),
+            animation: tuple[int, int] = None,
             speed: int = 200,
             crop: tuple[int, int, int, int] = (0, 0, 0, 0),
             pad: tuple[int, int, int, int] = (0, 0, 0, 0),
@@ -120,56 +121,63 @@ class Renderer:
             random_animations: bool = True,
             expand: bool = False,
             _disable_limit: bool = False,
+            sign_texts: list,
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
         if before_images is None:
             before_images = []
         start_time = time.perf_counter()
-        animation, animation_delta = animation  # number of frames per wobble frame, number of frames per timestep
+        if animation is not None:
+            animation_wobble, animation_timestep = animation
+        else:
+            animation_wobble, animation_timestep = 1, len(
+                frames)  # number of frames per wobble frame, number of frames per timestep
         grid = np.array(grid, dtype=object)
-        durations = [speed] * ((len(frames) if animation_delta is None else animation_delta) * grid.shape[0] + len(before_images))
-        if animation:
-            frames = np.repeat(frames, animation).tolist()
-            frames = (frames * (math.ceil(len(durations) /
-                                          animation_delta)))[:len(durations)]
-
-        sizes = np.array([get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
+        durations = [speed for _ in range(animation_timestep * grid.shape[0] + len(before_images))]
+        frames = np.repeat(frames, animation_wobble).tolist()
+        frames = (frames * (math.ceil(len(durations) / animation_timestep)))
+        sizes = np.array(
+            [get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
         sizes = sizes.reshape((*grid.shape, 2))
         assert sizes.size > 0, "The render must have at least one tile in it."
-        left_influence    = np.arange(0, -spacing * sizes.shape[3], -spacing) * 2
-        top_influence     = np.arange(0, -spacing * sizes.shape[2], -spacing) * 2
-        right_influence   = np.arange(-spacing * (sizes.shape[3] - 1), spacing,  spacing) * 2
-        bottom_influence  = np.arange(-spacing * (sizes.shape[2] - 1), spacing,  spacing) * 2
-        left_sizes =   sizes[..., 1] + left_influence.reshape((1, 1, 1, -1))
-        top_sizes =    sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
-        right_sizes =  sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
+        left_influence = np.arange(0, -spacing * sizes.shape[3], -spacing) * 2
+        top_influence = np.arange(0, -spacing * sizes.shape[2], -spacing) * 2
+        right_influence = np.arange(-spacing * (sizes.shape[3] - 1), spacing, spacing) * 2
+        bottom_influence = np.arange(-spacing * (sizes.shape[2] - 1), spacing, spacing) * 2
+        left_sizes = sizes[..., 1] + left_influence.reshape((1, 1, 1, -1))
+        top_sizes = sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
+        right_sizes = sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
         bottom_sizes = sizes[..., 0] + bottom_influence.reshape((1, 1, -1, 1))
-        left =   max((np.max(left_sizes   - spacing) // 2) + pad[0], 0)
-        top =    max((np.max(top_sizes    - spacing) // 2) + pad[1], 0)
-        right =  max((np.max(right_sizes  - spacing) // 2) + pad[2], 0)
+        left = max((np.max(left_sizes - spacing) // 2) + pad[0], 0)
+        top = max((np.max(top_sizes - spacing) // 2) + pad[1], 0)
+        right = max((np.max(right_sizes - spacing) // 2) + pad[2], 0)
         bottom = max((np.max(bottom_sizes - spacing) // 2) + pad[3], 0)
         if expand:
             displacements = np.array(
                 [tile.displacement if not (tile is None or tile.empty) else (0, 0)
                  for tile in grid.flatten()])
             displacements = (displacements.reshape((*grid.shape, 2)))
-            left_disp =   displacements[:, :, :, 0, 0]
-            top_disp =    displacements[:, :, 0, :, 1]
-            right_disp =  displacements[:, :, :, -1, 0]
+            left_disp = displacements[:, :, :, 0, 0]
+            top_disp = displacements[:, :, 0, :, 1]
+            right_disp = displacements[:, :, :, -1, 0]
             bottom_disp = displacements[:, :, -1, :, 1]
-            left +=   max(max(left_disp.max((0, 1, 2)), left_disp.min((0, 1, 2)), key=abs), 0)
-            top +=    max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
-            right -=  min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
+            left += max(max(left_disp.max((0, 1, 2)), left_disp.min((0, 1, 2)), key=abs), 0)
+            top += max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
+            right -= min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
             bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
         default_size = np.array((int(sizes.shape[2] * spacing + top + bottom),
-                        int(sizes.shape[3] * spacing + left + right)))
+                                 int(sizes.shape[3] * spacing + left + right)))
         true_size = default_size * upscale
         if not _disable_limit:
-            assert all(true_size <= constants.MAX_IMAGE_SIZE), f"Image of size {true_size} is larger than the maximum allowed size of {constants.MAX_IMAGE_SIZE}!"
-        steps = np.zeros((grid.shape[0] * len(frames), *default_size, 4), dtype=np.uint8)
+            assert all(
+                true_size <= constants.MAX_IMAGE_SIZE), f"Image of size {true_size} is larger than the maximum allowed size of {constants.MAX_IMAGE_SIZE}!"
+        steps = np.zeros(
+            (((animation_timestep if animation_wobble else len(frames)) * grid.shape[0]), *default_size, 4),
+            dtype=np.uint8)
+
         if images and ((bg_images := isinstance(images[0], Image.Image)) or image_source is not None):
-            for step in range(0, steps.shape[0], len(frames)):
+            for step in range(steps.shape[0] // len(frames)):
                 for frame in frames:
                     img = Image.new("RGBA", tuple(default_size[::-1]))
                     # for loop in case multiple background images are used
@@ -188,7 +196,8 @@ class Renderer:
                                 overlap = Image.open(
                                     f"data/images/{image_source}/{image}_1.png").convert("RGBA")
                         img.paste(overlap, (0, 0), mask=overlap)
-                    steps[step + frame - 1] = np.array(img)
+                    for i in range(animation_wobble):
+                        steps[i + animation_timestep * step] = np.array(img)
         for t, step in enumerate(grid):
             for z, layer in enumerate(step):
                 for y, row in enumerate(layer):
@@ -198,8 +207,10 @@ class Renderer:
                             continue
                         displacement = (y * spacing - int((first_frame[0] - spacing) / 2) + top - tile.displacement[1],
                                         x * spacing - int((first_frame[1] - spacing) / 2) + left - tile.displacement[0])
-                        for i, frame in enumerate(frames):
-                            wobble = tile.wobble if tile.wobble is not None else (11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
+                        for i, frame in enumerate(frames[animation_timestep * t:animation_timestep * (t + 1)]):
+                            image_index = i + animation_timestep * t
+                            wobble = tile.wobble if tile.wobble is not None else (
+                                                                                         11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
                             image = tile.frames[wobble]
                             dslice = (default_size - (first_frame + displacement))
                             dst_slice = (
@@ -214,15 +225,17 @@ class Renderer:
                                 slice(max(displacement[0], 0), image.shape[0] + max(displacement[0], 0)),
                                 slice(max(displacement[1], 0), image.shape[1] + max(displacement[1], 0))
                             )
-                            index = (t * len(frames)) + i - 1, *src_slice
-                            steps[index] = self.blend(tile.blending, steps[index], image, tile.keep_alpha)
-        comp_ovh = time.perf_counter() - start_time
-        start_time = time.perf_counter()
+                            index = image_index, *src_slice
+                            try:
+                                steps[index] = self.blend(tile.blending, steps[index], image, tile.keep_alpha)
+                            except IndexError:
+                                pass  # warnings.warn(f"Couldn't place {tile} at {x}, {y}, {index}")
         images = [np.array(image.convert("RGBA")) for image in before_images]
         l, u, r, d = crop
         r = r
         d = d
-        for step in steps:
+        wobble_range = np.arange(steps.shape[0]) // animation_timestep
+        for i, step in enumerate(steps):
             step = step[u:-d if d > 0 else None, l:-r if r > 0 else None]
             if background is not None:
                 if len(background) < 4:
@@ -232,6 +245,41 @@ class Renderer:
                 step_f[..., :3] = step_f[..., 3, np.newaxis]
                 c = ((1 - step_f) * background + step_f * step.astype(np.float32))
                 step = c.astype(np.uint8)
+            step = cv2.resize(
+                step,
+                (int(step.shape[1] * upscale), int(step.shape[0] * upscale)),
+                interpolation=cv2.INTER_NEAREST
+            )
+            assert len(sign_texts) <= constants.MAX_SIGN_TEXTS, \
+                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(sign_texts)}`."
+            if len(sign_texts):
+                im = Image.new("RGBA", step.shape[1::-1])
+                draw = ImageDraw(im)
+                if image_format == "gif" and background is None:
+                    draw.fontmode = "1"
+                for sign_text in sign_texts:
+                    if wobble_range[i] in range(sign_text.time_start, sign_text.time_end):
+                        size = int(spacing * (upscale // 2) * sign_text.size)
+                        assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
+                        if sign_text.font is not None:
+                            font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
+                        else:
+                            font = FONT.font_variant(size=size)
+                        text = sign_text.text
+                        text = re.sub(r"(?<!\\)\/n", "\n", text)
+                        text = re.sub(r"\\(.)", r"\1", text)
+                        assert len(text) < constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
+                        pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + 0.5)),
+                                top + sign_text.yo + (spacing * upscale * (sign_text.y + 1.0)))
+                        draw.multiline_text(pos, text, font=font,
+                                            align=sign_text.alignment if sign_text.alignment is not None else "center",
+                                            anchor="md",
+                                            fill=sign_text.color, features=("liga", "dlig", "clig"),
+                                            stroke_fill=sign_text.stroke[0], stroke_width=sign_text.stroke[1])
+                sign_arr = np.array(im)
+                if image_format == "gif" and background is None:
+                    sign_arr[..., 3][sign_arr[..., 3] > 0] = 255
+                step = self.blend("normal", step, sign_arr, True)
             if image_format == "gif":
                 step_a = step[..., 3]
                 step = np.multiply(step[..., :3], np.dstack([step_a] * 3).astype(float) / 255,
@@ -240,13 +288,9 @@ class Renderer:
                 too_dark_mask = np.logical_and(np.all(true_rgb < 8, axis=2), step_a != 0)
                 step[too_dark_mask, :3] = 4
                 step = np.dstack((step, step_a))
-            images.append(
-                cv2.resize(
-                    step,
-                    (int(step.shape[1] * upscale), int(step.shape[0] * upscale)),
-                    interpolation=cv2.INTER_NEAREST
-                )
-            )
+            images.append(step)
+        comp_ovh = time.perf_counter() - start_time
+        start_time = time.perf_counter()
         self.save_frames(images,
                          out,
                          durations,
@@ -307,7 +351,7 @@ class Renderer:
             dst_alpha = dst_alpha[:, :, np.newaxis]
             c = ((1 - dst_alpha) * a + dst_alpha * c)
             c[out_a == 0] = 0
-            return np.dstack((np.clip(c*255, 0, 255).astype(np.uint8), out_a[..., np.newaxis]))
+            return np.dstack((np.clip(c * 255, 0, 255).astype(np.uint8), out_a[..., np.newaxis]))
         return np.clip(c * 255, 0, 255).astype(np.uint8)
 
     async def render_full_frame(self,
@@ -401,7 +445,8 @@ class Renderer:
         frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
         for frame in frame_range:
             frame -= 1
-            wobble = tile.wobble if tile.wobble is not None else (11 * x + 13 * y + frame) % 3 if random_animations else frame
+            wobble = tile.wobble if tile.wobble is not None else (
+                                                                         11 * x + 13 * y + frame) % 3 if random_animations else frame
             if not done_frames[wobble]:
                 final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y)
                 rendered_frames.append(wobble)
@@ -456,7 +501,7 @@ class Renderer:
             position: tuple[int, int]
     ) -> np.ndarray:
         """Generates a custom text sprite."""
-        text = tile.name[5:].lower()
+        text = tile.name[5:].lower().replace(" ","~")
         raw = text.replace("/", "")
         newline_count = text.count("/")
         assert len(text) <= 64, 'Text has a maximum length of `64` characters.'
@@ -478,8 +523,9 @@ class Renderer:
             indices = []
             if len(raw) >= 4:
                 mode = "small"
-                indices = [len(raw) - math.ceil(len(raw) / 2)]
-
+                if tile.style != "oneline":
+                    indices = [len(raw) - math.ceil(len(raw) / 2)]
+        print(mode)
         indices.insert(0, 0)
         indices.append(len(raw))  # can't use -1 here because of a range() later on
 
@@ -595,13 +641,13 @@ class Renderer:
             l_rows = await self.bot.db.conn.fetchall(
                 # fstring use safe
                 f'''
-                SELECT char, width, sprite_{int(wobble)} FROM letters
+                SELECT sprite_{int(wobble)} FROM letters
                 WHERE char == ? AND mode == ? AND width == ?
                 ''',
                 c, mode, width
             )
             options = list(l_rows)
-            char, width, letter_sprite = options[seed_digit % len(options)]
+            letter_sprite, *_ = *options[seed_digit % len(options)],
             buf = BytesIO(letter_sprite)
             letters.append(Image.open(buf))
 
@@ -612,7 +658,8 @@ class Renderer:
         if mode == "small":
             for j, (a, b) in enumerate(bounds):
                 x = gaps[a]
-                y_center = ((constants.DEFAULT_SPRITE_SIZE // 2) * j) + (constants.DEFAULT_SPRITE_SIZE // 4)
+                y_center = ((constants.DEFAULT_SPRITE_SIZE // 2) * j) + (constants.DEFAULT_SPRITE_SIZE // 4) \
+                    if style != "oneline" else 12
                 for i in range(a, b):
                     letter = letters[i]
                     y_top = y_center - letter.height // 2

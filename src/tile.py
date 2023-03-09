@@ -9,7 +9,36 @@ import numpy as np
 from . import errors, constants
 from .cogs.variants import parse_signature
 from .db import TileData
-from .types import Variant, Context
+from .types import Variant, Context, RegexDict
+
+
+def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str], bot = None, name = None):
+    macro_count = 0
+    out = {}
+    i = 0
+    while i < len(raw_variants):
+        raw_variant = raw_variants[i]
+        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
+            assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
+            macro_count += 1
+            raw_macro, *macro_args = raw_variant[2:].split("/")
+            macro = bot.macros[raw_macro].value
+            for j, arg in enumerate(macro_args):
+                macro = macro.replace(f"${j + 1}", arg)
+            del raw_variants[i]
+            raw_variants[i:i] = macro.split(":")  # Extend at index i
+            continue
+        try:
+            final_variant = possible_variants[raw_variant]
+            var_type = final_variant.type
+            variant_args = [g for g in re.fullmatch(final_variant.pattern, raw_variant).groups() if g is not None]
+            final_args = parse_signature(variant_args, final_variant.signature)
+            out[var_type] = out.get(var_type, [])
+            out[var_type].append(final_variant(*final_args))
+        except KeyError:
+            raise errors.UnknownVariant(name, raw_variant)
+        i += 1
+    return out
 
 @dataclass
 class TileSkeleton:
@@ -52,30 +81,7 @@ class TileSkeleton:
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
             raw_variants.insert(0, "m!2ify")
-        macro_count = 0
-        # Allow the index to be changed while iterating
-        i = 0
-        while i < len(raw_variants):
-            raw_variant = raw_variants[i]
-            if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
-                assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
-                macro_count += 1
-                raw_macro, *macro_args = raw_variant[2:].split("/")
-                macro = bot.macros[raw_macro].value
-                for j, arg in enumerate(macro_args):
-                    macro = macro.replace(f"${j+1}", arg)
-                del raw_variants[i]
-                raw_variants[i:i] = macro.split(":")  # Extend at index i
-                continue
-            try:
-                final_variant = possible_variants[raw_variant]
-                var_type = final_variant.type
-                variant_args = [g for g in re.fullmatch(final_variant.pattern, raw_variant).groups() if g is not None]
-                final_args = parse_signature(variant_args, final_variant.signature)
-                out.variants[var_type].append(final_variant(*final_args))
-            except KeyError:
-                raise errors.UnknownVariant(out.name, raw_variant)
-            i += 1
+        out.variants |= parse_variants(possible_variants, raw_variants, bot=bot, name=out.name)
         return out
 
 
@@ -156,7 +162,7 @@ class Tile:
                      self.custom_color, self.palette))
 
     @classmethod
-    async def prepare(cls, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
+    async def prepare(cls, possible_variants, tile: TileSkeleton, tile_data_cache: dict[str, TileData], grid,
                       position: tuple[int, int, int, int], tile_borders: bool = False, ctx: Context = None):
         if tile.empty:
             return cls(name="<empty>")
@@ -187,7 +193,7 @@ class Tile:
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
                 value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
         value.variants["sprite"].append(
-            ctx.bot.variants["0/3"](value.color, _default_color=True)
+            possible_variants["0/3"](value.color, _default_color=True)
         )
         return value
 
