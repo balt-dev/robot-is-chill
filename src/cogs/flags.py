@@ -271,13 +271,13 @@ Use % to set a percentage of the default render speed."""
         """Expands the render for tiles displaced with the `:displace` variant."""
         return True,
 
-#     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
-#                     syntax="--anim|-am=<wobble: int>/<timestep: int>",
-#                     kwargs=["animation"])
-#     async def anim(match, _):
-#         """Makes the wobble frames independent of the animation.
-# The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
-#         return ((int(match.group(1))), (int(match.group(2)))),
+    @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
+                    syntax="--anim|-am=<wobble: int>/<timestep: int>",
+                    kwargs=["animation"])
+    async def anim(match, _):
+        """Makes the wobble frames independent of the animation.
+The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
+        return ((int(match.group(1))), (int(match.group(2)))),
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
                     syntax="--format|-f=<format: gif | png>",

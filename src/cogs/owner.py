@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from glob import glob
 from io import BytesIO
 import json
@@ -90,7 +91,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         file_name = None
         check = [
             os.path.basename(name)[
-                :5] == 'text_' for name in zip.namelist()]
+            :5] == 'text_' for name in zip.namelist()]
         for name in zip.namelist():
             name = os.path.basename(name)
             if name[:5] != 'text_' or all(check):
@@ -175,7 +176,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             return await ctx.error('You forgot to attach a zip.')
         check = [
             os.path.basename(name)[
-                :5] == 'text_' for name in zip.namelist()]
+            :5] == 'text_' for name in zip.namelist()]
         withtext = any(check) and not all(check)
         file_name = None
         for name in zip.namelist():
@@ -327,9 +328,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         def scanforname(name):
             for directory, filenames in (  # i wish this could be a dict
                     ('objects', ("characters", "devs",
-                     "special", "thingify", "ui", "unsorted")),
+                                 "special", "thingify", "ui", "unsorted")),
                     ('text', ("conditions", "letters",
-                     "properties", "tutorial", "unsorted", "verbs"))
+                              "properties", "tutorial", "unsorted", "verbs"))
             ):
                 for filename in filenames:
                     for babdata in requests.get(
@@ -398,7 +399,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.bot.close()
 
     @commands.command(aliases=["kill", "yeet",
-                      "defeat", "empty", "not", "kil"])
+                               "defeat", "empty", "not", "kil"])
     @commands.is_owner()
     async def logout(self, ctx: Context, endsentence: str = ""):
         """Kills the bot process."""
@@ -848,7 +849,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     header = header + '-' * max_length + '+'
                 formattable_rows = formattable_columns.T
                 formatted = '|' + \
-                    '|'.join(formattable_rows[0]) + f'|\n{header}'
+                            '|'.join(formattable_rows[0]) + f'|\n{header}'
                 for row in formattable_rows[1:]:
                     formatted_row = '|' + '|'.join(row) + '|'
                     if not filemode and len(row) + len(formatted) > 1800:
@@ -1061,6 +1062,40 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             ''',
             data
         )
+
+    @commands.command()
+    @commands.is_owner()
+    async def addbaba(self, ctx: Context, *, path: str):
+        """Adds all missing files from the base game. Should only have to be run when the game updates."""
+        path = pathlib.Path(path) / "Data"
+        assert path.exists, "Invalid directory!"
+        bot_path = pathlib.Path(os.getcwd()) / "data"
+
+        def replace(src, dst, *args):
+            if os.path.exists(src):
+                if os.path.exists(dst):
+                    shutil.rmtree(dst)
+                shutil.copytree(src, dst, *args)
+
+        message = await ctx.reply(f"Adding sprites...")
+        replace(path / "Sprites", bot_path / "sprites" / "baba")
+        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "vanilla")
+        shutil.copy2(path / "merged.ttf", bot_path / "fonts" / "default.ttf")
+        shutil.copy2(path / "Editor" / "editor_objectlist.lua", bot_path / "editor_objectlist.lua")
+        shutil.copy2(path / "values.lua", bot_path / "values.lua")
+        for world in glob(str(path / "Worlds" / "*")):
+            world = pathlib.Path(world)
+            world_name = world.stem
+            await message.edit(content=f"Adding world `{world_name}`...")
+            if (bot_world_path := pathlib.Path(bot_path) / "levels" / world_name).exists():
+                shutil.rmtree(bot_world_path)
+            os.mkdir(bot_world_path)
+            for file in os.listdir(world):
+                if os.path.isfile(world / file):
+                    shutil.copy2(world / file, bot_world_path / file)
+            replace(world / "Images", pathlib.Path(bot_path) / "images" / world_name)
+        await message.edit(content="Done.")
+
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
