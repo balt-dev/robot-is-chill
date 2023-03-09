@@ -55,7 +55,7 @@ class SearchPageSource(menus.ListPageSource):
                 continue
             else:
                 lines.append(f"({type}) {short}")
-            lines.append("\n\n")
+            lines.append("\n")
 
         if len(lines) > 1:
             lines[-1] = "```"
@@ -189,7 +189,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         * `author`: For custom levels, filters by the author.
 
         You can also filter by the result type:
-        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, or `mod`.
+        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, `world`, or `mod`.
 
         **Example commands:**
         `search baba`
@@ -353,6 +353,17 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
+        if flags.get("type") is None and plain_query or flags.get(
+                "type") == "world":
+            out = []
+            for path in Path("data/levels").glob("*"):
+                out.append((("world", path.stem), path.stem))
+            out.sort()
+            for a, b in out:
+                results[a] = b
+
+        if "variant" in query:
+            await ctx.reply("_Looking for variants? They've moved to the `variants` command._", delete_after=10, mention_author=False)
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
@@ -368,7 +379,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             return variant.__name__
         variants = ctx.bot.variants._values
         if query is not None:
-            variants = [var for var in variants if query in var.__name__.lower()]
+            variants = [var for var in variants if query in var.__name__.lower() and not var.hidden]
+        assert len(variants) > 0, f"No variants were found with the query `{query}`!"
         await ButtonPages(
             source=VariantSource(
                 sorted(variants, key=sort)  # Sort alphabetically
@@ -431,11 +443,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         This is useful for picking colors from the palette.
         """
         p_cache = self.bot.renderer.palette_cache
-        if (img := p_cache.get(palette, None)) is None:
+        img = p_cache.get(palette, None)
+        if img is None:
             if "/" not in palette:
                 return await ctx.error(f'The palette {palette} could not be found.')
-            palette = "default"
-            r, g, b, _ = Color.parse(Tile(name="<palette command>"), p_cache, palette)
+            palette, color = "default", palette
+        if color is not None:
+            r, g, b, _ = Color.parse(Tile(name="<palette command>", palette=palette), p_cache, color)
             d = discord.Embed(
                 color=discord.Color.from_rgb(r, g, b),
                 title=f"Color: #{hex((r << 16) | (g << 8) | b)[2:].zfill(6)}"
@@ -448,7 +462,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                  img.height * constants.PALETTE_PIXEL_SIZE),
                 resample=Image.NEAREST
             ).convert("RGBA")
-            font = ImageFont.truetype("data/04b03.ttf", 16)
+            font = ImageFont.truetype("data/misc/04b03.ttf", 16)
             draw = ImageDraw.Draw(pal_img)
             for y in range(txthgt):
                 for x in range(txtwid):

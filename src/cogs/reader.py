@@ -6,6 +6,7 @@ import configparser
 import io
 import re
 import shutil
+import warnings
 import zlib
 from glob import glob
 from pathlib import PurePath
@@ -242,8 +243,10 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         self.defaults_by_name: dict[str, Item] = {}
         self.parent_levels: dict[str,
                                  tuple[str, dict[str, tuple[int, int]]]] = {}
-
-        self.read_objects()
+        try:
+            self.read_objects()
+        except FileNotFoundError:
+            warnings.warn("Baba is not added!")
 
     async def render_custom_level(self, code: str) -> CustomLevelData:
         """Renders a custom level.
