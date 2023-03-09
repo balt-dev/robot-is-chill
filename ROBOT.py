@@ -1,25 +1,39 @@
 from __future__ import annotations
+
 import asyncio
+import glob
 
 import sys
 from datetime import datetime
+from pathlib import Path
+from typing import Coroutine
 
 import discord
+from PIL import Image
 from discord.ext import commands
 
 import auth
 import config
 import webhooks
+from src.types import Macro
 from src.db import Database
+
+from numpy import set_printoptions as numpy_set_printoptions
 
 
 class Context(commands.Context):
-    async def error(self, msg: str, embed: discord.Embed | None = None) -> discord.Message:
+    silent: bool = False
+
+    async def error(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+        try:
+            self.silent
+        except KeyError:
+            self.silent = False
         await self.message.add_reaction("\u26a0\ufe0f")
         if embed is not None:
-            return await self.reply(msg, embed=embed)
+            return await self.reply(msg, embed=embed, silent=self.silent)
         else:
-            return await self.reply(msg)
+            return await self.reply(msg, silent=self.silent)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
@@ -66,8 +80,17 @@ class Bot(commands.Bot):
         self.renderer = None
         self.flags = None
         self.variants = None
+        self.palette_cache = {}
+        self.macros = {}
+        for path in glob.glob("data/palettes/*.png"):
+            with Image.open(path) as im:
+                self.palette_cache[Path(path).stem] = im.copy()
+        numpy_set_printoptions(
+            threshold=sys.maxsize,
+            linewidth=sys.maxsize
+        )
         super().__init__(*args, **kwargs)
-
+        self.remove_command('help')
         # has to be after __init__
         async def gather_cogs():
             await asyncio.gather(*(self.load_extension(cog, package='ROBOT') for cog in cogs))
@@ -83,6 +106,11 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         await self.db.connect(self.db_path)
+        print("Loading macros...")
+        async with self.db.conn.cursor() as cur:
+            await cur.execute("SELECT * from macros")
+            for (name, value, description, author) in await cur.fetchall():
+                self.macros[name] = Macro(value, description, author)
         print(f"Logged in as {self.user}!")
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
@@ -127,10 +155,13 @@ bot = Bot(
 async def on_command(ctx):
     embed = discord.Embed(
         title="Disclaimer",
-        description="This is the beta branch prefix. Things will most likely be broken.",
+        description="This is the beta branch prefix. Some things may be changed.",
         color=config.logging_color)
     await ctx.send(embed=embed, delete_after=3)
-    pass
+    nl = '\n'
+    print(f"""{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) in {"DMs" if ctx.guild is None else ctx.guild.name} | {ctx.author.public_flags.all()}
+    {(nl + '    ').join(ctx.message.content.split(nl))}""")
+    # pass
     # webhook = await bot.fetch_webhook(webhooks.logging_id)
     # embed = discord.Embed(
     #     description=ctx.message.content,
@@ -139,7 +170,6 @@ async def on_command(ctx):
     #                  icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
     # embed.set_footer(text=str(ctx.author.id))
     # await webhook.send(embed=embed)
-
 
 bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)

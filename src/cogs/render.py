@@ -270,7 +270,7 @@ class Renderer:
                         text = sign_text.text
                         text = re.sub(r"(?<!\\)\/n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
-                        assert len(text) < constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
+                        assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
                         pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + 0.5)),
                                 top + sign_text.yo + (spacing * upscale * (sign_text.y + 1.0)))
                         draw.multiline_text(pos, text, font=font,
