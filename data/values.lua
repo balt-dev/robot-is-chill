@@ -2720,6 +2720,8 @@ bicons =
 	m_settings_language = 46,
 	m_settings_hand_right = 47,
 	m_settings_hand_left = 48,
+	m_settings_pointers_on = 49,
+	m_settings_pointers_off = 50,
 }
 
 lookup_table =
