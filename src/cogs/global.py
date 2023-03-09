@@ -145,7 +145,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     async def start_timeout(self, ctx, *args, timeout_multiplier: float = 1.0, **kwargs):
         def handler(_signum, _frame):
-            raise AssertionError("The command took too long and was timed out.")
+            asyncio.ensure_future(CommandErrorHandler(ctx.bot).on_command_error(ctx, AssertionError(
+                "The command took too long and was timed out.")))
+
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
         await self.render_tiles(ctx, *args, **kwargs)
@@ -249,7 +251,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)
 
-            # Replace some phrases
             replace_list = [
                 ['а', 'a'],
                 ['в', 'b'],
@@ -274,7 +275,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
             # Check for empty input
             if not tiles:
-                return await ctx.error("Input cannot have 0 tiles.")
+                return await ctx.error("Input cannot be blank.")
 
             old_tiles = tiles
 
@@ -310,6 +311,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 for flag in self.bot.flags.list:
                     to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
             raw_output = kwargs.get("raw_output", False)
+            macros = kwargs.get("macro", {})
             image_format = kwargs.get('image_format', 'gif')
             do_embed = kwargs.get('do_embed', False)
             global_variant = kwargs.get('global_variant', "")
@@ -397,14 +399,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
                                     else:
-                                        layer_grid[d:, l, y, x] = [
-                                            await TileSkeleton.parse(
+                                        layer_grid[d:, l, y, x] = await TileSkeleton.parse(
                                             possible_variants,
                                             layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
                                                 0] + tile,
-                                            rule, bot=self.bot)
-                                            for _ in range(layer_grid.shape[0] - d)
-                                        ]
+                                            rule, macros, bot=self.bot)
+
                 # Get the dimensions of the grid
                 grid_shape = layer_grid.shape
                 # Don't proceed if the request is too large.
@@ -424,7 +424,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     gscale=kwargs.get("gscale", 1),
                     frames=kwargs.get("frames", (1, 2, 3))
                 )
-                composite_overhead, saving_overhead, im_size = await self.bot.renderer.render(
+                composite_overhead, saving_overhead = await self.bot.renderer.render(
                     full_tiles,
                     out=buffer,
                     extra_out=extra_buffer,
@@ -447,8 +447,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 return await ctx.error(
                     f"You provided an empty variant for `{word}`."
                 )
-            except errors.TooLargeTile as e:
-                return await ctx.error(f"A tile of size `{e.args[0]}` is larger than the maximum allowed size of `{constants.MAX_TILE_SIZE}`.")
             except errors.VariantError as e:
                 return await self.handle_variant_errors(ctx, e)
             except errors.TextGenerationError as e:
@@ -457,7 +455,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             filename = datetime.utcnow().strftime(
                 f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
             image = discord.File(buffer, filename=filename, spoiler=spoiler)
-            description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
+            description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
             if do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)
 
@@ -479,7 +477,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     Tiles rendered: {unique_tiles}
     Frames rendered: {rendered_frames}
     Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
-    Image size: {im_size}
     '''
 
                 embed.add_field(name="Render statistics", value=stats)
@@ -494,7 +491,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         finally:
             signal.alarm(0)
 
-    @commands.command(aliases=["t"])
+    @commands.command()
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def tile(self, ctx: Context, *, objects: str = ""):
         """Renders the tiles provided.
@@ -508,10 +505,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         **Useful tips:**
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `$` : `$object` renders text objects.
-        * `,` : `$x,y,...` is expanded into `$x $y ...`
+        * `tile_` : `tile_object` renders regular objects.
+        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
         * `||` : Marks the output gif as a spoiler.
-        * `""`: `"x y ..."` is expanded into `$x $y $...`
 
         **Example commands:**
         `tile baba - keke`
@@ -543,10 +539,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         **Useful tips:**
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `$` : `$object` renders tile objects.
-        * `,` : `$x,y,...` is expanded into `$x $y ...`
+        * `tile_` : `tile_object` renders regular objects.
         * `||` : Marks the output gif as a spoiler.
-        * `""`: `"x y ..."` is expanded into `$x $y $...`
 
         **Example commands:**
         `rule baba is you`
@@ -933,13 +927,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
     @commands.group(aliases=["fi", "filter"], pass_context=True, invoke_without_command=True)
     async def filterimage(self, ctx: Context):
-        """Performs filterimage-related actions like template creation, conversion and accessing the database.
-Filterimages are formatted as follows:
-- R: X offset of pixel's UV (-127 to 128)
-- G: Y offset of pixel's UV (-127 to 128)
-- B: Brightness of pixel (0 to 255)
-- A: Alpha of pixel (0 to 255)"""
-        await ctx.invoke(ctx.bot.get_command("cmds"), "filterimage")
+        """Performs filterimage-related actions like template creation,
+        conversion and accessing the database."""
+        await ctx.error("Invalid subcommand specified! Use `commands filterimage` to see what subcommmands there are.")
 
     @filterimage.command(aliases=["cvt"])
     async def convert(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"]):
@@ -952,8 +942,8 @@ Filterimages are formatted as follows:
         filter_headers = requests.head(filter_url, timeout=3).headers
         assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
         with Image.open(requests.get(filter_url, stream=True).raw) as im:
-            fil = np.array(im.convert("RGBA"), dtype=np.uint8)
-        fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(1 if target_mode.startswith("abs") else -1)
+            fil = np.array(im.convert("RGBA"))
+        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * (1 if target_mode.startswith("abs") else -1)
         out = BytesIO()
         Image.fromarray(fil).save(out, format="png", optimize=False)
         out.seek(0)
@@ -973,15 +963,14 @@ Filterimages are formatted as follows:
     async def create(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"], width: int,
                      height: int):
         """Creates a template filter."""
-        assert width > 0 and height > 0, "Can't create a filter with a non-positive area!"
-        size = (height, width)
-        fil = np.ones((*size, 4), dtype=np.uint8) * 0xFF
+        size = (width, height)
+        fil = np.ones((*size[::-1], 4), dtype=np.uint8) * 0xFF
         fil[..., :2] -= 0x7F
-        fil[..., :2] += np.indices(fil.shape[1::-1], dtype=np.uint8).T * target_mode.startswith("abs")
+        fil[..., :2] += np.indices(fil.shape[:2], dtype=np.uint8).T * target_mode.startswith("abs")
         out = BytesIO()
         Image.fromarray(fil).save(out, format="png", optimize=False)
         out.seek(0)
-        filename = f"filter-{size[1]}x{size[0]}-{target_mode}.png"
+        filename = f"filter-{size[0]}x{size[1]}-{target_mode}.png"
         file = discord.File(out, filename=filename)
         emb = discord.Embed(
             color=ctx.bot.embed_color,
@@ -1003,15 +992,13 @@ Filterimages are formatted as follows:
             dname = await cursor.fetchone()
             if dname is not None:
                 return await ctx.error(f"Filter of name `{name}` already exists in the database!")
-            url = ctx.message.attachments[0].url
-            await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
             command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
-            args = (name, target_mode.startswith("abs"), url, ctx.author.id)
+            args = (name, target_mode.startswith("abs"), ctx.message.attachments[0].url, ctx.author.id)
             await cursor.execute(command, args)
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Registered!",
-                description=f'Registered filter `{name}` in the filterimage database!\n_Keep in mind that if the message sent to create this filter is deleted, it will no longer work._'
+                description=f'Registered filter `{name}` in the filterimage database!'
             ).set_footer(
                 text="Filters by CenTdemeern1",
                 icon_url="https://sno.mba/assets/filter_icon.png"
@@ -1025,7 +1012,7 @@ Filterimages are formatted as follows:
             await cursor.execute("SELECT * FROM filterimages WHERE name == ?;", name)
             attrs = await cursor.fetchone()
             if attrs is None:
-                return await ctx.error(f"Filter of name `{name}` isn't in the database!")
+                return await ctx.error(f"Filter of name `{name}` isn't in the filterimage!")
             name, mode, url, author = attrs
             mode = "absolute" if mode else "relative"
             emb = discord.Embed(
@@ -1047,17 +1034,12 @@ Filterimages are formatted as follows:
         """Removes a filter from the database. You must have made it to do this."""
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute(
-                f"SELECT url FROM filterimages WHERE name == ?{'' if await ctx.bot.is_owner(ctx.author) else ' AND creator == ?'};",
-                (name,) if await ctx.bot.is_owner(ctx.author) else (name, ctx.author.id))
-            url = (await cursor.fetchone())
-            assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
-            url = url[0]
-            await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
-            del self.bot.db.filter_cache[name]
+                f"DELETE FROM filterimages WHERE name == ?{'' if ctx.author.id == ctx.bot.owner_id else ' AND creator == ?'};",
+                (name,) if ctx.author.id == ctx.bot.owner_id else (name, ctx.author.id))
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Deleted!",
-                description=f"Removed the filter {name} from the database."
+                description=f"Removed the filter {name} from the database (if it existed in the first place)."
             ).set_footer(
                 text="Filters by CenTdemeern1",
                 icon_url="https://sno.mba/assets/filter_icon.png"
