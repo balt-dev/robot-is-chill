@@ -244,7 +244,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
-            ctx.silent = ctx.message.flags.silent
+            ctx.silent = ctx.message.flags.silent-t {{}:font!ui
             tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:","♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)

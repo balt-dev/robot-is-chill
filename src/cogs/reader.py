@@ -369,7 +369,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 # remove levels which point to maps themselves (i.e. don't mark map as "lake-blah: map")
                 # as a result of this, every map will have no parent in its name - so it'll just be
                 # something like "chasm" or "center"
-                if self.parent_levels.get(child_id) is not None:
+                if self.parent_levels.get(child_id) is not None or child_id not in metadata:
                     remove.append(child_id)
             # avoid mutating a dict while iterating over it
             for child_id in remove:
@@ -596,7 +596,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             style = config.getint("levels", f"{i}style", fallback=0)
             number = config.getint("levels", f"{i}number", fallback=0)
             # "custom" style
-            if style == -1:
+            if style == -1 and "icons" in config:
                 icon = Item.icon(config.get("icons", f"{number}file"))
                 grid.cells[pos].append(icon)
             # "dot" style
