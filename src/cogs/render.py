@@ -154,6 +154,17 @@ class Renderer:
         top = max((np.max(top_sizes - spacing) // 2) + pad[1], 0)
         right = max((np.max(right_sizes - spacing) // 2) + pad[2], 0)
         bottom = max((np.max(bottom_sizes - spacing) // 2) + pad[3], 0)
+        assert len(sign_texts) <= constants.MAX_SIGN_TEXTS, \
+            f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(sign_texts)}`."
+        if len(sign_texts):
+            for i, sign_text in enumerate(sign_texts):
+                size = int(spacing * (upscale // 2) * sign_text.size * (1.3333333333333333 if sign_text.font == "ui" else 1))
+                assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
+                if sign_text.font is not None:
+                    print(f"data/fonts/{sign_text.font}.ttf")
+                    sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
+                else:
+                    sign_texts[i].font = FONT.font_variant(size=size)
         if expand:
             displacements = np.array(
                 [tile.displacement if not (tile is None or tile.empty) else (0, 0)
@@ -263,17 +274,13 @@ class Renderer:
                     if wobble_range[i] in range(sign_text.time_start, sign_text.time_end):
                         size = int(spacing * (upscale // 2) * sign_text.size)
                         assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
-                        if sign_text.font is not None:
-                            font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
-                        else:
-                            font = FONT.font_variant(size=size)
                         text = sign_text.text
                         text = re.sub(r"(?<!\\)\/n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
                         assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
                         pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + 0.5)),
                                 top + sign_text.yo + (spacing * upscale * (sign_text.y + 1.0)))
-                        draw.multiline_text(pos, text, font=font,
+                        draw.multiline_text(pos, text, font=sign_text.font,
                                             align=sign_text.alignment if sign_text.alignment is not None else "center",
                                             anchor="md",
                                             fill=sign_text.color, features=("liga", "dlig", "clig"),
