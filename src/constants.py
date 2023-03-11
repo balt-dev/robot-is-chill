@@ -235,7 +235,6 @@ OTHER_LEVELS_CUTOFF = 20
 
 BABA_WORLD = "baba"
 EXTENSIONS_WORLD = "baba-extensions"
-VANILLA_WORLD = "vanilla"
 
 COMBINE_MAX_FILESIZE = 5242880  # in bytes
 

@@ -449,6 +449,30 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
+    async def loadinitial(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_initial_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded initial tile data.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def loadeditor(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_editor_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded editor tile data.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def loadcustom(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_custom_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded custom tile data.")
+
+    @commands.command()
+    @commands.is_owner()
     async def loaddata(self, ctx: Context, flag: bool = False):
         """Reloads tile data from the world map, editor, and custom files.
 
@@ -814,13 +838,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
-    async def doc(self, ctx: Context, command: commands.Command):
-        """Check a command's docstring."""
-        help = command.help
-        await ctx.send(f"Command doc for {command}:\n{help}")
-
-    @commands.command()
-    @commands.is_owner()
     async def sql(self, ctx: Context, *, query: str):
         """Run some sql."""
         filemode = False
@@ -1065,7 +1082,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
-    async def addbaba(self, ctx: Context, *, path: str):
+    async def loadbaba(self, ctx: Context, *, path: str):
         """Adds all missing files from the base game. Should only have to be run when the game updates."""
         path = pathlib.Path(path) / "Data"
         assert path.exists, "Invalid directory!"
@@ -1078,8 +1095,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 shutil.copytree(src, dst, *args)
 
         message = await ctx.reply(f"Adding sprites...")
-        replace(path / "Sprites", bot_path / "sprites" / "baba")
-        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "vanilla")
+        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "baba")
+        shutil.copytree(path / "Sprites", bot_path / "sprites" / "baba", dirs_exist_ok=True)
+        shutil.copytree(path / "Palettes", bot_path / "palettes", dirs_exist_ok=True)
         shutil.copy2(path / "merged.ttf", bot_path / "fonts" / "default.ttf")
         shutil.copy2(path / "Editor" / "editor_objectlist.lua", bot_path / "editor_objectlist.lua")
         shutil.copy2(path / "values.lua", bot_path / "values.lua")

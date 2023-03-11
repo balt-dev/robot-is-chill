@@ -842,9 +842,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 f"target/renders/{level.world}_m/{level.id}.gif")
 
             if not mobile and mobile_exists:
-                footer = f"*This level is also on mobile, see `+level mobile {level.unique()}`*"
+                footer = f"This level is also on mobile, see [level mobile {level.unique()}]"
             elif mobile and mobile_exists:
-                footer = f"*This is the mobile version. For others, see `+level {level.unique()}`*"
+                footer = f"This is the mobile version. For others, see [level {level.unique()}]"
 
             if mobile and mobile_exists:
                 filepath = f"target/renders/{level.world}_m/{level.id}.gif"

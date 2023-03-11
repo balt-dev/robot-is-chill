@@ -328,10 +328,9 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
             if flags.get("custom") is None or not flags.get(
                     "custom") == "false":
-                if plain_query.strip() or any(x in flags for x in ("map", "world")):
-                    levels = await self.bot.get_cog("Baba Is You").search_levels(plain_query, **flags)
-                    for (world, id), data in levels.items():
-                        results["level", f"{world}/{id}"] = data
+                levels = await self.bot.get_cog("Baba Is You").search_levels(plain_query, **flags)
+                for (world, id), data in levels.items():
+                    results["level", f"{world}/{id}"] = data
 
         if flags.get("type") is None and plain_query or flags.get(
                 "type") == "palette":
@@ -463,7 +462,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                  img.height * constants.PALETTE_PIXEL_SIZE),
                 resample=Image.NEAREST
             ).convert("RGBA")
-            font = ImageFont.truetype("data/misc/04b03.ttf", 16)
+            font = ImageFont.truetype("data/fonts/04b03.ttf", 16)
             draw = ImageDraw.Draw(pal_img)
             for y in range(txthgt):
                 for x in range(txtwid):

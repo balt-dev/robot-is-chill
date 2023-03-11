@@ -94,8 +94,7 @@ class Grid:
                 paths = [f"data/sprites/{{}}/{sprite}_{variant}_{wobble}.png", f"data/sprites/{{}}/{sprite}_{variant}_1.png"]
 
             for maybe_world in (world, constants.BABA_WORLD,
-                                constants.EXTENSIONS_WORLD,
-                                constants.VANILLA_WORLD):
+                                constants.EXTENSIONS_WORLD):
                 for path in paths:
                     try:
                         return cached_open(
