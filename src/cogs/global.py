@@ -1,18 +1,11 @@
 from __future__ import annotations
 
-import asyncio
 import collections
-import glob
 import os
-import random
 import signal
 import time
 import traceback
-from dataclasses import dataclass
-from functools import partial
-from multiprocessing import Process
-from pathlib import Path, PurePath
-from urllib.parse import urlparse
+from pathlib import Path
 
 import requests
 
@@ -22,8 +15,7 @@ import re
 from datetime import datetime
 from io import BytesIO
 from json import load
-from time import perf_counter
-from typing import Any, OrderedDict, Coroutine, Literal, Optional
+from typing import Any, OrderedDict, Literal
 
 import numpy as np
 import emoji
@@ -33,30 +25,14 @@ import aiohttp
 import discord
 from discord.ext import commands, menus
 
-from src.cogs.variants import parse_signature
+from src.types import SignText
 from src.utils import ButtonPages
 from ..tile import Tile, TileSkeleton, parse_variants
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
-from ..types import Bot, Context, Color, RegexDict
+from ..types import Bot, Context, RegexDict
 
-from .errorhandler import CommandErrorHandler
-
-@dataclass
-class SignText:
-    time_start: int = 0
-    time_end: int = 0
-    x: int = 0
-    y: int = 0
-    text: str = "null"
-    size: float = 1.0
-    xo: int = 0
-    yo: int = 0
-    color: tuple[int, int, int, int] = (255, 255, 255, 255)
-    font: Optional[str] = None
-    alignment: Optional[str] = None
-    stroke: tuple[tuple[int, int, int, int], int] = (0, 0, 0, 0), 0
 
 def try_index(string: str, value: str) -> int:
     """Returns the index of a substring within a string.
@@ -184,6 +160,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(
                 f"There isn't a variant called `{variant}`."
             )
+        elif isinstance(err, errors.BadVariant):
+            return await ctx.error(
+                f"The arguments for `{variant}` are not valid."
+            )
         else:
             return await ctx.error(f"{msg}.")
 
@@ -244,8 +224,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
-            ctx.silent = ctx.message.flags.silent-t {{}:font!ui
-            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:","♥")  # keep the heart, for the people
+            ctx.silent = ctx.message.flags.silent
+            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:", "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)
 
@@ -346,6 +326,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 possible_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
                 font_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
 
+                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name]
                 def catch(f, *args, **kwargs):
                     try:
                         return f(*args, **kwargs)
@@ -369,7 +350,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                             try:
                                                 text = timeline_split[d+o]
                                                 if len(text):
-                                                    print(text, o)
                                                     break
                                             except IndexError:
                                                 continue
@@ -378,7 +358,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         sign_text.time_end = d + o
                                         # Sign texts sadly cannot respect layers.
                                         sign_texts.append(sign_text)
-                                        print(d, d+o)
                                         continue
                                     tile = re.sub(r"\\(.)", r"\1", tile)
                                     assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
@@ -386,13 +365,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     if catch(tile.index, ":") or catch(tile.index, ";") \
                                             or ":" not in tile and ";" not in tile:
                                         tilecount += 1
-                                        print(range(layer_grid.shape[0] - d))
                                         # This is done to prevent setting everything to one instance of an object.
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
                                                 possible_variants, tile, rule,
                                                 palette=pal, bot=self.bot,
-                                                global_variant=global_variant
+                                                global_variant=global_variant,
+                                                possible_variant_names=possible_variant_names
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
@@ -402,7 +381,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                             possible_variants,
                                             layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
                                                 0] + tile,
-                                            rule, bot=self.bot)
+                                            rule, bot=self.bot,
+                                            possible_variant_names=possible_variant_names)
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
                 # Get the dimensions of the grid
@@ -847,77 +827,60 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             levels = {}
             level = custom_level
 
+        footer = None
         if isinstance(level, LevelData):
             path = level.unique()
-            display = level.display()
+            display = level.display().upper()
             rows = [
-                f"Name: ||{display}||" if spoiler else f"Name: {display}",
-                f"ID: {path}",
+                f"`{path}`",
             ]
             if level.subtitle:
                 rows.append(
-                    f"Subtitle: {level.subtitle}"
+                    f"_{level.subtitle}_"
                 )
             mobile_exists = os.path.exists(
                 f"target/renders/{level.world}_m/{level.id}.gif")
 
             if not mobile and mobile_exists:
-                rows.append(
-                    f"*This level is also on mobile, see `+level mobile {level.unique()}`*"
-                )
+                footer = f"*This level is also on mobile, see `+level mobile {level.unique()}`*"
             elif mobile and mobile_exists:
-                rows.append(
-                    f"*This is the mobile version. For others, see `+level {level.unique()}`*"
-                )
+                footer = f"*This is the mobile version. For others, see `+level {level.unique()}`*"
 
             if mobile and mobile_exists:
+                filepath = f"target/renders/{level.world}_m/{level.id}.gif"
                 gif = discord.File(
-                    f"target/renders/{level.world}_m/{level.id}.gif",
+                    filepath,
                     filename=level.world + '_m_' + level.id + '.gif',
                     spoiler=spoiler)
             else:
                 if mobile and not mobile_exists:
-                    rows.append(
-                        "*This level doesn't have a mobile version. Using the normal gif instead...*")
+                    footer = "This level doesn't have a mobile version. Using the normal gif instead..."
+                filepath = f"target/renders/{level.world}/{level.id}.gif"
                 gif = discord.File(
-                    f"target/renders/{level.world}/{level.id}.gif",
+                    filepath,
                     filename=level.world + '_' + level.id + '.gif',
                     spoiler=spoiler)
         else:
             try:
+                filepath = f"target/renders/levels/{level.code}.gif"
                 gif = discord.File(
-                    f"target/renders/levels/{level.code}.gif",
+                    filepath,
                     filename=level.code + '.gif',
                     spoiler=spoiler)
             except FileNotFoundError:
                 await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                filepath = f"target/renders/levels/{level.code}.gif"
                 gif = discord.File(
-                    f"target/renders/levels/{level.code}.gif",
+                    filepath,
                     filename=level.code + '.gif',
                     spoiler=spoiler)
             path = level.unique()
-            display = level.name
+            display = f"{level.name.upper()} (by {level.author})"
             rows = [
-                f"Name: ||{display}|| (by {level.author})"
-                if spoiler else f"Name: {display} (by {level.author})",
-                f"ID: {path}",
+                f"`{path}`",
             ]
             if level.subtitle:
-                rows.append(
-                    f"Subtitle: {level.subtitle}"
-                )
-
-        if len(levels) > 0:
-            extras = [level.unique() for level in levels.values()]
-            if len(levels) > constants.OTHER_LEVELS_CUTOFF:
-                extras = extras[:constants.OTHER_LEVELS_CUTOFF]
-            paths = ", ".join(f"{extra}" for extra in extras)
-            plural = "result" if len(extras) == 1 else "results"
-            suffix = ", ..." if len(
-                levels) > constants.OTHER_LEVELS_CUTOFF else ""
-            rows.append(
-                f"*Found {len(levels)} other {plural}: {paths}{suffix}*"
-            )
+                rows.append(f"_{level.subtitle}_")
 
         formatted = "\n".join(rows)
 
@@ -928,8 +891,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
 
         gif.spoiler = True
 
+        emb = discord.Embed(
+            color=self.bot.embed_color,
+            title=display,
+            description=formatted,
+        )
+        emb.set_footer(text=footer)
         # Send the result
-        await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
+        await ctx.reply(embed=emb, file=gif, allowed_mentions=mentions)
 
     @commands.group(aliases=["fi", "filter"], pass_context=True, invoke_without_command=True)
     async def filterimage(self, ctx: Context):

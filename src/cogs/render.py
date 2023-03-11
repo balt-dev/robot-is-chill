@@ -104,7 +104,6 @@ class Renderer:
             before_images=None,
             palette: str = "default",
             images: list[str] | list[Image] | None = None,
-            image_source: str = constants.BABA_WORLD,
             out: str | BinaryIO = "target/renders/render.gif",
             background: tuple[int] | None = None,
             upscale: int = 2,
@@ -121,8 +120,9 @@ class Renderer:
             boomerang: bool = False,
             random_animations: bool = True,
             expand: bool = False,
-            _disable_limit: bool = False,
             sign_texts: list = [],
+            _disable_limit: bool = False,
+            _no_sign_limit: bool = False,
             **_
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
@@ -132,8 +132,7 @@ class Renderer:
         if animation is not None:
             animation_wobble, animation_timestep = animation
         else:
-            animation_wobble, animation_timestep = 1, len(
-                frames)  # number of frames per wobble frame, number of frames per timestep
+            animation_wobble, animation_timestep = 1, len(frames)  # number of frames per wobble frame, number of frames per timestep
         grid = np.array(grid, dtype=object)
         durations = [speed for _ in range(animation_timestep * grid.shape[0] + len(before_images))]
         frames = np.repeat(frames, animation_wobble).tolist()
@@ -154,14 +153,13 @@ class Renderer:
         top = max((np.max(top_sizes - spacing) // 2) + pad[1], 0)
         right = max((np.max(right_sizes - spacing) // 2) + pad[2], 0)
         bottom = max((np.max(bottom_sizes - spacing) // 2) + pad[3], 0)
-        assert len(sign_texts) <= constants.MAX_SIGN_TEXTS, \
+        assert len(sign_texts) <= constants.MAX_SIGN_TEXTS or _no_sign_limit, \
             f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(sign_texts)}`."
         if len(sign_texts):
             for i, sign_text in enumerate(sign_texts):
-                size = int(spacing * (upscale // 2) * sign_text.size * (1.3333333333333333 if sign_text.font == "ui" else 1))
+                size = int(spacing * (upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
                 assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
                 if sign_text.font is not None:
-                    print(f"data/fonts/{sign_text.font}.ttf")
                     sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
                 else:
                     sign_texts[i].font = FONT.font_variant(size=size)
@@ -183,33 +181,22 @@ class Renderer:
         true_size = default_size * upscale
         if not _disable_limit:
             assert all(
-                true_size <= constants.MAX_IMAGE_SIZE), f"Image of size {true_size} is larger than the maximum allowed size of {constants.MAX_IMAGE_SIZE}!"
+                true_size <= constants.MAX_IMAGE_SIZE), f"Image of size `{true_size}` is larger than the maximum allowed size of `{constants.MAX_IMAGE_SIZE}`!"
         steps = np.zeros(
             (((animation_timestep if animation_wobble else len(frames)) * grid.shape[0]), *default_size, 4),
             dtype=np.uint8)
 
-        if images and ((bg_images := isinstance(images[0], Image.Image)) or image_source is not None):
-            for step in range(steps.shape[0] // len(frames)):
-                for frame in frames:
-                    img = Image.new("RGBA", tuple(default_size[::-1]))
-                    # for loop in case multiple background images are used
-                    # (i.e. baba's world map)
-                    if bg_images:
-                        bg_img: Image.Image = images[frame - 1].convert("RGBA")
-                        bg_img = bg_img.resize((bg_img.width // upscale, bg_img.height // upscale), Image.NEAREST)
-                        img.paste(bg_img, (0, 0), mask=bg_img)
-                    else:
-                        # Legacy behavior, too lazy to remove
-                        for image in images:
-                            try:
-                                overlap = Image.open(
-                                    f"data/images/{image_source}/{image}_{frame}.png").convert("RGBA")
-                            except FileNotFoundError:
-                                overlap = Image.open(
-                                    f"data/images/{image_source}/{image}_1.png").convert("RGBA")
-                        img.paste(overlap, (0, 0), mask=overlap)
-                    for i in range(animation_wobble):
-                        steps[i + animation_timestep * step] = np.array(img)
+        if images:
+            for f, frame in enumerate(frames):
+                img = Image.new("RGBA", tuple(default_size[::-1]))
+                # for loop in case multiple background images are used
+                # (i.e. baba's world map)
+                bg_img: Image.Image = images[frame - 1].convert("RGBA")
+                bg_img = bg_img.resize((bg_img.width // upscale, bg_img.height // upscale), Image.NEAREST)
+                img.paste(bg_img, (0, 0), mask=bg_img)
+                for i in range(animation_wobble):
+                    q = i + animation_wobble * f
+                    steps[q] = np.array(img)
         for t, step in enumerate(grid):
             for z, layer in enumerate(step):
                 for y, row in enumerate(layer):
@@ -263,26 +250,29 @@ class Renderer:
                 (int(step.shape[1] * upscale), int(step.shape[0] * upscale)),
                 interpolation=cv2.INTER_NEAREST
             )
-            assert len(sign_texts) <= constants.MAX_SIGN_TEXTS, \
-                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(sign_texts)}`."
             if len(sign_texts):
+                anchor_disps = {
+                    "l": 0.0,
+                    "t": 0.0,
+                    "m": 0.5,
+                    "r": 1.0,
+                    "s": 1.0,
+                    "d": 1.0
+                }
                 im = Image.new("RGBA", step.shape[1::-1])
                 draw = ImageDraw(im)
                 if image_format == "gif" and background is None:
                     draw.fontmode = "1"
                 for sign_text in sign_texts:
                     if wobble_range[i] in range(sign_text.time_start, sign_text.time_end):
-                        size = int(spacing * (upscale // 2) * sign_text.size)
-                        assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
                         text = sign_text.text
                         text = re.sub(r"(?<!\\)\/n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
                         assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
-                        pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + 0.5)),
-                                top + sign_text.yo + (spacing * upscale * (sign_text.y + 1.0)))
+                        pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),
+                                top + sign_text.yo + (spacing * upscale * (sign_text.y + anchor_disps[sign_text.anchor[1]])))
                         draw.multiline_text(pos, text, font=sign_text.font,
-                                            align=sign_text.alignment if sign_text.alignment is not None else "center",
-                                            anchor="md",
+                                            align=sign_text.alignment, anchor=sign_text.anchor,
                                             fill=sign_text.color, features=("liga", "dlig", "clig"),
                                             stroke_fill=sign_text.stroke[0], stroke_width=sign_text.stroke[1])
                 sign_arr = np.array(im)
@@ -534,7 +524,6 @@ class Renderer:
                 mode = "small"
                 if tile.style != "oneline":
                     indices = [len(raw) - math.ceil(len(raw) / 2)]
-        print(mode)
         indices.insert(0, 0)
         indices.append(len(raw))  # can't use -1 here because of a range() later on
 

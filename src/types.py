@@ -249,3 +249,20 @@ class Macro:
     value: str
     description: str
     author: int
+
+
+@dataclass
+class SignText:
+    time_start: int = 0
+    time_end: int = 0
+    x: int = 0
+    y: int = 0
+    text: str = "null"
+    size: float = 1.0
+    xo: int = 0
+    yo: int = 0
+    color: tuple[int, int, int, int] = (255, 255, 255, 255)
+    font: Optional[str] = None
+    alignment: str = "center"
+    anchor: str = "md"
+    stroke: tuple[tuple[int, int, int, int], int] = (0, 0, 0, 0), 0

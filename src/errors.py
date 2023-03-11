@@ -130,3 +130,8 @@ class CustomTextTooLong(TextGenerationError):
 
 class ScaleError(VariantError):
     """Can't scale below 0."""
+
+
+class BadVariant(VariantError):
+    """Incorrect syntax."""
+    pass

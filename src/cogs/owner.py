@@ -1089,10 +1089,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             await message.edit(content=f"Adding world `{world_name}`...")
             if (bot_world_path := pathlib.Path(bot_path) / "levels" / world_name).exists():
                 shutil.rmtree(bot_world_path)
-            os.mkdir(bot_world_path)
-            for file in os.listdir(world):
-                if os.path.isfile(world / file):
-                    shutil.copy2(world / file, bot_world_path / file)
+            shutil.copytree(world, bot_world_path, dirs_exist_ok=True)
             replace(world / "Images", pathlib.Path(bot_path) / "images" / world_name)
         await message.edit(content="Done.")
 
