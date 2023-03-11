@@ -109,7 +109,8 @@ class FlagPageSource(menus.ListPageSource):
 type_format = {
     "sprite": "sprite augmentation",
     "tile": "tile creation",
-    "post": "compositing"
+    "post": "compositing",
+    "sign": "sign text parsing"
 }
 
 class VariantSource(menus.ListPageSource):
@@ -379,7 +380,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             return variant.__name__
         variants = ctx.bot.variants._values
         if query is not None:
-            variants = [var for var in variants if query in var.__name__.lower() and not var.hidden]
+            variants = [var for var in variants if (query in var.__name__.lower() or query in var.__doc__) and not var.hidden]
         assert len(variants) > 0, f"No variants were found with the query `{query}`!"
         await ButtonPages(
             source=VariantSource(

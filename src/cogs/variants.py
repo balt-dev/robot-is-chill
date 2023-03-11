@@ -186,7 +186,8 @@ async def setup(bot):
                 "syntax": syntax,
                 "type": variant_type,
                 "hashed": hashed,
-                "hidden": hidden
+                "hidden": hidden,
+                "name": aliases
             }
         )
         bot.variants.append(variant)
@@ -225,7 +226,7 @@ async def setup(bot):
     # --- SIGN TEXT ---
 
     @add_variant("font!", no_function_name=True)
-    async def font(sign, name: Literal[*tuple(Path(f).stem for f in glob.glob('data/fonts/*'))]):
+    async def font(sign, name: Literal[*tuple(Path(f).stem for f in glob.glob('data/fonts/*.ttf'))]):
         """Applies a font to a sign text object."""
         sign.font = name
 
@@ -252,10 +253,20 @@ async def setup(bot):
                 raise errors.BadPaletteIndex(sign.text, color)
         sign.color = color
 
-    @add_variant("align!", "a!", no_function_name=True)
+    @add_variant("align!", no_function_name=True)
     async def alignment(sign, alignment: Literal["left", "center", "right"]):
         """Sets the sign text's alignment."""
         sign.alignment = alignment
+
+    @add_variant("anchor!", no_function_name=True)
+    async def anchor(sign, anchor: str):
+        """Sets the anchor of a sign text. https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html"""
+        assert (
+            len(anchor) == 2 and
+            anchor[0] in ('l', 'm', 'r') and
+            anchor[1] in ('a', 'm', 's', 'd')
+        ), f"Anchor of `{anchor}` is invalid!"
+        sign.anchor = anchor
 
     @add_variant()
     async def stroke(sign, color: Color, size: int, *, bot, palette):
@@ -422,7 +433,6 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         dummy = np.zeros(size, dtype=bool)
         delta = ((plate.shape[0] - sprite.shape[0]) // 2,
                  (plate.shape[1] - sprite.shape[1]) // 2)
-        print(delta)
         p_delta = max(-delta[0], 0), max(-delta[1], 0)
         delta = max(delta[0], 0), max(delta[1], 0)
         dummy[p_delta[0]:p_delta[0] + plate.shape[0],
@@ -799,7 +809,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         return out.astype(np.uint8)
 
     @add_variant("abberate")  # misspelling alias because i misspell it all the time
-    async def aberrate(sprite, x: int, y: int):
+    async def aberrate(sprite, x: Optional[int] = 1, y: Optional[int] = 0):
         """Abberates the colors of a sprite."""
         check_size(sprite.shape[0] + abs(x) * 2, sprite.shape[1] + abs(y) * 2)
         sprite = np.pad(sprite, ((abs(y), abs(y)), (abs(x), abs(x)), (0, 0)))

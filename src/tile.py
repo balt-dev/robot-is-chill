@@ -12,7 +12,8 @@ from .db import TileData
 from .types import Variant, Context, RegexDict
 
 
-def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str], bot = None, name = None):
+def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
+                   bot=None, name=None, possible_variant_names=[]):
     macro_count = 0
     out = {}
     i = 0
@@ -36,9 +37,12 @@ def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str
             out[var_type] = out.get(var_type, [])
             out[var_type].append(final_variant(*final_args))
         except KeyError:
+            if any(raw_variant.startswith(n) for n in possible_variant_names):
+                raise errors.BadVariant(name, raw_variant)
             raise errors.UnknownVariant(name, raw_variant)
         i += 1
     return out
+
 
 @dataclass
 class TileSkeleton:
@@ -53,7 +57,7 @@ class TileSkeleton:
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
-                    bot=None, global_variant=""):
+                    bot=None, global_variant="", possible_variant_names=[]):
         out = cls()
         if string == "-":
             return out
@@ -81,7 +85,8 @@ class TileSkeleton:
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
             raw_variants.insert(0, "m!2ify")
-        out.variants |= parse_variants(possible_variants, raw_variants, bot=bot, name=out.name)
+        out.variants |= parse_variants(possible_variants, raw_variants, bot=bot, name=out.name,
+                                       possible_variant_names=possible_variant_names)
         return out
 
 
@@ -211,4 +216,5 @@ class ProcessedTile:
     keep_alpha: bool = True
 
     def copy(self):
-        return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement, self.keep_alpha)
+        return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement,
+                             self.keep_alpha)

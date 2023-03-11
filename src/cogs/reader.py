@@ -6,6 +6,8 @@ import configparser
 import io
 import re
 import shutil
+import sys
+import time
 import warnings
 import zlib
 from glob import glob
@@ -25,7 +27,7 @@ from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
 from ..tile import ProcessedTile
 
-from ..types import Bot, Context
+from ..types import Bot, Context, SignText
 
 from more_itertools import ichunked
 
@@ -83,24 +85,27 @@ class Grid:
             """This first checks the given world, then the `baba` world, then
             `baba-extensions`, and if both fail it returns `default`"""
             if sprite == "icon":
-                path = f"data/sprites/{{}}/icon.png"
+                paths = [f"data/sprites/{{}}/icon.png"]
             elif sprite in ("smiley", "hi") or sprite.startswith("icon"):
-                path = f"data/sprites/{{}}/{sprite}_1.png"
+                paths = [f"data/sprites/{{}}/{sprite}_1.png", f"data/sprites/{{}}/{sprite}.png"]
             elif sprite == "default":
-                path = f"data/sprites/{{}}/default_{wobble}.png"
+                paths = [f"data/sprites/{{}}/default_{wobble}.png"]
             else:
-                path = f"data/sprites/{{}}/{sprite}_{variant}_{wobble}.png"
+                paths = [f"data/sprites/{{}}/{sprite}_{variant}_{wobble}.png", f"data/sprites/{{}}/{sprite}_{variant}_1.png"]
 
             for maybe_world in (world, constants.BABA_WORLD,
-                                constants.EXTENSIONS_WORLD):
-                try:
-                    return cached_open(
-                        path.format(maybe_world),
-                        cache=cache,
-                        fn=Image.open).convert("RGBA")
-                except FileNotFoundError:
-                    continue
+                                constants.EXTENSIONS_WORLD,
+                                constants.VANILLA_WORLD):
+                for path in paths:
+                    try:
+                        return cached_open(
+                            path.format(maybe_world),
+                            cache=cache,
+                            fn=Image.open).convert("RGBA")
+                    except FileNotFoundError:
+                        continue
             else:
+                warnings.warn(f"Using default sprite! {path.format(world)}")
                 return cached_open(
                     f"data/sprites/{constants.BABA_WORLD}/default_{wobble}.png",
                     cache=cache,
@@ -131,7 +136,7 @@ class Grid:
                     try:
 
                         item = sorted(
-                            self.cells[y * self.width + x], key=lambda item: item.layer)[i]
+                            self.cells[y * self.width + x], key=lambda item: item.layer, reverse=False)[i]
                         item: Item
                         if item.tiling in constants.DIRECTION_TILINGS:
                             variant = item.direction * 8
@@ -220,12 +225,7 @@ class Item:
     @classmethod
     def icon(cls, sprite: str) -> Item:
         """Level icon."""
-        if sprite == "icon":
-            sprite = sprite
-        elif sprite.startswith("icon"):
-            sprite = sprite[:-2]  # strip _1 for icon sprites
-        else:
-            sprite = sprite[:-4]  # strip _0_2 for normal sprites
+        sprite = re.sub(r"(?:_\d+)+$", r"", sprite)
         return cls(id=-3, obj="icon", sprite=sprite, layer=30)
 
 
@@ -267,7 +267,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             raw_ld = io.StringIO(raw_s)
 
         grid = self.read_map(code, source="levels", data=raw_l)
-        grid = await self.read_metadata(grid, data=raw_ld, custom=True)
+        grid, sign_texts = await self.read_metadata(grid, data=raw_ld, custom=True)
 
         objects = grid.ready_grid()
         # Strips the borders from the render
@@ -279,7 +279,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 row.pop(grid.width - 1)
                 row.pop(0)
         out = f"target/renders/levels/{code.lower()}.gif"
-        await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out)
+        await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out, sign_texts=sign_texts, _no_sign_limit=True)
 
         data = CustomLevelData(
             code.lower(),
@@ -313,7 +313,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         """
         # Data
         grid = self.read_map(filename, source=source)
-        grid = await self.read_metadata(grid, initialize_level_tree=initialize)
+        grid, sign_texts = await self.read_metadata(grid, initialize_level_tree=initialize)
         objects = grid.ready_grid()
 
         # Shave off the borders:
@@ -328,17 +328,33 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         # (0,4) is the color index for level backgrounds
         background = (0, 4) if keep_background else None
 
+        frames = None
+        if len(grid.images):
+            frames = []
+            with Image.open(f"data/images/{source}/{grid.images[0]}_1.png") as im:
+                size = im.size
+            for frame in range(1, 4):
+                img = Image.new("RGBA", size)
+                for image in grid.images:
+                    try:
+                        with Image.open(f"data/images/{source}/{image}_{frame}.png") as im:
+                            overlap = im.convert("RGBA")
+                    except FileNotFoundError:
+                        with Image.open(f"data/images/{source}/{image}_1.png") as im:
+                            overlap = im.convert("RGBA")
+                    img.paste(overlap, (0, 0), mask=overlap)
+                frames.append(img)
         # Render the level
         await self.bot.renderer.render(
             [objects],
             palette=grid.palette,
-            images=grid.images,
-            image_source=grid.world,
+            images=frames,
             background=background,
             out=f"target/renders/{grid.world}/{grid.filename}.gif",
             upscale=1,
             _disable_limit=True,
-            sign_texts=[]
+            sign_texts=sign_texts,
+            _no_sign_limit=True
         )
         # Return level metadata
         return LevelData(filename, source, grid.name, grid.subtitle,
@@ -398,7 +414,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="loadworld")
     @commands.is_owner()
-    async def load_world(self, ctx: Context, world: str = constants.BABA_WORLD, also_mobile: bool = True):
+    async def load_world(self, ctx: Context, world: str, also_mobile: bool = True):
         """Loads and renders levels in a world and its mobile variant.
 
         Initializes the level tree unless otherwise specified. Cuts off
@@ -410,33 +426,46 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         world_glob = [PurePath(p).stem for p in glob(f"data/levels/{world}")]
         if not len(world_glob):
             return await ctx.error(f"No worlds found for `{world}`!")
-        for world in world_glob:
+        level_amount = len(glob(f"data/levels/{world}/*.l"))
+        total_levels_done = 0
+        deltas = [None for _ in range(10)]
+        last_time = time.time()
+        metadatas = {}
+        for world_index, world in enumerate(world_glob):
             levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
-
             if not path.exists(f'target/renders/{world}'):
                 mkdir(f'target/renders/{world}')
-            if not path.exists(f'data/images/{world}') and path.exists(f"data/levels/{world}/Images"):
-                shutil.copytree(f"data/levels/{world}/Images", f"data/images/{world}")
-            metadatas = {}
+            if path.exists(f"data/levels/{world}/Images"):
+                shutil.copytree(f"data/levels/{world}/Images", f"data/images/{world}", dirs_exist_ok=True)
+            if path.exists(f"data/levels/{world}/Palettes"):
+                shutil.copytree(f"data/levels/{world}/Palettes", f"data/palettes/", dirs_exist_ok=True)
+            if path.exists(f"data/levels/{world}/Sprites"):
+                shutil.copytree(f"data/levels/{world}/Sprites", f"data/sprites/{world}", dirs_exist_ok=True)
 
-            async def cb_render(coro, lvl):
-                nonlocal metadatas
-                metadatas[lvl] = await coro
-                await asyncio.sleep(0)
+            async def update_message(levels_done):
+                pruned_deltas = [d for d in deltas if d is not None]
+                if len(pruned_deltas) == 0:
+                    pruned_deltas = [100]
+                await message.edit(content=f"""Loading maps...
+- Current world: `{world}` ({world_index}/{len(world_glob)})
+- {levels_done}/{len(levels)} levels done ({total_levels_done}/{level_amount} in total)
+- ETA: Will be done <t:{int(time.time() + ((sum(pruned_deltas) / len(pruned_deltas)) * (level_amount - total_levels_done)))}:R>""")
 
-            for i, levels_slice in enumerate(ichunked(levels, 8)):
-                tasks = []
-                for level in levels_slice:
-                    tasks.append(asyncio.create_task(cb_render(self.render_level(
+            for i, level in enumerate(levels):
+                t = time.perf_counter()
+                metadatas[level] = await self.render_level(
                         level,
                         source=world,
                         initialize=True,
                         remove_borders=True,
                         keep_background=True,
-                    ), level)))
-                await asyncio.gather(*tasks)
-                await asyncio.sleep(0.5)
-                await message.edit(content=f"Loading maps from `{world}`... {(i + 1) * 8}/{len(levels)}")
+                )
+                total_levels_done += 1
+                deltas = [(time.perf_counter() - t)] + deltas[:-1]
+                if time.time() - last_time >= 1:
+                    await update_message(i)
+                    last_time = time.time()
+                await asyncio.sleep(0)
 
         await message.edit(content=f"All maps loaded.\nUpdating database...")
         await self.clean_metadata(metadatas)
@@ -518,7 +547,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             self.read_layer(stream, grid)
         return grid
 
-    async def read_metadata(self, grid: Grid, initialize_level_tree: bool = False, data: TextIO | None = None, custom: bool = False) -> Grid:
+    async def read_metadata(self, grid: Grid, initialize_level_tree: bool = False, data: TextIO | None = None, custom: bool = False) -> tuple[Grid, list[SignText]]:
         """Add everything that's not just basic tile positions & IDs."""
         # We've added the basic objects & their directions.
         # Now we add everything else:
@@ -526,6 +555,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             fp = open(grid.fp + "d", errors="replace")
         else:
             fp = data
+        sign_texts = []
 
         config = configparser.ConfigParser()
         config.read_file(fp)
@@ -600,15 +630,14 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 icon = Item.icon(config.get("icons", f"{number}file"))
                 grid.cells[pos].append(icon)
             # "dot" style
-            elif style == 2 and number >= 10:
-                icon = Item.icon("icon")
+            elif style == 2:
+                number += 1
+                icon = Item.icon(f"icon_dot{number}_1" if number in range(1, 10) else "icon")
                 grid.cells[pos].append(icon)
+            elif style == 1:
+                sign_texts.append(SignText(0, 1, x - 1, y - 1, chr(number + 65), font="icon", anchor="mm"))
             else:
-                pass
-                # If the bot could be able to draw numbers, letters and
-                # dots in the game font (for icons), it would do so here
-                # TODO draw text using the built-in font
-
+                sign_texts.append(SignText(0, 1, x-1, y-1, f"{number:02}", font="icon", anchor="mm"))
             if initialize_level_tree and grid.map_id is not None:
                 level_file = config.get("levels", f"{i}file")
                 # Each level within
@@ -705,8 +734,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         # order.
         for cell in grid.cells:
             cell.sort(key=lambda x: x.layer)
-
-        return grid
+        return grid, sign_texts
 
     def read_layer(self, stream: BinaryIO, grid: Grid):
         buffer = stream.read(4)

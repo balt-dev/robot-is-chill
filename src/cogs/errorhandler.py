@@ -151,6 +151,7 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error(error.args[0])
 
             elif isinstance(error, ZeroDivisionError):
+                traceback.print_exception(error)
                 return await ctx.error('Encountered a division by zero somewhere. Why?')
 
             elif isinstance(error, ArithmeticError):
