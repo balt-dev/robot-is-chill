@@ -28,21 +28,6 @@
     "tiling": "2"
   },
   {
-    "name": "text_violet",
-    "sprite": "text_violet",
-    "tiling": "-1",
-    "color": [
-      "6",
-      "1"
-    ],
-    "active": [
-      "6",
-      "2"
-    ],
-    "type": "0",
-    "source": "baba"
-  },
-  {
     "name": "violet",
     "sprite": "flower",
     "color": [
@@ -735,21 +720,6 @@
       "tiling":"-1"
   },
   {
-    "name": "text_violet",
-    "sprite": "text_violet",
-    "tiling": "-1",
-    "color": [
-       "6",
-       "1"
-    ],
-    "active": [
-       "6",
-       "2"
-    ],
-    "type": "0",
-    "source": "vanilla"
- },
-  {
       "name":"violet",
       "sprite":"flower",
       "color":[
@@ -758,21 +728,6 @@
       ],
       "tiling":"-1"
   },
-  {
-    "name": "text_violet",
-    "sprite": "text_violet",
-    "tiling": "-1",
-    "color": [
-       "3",
-       "2"
-    ],
-    "active": [
-       "3",
-       "3"
-    ],
-    "type": "0",
-    "source": "vanilla"
- },
   {
     "sprite":"error",
     "name":"error",

@@ -529,7 +529,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         check_size(*dst_size)
         dim = sprite.shape[:2] * np.array((h, w))
         dim = dim.astype(int)
-        return cv2.resize(sprite, dim[::-1], interpolation=cv2.INTER_NEAREST_EXACT)
+        return cv2.resize(sprite[:, ::-1], dim[::-1], interpolation=cv2.INTER_NEAREST)[:, ::-1]
 
     @add_variant()
     async def pad(sprite, left: int, top: int, right: int, bottom: int):

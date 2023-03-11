@@ -57,10 +57,14 @@ class CommandPageSource(menus.ListPageSource):
             description=(f"> _aka {', '.join(entry.aliases)}_\n" if len(entry.aliases) else "") +
                         f"> Arguments: `{arguments}`\n" if len(arguments) else ""
         )
-        embed.add_field(
-            name="",
-            value=entry.help
-        )
+        help = copy(entry.help)
+        while len(help) > 0:
+            embed.add_field(
+                name="",
+                value=help[:1024],
+                inline=False
+            )
+            help = help[1024:]
         embed.set_footer(text=f"{menu.current_page + 1}/{self.get_max_pages()}")
         return embed
 
@@ -99,7 +103,7 @@ class MetaCog(commands.Cog, name="Other Commands"):
         new_query = query
         if query is None or query == "list":
             new_query = ""
-        cmds = sorted((cmd for cmd in self.bot.commands if re.match(new_query, cmd.name) and not cmd.hidden),
+        cmds = sorted((cmd for cmd in self.bot.commands if re.match(new_query, cmd.name) and (not cmd.hidden or ctx.bot.is_owner(ctx.author))),
                       key=lambda cmd: cmd.name)
         if query == "list":
             names = [cmd.name for cmd in cmds]
@@ -131,7 +135,8 @@ This help page should be able to guide you to everything you need to know.
 - If you need a list of commands, look at `commands`.
 - If you need to make a render, look at `commands tile`.
 - If you need help on a level, look at `hints <level name>`.
-- If you need to look at a level, look at `level`.""",
+- If you need to look at a level, look at `level`.
+- If you need help learning how to make renders, look at `doc`.""",
             inline=False
         )
         ut = (datetime.utcnow() - self.bot.started).seconds
@@ -272,6 +277,10 @@ _RocketRace#0798_ - Original lead
         logger = await self.bot.fetch_webhook(594692503014473729)
         await logger.send(text=err)
 
+    @commands.command()
+    async def doc(self, ctx: Context):
+        """Get a tutorial on how to use the bot."""
+        return await ctx.error("Haven't written this yet. Will tomorrow. (March 11 2023)")
 
 async def setup(bot: Bot):
     await bot.add_cog(MetaCog(bot))
