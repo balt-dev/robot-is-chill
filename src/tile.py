@@ -37,8 +37,9 @@ def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str
             out[var_type] = out.get(var_type, [])
             out[var_type].append(final_variant(*final_args))
         except KeyError:
-            if any(raw_variant.startswith(n) for n in possible_variant_names):
-                raise errors.BadVariant(name, raw_variant)
+            for n in possible_variant_names:
+                if raw_variant.startswith(n) and len(n):
+                    raise errors.BadVariant(name, raw_variant)
             raise errors.UnknownVariant(name, raw_variant)
         i += 1
     return out
