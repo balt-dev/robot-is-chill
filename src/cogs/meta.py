@@ -8,7 +8,9 @@ from copy import copy
 from functools import reduce
 import itertools
 from datetime import datetime
+from glob import glob
 from inspect import Parameter
+from pathlib import Path
 from subprocess import PIPE, STDOUT, TimeoutExpired, run
 from time import time
 from typing import Optional, Sequence
@@ -69,6 +71,29 @@ class CommandPageSource(menus.ListPageSource):
         return embed
 
 
+class DocsPageSource(menus.ListPageSource):
+    def __init__(self):
+        docs = []
+        for path in sorted(glob("docs/*.md")):
+            with open(path, "r") as f:
+                match = re.fullmatch(r".+ - (.+)", Path(path).stem)
+                assert match is not None, "One or more of the documentation files are invalid! Please contact the owner."
+                title = match.group(1)
+                docs.append((title, f.read()))
+        super().__init__(docs, per_page=1)
+
+    async def format_page(self, menu: menus.Menu, entry: tuple[str, str]) -> discord.Embed:
+        print(repr(entry))
+        title, description = entry
+        embed = discord.Embed(
+            color=menu.bot.embed_color,
+            title=title,
+            description=description
+        )
+        embed.set_footer(text=f"Page {menu.current_page + 1} of {self.get_max_pages()}")
+        return embed
+
+
 class MetaCog(commands.Cog, name="Other Commands"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -103,7 +128,8 @@ class MetaCog(commands.Cog, name="Other Commands"):
         new_query = query
         if query is None or query == "list":
             new_query = ""
-        cmds = sorted((cmd for cmd in self.bot.commands if re.match(new_query, cmd.name) and (not cmd.hidden or ctx.bot.is_owner(ctx.author))),
+        cmds = sorted((cmd for cmd in self.bot.commands if
+                       re.match(new_query, cmd.name) and (not cmd.hidden or ctx.bot.is_owner(ctx.author))),
                       key=lambda cmd: cmd.name)
         if query == "list":
             names = [cmd.name for cmd in cmds]
@@ -260,27 +286,17 @@ _RocketRace#0798_ - Original lead
 
         await ctx.send("".join(message))
 
-    @commands.Cog.listener()
-    async def on_disconnect(self):
-        start = time()
-        try:
-            await self.bot.wait_for("ready", timeout=5.0)
-        except asyncio.TimeoutError:
-            try:
-                await self.bot.wait_for("ready", timeout=55.0)
-            except asyncio.TimeoutError:
-                err = description = f"{self.bot.user.mention} has disconnected.",
-            else:
-                err = f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds."
-        else:
-            err = f"{self.bot.user.mention} has reconnected. Downtime: {str(round(time() - start, 2))} seconds."
-        logger = await self.bot.fetch_webhook(594692503014473729)
-        await logger.send(text=err)
-
     @commands.command()
-    async def doc(self, ctx: Context):
+    async def doc(self, ctx: Context, page: int = 0):
         """Get a tutorial on how to use the bot."""
-        return await ctx.error("Haven't written this yet. Will tomorrow. (March 11 2023)")
+        source = DocsPageSource()
+        pages = ButtonPages(source=source)
+        if not isinstance(ctx.channel, discord.DMChannel):
+            await ctx.reply("Sending docs to DMs...")
+        ctx.channel = await ctx.author.create_dm()
+        await pages.start(ctx)
+        await pages.show_page(page)
+
 
 async def setup(bot: Bot):
     await bot.add_cog(MetaCog(bot))

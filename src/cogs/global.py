@@ -301,6 +301,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     comma_grid = split_commas(word_grid, "tile_")
                 else:
                     comma_grid = split_commas(word_grid, "text_")
+                comma_grid = split_commas(comma_grid, "$")
             except errors.SplittingException as e:
                 cause = e.args[0]
                 return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
@@ -326,7 +327,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 possible_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
                 font_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
 
-                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name]
+                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name if len(name)]
                 def catch(f, *args, **kwargs):
                     try:
                         return f(*args, **kwargs)
