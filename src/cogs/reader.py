@@ -278,7 +278,16 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
                 row.pop(grid.width - 1)
                 row.pop(0)
         out = f"target/renders/levels/{code.lower()}.gif"
-        await self.bot.renderer.render([objects], palette=grid.palette, background=(0, 4), out=out, sign_texts=sign_texts, _no_sign_limit=True)
+        await self.bot.renderer.render(
+            [objects],
+            palette=grid.palette,
+            background=(0, 4),
+            out=out,
+            sign_texts=sign_texts,
+            _no_sign_limit=True,
+            upscale=1,
+            _disable_limit=True
+        )
 
         data = CustomLevelData(
             code.lower(),

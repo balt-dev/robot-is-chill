@@ -13,6 +13,7 @@ import discord
 from discord.ext import commands
 import requests
 
+import webhooks
 from ..types import Bot, Context
 from .. import errors, constants
 
@@ -24,10 +25,13 @@ class CommandErrorHandler(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.webhook_id = bot.webhook_id
-        self.logger = DummyLogger()
+        self.logger = None
 
     async def setup_logger(self, webhook_id: int):
-        return DummyLogger() # await self.bot.fetch_webhook(webhook_id)
+        try:
+            return await self.bot.fetch_webhook(webhook_id)
+        except:
+            return DummyLogger()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: Context, error: Exception):
@@ -39,7 +43,7 @@ class CommandErrorHandler(commands.Cog):
         """
         try:
             if self.logger is None:
-                self.logger = await self.setup_logger(self.webhook_id)
+                self.logger = await self.setup_logger(webhooks.error_id)
 
             # This prevents any commands with local handlers being handled here
             # in on_command_error.

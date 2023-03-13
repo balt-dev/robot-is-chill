@@ -4,6 +4,8 @@ import asyncio
 import glob
 
 import sys
+import traceback
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Coroutine
@@ -145,7 +147,7 @@ bot = Bot(
     # custom fields
     cogs=config.cogs,
     embed_color=config.embed_color,
-    webhook_id=webhooks.webhook_id,
+    webhook_id=webhooks.logging_id,
     prefixes=config.prefixes,
     db_path=config.db_path
 )
@@ -158,18 +160,17 @@ async def on_command(ctx):
         description="This is the beta branch prefix. Some things may be changed.",
         color=config.logging_color)
     await ctx.send(embed=embed, delete_after=3)
-    nl = '\n'
-    print(f"""{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) in {"DMs" if ctx.guild is None else ctx.guild.name} | {ctx.author.public_flags.all()}
-    {(nl + '    ').join(ctx.message.content.split(nl))}""")
-    # pass
-    # webhook = await bot.fetch_webhook(webhooks.logging_id)
-    # embed = discord.Embed(
-    #     description=ctx.message.content,
-    #     color=config.logging_color)
-    # embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
-    #                  icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
-    # embed.set_footer(text=str(ctx.author.id))
-    # await webhook.send(embed=embed)
+    try:
+        webhook = await bot.fetch_webhook(webhooks.logging_id)
+        embed = discord.Embed(
+            description=ctx.message.content,
+            color=config.logging_color)
+        embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
+                         icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
+        embed.set_footer(text=str(ctx.author.id))
+        await webhook.send(embed=embed)
+    except Exception as e:
+        warnings.warn("\n".join(traceback.format_exception(e)))
 
 bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)
