@@ -320,7 +320,7 @@ class LevelData:
             if self.style == 2:
                 # extra dots
                 return f"{self.parent}-extra {self.number + 1}: {self.name}"
-        raise RuntimeError("Level is in a bad state")
+        return self.name  # raise RuntimeError("Level is in a bad state")
 
     def unique(self) -> str:
         """Uniquely identifying string."""

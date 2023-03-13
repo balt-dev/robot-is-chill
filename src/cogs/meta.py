@@ -59,14 +59,15 @@ class CommandPageSource(menus.ListPageSource):
             description=(f"> _aka {', '.join(entry.aliases)}_\n" if len(entry.aliases) else "") +
                         f"> Arguments: `{arguments}`\n" if len(arguments) else ""
         )
-        help = copy(entry.help)
-        while len(help) > 0:
-            embed.add_field(
-                name="",
-                value=help[:1024],
-                inline=False
-            )
-            help = help[1024:]
+        if entry.help is not None:
+            help = copy(entry.help)
+            while len(help) > 0:
+                embed.add_field(
+                    name="",
+                    value=help[:1024],
+                    inline=False
+                )
+                help = help[1024:]
         embed.set_footer(text=f"{menu.current_page + 1}/{self.get_max_pages()}")
         return embed
 
@@ -128,8 +129,9 @@ class MetaCog(commands.Cog, name="Other Commands"):
         new_query = query
         if query is None or query == "list":
             new_query = ""
+        owner = await ctx.bot.is_owner(ctx.author)
         cmds = sorted((cmd for cmd in self.bot.commands if
-                       re.match(new_query, cmd.name) and (not cmd.hidden or ctx.bot.is_owner(ctx.author))),
+                       re.match(new_query, cmd.name) and (not cmd.hidden or owner)),
                       key=lambda cmd: cmd.name)
         if query == "list":
             names = [cmd.name for cmd in cmds]

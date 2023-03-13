@@ -228,7 +228,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:", "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)
-
+            tiles = re.sub(r"(?<!\\)`", "", tiles)
             # Replace some phrases
             replace_list = [
                 ['а', 'a'],
@@ -814,7 +814,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query)
                             except ValueError as e:
                                 return await ctx.error(
-                                    f"The level code is valid, but the level's {e.args[1]} is too big to fit in a GIF. ({e.args[0] * 48} > 65535)")
+                                    f"The level code is valid, but the level's {e.args[1]} is too big to fit in a GIF. ({e.args[0] * 24} > 65535)")
                             except aiohttp.ClientResponseError:
                                 return await ctx.error(
                                     f"The Baba Is Bookmark site returned a bad response. Try again later.")

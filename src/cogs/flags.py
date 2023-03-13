@@ -49,9 +49,10 @@ class Flag:
         return to_delete, kwargs
 
     def __str__(self):
+        nl = "\n"
         return f"""
-> `{self.syntax}`
-{self.description}"""
+`{self.syntax}`
+> {f"{nl}> ".join(self.description.splitlines())}"""
 
     def __repr__(self):
         return str(self)

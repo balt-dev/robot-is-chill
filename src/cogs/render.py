@@ -176,6 +176,8 @@ class Renderer:
             top += max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
             right -= min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
             bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
+            for sign_text in sign_texts:
+                bbox = sign_text.fon
         default_size = np.array((int(sizes.shape[2] * spacing + top + bottom),
                                  int(sizes.shape[3] * spacing + left + right)))
         true_size = default_size * upscale
@@ -266,7 +268,7 @@ class Renderer:
                 for sign_text in sign_texts:
                     if wobble_range[i] in range(sign_text.time_start, sign_text.time_end):
                         text = sign_text.text
-                        text = re.sub(r"(?<!\\)\/n", "\n", text)
+                        text = re.sub(r"(?<!\\)\\n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
                         assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
                         pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),

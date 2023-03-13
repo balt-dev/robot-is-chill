@@ -27,9 +27,9 @@ https://github.com/RocketRace/robot-is-you#readme
   ```
   - webhooks.py:
   ```py
-  webhook_id: int = <error logging id>
   logging_id: int = <command logging id>
-  ```
+  error_id: int = <error logging id>
+    ```
   - Make directory `target/renders/`
   - Configure `config.py`
 - Run the bot
