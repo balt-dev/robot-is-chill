@@ -14,3 +14,4 @@ aiohttp~=3.8.1
 setuptools~=58.1.0
 visual-center
 more_itertools
+tldextract

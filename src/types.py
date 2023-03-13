@@ -49,6 +49,7 @@ class Bot(commands.Bot):
             exit_code: int = 0,
             **kwargs):
         super().__init__(*args, **kwargs)
+        self.baba_loaded: bool = False
         self.macros: dict = None
         self.flags = None
 

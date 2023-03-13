@@ -2,7 +2,7 @@ import discord
 
 activity = "Booting..."
 description = "*An entertainment bot for rendering levels and custom scenes based on the indie game Baba Is You.*"
-prefixes = ["-"]
+prefixes = ["=", "robot is", "ROBOT IS", "-"]
 trigger_on_mention = True
 embed_color = discord.Color(12877055)
 logging_color = 0xffffff

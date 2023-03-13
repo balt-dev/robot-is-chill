@@ -11,7 +11,7 @@ import time
 import warnings
 import zlib
 from glob import glob
-from pathlib import PurePath
+from pathlib import PurePath, Path
 
 import discord
 from dataclasses import dataclass
@@ -246,6 +246,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             self.read_objects()
         except FileNotFoundError:
             warnings.warn("Baba is not added!")
+            self.bot.baba_loaded = False
 
     async def render_custom_level(self, code: str) -> CustomLevelData:
         """Renders a custom level.
@@ -441,8 +442,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         metadatas = {}
         for world_index, world in enumerate(world_glob):
             levels = [l[:-2] for l in listdir(f"data/levels/{world}") if l.endswith(".l")]
-            if not path.exists(f'target/renders/{world}'):
-                mkdir(f'target/renders/{world}')
+            Path(f"target/renders/{world}").mkdir(parents=True, exist_ok=True)
             if path.exists(f"data/levels/{world}/Images"):
                 shutil.copytree(f"data/levels/{world}/Images", f"data/images/{world}", dirs_exist_ok=True)
             if path.exists(f"data/levels/{world}/Palettes"):
@@ -810,4 +810,5 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
 
 async def setup(bot: Bot):
-    await bot.add_cog(Reader(bot))
+    cog = Reader(bot)
+    await bot.add_cog(cog)

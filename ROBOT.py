@@ -84,6 +84,7 @@ class Bot(commands.Bot):
         self.variants = None
         self.palette_cache = {}
         self.macros = {}
+        self.baba_loaded = True
         for path in glob.glob("data/palettes/*.png"):
             with Image.open(path) as im:
                 self.palette_cache[Path(path).stem] = im.copy()
@@ -114,7 +115,16 @@ class Bot(commands.Bot):
             for (name, value, description, author) in await cur.fetchall():
                 self.macros[name] = Macro(value, description, author)
         print(f"Logged in as {self.user}!")
-        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
+        if bot.baba_loaded:
+            await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
+        else:
+            await bot.change_presence(
+                activity=discord.Activity(
+                    type=discord.ActivityType.playing,
+                    name="Still being set up..."
+                ),
+                status=discord.Status.do_not_disturb
+            )
 
     async def is_owner(self, user: discord.User):
         if user.id == 280756504674566144:  # Implement your own conditions here
@@ -156,10 +166,10 @@ bot = Bot(
 @bot.event
 async def on_command(ctx):
     embed = discord.Embed(
-        title="Disclaimer",
-        description="This is the beta branch prefix. Some things may be changed.",
+        title="Notice",
+        description="The bot recently got a *huge* update, with a lot of breaking changes. Make sure to check `help`!",
         color=config.logging_color)
-    await ctx.send(embed=embed, delete_after=3)
+    await ctx.send(embed=embed, delete_after=13)
     try:
         webhook = await bot.fetch_webhook(webhooks.logging_id)
         embed = discord.Embed(

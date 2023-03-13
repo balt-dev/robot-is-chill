@@ -7,6 +7,7 @@ import random
 import re
 import sys
 import time
+import traceback
 import warnings
 import zipfile
 from io import BytesIO
@@ -24,7 +25,10 @@ from .. import constants, errors
 from ..types import Color
 from ..utils import cached_open
 
-FONT = ImageFont.truetype("data/fonts/default.ttf")
+try:
+    FONT = ImageFont.truetype("data/fonts/default.ttf")
+except OSError:
+    pass
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -557,6 +561,7 @@ class Renderer:
         try:
             widths: list[int] = [width_greater_than(c) for c in raw]
         except KeyError as e:
+            traceback.print_exc()
             raise errors.BadCharacter(text, mode, e.args[0])
 
         max_width = constants.DEFAULT_SPRITE_SIZE
