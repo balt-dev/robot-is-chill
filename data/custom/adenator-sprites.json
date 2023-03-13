@@ -43,5 +43,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "packoc",
+        "sprite": "packoc",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

@@ -124,6 +124,11 @@ bot = Bot(
 
 @bot.event
 async def on_command(ctx):
+    embed = discord.Embed(
+        title="Notice",
+        description="The bot currently has a beta version running under the prefix `-`.\nTry out the beta prefix, and if something breaks, [please report it!](https://discord.gg/ktk8XkAfGD)\n(Mind you, a lot has changed, so look at `-help` first.)",
+        color=config.logging_color)
+    await ctx.send(embed=embed, delete_after=10)
     webhook = await bot.fetch_webhook(webhooks.logging_id)
     embed = discord.Embed(
         description=ctx.message.content,
