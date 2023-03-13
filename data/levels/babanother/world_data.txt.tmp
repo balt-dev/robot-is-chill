@@ -1,0 +1,10 @@
+[general]
+author=napier
+start=106level
+name=babanother
+themecount=27
+
+[levels]
+levelid=237
+rolling_levelid=49
+

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from glob import glob
 from io import BytesIO
 import json
@@ -49,9 +50,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             not self.bot.config['owner_only_mode'][0], reason]
         await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
 
-    @commands.command(aliases=["load", "reload"])
+    @commands.command(aliases=["rekiad", "relaod", "reloa", "re;pad", "relad", "reolad", "r"])
     @commands.is_owner()
-    async def reloadcog(self, ctx: Context, cog: str = ""):
+    async def reload(self, ctx: Context, cog: str = ""):
         """Reloads extensions within the bot while the bot is running."""
         if not cog:
             extensions = [a for a in self.bot.extensions.keys()]
@@ -90,7 +91,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         file_name = None
         check = [
             os.path.basename(name)[
-                :5] == 'text_' for name in zip.namelist()]
+            :5] == 'text_' for name in zip.namelist()]
         for name in zip.namelist():
             name = os.path.basename(name)
             if name[:5] != 'text_' or all(check):
@@ -175,7 +176,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             return await ctx.error('You forgot to attach a zip.')
         check = [
             os.path.basename(name)[
-                :5] == 'text_' for name in zip.namelist()]
+            :5] == 'text_' for name in zip.namelist()]
         withtext = any(check) and not all(check)
         file_name = None
         for name in zip.namelist():
@@ -327,9 +328,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         def scanforname(name):
             for directory, filenames in (  # i wish this could be a dict
                     ('objects', ("characters", "devs",
-                     "special", "thingify", "ui", "unsorted")),
+                                 "special", "thingify", "ui", "unsorted")),
                     ('text', ("conditions", "letters",
-                     "properties", "tutorial", "unsorted", "verbs"))
+                              "properties", "tutorial", "unsorted", "verbs"))
             ):
                 for filename in filenames:
                     for babdata in requests.get(
@@ -398,7 +399,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.bot.close()
 
     @commands.command(aliases=["kill", "yeet",
-                      "defeat", "empty", "not", "kil"])
+                               "defeat", "empty", "not", "kil"])
     @commands.is_owner()
     async def logout(self, ctx: Context, endsentence: str = ""):
         """Kills the bot process."""
@@ -448,6 +449,30 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
+    async def loadinitial(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_initial_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded initial tile data.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def loadeditor(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_editor_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded editor tile data.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def loadcustom(self, ctx: Context):
+        self.bot.loading = True
+        await self.load_custom_tiles()
+        self.bot.loading = False
+        return await ctx.send("Done. Loaded custom tile data.")
+
+    @commands.command()
+    @commands.is_owner()
     async def loaddata(self, ctx: Context, flag: bool = False):
         """Reloads tile data from the world map, editor, and custom files.
 
@@ -456,8 +481,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         """
         self.bot.loading = True
         if flag:
-            # Flush the tile database since it all gets reconstructed anyways
+            # Flush the tile database since it all gets reconstructed anyway
             await self.bot.db.conn.execute('DELETE FROM tiles')
+        del self.bot.db.filter_cache  # Just to make absolutely sure that it gets flushed
+        self.bot.db.filter_cache = {}
         await self.load_initial_tiles()
         await self.load_editor_tiles()
         await self.load_custom_tiles()
@@ -697,7 +724,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
             """From config format to db format."""
-            print(f"Loading from {source}")
             inactive = d.pop("color")
             if d.get("active") is not None:
                 d["inactive_color_x"] = inactive[0]
@@ -812,13 +838,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
-    async def doc(self, ctx: Context, command: commands.Command):
-        """Check a command's docstring."""
-        help = command.help
-        await ctx.send(f"Command doc for {command}:\n{help}")
-
-    @commands.command()
-    @commands.is_owner()
     async def sql(self, ctx: Context, *, query: str):
         """Run some sql."""
         filemode = False
@@ -847,7 +866,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     header = header + '-' * max_length + '+'
                 formattable_rows = formattable_columns.T
                 formatted = '|' + \
-                    '|'.join(formattable_rows[0]) + f'|\n{header}'
+                            '|'.join(formattable_rows[0]) + f'|\n{header}'
                 for row in formattable_rows[1:]:
                     formatted_row = '|' + '|'.join(row) + '|'
                     if not filemode and len(row) + len(formatted) > 1800:
@@ -1009,7 +1028,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     frame.paste(img, (x1 - x1_min, y1 - y1_min))
                     width, height = frame.size
                     buf = BytesIO()
-                    frame.save(buf, format="PNG")
+                    frame.convert("L").save(buf, format="PNG")
                     blobs.append(buf.getvalue())
                 results.append((mode, char, width, *blobs))
 
@@ -1023,11 +1042,11 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     async def load_ready_letters(self):
         def channel_shenanigans(im: Image.Image) -> Image.Image:
-            if im.mode == "1":
+            if im.mode == "L":
                 return im
-            elif im.mode == "RGB" or im.mode == "L":
-                return im.convert("1")
-            return im.convert("RGBA").getchannel("A").convert("1")
+            elif im.mode in ("RGB", "1"):
+                return im.convert("L")
+            return im.convert("RGBA").getchannel("A")
 
         data = []
         for path in pathlib.Path("data/letters").glob("*/*/*/*_0.png"):
@@ -1060,6 +1079,38 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             ''',
             data
         )
+
+    @commands.command()
+    @commands.is_owner()
+    async def loadbaba(self, ctx: Context, *, path: str):
+        """Adds all missing files from the base game. Should only have to be run when the game updates."""
+        path = pathlib.Path(path) / "Data"
+        assert path.exists, "Invalid directory!"
+        bot_path = pathlib.Path(os.getcwd()) / "data"
+
+        def replace(src, dst, *args):
+            if os.path.exists(src):
+                if os.path.exists(dst):
+                    shutil.rmtree(dst)
+                shutil.copytree(src, dst, *args)
+
+        message = await ctx.reply(f"Adding sprites...")
+        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "baba")
+        shutil.copytree(path / "Sprites", bot_path / "sprites" / "baba", dirs_exist_ok=True)
+        shutil.copytree(path / "Palettes", bot_path / "palettes", dirs_exist_ok=True)
+        shutil.copy2(path / "merged.ttf", bot_path / "fonts" / "default.ttf")
+        shutil.copy2(path / "Editor" / "editor_objectlist.lua", bot_path / "editor_objectlist.lua")
+        shutil.copy2(path / "values.lua", bot_path / "values.lua")
+        for world in glob(str(path / "Worlds" / "*")):
+            world = pathlib.Path(world)
+            world_name = world.stem
+            await message.edit(content=f"Adding world `{world_name}`...")
+            if (bot_world_path := pathlib.Path(bot_path) / "levels" / world_name).exists():
+                shutil.rmtree(bot_world_path)
+            shutil.copytree(world, bot_world_path, dirs_exist_ok=True)
+            replace(world / "Images", pathlib.Path(bot_path) / "images" / world_name)
+        await message.edit(content="Done.")
+
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):

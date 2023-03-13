@@ -91,6 +91,10 @@ class BadLetterVariant(VariantError):
 class UnknownVariant(VariantError):
     """Not a valid variant."""
 
+
+class TooLargeTile(VariantError):
+    """Tile exceeds the limit."""
+
 # === Custom text ===
 
 
@@ -122,3 +126,12 @@ class BadCharacter(TextGenerationError):
 
 class CustomTextTooLong(TextGenerationError):
     """Can't fit."""
+
+
+class ScaleError(VariantError):
+    """Can't scale below 0."""
+
+
+class BadVariant(VariantError):
+    """Incorrect syntax."""
+    pass

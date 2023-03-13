@@ -2,20 +2,33 @@ from __future__ import annotations
 
 import json
 import string
+import traceback
 from dataclasses import dataclass
+from io import BytesIO
 from sqlite3.dbapi2 import Row
-from typing import AsyncGenerator, Iterable
+from typing import AsyncGenerator, Iterable, Any
 
+import re
 import asqlite
+import numpy as np
+import requests
+import tldextract as tldextract
 from PIL import Image
 
+from . import constants
 from .constants import BABA_WORLD, DIRECTIONS
 
 
 class Database:
     """Everything relating to persistent readable & writable data."""
     conn: asqlite.Connection
+    bot: None
     level_hints: dict[str, dict[str, dict[str, str]]]
+    filter_cache: dict[str, np.ndarray]
+
+    def __init__(self, bot):
+        self.filter_cache = {}
+        self.bot = bot
 
     async def connect(self, db: str) -> None:
         """Startup."""
@@ -24,6 +37,9 @@ class Database:
         # not checking for same thread probably is a terrible idea but
         # whateverrr
         self.conn = await asqlite.connect(db, check_same_thread=False)
+        def regexp(x, y):
+            return bool(re.search(x, y))
+        self.conn.get_connection().create_function('regexp', 2, regexp)
         print("Initialized database connection.")
         await self.create_tables()
         print("Verified database tables.")
@@ -149,7 +165,6 @@ class Database:
                 '''
 				CREATE TABLE IF NOT EXISTS filterimages (
 					name TEXT UNIQUE PRIMARY KEY,
-					relative BOOL,
 					absolute BOOL,
 					url TEXT,
 					creator INT
@@ -215,6 +230,34 @@ class Database:
         """The hints for a baba level."""
         return self.level_hints.get(level_id.lower())
 
+    async def get_filter(self, url: str):
+        """Get a filter from the database."""
+        if url not in self.filter_cache:
+            async with self.conn.cursor() as cur:
+                await cur.execute("SELECT url, absolute FROM filterimages WHERE name == ?;", url)
+                result = await cur.fetchone()
+                if result is None:
+                    if "." not in url:
+                        raise AssertionError(f"Filter `{url}` wasn't found in the database!")
+                    assert tldextract.extract(url).domain == "discordapp", "In light of a potential security hazard, only files uploaded from Discord are allowed as filters."
+                    result = f"https://"+url
+                    absolute = None
+                else:
+                    result, absolute = result
+                try:
+                    filter_headers = requests.head(result, timeout=3).headers
+                except requests.exceptions.ConnectionError:
+                    raise AssertionError(f"Filter `{url}` isn't a valid URL (or didn't respond in time)!")
+                assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter `{url}` is too big!"
+                buffer = requests.get(result, stream=True).raw.read()
+                try:
+                    with Image.open(BytesIO(buffer)) as im:
+                        final = np.array(im.convert("RGBA")), absolute
+                        self.filter_cache[url] = final
+                        return final
+                except IOError:
+                    raise AssertionError(f"Filter `{url}` couldn't be parsed as an image!")
+        return self.filter_cache[url]
 
 @dataclass
 class TileData:
@@ -277,7 +320,7 @@ class LevelData:
             if self.style == 2:
                 # extra dots
                 return f"{self.parent}-extra {self.number + 1}: {self.name}"
-        raise RuntimeError("Level is in a bad state")
+        return self.name  # raise RuntimeError("Level is in a bad state")
 
     def unique(self) -> str:
         """Uniquely identifying string."""

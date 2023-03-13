@@ -11,7 +11,8 @@ from PIL import Image
 
 from .. import constants
 from ..errors import InvalidFlagError
-from ..types import Context
+from ..tile import Tile
+from ..types import Context, Color
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -37,18 +38,24 @@ class Flag:
     async def match(self, ctx: Context, potential_flag: str, x: int, y: int, kwargs: dict, to_delete: list) -> list:
         """Matches the potential flag with the flag.
         Returns the to_delete list passed in, plus the coordinates to delete if matched, and the kwargs."""
-        print(potential_flag)
         if match := self.pattern.fullmatch(potential_flag):
             to_delete.append((x, y))
             values = await self.mutator(match, ctx)
             for kwarg, value in zip(self.kwargs, values):
-                kwargs[kwarg] = value
+                if type(kwargs.get(kwarg, None)) is dict:
+                    kwargs[kwarg] |= value
+                else:
+                    kwargs[kwarg] = value
         return to_delete, kwargs
 
     def __str__(self):
+        nl = "\n"
         return f"""
-> `{self.syntax}`
-{self.description}"""
+`{self.syntax}`
+> {f"{nl}> ".join(self.description.splitlines())}"""
+
+    def __repr__(self):
+        return str(self)
 
 
 class Flags:
@@ -72,32 +79,25 @@ async def setup(bot: Bot):
     flags = Flags()
     bot.flags = flags
 
-    @flags.register(match=r"(?:--background|-b)(?:=(\d)/(\d))?",
-                    syntax="(-b | --background)[=<x: int>/<y: int>]",
+    @flags.register(match=r"(?:--background|-b)(?:=("
+                         rf"(?:#(?:[0-9A-Fa-f]{{2}}){{3,4}})|"
+                         rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
+                         rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
+                         rf"(?:-?\d+\/-?\d+)))?",
+                    syntax="(-b | --background)=#<color: Color>",
                     kwargs=["background"])
     async def background(match, _):
-        """Sets the background of a render to a palette color."""
-        if match.group(1) is not None:
-            tx, ty = int(match.group(1)), int(match.group(2))
-            if not (0 <= tx < 7 and 0 <= ty < 5):
-                raise InvalidFlagError(
-                    "The provided background color is invalid.")
-            return ((tx, ty),)
-        else:
-            return ((0, 4),)
-
-    @flags.register(match=r"(?:--background|-b)=#([\da-fA-F]{6})",
-                    syntax="(-b | --background)=#<color: hex>",
-                    kwargs=["background"])
-    async def background_hex(match, _):
-        """Sets the background of a render to a hexadecimal color."""
-        return [match.group(1)]
+        """Sets the background of a render to a color."""
+        m = match.group(1)
+        if m is None:
+            m = "0/4"
+        return [Color.parse(Tile(palette="default"), bot.renderer.palette_cache, m)]
 
     @flags.register(match=r"(?:--palette|-p)=(\w+)",
                     syntax="(-p | --palette)=<palette: str>",
                     kwargs=["palette"])
     async def palette(match, _):
-        """Sets the palette to use for the render."""
+        """Sets the palette to use for the render. For a list of palettes, try `search type:palette`."""
         palette = match.group(1)
         if palette == "random":
             palette = random.choice(listdir("data/palettes"))[:-4]
@@ -137,13 +137,12 @@ async def setup(bot: Bot):
         """Sets which wobble frames to use."""
         frames = []
         for frame in list(match.group(1)):
-            # you have no idea how much i wish i could use a yield here
             frames.append(int(frame))
         return [frames]
 
     @flags.register(match=r"-c|--combine",
                     syntax="-c | --combine",
-                    kwargs=["before_image"])
+                    kwargs=["before_images"])
     async def combine(_, ctx):
         """Sets an image to combine this render with."""  # god this one's so jank.
         msg = None
@@ -175,10 +174,12 @@ async def setup(bot: Bot):
                         msg.attachments[0].url, stream=True).headers.get(
                         'content-length',
                         0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-                return [Image.open(requests.get(
-                    msg.attachments[0].url, stream=True).raw)]
-                # except AttributeError:
-                #    raise InvalidFlagError("not actually sure what causes this, if you get this please ping me")
+                with Image.open(requests.get(msg.attachments[0].url, stream=True).raw) as im:
+                    out = []
+                    for frame in range(im.n_frames):
+                        im.seek(frame)
+                        out.append(im.copy())
+                    return tuple(out),
 
     @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
                     syntax="(--speed | -speed)=<speed: int>[%]",
@@ -208,18 +209,11 @@ Use % to set a percentage of the default render speed."""
         """Removes the random animation offset."""
         return False,
 
-    @flags.register(match=r"(?:--grid|-gr)=(\d+)/(\d+)",
-                    syntax="--grid|-gr=<width: int>/<height: int>",
-                    kwargs=["gridol"])
-    async def grid(match, _):
-        """Adds a grid overlay."""
-        return ((int(match.group(1))), (int(match.group(2)))),
-
     @flags.register(match=r"(?:--crop)=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--crop=<left: int>/<top: int>/<right: int>/<bottom: int>",
                     kwargs=["crop"])
     async def crop(match, _):
-        """Crops the render to the bounding box."""
+        """Crops the render on each side."""
         return ((int(match.group(1))), (int(match.group(2))),
                 (int(match.group(3))), (int(match.group(4)))),
 
@@ -259,17 +253,24 @@ Use % to set a percentage of the default render speed."""
         """Makes the render not loop."""
         return False,
 
+    @flags.register(match=r"--expand|-ex",
+                    syntax="--expand|-ex",
+                    kwargs=["expand"])
+    async def expand(_, __):
+        """Expands the render for tiles displaced with the `:displace` variant."""
+        return True,
+
     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
                     syntax="--anim|-am=<wobble: int>/<timestep: int>",
                     kwargs=["animation"])
     async def anim(match, _):
-        """Makes the wobble frames independent from the animation.
+        """Makes the wobble frames independent of the animation.
 The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
         return ((int(match.group(1))), (int(match.group(2)))),
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
                     syntax="--format|-f=<format: gif | png>",
-                    kwargs=["file_format"])
+                    kwargs=["image_format"])
     async def format(match, _):
         """Set the format of the render.
 Note that PNG formats won't animate inside of Discord, you'll have to open them in the browser."""
@@ -282,11 +283,11 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
         """Adds spacing to the render."""
         return (int(match.group(1))),
 
-    @flags.register(match=r"--expand|-ex",
-                    syntax="--expand|-ex",
-                    kwargs=["expand"])
-    async def expand(_, __):
-        """Expands the render for tiles displaced with the `:displace` variant."""
+    @flags.register(match=r"--tileborder|-tb",
+                    syntax="--tileborder|-tb",
+                    kwargs=["tileborder"])
+    async def tileborder(_, __):
+        """Makes the render's border connect to tiles that tile."""
         return True,
 
     @flags.register(match=r"--boomerang|-br",
@@ -295,3 +296,11 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
     async def boomerang(_, __):
         """Make the render reverse at the end."""
         return True,
+
+    @flags.register(match=r"(?:--macro|-mc)=(.+?)\|(.+)",
+                    syntax="--macro|-mc=<name: str>|<variants: Variant[]>",
+                    kwargs=["macro"])
+    async def macro(match, __):
+        """Define macros for variants."""
+        assert ";" not in match.group(2), "Can't have persistent variants in macros!"
+        return {match.group(1): match.group(2)},

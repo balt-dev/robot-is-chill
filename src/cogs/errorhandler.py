@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
+import signal
 import sqlite3
 import sys
 import traceback
@@ -11,9 +13,13 @@ import discord
 from discord.ext import commands
 import requests
 
+import webhooks
 from ..types import Bot, Context
-from .. import errors
+from .. import errors, constants
 
+
+class DummyLogger:
+    async def send(self, *args, **kwargs): pass
 
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot: Bot):
@@ -22,7 +28,10 @@ class CommandErrorHandler(commands.Cog):
         self.logger = None
 
     async def setup_logger(self, webhook_id: int):
-        return await self.bot.fetch_webhook(webhook_id)
+        try:
+            return await self.bot.fetch_webhook(webhook_id)
+        except:
+            return DummyLogger()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: Context, error: Exception):
@@ -34,7 +43,7 @@ class CommandErrorHandler(commands.Cog):
         """
         try:
             if self.logger is None:
-                self.logger = await self.setup_logger(self.webhook_id)
+                self.logger = await self.setup_logger(webhooks.error_id)
 
             # This prevents any commands with local handlers being handled here
             # in on_command_error.
@@ -141,11 +150,12 @@ class CommandErrorHandler(commands.Cog):
                 await self.logger.send(embed=emb)
                 return await ctx.error("Invalid function arguments provided. Check the help command for the proper format.")
 
-            elif isinstance(error, AssertionError):
+            elif isinstance(error, AssertionError) or isinstance(error, NotImplementedError):
                 await self.logger.send(embed=emb)
                 return await ctx.error(error.args[0])
 
             elif isinstance(error, ZeroDivisionError):
+                traceback.print_exception(error)
                 return await ctx.error('Encountered a division by zero somewhere. Why?')
 
             elif isinstance(error, ArithmeticError):
@@ -186,6 +196,10 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.error(f'The render took too long, so it was cancelled.')
             elif isinstance(error, errors.InvalidFlagError):
                 return await ctx.error(f'A flag failed to parse:\n> `{error}`')
+            elif isinstance(error, commands.BadLiteralArgument):
+                return await ctx.error(f"An argument for the command wasn't in the allowed values of `{', '.join(repr(o) for o in error.literals)}`.")
+            elif isinstance(error, re.error):
+                return await ctx.error(f"The regular expression `{error.pattern}` is invalid. `{error}`")
             # All other Errors not returned come here... And we can just print
             # the default TraceBack + log
             if os.name == "nt":
@@ -240,6 +254,8 @@ User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.messag
                 error.__traceback__,
                 file=sys.stderr)
             return
+        finally:
+            signal.alarm(0)
 
 
 async def setup(bot: Bot):

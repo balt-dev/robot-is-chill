@@ -62,7 +62,7 @@ def makecircle(size, radius, color):
     draw = ImageDraw.Draw(img)
     draw.ellipse(bbox, fill=tuple(color))
     del draw
-    return img
+    return np.array(img)
 
 
 def liquify(img):
@@ -110,13 +110,12 @@ def planet(img):
         img = remove_instances_of_color(img, most_used_color)
     else:
         most_used_color = colors[0]
-        total_color_count = most_used_color_count = count_instances_of_color(
+        most_used_color_count = count_instances_of_color(
             img, most_used_color)
         radius = pow(
             most_used_color_count / np.pi,
             0.5)  # sqrt(area/π) = radius
-        return makecircle(
-            (img.shape[1], img.shape[0]), radius, most_used_color)
+        return makecircle((img.shape[1], img.shape[0]), radius, most_used_color)
 
     # Center
     for axis in range(2):
@@ -128,9 +127,8 @@ def planet(img):
     # Create circle of volume most_used_color_count with color most_used_color
     radius = pow(most_used_color_count / np.pi, 0.5)  # sqrt(area/π) = radius
     circle = makecircle((img.shape[1], img.shape[0]), radius, most_used_color)
-
     # Blend
-    pimg = Image.fromarray(img)
-    pimg = Image.alpha_composite(circle, pimg)
 
-    return pimg
+    circle[img[..., 3] > 0] = img[img[..., 3] > 0]
+
+    return circle

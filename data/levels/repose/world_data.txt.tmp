@@ -1,0 +1,14 @@
+[general]
+bonus_max=8
+clear_max=8
+prize_max=162
+firstlevel=16level
+themecount=40
+name=Repose
+author=Regal
+start=14level
+
+[levels]
+levelid=268
+rolling_levelid=274
+

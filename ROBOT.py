@@ -1,25 +1,41 @@
 from __future__ import annotations
+
 import asyncio
+import glob
 
 import sys
+import traceback
+import warnings
 from datetime import datetime
+from pathlib import Path
+from typing import Coroutine
 
 import discord
+from PIL import Image
 from discord.ext import commands
 
 import auth
 import config
 import webhooks
+from src.types import Macro
 from src.db import Database
+
+from numpy import set_printoptions as numpy_set_printoptions
 
 
 class Context(commands.Context):
-    async def error(self, msg: str, embed: discord.Embed | None = None) -> discord.Message:
+    silent: bool = False
+
+    async def error(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+        try:
+            self.silent
+        except KeyError:
+            self.silent = False
         await self.message.add_reaction("\u26a0\ufe0f")
         if embed is not None:
-            return await self.reply(msg, embed=embed)
+            return await self.reply(msg, embed=embed, silent=self.silent)
         else:
-            return await self.reply(msg)
+            return await self.reply(msg, silent=self.silent)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
@@ -60,13 +76,23 @@ class Bot(commands.Bot):
         self.embed_color = embed_color
         self.webhook_id = webhook_id
         self.prefixes = prefixes
-        self.db = Database()
+        self.db = Database(self)
         self.db_path = db_path
         self.config = config.__dict__
         self.renderer = None
         self.flags = None
+        self.variants = None
+        self.palette_cache = {}
+        self.macros = {}
+        for path in glob.glob("data/palettes/*.png"):
+            with Image.open(path) as im:
+                self.palette_cache[Path(path).stem] = im.copy()
+        numpy_set_printoptions(
+            threshold=sys.maxsize,
+            linewidth=sys.maxsize
+        )
         super().__init__(*args, **kwargs)
-
+        self.remove_command('help')
         # has to be after __init__
         async def gather_cogs():
             await asyncio.gather(*(self.load_extension(cog, package='ROBOT') for cog in cogs))
@@ -82,6 +108,11 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         await self.db.connect(self.db_path)
+        print("Loading macros...")
+        async with self.db.conn.cursor() as cur:
+            await cur.execute("SELECT * from macros")
+            for (name, value, description, author) in await cur.fetchall():
+                self.macros[name] = Macro(value, description, author)
         print(f"Logged in as {self.user}!")
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="commands..."))
 
@@ -116,7 +147,7 @@ bot = Bot(
     # custom fields
     cogs=config.cogs,
     embed_color=config.embed_color,
-    webhook_id=webhooks.webhook_id,
+    webhook_id=webhooks.logging_id,
     prefixes=config.prefixes,
     db_path=config.db_path
 )
@@ -125,19 +156,21 @@ bot = Bot(
 @bot.event
 async def on_command(ctx):
     embed = discord.Embed(
-        title="Notice",
-        description="The bot currently has a beta version running under the prefix `-`.\nTry out the beta prefix, and if something breaks, [please report it!](https://discord.gg/ktk8XkAfGD)\n(Mind you, a lot has changed, so look at `-help` first.)",
+        title="Disclaimer",
+        description="This is the beta branch prefix. Some things may be changed.",
         color=config.logging_color)
-    await ctx.send(embed=embed, delete_after=10)
-    webhook = await bot.fetch_webhook(webhooks.logging_id)
-    embed = discord.Embed(
-        description=ctx.message.content,
-        color=config.logging_color)
-    embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
-                     icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
-    embed.set_footer(text=str(ctx.author.id))
-    await webhook.send(embed=embed)
-
+    await ctx.send(embed=embed, delete_after=3)
+    try:
+        webhook = await bot.fetch_webhook(webhooks.logging_id)
+        embed = discord.Embed(
+            description=ctx.message.content,
+            color=config.logging_color)
+        embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
+                         icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
+        embed.set_footer(text=str(ctx.author.id))
+        await webhook.send(embed=embed)
+    except Exception as e:
+        warnings.warn("\n".join(traceback.format_exception(e)))
 
 bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)

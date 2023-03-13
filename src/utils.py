@@ -1,9 +1,24 @@
 from __future__ import annotations
+
+import cv2
+from discord.ext import menus
+from discord.ext.menus.views import ViewMenuPages
+
 from src.constants import BABA_WORLD
 
 from typing import Callable, List, Optional, Tuple, TypeVar
 from PIL import Image
+import numpy as np
 
+def recolor(sprite: Image.Image | np.ndarray, rgba: tuple[int, int, int, int]) -> Image.Image:
+    """Apply rgba color multiplication (0-255)"""
+    arr = np.multiply(sprite, np.array(rgba) / 255, casting="unsafe").astype(np.uint8)
+    if isinstance(sprite, np.ndarray):
+        return arr
+    return Image.fromarray(arr)
+
+def composite(a, b, t):
+    return (1.0 - t) * a + t * b
 
 class Tile:
     """Represents a tile object, ready to be rendered."""
@@ -30,9 +45,7 @@ class Tile:
         self.images = images or []
 
     def __repr__(self) -> str:
-        if self.custom:
-            return f"<Custom tile {self.name}>"
-        return f"<Tile {self.name} : {self.variant} with {self.color} from {self.source}>"
+        return f"<Tile {self.name} : {self.variant} with {self.color} from {'[generated]' if self.custom else self.source}>"
 
 
 T = TypeVar("T")
@@ -48,3 +61,26 @@ def cached_open(path, *, cache: dict[str, T],
         return cache[path]
     cache[path] = result = fn(path)
     return result
+
+class ButtonPages(ViewMenuPages,inherit_buttons=False):
+    @menus.button('⏮', position=menus.First())
+    async def go_to_first_page(self, payload):
+        await self.show_page(0)
+
+    @menus.button('◀', position=menus.First(1))
+    async def go_to_previous_page(self, payload):
+        await self.show_checked_page(self.current_page - 1)
+
+    @menus.button('▶', position=menus.Last(1))
+    async def go_to_next_page(self, payload):
+        await self.show_checked_page(self.current_page + 1)
+
+    @menus.button('⏭', position=menus.Last(2))
+    async def go_to_last_page(self, payload):
+        max_pages = self._source.get_max_pages()
+        last_page = max(max_pages - 1, 0)
+        await self.show_page(last_page)
+
+    @menus.button('⏹', position=menus.Last())
+    async def stop_pages(self, payload):
+        self.stop()

@@ -1,1373 +1,1106 @@
-from __future__ import annotations
+import glob
+import inspect
+import math
+import types
+import typing
+from typing import Any, Literal, Optional, Union, get_origin, get_args, Callable, Iterable
+from pathlib import Path
 
-import re
-from typing import TYPE_CHECKING, Any, Callable
-
-from src.db import TileData
-
-from .. import constants, errors
-from ..tile import FullTile, RawTile, TileFields
-
-import random as rand
+import cv2
 import numpy as np
+import visual_center
 
-if TYPE_CHECKING:
-    from ...ROBOT import Bot
-    from ..tile import FullGrid, GridIndex, RawGrid
+from . import liquify
+from ..utils import recolor, composite
+from .. import constants, errors
+from ..types import Variant, RegexDict, VaryingArgs, Color, Slice
 
-HandlerFn = Callable[['HandlerContext'], TileFields]
-DefaultFn = Callable[['DefaultContext'], TileFields]
-
-
-class ContextBase:
-    """The context that the (something) was invoked in."""
-
-    def __init__(self,
-                 *,
-                 bot: Bot,
-                 tile: RawTile,
-                 grid: RawGrid,
-                 index: GridIndex,
-                 tile_data_cache: dict[str,
-                                       TileData],
-                 flags: dict[str,
-                             Any]) -> None:
-        self.bot = bot
-        self.tile = tile
-        self.grid = grid
-        self.index = index
-        self.flags = flags
-        self.tile_data_cache = tile_data_cache
-
-    @property
-    def tile_data(self) -> TileData | None:
-        """Associated tile data."""
-        return self.tile_data_cache.get(self.tile.name)
-
-    def is_adjacent(self, coordinate: tuple[int, int, int, int]) -> bool:
-        """Tile is next to a joining tile."""
-        d, x, y, l = coordinate
-        joining_tiles = (self.tile.name, "level", "border")
-        print(self.grid[d], coordinate)
-        if x < 0 or y < 0 or y >= len(
-                self.grid[d][l]) or x >= len(self.grid[d][l][0]):
-            return bool(self.flags.get("tile_borders"))
-        return self.grid[d][l][y][x].name in joining_tiles
+CARD_KERNEL = np.array(((0, 1, 0), (1, 0, 1), (0, 1, 0)))
+OBLQ_KERNEL = np.array(((1, 0, 1), (0, 0, 0), (1, 0, 1)))
+META_KERNELS = {
+    "full": np.array([[1, 1, 1],
+                      [1, -8, 1],
+                      [1, 1, 1]]),
+    "edge": np.array([[0, 1, 0],
+                      [1, -4, 1],
+                      [0, 1, 0]])
+}
 
 
-class HandlerContext(ContextBase):
-    """The context that the handler was invoked in."""
-
-    def __init__(self, *,
-                 fields: TileFields,
-                 variant: str,
-                 groups: tuple[str, ...],
-                 extras: dict[str, Any],
-                 **kwargs: Any,
-                 ) -> None:
-        self.fields = fields
-        self.variant = variant
-        self.groups = groups
-        self.extras = extras
-        super().__init__(**kwargs)
+def class_init(self, *args, **kwargs):
+    self.args = args
+    self.kwargs = kwargs
 
 
-class DefaultContext(ContextBase):
-    """The context that a default factory was invoked in."""
+def parse_signature(v: list[str], t: list[type | types.GenericAlias]) -> list[Any]:
+    out = []
+    t = list(t).copy()
+    v = list(v).copy()
+    while len(t) > 0:
+        if len(v) == 0:
+            break
+        curr_type = t.pop(0)
+        if get_origin(curr_type) is Union:
+            curr_type = get_args(curr_type)[0]
+            if v[0] is None:
+                continue
+        if get_origin(curr_type) is Literal:
+            curr_type = get_args(curr_type)
+        if type(curr_type) is VaryingArgs:
+            out.extend(parse_signature(v, [curr_type.type] * len(v)))
+            return out
+        elif isinstance(curr_type, list):  # tree branch
+            num_values = len(curr_type)
+            val = tuple(parse_signature(v[:num_values], curr_type))
+            del v[:num_values]
+        elif isinstance(curr_type, tuple):  # literal, does not need to be checked
+            val = v.pop(0)
+        elif curr_type is bool:
+            g = v.pop(0)
+            val = g == "true"
+        elif curr_type is Slice:
+            g = v[:3]
+            del v[:3]
+            val = Slice(*[int(i) if len(i) > 0 else None for i in g])
+        else:
+            try:
+                raw_val = v.pop(0)
+                if curr_type is float or curr_type is int:
+                    raw_val = "-" * (raw_val.count("-") % 2) + raw_val.lstrip("-")
+                val = curr_type(raw_val)
+            except ValueError:
+                val = None
+        out.append(val)
+    return out
 
 
-class VariantHandlers:
-    def __init__(self, bot: Bot) -> None:
-        self.handlers: list[Handler] = []
-        self.bot = bot
-        self.default_fields: DefaultFn = lambda ctx: {}
-        self.tile_data_cache: dict[str, TileData] = {}
+def check_size(*dst_size):
+    if dst_size[0] > constants.MAX_TILE_SIZE or dst_size[1] > constants.MAX_TILE_SIZE:
+        raise errors.TooLargeTile(dst_size)
 
-    def handler(
-            self,
-            *,
-            pattern: str,
-            variant_hints: dict[str, str],
-            variant_group: str = "Other",
-            order: int | None = None
-    ) -> Callable[[HandlerFn], Handler]:
-        """Registers a variant handler.
 
-        The decorated function should take one argument (`HandlerContext`) and return `TileFields`.
+async def setup(bot):
+    """Get the variants."""
+    bot.variants = []
 
-        The handler is invoked when the variant matches `pattern`. If the pattern includes any
-        capturing groups, they are accessible at `HandlerContext.groups`.
-
-        `variant_hints` is a list of (variant, user-friendly representation) pairs.
-        Each variant should be valid for the handler. The representation should typically
-        be related to the variant provided, as it will be passed to the user.
-
-        `variant_group` is a key used to group variant handlers together. It should
-        be a user-friendly string.
-
-        The lower `order` is, the earlier the handler is prioritized (loosely).
-        If `order` is `None` or not given, the handler is given the least priority (loosely).
-        """
-
-        def deco(fn: HandlerFn) -> Handler:
-            handler = Handler(pattern, fn, variant_hints, variant_group)
-            if order is None:
-                self.handlers.append(handler)
+    def generate_pattern(params: list[inspect.Parameter], keep_slash=False):
+        pattern = f""
+        for i, p in enumerate(params):
+            if p.kind == inspect.Parameter.VAR_POSITIONAL:
+                # You can't match a variable number of groups in RegEx.
+                fstring_backslash_hack = r"^/|(?<=^\(\?:)/"
+                pattern += f"(?:{'/' if i - 1 else ''}{(generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=p.annotation)]).replace(fstring_backslash_hack, '', 1) + '/?')})?" * constants.VAR_POSITIONAL_MAX
+            elif get_origin(p.annotation) == Literal and len(get_args(p.annotation)) > 1:
+                pattern += f"/({'|'.join([str(arg) for arg in get_args(p.annotation)])})"
+            elif get_origin(p.annotation) == list:
+                pattern += rf"\/?\(?{generate_pattern([inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno) for name, anno in zip(p.name.split('_'), get_args(p.annotation))])}\)?"
+            elif get_origin(p.annotation) == Union:
+                pattern += f"(?:{'/' if i - 1 else ''}{generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=get_args(p.annotation)[0])])})?"
+            elif p.annotation in (patterns := {
+                int: r"/(-*\d+)",
+                float: r"/(-*(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))",
+                # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
+                str: r"/(.+?)",
+                bool: r"/(true|false)?",
+                Slice: r"/\(?(?:(-*\d*)(?:/(-*\d*)(?:/(-*\d*))?)?)?\)?",
+                Color: rf"/((?:#(?:[0-9A-Fa-f]{{2}}){{3,4}})|"
+                       rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
+                       rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
+                       rf"(?:-*\d+\/-*\d+)|"
+                       rf"\((?:-*\d+\/-*\d+)\))"
+            }):
+                pattern += patterns[p.annotation]
             else:
-                self.handlers.insert(order, handler)
-            return handler
+                continue
+        return pattern if keep_slash else pattern.lstrip("/")  # Remove starting /
 
-        return deco
+    def generate_syntax(params):
+        syntax = ""
+        for name, param in dict(params).items():
+            if param.annotation == inspect.Parameter.empty:
+                continue
+            elif param.kind == inspect.Parameter.VAR_POSITIONAL:
+                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m/" \
+                          f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m" \
+                          f"/[0;30m..."
+                break
+            elif get_origin(param.annotation) is Union:
+                syntax += f"[0;30m[[1;34m{generate_syntax({name: inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=typing.get_args(param.annotation)[0])})}" \
+                          f"[0;30m: [1;37m{repr(param.default)}[0;30m][0m"
+            elif get_origin(param.annotation) == list:
+                syntax += f"""[0;34m({generate_syntax({
+                    name: inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=anno)
+                    for name, anno in zip(name.split('_'), get_args(param.annotation))})}[0;34m)[0m"""
+            elif get_origin(param.annotation) == Literal:
+                syntax += f"""[0;30m<[32m{'[0;30m/[32m'.join([repr(arg) for arg in get_args(param.annotation)])} [0;36m{name}[0;30m>[0m"""
+            else:
+                syntax += f"[0;30m<[1;36m{param.annotation.__name__} [0;36m{name}[0;30m>[0m"
+            syntax += "/"
+        return syntax.rstrip("[0m").rstrip("/")  # Remove ending /
 
-    def default(self, fn: DefaultFn):
-        """Registers a default field factory.
+    def get_type_tree(unparsed_tree):
+        tree = []
+        for i, p in enumerate(unparsed_tree):
+            if p.kind == inspect.Parameter.VAR_POSITIONAL:
+                t = p.annotation
+                if isinstance(t, types.GenericAlias):
+                    t = get_type_tree(inspect.Parameter(p.name, p.kind, annotation=anno) for anno in get_args(t))
+                tree.append(VaryingArgs(t))
+                return tree
+            elif get_origin(p.annotation) == Literal:
+                tree.append(tuple(get_args(p.annotation)))
+            elif isinstance(p.annotation, types.GenericAlias):
+                tree.append(get_type_tree(
+                    inspect.Parameter(p.name, p.kind, annotation=anno) for anno in get_args(p.annotation)))
+            else:
+                tree.append(p.annotation)
+        return tree
 
-        There can only be one factory.
-
-        The function should take no arguments and return a `TileFields`.
-        Successive calls to this decorator will replace previous factories.
-        """
-        self.default_fields = fn
-
-    def finalize(self, fn: Callable[[FullTile], None]):
-        """Registers a finalizer.
-
-        There can only be one.
-        """
-        self.finalizer = fn
-
-    def all_variants(self) -> list[str]:
-        """All the possible variants.
-
-        tuples: (real string, representation string)
-        """
-        return [
-            repr
-            for handler in self.handlers
-            for repr in handler.hints.values()
-        ]
-
-    def valid_variants(self,
-                       tile: RawTile,
-                       tile_data_cache: dict[str,
-                                             TileData]) -> dict[str,
-                                                                list[str]]:
-        """Returns the variants that are valid for a given tile. This data is
-        pulled from the handler's `hints` attribute.
-
-        The output is grouped by the variant group of the handler.
-        """
-        out: dict[str, list[str]] = {}
-        for handler in self.handlers:
-            for variant, repr in handler.hints.items():
-                try:
-                    groups = handler.match(variant)
-                    if groups is not None:
-                        mock_ctx = HandlerContext(
-                            bot=self.bot,
-                            fields={},
-                            groups=groups,
-                            variant=variant,
-                            tile=tile,
-                            grid=[[[tile]]],
-                            index=(0, 0),
-                            extras={},
-                            tile_data_cache=tile_data_cache,
-                            flags=dict(disallow_custom_directions=True)
-                        )
-                        handler.handle(mock_ctx)
-                except errors.VariantError:
-                    pass  # Variant not possible
-                else:
-                    out.setdefault(handler.group, []).append(repr)
-        return out
-
-    def handle_tile(self,
-                    tile: RawTile,
-                    grid: RawGrid,
-                    index: GridIndex,
-                    tile_data_cache: dict[str,
-                                          TileData],
-                    **flags: Any) -> FullTile:
-        """Take a RawTile and apply its variants to it."""
-        default_ctx = DefaultContext(
-            bot=self.bot,
-            tile=tile,
-            grid=grid,
-            index=index,
-            tile_data_cache=tile_data_cache,
-            flags=flags
+    def create_variant(func: Callable, aliases: Iterable[str], no_function_name=False, hashed=True, hidden=False) -> \
+    type[Variant]:
+        assert func.__doc__ is not None, f"Variant `{func.__name__}` is missing a docstring!"
+        sig = inspect.signature(func)
+        params = sig.parameters
+        has_kwargs = any([p.kind == inspect.Parameter.KEYWORD_ONLY for p in params.values()])
+        if not no_function_name:  # HACKY
+            aliases = list(aliases)
+            aliases.append(func.__name__)
+            aliases = tuple(aliases)
+        pattern = rf"(?:{'|'.join(aliases)}){generate_pattern(list(params.values()))}"
+        syntax = (f"\u001b[0;30m[\u001b[0;35m{'[0;30m|[0;35m'.join(aliases)}[0;30m]" if len(
+            aliases) else "") + generate_syntax(params)
+        class_name = func.__name__.replace("_", " ").title().replace(" ", "") + "Variant"
+        variant_type = tuple(params.keys())[0]
+        type_tree = get_type_tree([p for p in params.values() if p.kind != inspect.Parameter.KEYWORD_ONLY])[1:]
+        variant = type(
+            class_name,
+            (Variant,),
+            {
+                "__init__": class_init,
+                "__doc__": func.__doc__,
+                "__repr__": (lambda self: f"{self.__class__.__name__}{self.args}"),
+                "apply": (lambda self, obj, **kwargs:
+                          func(obj, *self.args, **(self.kwargs | kwargs) if has_kwargs else self.kwargs)),
+                "pattern": pattern,
+                "signature": type_tree,
+                "syntax": syntax,
+                "type": variant_type,
+                "hashed": hashed,
+                "hidden": hidden,
+                "name": aliases
+            }
         )
-        fields: TileFields = self.default_fields(default_ctx)
-        extras = {}
-        for variant in tile.variants:
-            failed = True
-            for handler in reversed(self.handlers):
-                groups = handler.match(variant)
-                if groups is not None:
-                    failed = False
-                    ctx = HandlerContext(
-                        bot=self.bot,
-                        fields=fields,
-                        groups=groups,
-                        variant=variant,
-                        tile=tile,
-                        grid=grid,
-                        index=index,
-                        extras=extras,
-                        tile_data_cache=tile_data_cache,
-                        flags=flags
-                    )
-                    fields.update(handler.handle(ctx))
-            if failed:
-                raise errors.UnknownVariant(tile, variant)
-        full = FullTile.from_tile_fields(tile, fields)
-        self.finalizer(full, **flags)
-        return full
+        bot.variants.append(variant)
+        return variant
 
-    async def handle_grid(self, grid: RawGrid, **flags: Any) -> FullGrid:
-        """Apply variants to a full grid of raw tiles."""
-        tile_data_cache = {
-            data.name: data async for data in self.bot.db.tiles(
-                {
-                    tile.name for steps in grid for row in steps for stack in row for tile in stack
-                },
-                maximum_version=flags.get("ignore_editor_overrides", 1000)
-            )
-        }
-        return [
-            [
-                [
-                    [
-                        self.handle_tile(
-                            tile, grid, (d, x, y, z), tile_data_cache, **flags)
-                        for z, tile in enumerate(stack)
-                    ]
-                    for x, stack in enumerate(row)
-                ]
-                for y, row in enumerate(step)
-            ]
-            for d, step in enumerate(grid)
-        ]
+    def add_variant(*aliases, no_function_name=False, debug=False, hashed=True, hidden=False):
+        def wrapper(func):
+            v = create_variant(func, aliases, no_function_name, hashed, hidden)
+            if debug:
+                print(f"""{v.__name__}:
+    pattern: {v.pattern},
+    type: {v.type},
+    syntax: {v.syntax}""")
+            return func
 
+        return wrapper
 
-class Handler:
-    """Handles a single variant."""
+    # --- SPECIAL ---
 
-    def __init__(
-            self,
-            pattern: str,
-            fn: HandlerFn,
-            hints: dict[str, str],
-            group: str
-    ):
-        self.pattern = pattern
-        self.fn = fn
-        self.hints = hints
-        self.group = group
+    @add_variant("", "noop")
+    async def nothing(tile):
+        """Does nothing. Useful for resetting persistent variants."""
+        pass
 
-    def match(self, variant: str) -> tuple[str, ...] | None:
-        """Can this handler take the variant?
+    @add_variant(no_function_name=True)
+    async def blending(post, mode: Literal[*constants.BLENDING_MODES], keep_alpha: Optional[bool] = True):
+        """Sets the blending mode for the tile."""
+        post.blending = mode
+        post.keep_alpha = keep_alpha and mode != "mask"
 
-        Returns the matched groups if possible, else returns `None`.
-        """
-        matches = re.fullmatch(self.pattern, variant)
-        if matches is not None:
-            return matches.groups()
+    @add_variant("m!", no_function_name=True)
+    async def macro(tile, name: str):
+        """Applies a variant macro to the tile. Check the macros command for details."""
+        assert 0, f"Macro `{name}` not found in the database!"
 
-    def handle(self, ctx: HandlerContext) -> TileFields:
-        """Handle the variant."""
-        return self.fn(ctx)
+    # --- SIGN TEXT ---
 
+    @add_variant("font!", no_function_name=True)
+    async def font(sign, name: Literal[*tuple(Path(f).stem for f in glob.glob('data/fonts/*.ttf'))]):
+        """Applies a font to a sign text object."""
+        sign.font = name
 
-def split_variant(variant: int | None) -> tuple[int, int]:
-    """The sleeping animation is slightly inconvenient."""
-    if variant is None:
-        return 0, 0
-    dir, anim = divmod(variant, 8)
-    if anim == 7:
-        dir = (dir + 1) % 4
-        anim = -1
-    return dir * 8, anim
+    @add_variant("scale", no_function_name=True)
+    async def sign_scale(sign, size: float):
+        """Sets the font size of a sign text object."""
+        sign.size *= size
 
+    @add_variant("disp", "displace", no_function_name=True)
+    async def sign_displace(sign, x: float, y: float):
+        """Displaces a sign text object."""
+        sign.xo += x
+        sign.yo += y
 
-def join_variant(dir: int, anim: int) -> int:
-    """The sleeping animation is slightly inconvenient."""
-    return (dir + anim) % 32
+    @add_variant(no_function_name=True)
+    async def sign_color(sign, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, bot, palette):
+        """Sets the sign text's color. See the sprite counterpart for details."""
+        if len(color) < 4:
+            if inactive is not None:
+                color = constants.INACTIVE_COLORS[color]
+            try:
+                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(sign.text, color)
+        sign.color = color
 
+    @add_variant("align!", no_function_name=True)
+    async def alignment(sign, alignment: Literal["left", "center", "right"]):
+        """Sets the sign text's alignment."""
+        sign.alignment = alignment
 
-async def setup(bot: Bot):
-    """Get the variant handler instance."""
-    handlers = VariantHandlers(bot)
-    bot.handlers = handlers
+    @add_variant("anchor!", no_function_name=True)
+    async def anchor(sign, anchor: str):
+        """Sets the anchor of a sign text. https://pillow.readthedocs.io/en/stable/handbook/text-anchors.html"""
+        assert (
+            len(anchor) == 2 and
+            anchor[0] in ('l', 'm', 'r') and
+            anchor[1] in ('a', 'm', 's', 'd')
+        ), f"Anchor of `{anchor}` is invalid!"
+        sign.anchor = anchor
 
-    @handlers.default
-    def default(ctx: DefaultContext) -> TileFields:
-        """Handles default colors, facing right, and auto-tiling."""
-        if ctx.tile.name == "-":
-            return {
-                "empty": True
-            }
-        tile_data = ctx.tile_data
-        color = (0, 3)
-        variant = 0
-        variant_fallback = 0
-        if tile_data is not None:
-            color = tile_data.active_color
-            if tile_data.tiling in constants.AUTO_TILINGS:
-                d, y, t, x = ctx.index
-                adj_right = ctx.is_adjacent((d, x + 1, y, t))
-                adj_up = ctx.is_adjacent((d, x, y - 1, t))
-                adj_left = ctx.is_adjacent((d, x - 1, y, t))
-                adj_down = ctx.is_adjacent((d, x, y + 1, t))
-                variant_fallback = constants.TILING_VARIANTS[(
-                    adj_right, adj_up, adj_left, adj_down,
-                    False, False, False, False
-                )]
-                # Variant with diagonal tiles as well, not guaranteed to exist
-                # The renderer falls back to the simple variant if it doesn't
-                adj_rightup = adj_right and adj_up and ctx.is_adjacent(
-                    (d, x + 1, y - 1, t))
-                adj_upleft = adj_up and adj_left and ctx.is_adjacent(
-                    (d, x - 1, y - 1, t))
-                adj_leftdown = adj_left and adj_down and ctx.is_adjacent(
-                    (d, x - 1, y + 1, t))
-                adj_downright = adj_down and adj_right and ctx.is_adjacent(
-                    (d, x + 1, y + 1, t))
-                variant = constants.TILING_VARIANTS.get((
-                    adj_right, adj_up, adj_left, adj_down,
-                    adj_rightup, adj_upleft, adj_leftdown, adj_downright
-                ), variant_fallback)
-            if ctx.flags.get("raw_output"):
-                color = (0, 3)
-            return {
-                "variant_number": variant,
-                "variant_fallback": variant_fallback,
-                "color_index": color,
-                "meta_level": 0,
-                "sprite": (tile_data.source, tile_data.sprite),
-            }
-        if not ctx.tile.is_text:
-            raise errors.TileNotFound(ctx.tile)
-        return {
-            "custom": True,
-            "variant_number": variant,
-            "color_index": color,
-            "meta_level": 0,
-        }
+    @add_variant()
+    async def stroke(sign, color: Color, size: int, *, bot, palette):
+        """Sets the sign text's stroke."""
+        if len(color) < 4:
+            try:
+                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(sign.text, color)
+        sign.stroke = color, size
 
-    @handlers.finalize
-    def finalize(tile: FullTile, **flags) -> None:
-        if flags.get("extra_names") is not None:
-            if flags["extra_names"]:
-                flags["extra_names"][0] = "render"
-            else:
-                name = tile.name.replace("/", "")
-                variant = tile.variant_number
-                meta_level = tile.meta_level
-                flags["extra_names"].append(
-                    meta_level * "meta_" + f"{name}_{variant}"
-                )
-        if tile.custom and tile.custom_style is None:
-            if len(tile.name[5:]) == 2 and flags.get("default_to_letters"):
-                tile.custom_style = "letter"
-            else:
-                tile.custom_style = "noun"
+    # --- ANIMATION FRAMES ---
 
-    def add(ctx, dst, var: object = True):
-        try:
-            f = ctx.fields.get("filters")
-            return {
-                "filters": f + [[dst, var]]
-            }
-        except TypeError as e:
-            return {
-                "filters": [[dst, var]]
-            }
+    @add_variant(no_function_name=True)
+    async def frame(tile, anim_frame: int):
+        """Sets the animation frame of a sprite."""
+        tile.altered_frame = True
+        tile.frame = anim_frame
+        tile.surrounding = 0
 
-    @handlers.handler(
-        pattern=r"|".join(constants.DIRECTION_VARIANTS),
-        variant_hints=constants.DIRECTION_REPRESENTATION_VARIANTS,
-        variant_group="Alternate sprites"
-    )
-    def directions(ctx: HandlerContext) -> TileFields:
-        dir = constants.DIRECTION_VARIANTS[ctx.variant]
-        _, anim = split_variant(ctx.fields.get("variant_number"))
-        tile_data = ctx.tile_data
-        if tile_data is not None and tile_data.tiling in constants.DIRECTION_TILINGS:
-            return {
-                "variant_number": join_variant(dir, anim),
-                "custom_direction": dir
-            }
-        elif ctx.flags.get("ignore_bad_directions"):
-            return {}
+    @add_variant(no_function_name=True)
+    async def direction(tile, direction: Literal[*tuple(constants.DIRECTION_VARIANTS.keys())]):
+        """Sets the direction of a tile."""
+        tile.altered_frame = True
+        tile.frame = constants.DIRECTION_VARIANTS[direction]
+
+    @add_variant(no_function_name=True)
+    async def tiling(tile, tiling: Literal[*tuple(constants.AUTO_VARIANTS.keys())]):
+        """Alters the tiling of a tile. Only works on tiles that tile."""
+        tile.altered_frame = True
+        tile.surrounding |= constants.AUTO_VARIANTS[tiling]
+
+    @add_variant("a", no_function_name=True)
+    async def animation_frame(tile, a_frame: int):
+        """Sets the animation frame of a tile."""
+        tile.altered_frame = True
+        tile.frame += a_frame
+
+    @add_variant("s", "sleep", no_function_name=True)
+    async def sleep(tile):
+        """Makes the tile fall asleep. Only functions correctly on character tiles."""
+        tile.altered_frame = True
+        tile.frame = (tile.frame - 1) % 32
+
+    @add_variant("f", hashed=False)
+    async def freeze(tile, frame: Optional[int] = 1):
+        """Freezes the wobble of the tile to the specified frame."""
+        assert frame in range(1, 4), f"Wobble frame of `{frame}` is outside of the supported range!"
+        tile.wobble = frame - 1
+
+    # --- COLORING ---
+
+    palette_names = tuple([Path(p).stem for p in glob.glob("data/palettes/*.png")])
+
+    @add_variant("palette/", "p!", no_function_name=True)
+    async def palette(tile, palette: str):
+        """Sets the tile's palette. For a list of palettes, try `search type:palette`."""
+        assert palette in palette_names, f"Palette `{palette}` was not found!"
+        tile.palette = palette
+
+    @add_variant("ac", "~")
+    async def apply(sprite, *, tile, wobble, renderer):
+        """Immediately applies the sprite's default color."""
+        tile.custom_color = True
+        rgba = *renderer.palette_cache[tile.palette].getpixel(tile.color), 0xFF
+        sprite = recolor(sprite, rgba)
+        return sprite
+
+    @add_variant("dcol", "dc", "%")
+    async def default_color(tile, color: Color):
+        """Overrides the tile's default color."""
+        assert len(color) == 2, "Can't override the default with a hexadecimal color!"
+        tile.color = tuple(color)
+
+    @add_variant(no_function_name=True)
+    async def color(sprite, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, tile, wobble, renderer, _default_color = False):
+        """Sets the tile's color.
+Can take:
+- A hexadecimal RGB/RGBA value, as #RGB, #RGBA, #RRGGBB, or #RRGGBBAA
+- A color name, as is (think the color properties from the game)
+- A palette index, as an x/y coordinate
+If [0;36minactive[0m is set and the color isn't hexadecimal, the color will switch to its "inactive" form, which is the color an inactive text object would take on if it had that color in the game."""
+        if _default_color:
+            if tile.custom_color:
+                return sprite
+            color = tile.color
         else:
-            if ctx.flags.get(
-                    "disallow_custom_directions") and not ctx.tile.is_text:
-                raise errors.BadTilingVariant(
-                    ctx.tile, ctx.variant, "<missing>")
-            return {
-                "custom_direction": dir
-            }
+            tile.custom_color = True
+        if len(color) == 4:
+            rgba = color
+        else:
+            if inactive is not None:
+                color = constants.INACTIVE_COLORS[color]
+            try:
+                rgba = *renderer.palette_cache[tile.palette].getpixel(color), 0xFF
+            except IndexError:
+                raise errors.BadPaletteIndex(tile.name, color)
+        return recolor(sprite, rgba)
 
-    @handlers.handler(
-        pattern=r"|".join(constants.ANIMATION_VARIANTS),
-        variant_hints=constants.ANIMATION_REPRESENTATION_VARIANTS,
-        variant_group="Alternate sprites"
-    )
-    def animations(ctx: HandlerContext) -> TileFields:
-        anim = constants.ANIMATION_VARIANTS[ctx.variant]
-        dir, _ = split_variant(ctx.fields.get("variant_number"))
-        tile_data = ctx.tile_data
-        tiling = None
-        if tile_data is not None:
-            tiling = tile_data.tiling
-            if tiling in constants.ANIMATION_TILINGS:
-                return {
-                    "variant_number": join_variant(dir, anim)
-                }
-        raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+    @add_variant("in")
+    async def inactive(tile):
+        """Applies the color that an inactive text of the tile's color would have.
+    This does not work if a color is specified!"""
+        tile.color = constants.INACTIVE_COLORS[tile.color]
 
-    @handlers.handler(
-        pattern=r"|".join(constants.SLEEP_VARIANTS),
-        variant_hints=constants.SLEEP_REPRESENTATION_VARIANTS,
-        variant_group="Alternate sprites"
-    )
-    def sleep(ctx: HandlerContext) -> TileFields:
-        anim = constants.SLEEP_VARIANTS[ctx.variant]
-        dir, _ = split_variant(ctx.fields.get("variant_number"))
-        tile_data = ctx.tile_data
-        if tile_data is not None:
-            if tile_data.tiling in constants.SLEEP_TILINGS:
-                return {
-                    "variant_number": join_variant(dir, anim)
-                }
-            raise errors.BadTilingVariant(
-                ctx.tile.name, ctx.variant, tile_data.tiling)
-        raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, "<missing>")
+    @add_variant("grad")
+    async def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
+                       offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
+                       extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
+        """Applies a gradient to a tile.
+Interpolates color through CIELUV color space by default. This can be toggled with [0;36mraw[0m.
+If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%."""
+        tile.custom_color = True
+        src = Color.parse(tile, renderer.palette_cache)
+        dst = Color.parse(tile, renderer.palette_cache, color=color)
+        if not raw:
+            src = np.hstack((cv2.cvtColor(np.array([[src[:3]]], dtype=np.uint8), cv2.COLOR_RGB2Luv)[0, 0], src[3]))
+            dst = np.hstack((cv2.cvtColor(np.array([[dst[:3]]], dtype=np.uint8), cv2.COLOR_RGB2Luv)[0, 0], dst[3]))
+        # thank you hutthutthutt#3295 you are a lifesaver
+        scale = math.cos(math.radians(angle % 90)) + math.sin(math.radians(angle % 90))
+        maxside = max(*sprite.shape[:2]) + 1
+        grad = np.mgrid[offset:width + offset:maxside * 1j]
+        grad = np.tile(grad[..., np.newaxis], (maxside, 1, 4))
+        if not extrapolate:
+            grad = np.clip(grad, 0, 1)
+        grad_center = maxside // 2, maxside // 2
+        rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
+        warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[:2], flags=cv2.INTER_LINEAR)
+        if steps:
+            warped_grad = np.round(warped_grad * steps) / steps
+        mult_grad = np.clip(((1 - warped_grad) * src + warped_grad * dst), 0, 255)
+        if not raw:
+            mult_grad[:, :, :3] = cv2.cvtColor(mult_grad[:, :, :3].astype(np.uint8), cv2.COLOR_Luv2RGB).astype(
+                np.float64)
+        mult_grad /= 255
+        return (sprite * mult_grad).astype(np.uint8)
 
-    @handlers.handler(
-        pattern=r"|".join(constants.AUTO_VARIANTS),
-        variant_hints=constants.AUTO_REPRESENTATION_VARIANTS,
-        variant_group="Alternate sprites"
-    )
-    def auto(ctx: HandlerContext) -> TileFields:
-        tile_data = ctx.tile_data
-        tiling = None
-        if tile_data is not None:
-            tiling = tile_data.tiling
-            if tiling in constants.AUTO_TILINGS:
-                if ctx.extras.get("auto_override", False):
-                    num = ctx.fields.get("variant_number") or 0
-                    return {"variant_number": num |
-                            constants.AUTO_VARIANTS[ctx.variant]}
-                else:
-                    ctx.extras["auto_override"] = True
-                    return {
-                        "variant_number": constants.AUTO_VARIANTS[ctx.variant]
-                    }
-        raise errors.BadTilingVariant(ctx.tile.name, ctx.variant, tiling)
+    @add_variant("overlay/", "o!", no_function_name=True)
+    async def overlay(sprite, overlay: str, *, tile, wobble, renderer):
+        """Applies an overlay to a sprite."""
+        tile.custom_color = True
+        assert overlay in renderer.overlay_cache, f"`{overlay}` isn't a valid overlay!"
+        overlay_image = renderer.overlay_cache[overlay]
+        tile_amount = np.ceil(np.array(sprite.shape[:2]) / overlay_image.shape[:2]).astype(
+            int)  # Convert sprite.shape to ndarray to allow vectorized math
+        overlay_image = np.tile(overlay_image, (*tile_amount, 1))[:sprite.shape[0], :sprite.shape[1]].astype(float)
+        return np.multiply(sprite, overlay_image / 255, casting="unsafe").astype(np.uint8)
 
-    @handlers.handler(
-        pattern=r"\d{1,2}",
-        variant_hints={"0": "`raw variant number` (e.g. `8`, `17`, `31`)"},
-        variant_group="Alternate sprites"
-    )
-    def raw_variant(ctx: HandlerContext) -> TileFields:
-        variant = int(ctx.variant)
-        tile_data = ctx.tile_data
-        if tile_data is None:
-            raise errors.VariantError("what tile is that even")
-        tiling = tile_data.tiling
-        try:
-            if tiling in constants.AUTO_TILINGS:
-                if variant >= 47:
-                    raise errors.BadTilingVariant(
-                        ctx.tile.name, ctx.variant, tiling)
+    # --- TEXT MANIPULATION ---
+
+    @add_variant("noun", "prop")
+    async def property(sprite,
+                       plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
+                       tile, wobble, renderer):
+        """Applies a property plate to a sprite."""
+        if plate is None:
+            plate = tile.frame if tile.altered_frame else None
+        else:
+            plate = {v: k for k, v in constants.DIRECTIONS.items()}[plate]
+        sprite = sprite[:, :, 3] > 0
+        plate, _ = renderer.bot.db.plate(plate, wobble)
+        plate = np.array(plate)[..., 3] > 0
+        size = tuple(max(a, b) for a, b in zip(sprite.shape[:2], plate.shape))
+        dummy = np.zeros(size, dtype=bool)
+        delta = ((plate.shape[0] - sprite.shape[0]) // 2,
+                 (plate.shape[1] - sprite.shape[1]) // 2)
+        p_delta = max(-delta[0], 0), max(-delta[1], 0)
+        delta = max(delta[0], 0), max(delta[1], 0)
+        dummy[p_delta[0]:p_delta[0] + plate.shape[0],
+        p_delta[1]:p_delta[1] + plate.shape[1]] = plate
+        dummy[delta[0]:delta[0] + sprite.shape[0],
+        delta[1]:delta[1] + sprite.shape[1]] &= ~sprite
+        return np.dstack([dummy[..., np.newaxis].astype(np.uint8) * 255] * 4)
+
+    @add_variant()
+    async def custom(tile):
+        """Forces custom generation of the text."""
+        tile.custom = True
+        tile.style = "noun"
+
+    @add_variant("let")
+    async def letter(tile):
+        """Makes custom words appear as letter groups."""
+        tile.style = "letter"
+
+    @add_variant("let")
+    async def oneline(tile):
+        """Makes custom words appear in one line."""
+        tile.style = "oneline"
+
+    @add_variant()
+    async def hide(tile):
+        """Hides the tile."""
+        tile.empty = True
+
+    # --- FILTERS ---
+
+    @add_variant("rot")
+    async def rotate(sprite, angle: float, expand: Optional[bool] = False):
+        """Rotates a sprite."""
+        if expand:
+            scale = math.cos(math.radians(-angle % 90)) + math.sin(math.radians(-angle % 90))
+            padding = int(sprite.shape[0] * ((scale - 1) / 2)), int(sprite.shape[1] * ((scale - 1) / 2))
+            dst_size = sprite.shape[0] + padding[0], sprite.shape[1] + padding[1]
+            check_size(*dst_size)
+            sprite = np.pad(sprite,
+                            (padding,
+                             padding,
+                             (0, 0)))
+        image_center = tuple(np.array(sprite.shape[1::-1]) / 2)
+        rot_mat = cv2.getRotationMatrix2D(image_center, -angle, 1.0)
+        return cv2.warpAffine(sprite, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
+
+    @add_variant("rot3d")
+    async def rotate3d(sprite, phi: float, theta: float, gamma: float):
+        """Rotates a sprite in 3D space."""
+        phi, theta, gamma = math.radians(phi), math.radians(theta), math.radians(gamma)
+        d = np.sqrt(sprite.shape[1] ** 2 + sprite.shape[0] ** 2)
+        f = d / (2 * math.sin(gamma) if math.sin(gamma) != 0 else 1)
+        w, h = sprite.shape[1::-1]
+        proj_23 = np.array([[1, 0, -w / 2],
+                            [0, 1, -h / 2],
+                            [0, 0, 1],
+                            [0, 0, 1]])
+        rot_mat = np.dot(np.dot(
+            np.array([[1, 0, 0, 0],
+                      [0, math.cos(theta), -math.sin(theta), 0],
+                      [0, math.sin(theta), math.cos(theta), 0],
+                      [0, 0, 0, 1]]),
+            np.array([[math.cos(phi), 0, -math.sin(phi), 0],
+                      [0, 1, 0, 0],
+                      [np.sin(phi), 0, math.cos(phi), 0],
+                      [0, 0, 0, 1]])),
+            np.array([[math.cos(gamma), -math.sin(gamma), 0, 0],
+                      [math.sin(gamma), math.cos(gamma), 0, 0],
+                      [0, 0, 1, 0],
+                      [0, 0, 0, 1]]))
+        trans_mat = np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, f],
+            [0, 0, 0, 1]])
+        proj_32 = np.array([
+            [f, 0, w / 2, 0],
+            [0, f, h / 2, 0],
+            [0, 0, 1, 0]
+        ])
+        final_matrix = np.dot(proj_32, np.dot(trans_mat, np.dot(rot_mat, proj_23)))
+        return cv2.warpPerspective(sprite, final_matrix, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
+
+    @add_variant()
+    async def scale(sprite, w: float, h: Optional[float] = None):
+        """Scales a sprite by the given multipliers."""
+        if h is None:
+            h = w
+        dst_size = (int(w * sprite.shape[0]), int(h * sprite.shape[1]))
+        if dst_size[0] <= 0 or dst_size[1] <= 0:
+            raise AssertionError(
+                f"Can't scale a tile to `{int(w * sprite.shape[0])}x{int(h * sprite.shape[1])}`, as it has a non-positive target area.")
+        check_size(*dst_size)
+        dim = sprite.shape[:2] * np.array((h, w))
+        dim = dim.astype(int)
+        return cv2.resize(sprite[:, ::-1], dim[::-1], interpolation=cv2.INTER_NEAREST)[:, ::-1]
+
+    @add_variant()
+    async def pad(sprite, left: int, top: int, right: int, bottom: int):
+        """Pads the sprite by the specified values."""
+        check_size(sprite.shape[1] + max(left, 0) + max(right, 0), sprite.shape[0] + max(top, 0) + max(bottom, 0))
+        return np.pad(sprite, ((top, bottom), (left, right), (0, 0)))
+
+    @add_variant("px")
+    async def pixelate(sprite, x: int, y: Optional[int] = None):
+        """Pixelates the sprite."""
+        if y is None:
+            y = x
+        return sprite[y - 1::y, x - 1::x].repeat(y, axis=0).repeat(x, axis=1)
+
+    @add_variant("m")
+    async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
+        """Applies a meta filter to an image."""
+        assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
+        # Not padding at negative values is intentional
+        padding = max(level, 0)
+        orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
+        check_size(*orig.shape[1::-1])
+        base = orig[..., 3]
+        if level < 0:
+            base = 255 - base
+        kernel = META_KERNELS[kernel]
+        for _ in range(abs(level)):
+            base = cv2.filter2D(src=base, ddepth=-1, kernel=kernel)
+        base = np.dstack((base, base, base, base))
+        mask = orig[..., 3] > 0
+        if not (level % 2) and level > 0:
+            base[mask, ...] = orig[mask, ...]
+        else:
+            base[mask ^ (level < 0), ...] = 0
+        return base
+
+    @add_variant()
+    async def land(sprite, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
+        """Removes all space between the sprite and its bounding box on the specified side."""
+        rows = np.any(sprite[:, :, 3], axis=1)
+        cols = np.any(sprite[:, :, 3], axis=0)
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        displacement = {"left": left, "top": top, "right": right+1-sprite.shape[1], "bottom": bottom+1-sprite.shape[0]}[direction]
+        index = {"left": 0, "top": 1, "right": 0, "bottom": 1}[direction]
+        return await wrap(sprite, ((1 - index) * displacement), index * displacement)
+
+    @add_variant()
+    async def bbox(sprite):
+        """Puts the sprite's bounding box behind it. Useful for debugging."""
+        rows = np.any(sprite[:, :, 3], axis=1)
+        cols = np.any(sprite[:, :, 3], axis=0)
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        out = np.zeros_like(sprite).astype(float)
+        out[top:bottom,   left:right] = (0xFF, 0xFF, 0xFF, 0x80)
+        out[top,          left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[bottom,       left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[top:bottom,   left      ] = (0xFF, 0xFF, 0xFF, 0xc0)
+        out[top:bottom+1, right     ] = (0xFF, 0xFF, 0xFF, 0xc0)
+        sprite = sprite.astype(float)
+        mult = sprite[..., 3, np.newaxis] / 255
+        sprite[..., :3] = (1 - mult) * out[..., :3] + mult * sprite[..., :3]
+        sprite[...,  3] = (sprite[..., 3] + out[..., 3] * (1 - mult[..., 0]))
+        return sprite.astype(np.uint8)
+
+    @add_variant()
+    async def warp(sprite, x1_y1: list[int, int], x2_y2: list[int, int], x3_y3: list[int, int], x4_y4: list[int, int]):
+        """Warps the sprite by displacing the bounding box's corners.
+    Point 1 is top-left, point 2 is top-right, point 3 is bottom-right, and point 4 is bottom-left.
+    If the sprite grows past its original bounding box, it will need to be recentered manually."""
+        src_shape = np.array(sprite.shape[-2::-1])
+        src = (np.array([
+            [[0.0, 0.0], [0.5, 0.5], [1.0, 0.0]],
+            [[1.0, 0.0], [0.5, 0.5], [1.0, 1.0]],
+            [[1.0, 1.0], [0.5, 0.5], [0.0, 1.0]],
+            [[0.0, 1.0], [0.5, 0.5], [0.0, 0.0]],
+        ]) * (src_shape - 1)).astype(np.int32)
+        pts = np.array((x1_y1, x2_y2, x3_y3, x4_y4))
+        # This package is only 70kb and I'm lazy
+        center = visual_center.find_pole(pts, precision=1)[0]
+        dst = src + np.array([
+            [x1_y1, center, x2_y2],
+            [x2_y2, center, x3_y3],
+            [x3_y3, center, x4_y4],
+            [x4_y4, center, x1_y1],
+        ], dtype=np.int32)
+        # Set padding values
+        before_padding = np.array([
+            max(-x1_y1[0], -x4_y4[0], 0),  # Added padding for left
+            max(-x1_y1[1], -x2_y2[1], 0)  # Added padding for top
+        ])
+        after_padding = np.array([
+            (max(x2_y2[0], x3_y3[0], 0)),  # Added padding for right
+            (max(x3_y3[1], x4_y4[1], 0))  # Added padding for bottom
+        ])
+        dst += before_padding
+        new_shape = (src_shape + before_padding + after_padding).astype(np.uint32)[::-1]
+        check_size(*new_shape)
+        final_arr = np.zeros((*new_shape, 4), dtype=np.uint8)
+        for source, destination in zip(src, dst):  # Iterate through the four triangles
+            clip = cv2.fillConvexPoly(np.zeros(new_shape, dtype=np.uint8), destination, 1).astype(bool)
+            M = cv2.getAffineTransform(source.astype(np.float32), destination.astype(np.float32))
+            warped_arr = cv2.warpAffine(sprite, M, new_shape[::-1], flags=cv2.INTER_NEAREST)
+            final_arr[clip] = warped_arr[clip]
+        return final_arr
+
+    @add_variant("mm")
+    async def matrix(sprite,
+                     aa_ab_ac_ad: list[float, float, float, float],
+                     ba_bb_bc_bd: list[float, float, float, float],
+                     ca_cb_cc_cd: list[float, float, float, float],
+                     da_db_dc_dd: list[float, float, float, float]):
+        """Multiplies the sprite by the given RGBA matrix."""
+        matrix = np.array((aa_ab_ac_ad, ba_bb_bc_bd, ca_cb_cc_cd, da_db_dc_dd)).T
+        img = sprite.astype(np.float64) / 255.0
+        immul = img.reshape(-1, 4) @ matrix  # @ <== matmul
+        immul = (np.clip(immul, 0.0, 1.0) * 255).astype(np.uint8)
+        return immul.reshape(img.shape)
+
+    @add_variant()
+    async def neon(sprite, strength: Optional[float] = 0.714):
+        """Darkens the inside of each region of color."""
+        # This is approximately 2.14x faster than Charlotte's neon, profiling at strength 0.5 with 2500 iterations on baba/frog_0_1.png.
+        unique_colors = liquify.get_colors(sprite)
+        final_mask = np.ones(sprite.shape[:2], dtype=np.float64)
+        for color in unique_colors:
+            mask = (sprite == color).all(axis=2)
+            float_mask = mask.astype(np.float64)
+            card_mask = cv2.filter2D(src=float_mask, ddepth=-1, kernel=CARD_KERNEL)
+            oblq_mask = cv2.filter2D(src=float_mask, ddepth=-1, kernel=OBLQ_KERNEL)
+            final_mask[card_mask == 4] -= strength / 2
+            final_mask[oblq_mask == 4] -= strength / 2
+        if strength < 0:
+            final_mask = np.abs(1 - final_mask)
+        sprite[:, :, 3] = np.multiply(sprite[:, :, 3], np.clip(final_mask, 0, 1), casting="unsafe")
+        return sprite.astype(np.uint8)
+
+    @add_variant()
+    async def convolve(sprite, width: int, height: int, *cell: float):
+        """Convolves the sprite with the given 2D convolution matrix. Information on these can be found at https://en.wikipedia.org/wiki/Kernel_(image_processing)"""
+        assert width * height == len(cell), f"Can't fit {len(cell)} values into a matrix that's {width}x{height}!"
+        kernel = np.array(cell).reshape((height, width))
+        return cv2.filter2D(src=sprite, ddepth=-1, kernel=kernel)
+
+    @add_variant()
+    async def scan(sprite, axis: Literal["x", "y"], on: Optional[int] = 1, off: Optional[int] = 1,
+                   offset: Optional[int] = 0):
+        """Removes rows or columns of pixels to create a scan line effect."""
+        assert on >= 0 and off >= 0 and on + off > 0, f"Scan mask of `{on}` on and `{off}` off is invalid!"
+        axis = ("y", "x").index(axis)
+        mask = np.roll(np.array([1] * on + [0] * off, dtype=np.uint8), offset)
+        mask = np.tile(mask, (
+            sprite.shape[1 - axis],
+            int(math.ceil(sprite.shape[axis] / mask.shape[0]))
+        ))[:, :sprite.shape[axis]]
+        if not axis:
+            mask = mask.T
+        return np.dstack((sprite[:, :, :3], sprite[:, :, 3] * mask))
+
+    @add_variant()
+    async def flip(sprite, *axis: Literal["x", "y"]):
+        """Flips the sprite along the specified axes."""
+        for a in axis:
+            if a == "x":
+                sprite = sprite[:, ::-1, :]
             else:
-                dir, anim = split_variant(variant)
-                if dir != 0:
-                    if tiling not in constants.DIRECTION_TILINGS or dir not in constants.DIRECTIONS:
-                        raise errors.BadTilingVariant(
-                            ctx.tile.name, ctx.variant, tiling)
-                if anim != 0:
-                    if anim in constants.SLEEP_VARIANTS.values():
-                        if tiling not in constants.SLEEP_TILINGS:
-                            raise errors.BadTilingVariant(
-                                ctx.tile.name, ctx.variant, tiling)
-                    else:
-                        if tiling not in constants.ANIMATION_TILINGS or anim not in constants.ANIMATION_VARIANTS.values():
-                            raise errors.BadTilingVariant(
-                                ctx.tile.name, ctx.variant, tiling)
-            return {
-                "variant_number": variant
-            }
-        except BaseException:
-            return {
-                "variant_number": -1
-            }
+                sprite = sprite[::-1, :, :]
+        return sprite
 
-    @handlers.handler(
-        pattern=r"|".join(constants.COLOR_NAMES),
-        variant_hints=constants.COLOR_REPRESENTATION_VARIANTS,
-        variant_group="Colors"
-    )
-    def color_name(ctx: HandlerContext) -> TileFields:
-        return {
-            "color_index": constants.COLOR_NAMES[ctx.variant]
-        }
+    @add_variant()
+    async def mirror(sprite, axis: Literal["x", "y"], half: Literal["back", "front"]):
+        """Mirrors the sprite along the specified direction."""
+        # NOTE: This code looks ugly, but it's fast and worked first try.
+        if axis == "x":
+            sprite = np.rot90(sprite)
+        if half == "front":
+            sprite = np.flipud(sprite)
+        sprite[:sprite.shape[0] // 2] = sprite[:sprite.shape[0] // 2 - 1:-1]
+        if half == "front":
+            sprite = np.flipud(sprite)
+        if axis == "x":
+            sprite = np.rot90(sprite, -1)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"(\d)/(\d)",
-        variant_hints={
-            "0/0": "`palette_x/palette_y` (Color palette index, e.g. `0/3`)"},
-        variant_group="Colors"
-    )
-    def color_index(ctx: HandlerContext) -> TileFields:
-        x, y = int(ctx.groups[0]), int(ctx.groups[1])
-        if x > 6 or y > 4:
-            raise errors.BadPaletteIndex(ctx.tile.name, ctx.variant)
-        return {
-            "color_index": (x, y)
-        }
+    @add_variant("norm")
+    async def normalize(sprite):
+        """Centers the sprite on its visual bounding box."""
+        rows = np.any(sprite[:, :, 3], axis=1)
+        cols = np.any(sprite[:, :, 3], axis=0)
+        left, right = np.where(cols)[0][[0, -1]]
+        top, bottom = np.where(rows)[0][[0, -1]]
+        sprite_center = sprite.shape[0] // 2 - 1, sprite.shape[1] // 2 - 1
+        center = int((top + bottom) // 2), int((left + right) // 2)
+        displacement = np.array((sprite_center[0] - center[0], sprite_center[1] - center[1]))
+        return np.roll(sprite, displacement, axis=(0, 1))
 
-    @handlers.handler(
-        pattern=r"#([0-9a-fA-F]{6})",
-        variant_hints={
-            "#ffffff": "`#hex_code` (Color hex code, e.g. `#f055ee`)"},
-        variant_group="Colors"
-    )
-    def color_rgb(ctx: HandlerContext) -> TileFields:
-        color = int(ctx.groups[0], base=16)
-        red = color >> 16
-        green = (color & 0x00ff00) >> 8
-        blue = color & 0x0000ff
-        return {
-            "color_rgb": (red, green, blue)
-        }
+    @add_variant("disp")
+    async def displace(post, x: int, y: int):
+        """Displaces the tile by the specified coordinates."""
+        post.displacement = [post.displacement[0] - x, post.displacement[1] - y]
 
-    @handlers.handler(
-        pattern=r"#([0-9a-fA-F]{3})",
-        variant_hints={"#fff": "`#hex_code` (Color hex code, e.g. `#f5e`)"},
-        variant_group="Colors"
-    )
-    def color_rgb(ctx: HandlerContext) -> TileFields:
-        red, green, blue = [int(n + n, base=16) for n in ctx.groups[0]]
-        return {
-            "color_rgb": (red, green, blue)
-        }
+    # Original code by Charlotte (CenTdemeern1)
+    @add_variant("flood")
+    async def floodfill(sprite, color: Color, inside: Optional[bool] = True, *, tile, wobble, renderer):
+        """Floodfills either inside or outside a sprite with a given brightness value."""
+        color = Color.parse(tile, renderer.palette_cache, color)
+        sprite[sprite[:, :, 3] == 0] = 0  # Optimal
+        sprite_alpha = sprite[:, :, 3]  # Stores the alpha channel separately
+        sprite_alpha[sprite_alpha > 0] = -1  # Sets all nonzero numbers to a number that's neither 0 nor 255.
+        # Pads the alpha channel by 1 on each side to allow flowing past
+        # where the sprite touches the edge of the bounding box.
+        sprite_alpha = np.pad(sprite_alpha, ((1, 1), (1, 1)))
+        sprite_flooded = cv2.floodFill(
+            image=sprite_alpha,
+            mask=None,
+            seedPoint=(0, 0),
+            newVal=255
+        )[1]
+        mask = sprite_flooded != (inside * 255)
+        sprite_flooded[mask] = ((not inside) * 255)
+        mask = mask[1:-1, 1:-1]
+        if inside:
+            sprite_flooded = 255 - sprite_flooded
+        # Crops the alpha channel back to the original size and positioning
+        sprite[:, :, 3][mask] = sprite_flooded[1:-1, 1:-1][mask].astype(np.uint8)
+        sprite[(sprite[:, :] == [0, 0, 0, 255]).all(2)] = color
+        return sprite
 
-    @handlers.handler(
-        pattern='|'.join(constants.CUSTOM_COLOR_NAMES),
-        variant_hints=constants.CUSTOM_COLOR_REPRESENTATION_VARIANTS,
-        variant_group="Custom Colors"
-    )
-    def color_rgb(ctx: HandlerContext) -> TileFields:
-        return {
-            "color_rgb": constants.CUSTOM_COLOR_NAMES[ctx.variant]
-        }
-
-    @handlers.handler(
-        pattern=r"random",
-        variant_hints={
-            "random": "`random` (Recolors the sprite to a random color.)"},
-        variant_group="Custom Colors"
-    )
-    def random(ctx: HandlerContext) -> TileFields:
-        return {
-            "color_rgb": [rand.randint(0, 255) for _ in range(3)]
-        }
-
-    @handlers.handler(
-        pattern=r"inactive|in|off",
-        variant_hints={
-            "in": "`inactive` / `in` / `off` (Inactive text color)"},
-        variant_group="Colors"
-    )
-    def inactive(ctx: HandlerContext) -> TileFields:
-        color = ctx.fields.get("color_index", (0, 3))
-        tile_data = ctx.tile_data
-        if tile_data is not None and ctx.tile.is_text:
-            # only the first `:inactive` should pick the provided color
-            if color == tile_data.active_color:
-                return {
-                    "color_index": tile_data.inactive_color
-                }
-        return {
-            "color_index": constants.INACTIVE_COLORS[color]
-        }
-
-    @handlers.handler(
-        pattern=r"hide",
-        variant_hints={"hide": "`hide` (It's a mystery)"},
-        variant_group="Filters"
-    )
-    def hide(ctx: HandlerContext) -> TileFields:
-        return {
-            "empty": True
-        }
-
-    @handlers.handler(
-        pattern=r"meta|m(?!-?\d+)",
-        variant_hints={"m": "`meta` / `m` (1 meta layer)"},
-        variant_group="Filters"
-    )
-    def meta(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'meta_level', 1)
-
-    @handlers.handler(
-        pattern=r"m(-?\d+)",
-        variant_hints={"m1": "`mX` (A specific meta depth, e.g. `m1`, `m3`)"},
-        variant_group="Filters"
-    )
-    def meta_absolute(ctx: HandlerContext) -> TileFields:
-        level = int(ctx.groups[0])
-        if abs(level) > constants.MAX_META_DEPTH:
-            raise errors.BadMetaVariant(ctx.tile.name, ctx.variant, level)
-        return add(ctx, 'meta_level', level)
-
-    @handlers.handler(
-        pattern=r"noun",
-        variant_hints={"noun": "`noun` (Noun-style text)"},
-        variant_group="Custom text"
-    )
-    def noun(ctx: HandlerContext) -> TileFields:
-        if not ctx.tile.is_text:
-            raise errors.TileNotText(ctx.tile.name, "noun")
-        tile_data = ctx.tile_data
-        if tile_data is not None:
-            if constants.TEXT_TYPES[tile_data.text_type] == "property":
-                return {
-                    "style_flip": True,
-                    "custom_style": "noun"
-                }
-        return {
-            "custom": True,
-            "custom_style": "noun"
-        }
-
-    @handlers.handler(
-        pattern=r"letter|let",
-        variant_hints={"let": "`letter` / `let` (Letter-style text)"},
-        variant_group="Custom text"
-    )
-    def letter(ctx: HandlerContext) -> TileFields:
-        if not ctx.tile.is_text:
-            raise errors.TileNotText(ctx.tile.name, "letter")
-        if len(ctx.tile.name[5:]) > 2:
-            raise errors.BadLetterVariant(ctx.tile.name, "letter")
-        return {
-            "custom": True,
-            "custom_style": "letter"
-        }
-
-    @handlers.handler(
-        pattern=r"property|prop",
-        variant_hints={"prop": "`property` / `prop` (Property-style text)"},
-        variant_group="Custom text"
-    )
-    def property(ctx: HandlerContext) -> TileFields:
-        tile_data = ctx.tile_data
-        if not ctx.tile.is_text:
-            if tile_data is not None:
-                # this will be funny
-                return {
-                    "style_flip": True,
-                    "custom_style": "property"
-                }
+    def slice_image(sprite, color_slice: slice):
+        colors = liquify.get_colors(sprite)
+        if len(colors) > 1:
+            colors = list(sorted(
+                colors,
+                key=lambda color: liquify.count_instances_of_color(sprite, color),
+                reverse=True
+            ))
+            try:
+                selection = np.arange(len(colors))[color_slice]
+            except IndexError:
+                raise AssertionError(f'The color slice `{color_slice}` is invalid.')
+            if isinstance(selection, np.ndarray):
+                selection = selection.flatten().tolist()
             else:
-                raise errors.VariantError(
-                    "yet again (but this time on a technicality)")
-        if tile_data is not None:
-            if constants.TEXT_TYPES[tile_data.text_type] == "noun":
-                return {
-                    "style_flip": True,
-                    "custom_style": "property"
-                }
-        return {
-            "custom_style": "property",
-            "custom": True,
-        }
+                selection = [selection]
+            # Modulo the value field
+            positivevalue = [(color % len(colors)) for color in selection]
+            # Remove most used color
+            for color_index, color in enumerate(colors):
+                if color_index not in positivevalue:
+                    sprite = liquify.remove_instances_of_color(sprite, color)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"mask",
-        variant_hints={"mask": "`mask` (Tiles below get cut to this)"},
-        variant_group="Filters"
-    )
-    def mask(ctx: HandlerContext) -> TileFields:
-        return {
-            "mask_alpha": True
-        }
+    @add_variant("csel", "c")
+    async def color_select(sprite, *index: int):
+        """Keeps only the selected colors, indexed by their occurrence. This changes per-frame, not per-tile."""
+        return slice_image(sprite, list(index))
 
-    @handlers.handler(
-        pattern=r"cut",
-        variant_hints={"cut": "`cut` (Tiles below get this cut from them)"},
-        variant_group="Filters"
-    )
-    def cut(ctx: HandlerContext) -> TileFields:
-        return {
-            "cut_alpha": True
-        }
+    @add_variant("cslice", "cs")
+    async def color_slice(sprite, s: Slice):
+        """Keeps only the slice of colors, indexed by their occurrence. This changes per-frame, not per-tile.
+Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, with all values being omittable."""
+        return slice_image(sprite, s.slice)
 
-    @handlers.handler(
-        pattern=r"(?:channelswap|cswap|cs)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)\((\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\)",
-        variant_hints={
-            "channelswap": "`channelswap(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)(<float>/<float>/<float>/<float>)`\n(Swaps around channels of the sprite according to a 4x4 RGBA matrix.\nThe 4 groups correspond to RGBA channels, and the 4 numbers correspond to the influence the original sprite's channels have on them.)"},
-        variant_group="Filters"
-    )
-    def channelswap(ctx: HandlerContext) -> TileFields:
-        return {"channelswap": np.array(
-            [float(n) for n in ctx.groups], dtype=float).reshape((4, 4))}
+    @add_variant("cshift", "csh")
+    async def color_shift(sprite, s: Slice):
+        """Shifts the colors of a sprite around, by index of occurence.
+Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, with all values being omittable."""
+        unique_colors = liquify.get_colors(sprite)
+        unique_colors = np.array(
+            sorted(unique_colors, key=lambda color: liquify.count_instances_of_color(sprite, color), reverse=True))
+        final_sprite = np.tile(sprite, (len(unique_colors), 1, 1, 1))
+        mask = np.equal(final_sprite[:, :, :, :], unique_colors.reshape((-1, 1, 1, 4))).all(axis=3)
+        out = np.zeros(sprite.shape)
+        for i, color in enumerate(unique_colors[s.slice]):
+            out += np.tile(mask[i].T, (4, 1, 1)).T * color
+        return out.astype(np.uint8)
 
-    @handlers.handler(
-        pattern=r"neon(?:(-?\d+(?:\.\d+)?))?",
-        variant_hints={
-            "neon": "`neon[float]` (Pixels surrounded by identical pixels get their alpha divided by n. If not specified, n is 1.4."},
-        variant_group="Filters")
-    def neon(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'neon', (float(ctx.groups[0] or 1.4)))
+    @add_variant("abberate")  # misspelling alias because i misspell it all the time
+    async def aberrate(sprite, x: Optional[int] = 1, y: Optional[int] = 0):
+        """Abberates the colors of a sprite."""
+        check_size(sprite.shape[0] + abs(x) * 2, sprite.shape[1] + abs(y) * 2)
+        sprite = np.pad(sprite, ((abs(y), abs(y)), (abs(x), abs(x)), (0, 0)))
+        sprite[:, :, 0] = np.roll(sprite[:, :, 0], -x, 1)
+        sprite[:, :, 2] = np.roll(sprite[:, :, 2], x, 1)
+        sprite[:, :, 0] = np.roll(sprite[:, :, 0], -y, 0)
+        sprite[:, :, 2] = np.roll(sprite[:, :, 2], y, 0)
+        sprite = sprite.astype(np.uint16)
+        sprite[:, :, 3] += np.roll(np.roll(sprite[:, :, 3], -x, 1), -y, 0)
+        sprite[:, :, 3] += np.roll(np.roll(sprite[:, :, 3], x, 1), y, 0)
+        sprite[sprite > 255] = 255
+        return sprite
 
-    @handlers.handler(
-        pattern=r"pixelate([\d]+)(?:\/([\d]+))?",
-        variant_hints={
-            "pixelate": "`pixelate<int>[/<int>]` (Pixelates the sprite with a radius of n.)"},
-        variant_group="Filters")
-    def pixelate(ctx: HandlerContext) -> TileFields:
-        pixelate = [max(int(ctx.groups[0]), 1), max(int(ctx.groups[1]), 1)
-                    if ctx.groups[1] is not None else max(int(ctx.groups[0]), 1)]
-        return add(ctx, 'pixelate', pixelate)
+    @add_variant()
+    async def opacity(sprite, amount: float):
+        """Sets the opacity of the sprite, from 0 to 1."""
+        sprite[:, :, 3] = np.multiply(sprite[:, :, 3], np.clip(amount, 0, 1), casting="unsafe")
+        return sprite
 
-    @handlers.handler(
-        pattern=r"opacity(?:([\d\.]+))?",
-        variant_hints={
-            "opacity": "`opacity<float>` (The image gets less opaque by n.)"},
-        variant_group="Filters"
-    )
-    def opacity(ctx: HandlerContext) -> TileFields:
-        opacity = ctx.groups[0] or 1
-        return add(ctx, "opacity", float(opacity))
+    @add_variant("neg")
+    async def negative(sprite, alpha: bool = False):
+        """Inverts the sprite's RGB or RGBA values."""
+        sl = slice(None, None if alpha else 3)
+        sprite[..., sl] = 255 - sprite[..., sl]
+        return sprite
 
-    @handlers.handler(
-        pattern=r"blank",
-        variant_hints={
-            "blank": "`blank` (Makes all of the sprite its palette-defined color.)"},
-        variant_group="Filters")
-    def blank(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'blank', True)
+    @add_variant()
+    async def wrap(sprite, x: int, y: int):
+        """Wraps the sprite around its image box."""
+        return np.roll(sprite, (y, x), (0, 1))
 
-    @handlers.handler(
-        pattern=r"face|eyes",
-        variant_hints={
-            "face": "`face` (Tries to extract the face of a sprite by removing all but the least used color.)"},
-        variant_group="Filters")
-    def face(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'colselect', [-1])
+    @add_variant()
+    async def melt(sprite, side: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
+        """Removes transparent pixels from each row/column and shifts the remaining ones to the end."""
+        is_vertical = side in ("top", "bottom")
+        at_end = side in ("right", "bottom")
+        if is_vertical:
+            sprite = np.swapaxes(sprite, 0, 1)
+        # NOTE: I couldn't find a way to do this without at least one Python loop :/
+        for i in range(sprite.shape[0]):
+            sprite_slice = sprite[i, sprite[i, :, 3] != 0]
+            sprite[i] = np.pad(sprite_slice,
+                               ((sprite[i].shape[0] - sprite_slice.shape[0], 0)[::2 * at_end - 1], (0, 0)))
+        if is_vertical:
+            sprite = np.swapaxes(sprite, 0, 1)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"main",
-        variant_hints={
-            "main": "`main` (Removes all but the most used color.)"},
-        variant_group="Filters"
-    )
-    def main(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'colselect', [0])
+    @add_variant()
+    async def bend(sprite, axis: Literal["x", "y"], amplitude: int, offset: float, frequency: float):
+        """Displaces the sprite by a wave. Frequency is a percentage of the sprite's size along the axis."""
+        if axis == "y":
+            sprite = np.rot90(sprite)
+        offset = ((np.sin(
+            np.linspace(offset, np.pi * 2 * (frequency + offset), sprite.shape[0])) / 2) * amplitude).astype(
+            int)
+        # NOTE: np.roll can't be element wise :/
+        sprite[:] = sprite[np.mod(np.arange(sprite.shape[0]) + offset, sprite.shape[1])]
+        if axis == "y":
+            sprite = np.rot90(sprite, -1)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"land",
-        variant_hints={"land": "`land` (Displaces the sprite to the floor.)"},
-        variant_group="Filters"
-    )
-    def main(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'land', True)
+    @add_variant()
+    async def wave(sprite, axis: Literal["x", "y"], amplitude: int, offset: float, frequency: float):
+        """Displaces the sprite per-slice by a wave. Frequency is a percentage of the sprite's size along the axis."""
+        if axis == "y":
+            sprite = np.rot90(sprite)
+        offset = ((np.sin(
+            np.linspace(offset, np.pi * 2 * (frequency + offset), sprite.shape[0])) / 2) * amplitude).astype(
+            int)
+        # NOTE: np.roll can't be element wise :/
+        for row in range(sprite.shape[0]):
+            sprite[row] = np.roll(sprite[row], offset[row], axis=0)
+        if axis == "y":
+            sprite = np.rot90(sprite, -1)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"flipx",
-        variant_hints={"flipx": "`flipx` (Flips sprite horizontally.)"},
-        variant_group="Filters"
-    )
-    def flipx(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'flipx', True)
+    @add_variant("hs")
+    async def hueshift(sprite, angle: int):
+        """Shifts the hue of the sprite. 0 to 360."""
+        hsv = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HSV)
+        hsv[..., 0] = np.mod(hsv[..., 0] + int(angle // 2), 180)
+        sprite[:, :, :3] = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+        return sprite
 
-    @handlers.handler(
-        pattern=r"reverse|rev",
-        variant_hints={
-            "reverse|rev": "`reverse` (Swaps a sprite's colors based off of frequency.)"},
-        variant_group="Filters")
-    def reverse(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'reverse', True)
+    @add_variant("gamma", "g")
+    async def brightness(sprite, brightness: float):
+        """Sets the brightness of the sprite."""
+        sprite = sprite.astype(float)
+        sprite[:, :, :3] *= brightness
+        sprite = sprite.clip(-256.0, 255.0) % 256
+        return sprite.astype(np.uint8)
 
-    @handlers.handler(
-        pattern=r"flipy",
-        variant_hints={"flipy": "`flipy` (Flips sprite vertically.)"},
-        variant_group="Filters"
-    )
-    def flipy(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'flipy', True)
+    @add_variant("ps")
+    async def palette_snap(sprite, *, tile, wobble, renderer):
+        """Snaps all the colors in the tile to the specified palette."""
+        palette_colors = np.array(renderer.palette_cache[tile.palette].convert("RGB")).reshape(-1, 3)
+        sprite_lab = cv2.cvtColor(sprite.astype(np.float32) / 255, cv2.COLOR_RGB2Lab)
+        diff_matrix = np.full((palette_colors.shape[0], *sprite.shape[:-1]), 999)
+        for i, color in enumerate(palette_colors):
+            filled_color_array = np.array([[color]]).repeat(
+                sprite.shape[0], 0).repeat(sprite.shape[1], 1)
+            filled_color_array = cv2.cvtColor(
+                filled_color_array.astype(
+                    np.float32) / 255, cv2.COLOR_RGB2Lab)
+            sprite_delta_e = np.sqrt(np.sum((sprite_lab - filled_color_array) ** 2, axis=-1))
+            diff_matrix[i] = sprite_delta_e
+        min_indexes = np.argmin(diff_matrix, 0, keepdsprites=True).reshape(
+            diff_matrix.shape[1:])
+        result = np.full(sprite.shape, 0, dtype=np.uint8)
+        for i, color in enumerate(palette_colors):
+            result[:, :, :3][min_indexes == i] = color
+        result[:, :, 3] = sprite[:, :, 3]
+        return result
 
-    @handlers.handler(
-        pattern=r"scanx(?:(\d+?)/(\d+?)/(\d+))?",
-        variant_hints={
-            "scanx": "`scanx[<visible>/<invisible>/<offset>]` (Applies a horizonal scanline effect.)"},
-        variant_group="Filters")
-    def scanx(ctx: HandlerContext) -> TileFields:
-        if all([b is not None for b in ctx.groups]):
-            return add(ctx, 'scanx', [int(n) for n in ctx.groups])
+    @add_variant("sat", "grayscale", "gscale")
+    async def saturation(sprite, saturation: Optional[float] = 0):
+        """Saturates or desaturates a sprite."""
+        gray_sprite = sprite.copy()
+        gray_sprite[..., :3] = (sprite[..., 0] * 0.299 + sprite[..., 1] * 0.587 + sprite[..., 2] * 0.114)[..., np.newaxis]
+        return composite(gray_sprite, sprite, saturation)
+
+    @add_variant()
+    async def blank(sprite):
+        """Sets a sprite to pure white."""
+        sprite[:, :, :3] = 255
+        return sprite
+
+    @add_variant("liquify", no_function_name=True)
+    async def liquify_variant(sprite):
+        """"Liquifies" the tile by melting every color except the main color and distributing the main color downwards."""
+        return liquify.liquify(sprite)
+
+    @add_variant()
+    async def planet(sprite):
+        """Turns the tile into a planet by melting every color except the main color and distributing the main color in a circle."""
+        a = liquify.planet(sprite)
+        return a
+
+    @add_variant("nl")
+    async def normalize_lightness(sprite):
+        """Normalizes a sprite's HSL lightness, bringing the lightest value up to full brightness."""
+        arr_hls = cv2.cvtColor(sprite[:, :, :3], cv2.COLOR_RGB2HLS).astype(
+            np.float64)  # since WHEN was it HLS???? huh?????
+        max_l = np.max(arr_hls[:, :, 1])
+        arr_hls[:, :, 1] *= (255 / max_l)
+        sprite[:, :, :3] = cv2.cvtColor(arr_hls.astype(np.uint8), cv2.COLOR_HLS2RGB)  # my question still stands
+        return sprite
+
+    @add_variant("3oo", "skul", hidden=True)
+    async def threeoo(sprite, scale: float):
+        """Content-aware scales the sprite downwards."""
+        assert 0, "Due to both extremely little use and extreme difficulty to program, 3oo isn't in the bot anymore. Sorry!"
+
+    @add_variant()
+    async def crop(sprite, x_y: list[int, int], u_v: list[int, int], change_bbox: Optional[bool] = False):
+        """Crops the sprite to the specified bounding box.
+    If the [36mchange_bbox[0m toggle is on, then the sprite's bounding box is altered, as opposed to removing pixels."""
+        (x, y), (u, v) = x_y, u_v
+        if change_bbox:
+            return sprite[y:v, x:u]
         else:
-            return add(ctx, 'scanx', [1, 1, 0])
+            dummy = np.zeros_like(sprite)
+            dummy[y:v, x:u] = sprite[y:v, x:u]
+            return dummy
 
-    @handlers.handler(
-        pattern=r"scany(?:(\d+?)/(\d+?)/(\d+))?",
-        variant_hints={
-            "scany": "`scany[<visible>/<invisible>/<offset>]` (Applies a vertical scanline effect.)"},
-        variant_group="Filters")
-    def scanx(ctx: HandlerContext) -> TileFields:
-        if all([b is not None for b in ctx.groups
-                ]):
-            return add(ctx, 'scany', [int(n) for n in ctx.groups])
+    @add_variant()
+    async def snip(sprite, x_y: list[int, int], u_v: list[int, int]):
+        """Snips the specified box out from the sprite."""
+        (x, y), (u, v) = x_y, u_v
+        sprite[y:v, x:u] = 0
+        return sprite
+
+    @add_variant()
+    async def croppoly(sprite, *x_y: list[int, int]):
+        """Crops the sprite to the specified polygon."""
+        assert len(x_y) > 3, "Must have at least 3 points to define a polygon!"
+        pts = np.array([x_y], dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
+        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
+        clip_poly = np.tile(clip_poly, (4, 1, 1)).T
+        return np.multiply(sprite, clip_poly, casting="unsafe").astype(np.uint8)
+
+    @add_variant("cvt")
+    async def convert(sprite, direction: Literal["to", "from"],
+                      space: Literal["BGR", "HSV", "HLS", "YUV", "YCrCb", "XYZ", "Lab", "Luv"]):
+        """Converts the sprite's color space to or from RGB. Mostly for use with :matrix."""
+        space_conversion = {
+            "to": {
+                "BGR": cv2.COLOR_RGB2BGR,
+                "HSV": cv2.COLOR_RGB2HSV,
+                "HLS": cv2.COLOR_RGB2HLS,
+                "YUV": cv2.COLOR_RGB2YUV,
+                "YCrCb": cv2.COLOR_RGB2YCrCb,
+                "XYZ": cv2.COLOR_RGB2XYZ,
+                "Lab": cv2.COLOR_RGB2Lab,
+                "Luv": cv2.COLOR_RGB2Luv,
+            },
+            "from": {
+                "BGR": cv2.COLOR_BGR2RGB,
+                "HSV": cv2.COLOR_HSV2RGB,
+                "HLS": cv2.COLOR_HLS2RGB,
+                "YUV": cv2.COLOR_YUV2RGB,
+                "YCrCb": cv2.COLOR_YCrCb2RGB,
+                "XYZ": cv2.COLOR_XYZ2RGB,
+                "Lab": cv2.COLOR_Lab2RGB,
+                "Luv": cv2.COLOR_Luv2RGB,
+            }
+        }
+        sprite[:, :, :3] = cv2.cvtColor(sprite[:, :, :3], space_conversion[direction][space])
+        return sprite
+
+    @add_variant()
+    async def threshold(sprite, r: float, g: Optional[float] = None, b: Optional[float] = None,
+                        a: Optional[float] = 0.0):
+        """Removes all pixels below a threshold.
+This can be used in conjunction with blur, opacity, and additive blending to create a bloom effect!
+If a value is negative, it removes pixels above the threshold instead."""
+        g = r if g is None else g
+        b = r if b is None else b
+        im_r, im_g, im_b, im_a = np.split(sprite, 4, axis=2)
+        # Could use np.logical_or, but that's much less readable for very little performance gain
+        im_a[np.copysign(im_r, r) < r * 255] = 0
+        im_a[np.copysign(im_g, g) < g * 255] = 0
+        im_a[np.copysign(im_b, b) < b * 255] = 0
+        im_a[np.copysign(im_a, a) < a * 255] = 0
+        return np.dstack((im_r, im_g, im_b, im_a))
+
+    @add_variant()
+    async def blur(sprite, radius: int, gaussian: Optional[bool] = False):
+        """Blurs a sprite. Uses box blur by default, though gaussian blur can be used with the boolean toggle."""
+        check_size(sprite.shape[0] + radius * 2, sprite.shape[1] + radius * 2)
+        arr = np.pad(sprite, ((radius, radius), (radius, radius), (0, 0)))
+        assert radius > 0, f"Blur radius of {radius} is too small!"
+        if gaussian:
+            arr = cv2.GaussianBlur(arr, (radius * 2 + 1, radius * 2 + 1), 0)
         else:
-            return add(ctx, 'scany', [1, 1, 0])
+            arr = cv2.boxFilter(arr, -1, (radius * 2 + 1, radius * 2 + 1))
+        return arr
 
-    @handlers.handler(
-        pattern=r"invert|inv",
-        variant_hints={"invert": "`invert` (Inverts sprite color.)"},
-        variant_group="Filters"
-    )
-    def invert(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'invert', True)
+    @add_variant("fish")
+    async def fisheye(sprite, strength: float):
+        """Applies a fisheye effect."""
+        size = np.array(sprite.shape[:2])
+        filt = np.indices(sprite.shape[:2], dtype=np.float32) / size[:, np.newaxis, np.newaxis]
+        filt = (2 * filt) - 1
+        abs_filt = np.linalg.norm(filt, axis=0)
+        filt /= (1 - (strength / 2) * (abs_filt[np.newaxis, ...]))
+        filt += 1
+        filt /= 2
+        filt = filt * np.array(sprite.shape)[:2, np.newaxis, np.newaxis]
+        filt = np.float32(filt)
+        mapped = cv2.remap(sprite, filt[1], filt[0],
+                           interpolation=cv2.INTER_NEAREST,
+                           borderMode=cv2.BORDER_CONSTANT,
+                           borderValue=0).astype(float)
+        return np.uint8(mapped)
 
-    @handlers.handler(
-        pattern=r"ng|noglobal",
-        variant_hints={
-            "noglobal": "`noglobal` (Removes this tile from the scope of the -global flag.)"},
-        variant_group="Filters")
-    def noglobal(ctx: HandlerContext) -> TileFields:
-        return {}
+    @add_variant("filter", "fi!")
+    async def filterimage(sprite, filter_url: str, absolute: Optional[bool] = None, *, tile, wobble, renderer):
+        """Applies a filter image to a sprite. For information about filter images, look at the filterimage command."""
+        filt, abs_db = await renderer.bot.db.get_filter(filter_url)
+        check_size(*filt.shape[:2])
+        absolute = absolute if absolute is not None else \
+            abs_db if abs_db is not None else False
+        filt = np.float32(filt)
+        filt[..., :2] -= 0x80
+        if not absolute:
+            filt[..., :2] += np.indices(filt.shape[:2]).T
+        mapped = cv2.remap(sprite, filt[..., 0], filt[..., 1],
+                           interpolation=cv2.INTER_NEAREST,
+                           borderMode=cv2.BORDER_WRAP).astype(float)
+        filt /= 255
+        mapped[..., :3] *= filt[..., 2, np.newaxis]
+        mapped[..., 3] *= filt[..., 3]
+        return np.uint8(mapped)
 
-    @handlers.handler(
-        pattern=r"normalize|norm([xy])?",
-        variant_hints={
-            "norm": "`norm[x/y]` (Moves the sprite to the center of its bounding box.)"},
-        variant_group="Filters")
-    def normalize(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'normalize',
-                   (ctx.groups[0] != 'x', ctx.groups[0] != 'y'))
+    @add_variant()
+    async def glitch(sprite, distance: int, chance: Optional[float] = 1.0, seed: Optional[int] = None, *, tile, wobble,
+                     renderer):
+        """Randomly displaces a sprite's pixels. An RNG seed is created using the tile's attributes if not specified."""
+        if seed is None:
+            seed = abs(hash(tile))
+        dst = np.indices(sprite.shape[:2], dtype=np.float32)
+        rng = np.random.default_rng(seed * 3 + wobble)
+        displacement = rng.uniform(-distance, distance, dst.shape)
+        mask = rng.uniform(0, 1, dst.shape)
+        displacement[mask > chance] = 0
+        dst += displacement
+        return cv2.remap(sprite, dst[1], dst[0],
+                         interpolation=cv2.INTER_NEAREST,
+                         borderMode=cv2.BORDER_WRAP)
 
-    @handlers.handler(
-        pattern=r"(?:grayscale|gscale)(?:(-?[\d\.]+))?",
-        variant_hints={
-            "grayscale": "`grayscale` (Forces raw sprite to be grayscale.)"},
-        variant_group="Filters"
-    )
-    def grayscale(ctx: HandlerContext) -> TileFields:
-        return {'grayscale': float(ctx.groups[0] or 1)}
+    # --- ADD TO BOT ---
 
-    @handlers.handler(
-        pattern=r"(?:floodfill|flood|fill)([01]\.\d+)?",
-        variant_hints={
-            "floodfill": "`floodfill[n]` (Fills in all open pockets in the sprite. An optional number specifies how bright the fill will be.)"},
-        variant_group="Filters")
-    def floodfill(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'floodfill', float(ctx.groups[0] or 0))
-
-    @handlers.handler(
-        pattern=r"(?:surround|surr|sr)([01]\.\d+)?",
-        variant_hints={
-            "surround": "`surround[n]` (Fills in all but the open pockets in the sprite. An optional number specifies how bright the fill will be.)"},
-        variant_group="Filters")
-    def surround(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'surround', float(ctx.groups[0] or 0))
-
-    @handlers.handler(
-        pattern=r"fisheye(-?\d+(?:\.\d+)?)?",
-        variant_hints={
-            "fisheye": "`fisheye[n]` (Applies fisheye effect. n is intensity, defaulting to 0.5.)"},
-        variant_group="Filters")
-    def fisheye(ctx: HandlerContext) -> TileFields:
-        fish = ctx.groups[0] or 0.5
-        return add(ctx, 'fisheye', float(fish))
-
-    @handlers.handler(
-        pattern=r"(?:glitch|g)(\d+)(?:\/(\d+(?:\.\d+)?))?",
-        variant_hints={
-            "glitch": "`glitch<int>[/float]` (Displaces some pixels. With 123/.456, 123 is the max displacement distance, with a 45.6% chance of displacing a pixel.)"},
-        variant_group="Filters")
-    def glitch(ctx: HandlerContext) -> TileFields:
-        intensity = ctx.groups[0] or 0
-        chance = ctx.groups[1] or 1
-        return add(ctx, 'glitch', (int(intensity), float(chance)))
-
-    @handlers.handler(
-        pattern=r"blur(\d)",
-        variant_hints={
-            "blur": "`blur<int>` (Gaussian blurs the sprite with a radius of n.)"},
-        variant_group="Filters")
-    def blur_radius(ctx: HandlerContext) -> TileFields:
-        radius = ctx.groups[0] or 0
-        return add(ctx, 'blur_radius', float(radius))
-
-    @handlers.handler(
-        pattern=r"rot(?:ate)?(-?\d+(?:\.\d+)?)(?:/(true|false))?",
-        variant_hints={
-            "rotate": "`rot|rotate<float>[/<bool>]` (Rotates the sprite n degrees counterclockwise. The second boolean, defaulting to true, decides whether or not to expand the bounding box of the sprite.)"},
-        variant_group="Filters"
-    )
-    def rotate(ctx: HandlerContext) -> TileFields:
-        angle = ctx.groups[0] or 0.0
-        return add(ctx, 'angle', (float(angle),
-                   (ctx.groups[1] or 'true') == 'true'))
-
-    @handlers.handler(
-        pattern=r"rotaterand(?:/(true|false))?",
-        variant_hints={
-            "rotaterand": "`rotaterand[/<bool>]` (Rotates the sprite a random number of degrees counterclockwise. The second boolean, defaulting to true, decides whether or not to expand the bounding box of the sprite.)"},
-        variant_group="Filters"
-    )
-    def rotate(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'angle', (rand.random() * 360,
-                   (ctx.groups[0] or 'true') == 'true'))
-
-    @handlers.handler(
-        pattern=r"scale([\d\.]+)(?:\/([\d\.]+))?",
-        variant_hints={
-            "scale": "`scale<float>/[float]` (Scales the sprite by n1 on the x axis and n2 on the y axis, or n1 if n2 isn't specified.)"},
-        variant_group="Filters")
-    def scale(ctx: HandlerContext) -> TileFields:
-        n = float(ctx.groups[1]) if ctx.groups[1] else float(ctx.groups[0])
-        return add(
-            ctx, 'scale', (max(min(float(ctx.groups[0]), 8), 0.01), max(min(n, 8), 0.01)))
-
-    @handlers.handler(
-        pattern=r"scale\((\d+)\/(\d+)\)(?:\((\d+)\/(\d+)\))?",
-        variant_hints={
-            "scale": "`scale(<int>/<int>)[(<int>/<int>)]` (Overload for scale with fractions)"},
-        variant_group="Filters")
-    def scale(ctx: HandlerContext) -> TileFields:
-        n = float(ctx.groups[2]) / float(ctx.groups[3]
-                                         ) if ctx.groups[2] else float(ctx.groups[0]) / float(ctx.groups[1])
-        return add(ctx, 'scale', (max(min(
-            (float(ctx.groups[0]) / float(ctx.groups[1])), 8), 0.01), max(min(n, 8), 0.01)))
-
-    @handlers.handler(
-        pattern=r"add",
-        variant_hints={
-            "add": "`add` (Makes the tile's RGB add to the tiles below.)"},
-        variant_group="Filters"
-    )
-    def addbl(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'add'
-        }
-
-    @handlers.handler(
-        pattern=r"xor",
-        variant_hints={
-            "xor": "`xor` (Makes the tile's RGB XOR with the tiles below.)"},
-        variant_group="Filters"
-    )
-    def xor(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'xora'
-        }
-
-    @handlers.handler(
-        pattern=r"xora",
-        variant_hints={
-            "xora": "`xora` (Makes the tile's RGBA XOR with the tiles below.)"},
-        variant_group="Filters")
-    def xora(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'xor'
-        }
-
-    @handlers.handler(
-        pattern=r"subtract",
-        variant_hints={
-            "subtract": "`subtract` (Makes the tile's RGB subtract from the tiles below.)"},
-        variant_group="Filters")
-    def subtract(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'subtract'
-        }
-
-    @handlers.handler(
-        pattern=r"maximum",
-        variant_hints={
-            "maximum": "`maximum` (Compares the tile's RGB from the tiles below, and keeps the max for each channel.)"},
-        variant_group="Filters")
-    def maximum(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'maximum'
-        }
-
-    @handlers.handler(
-        pattern=r"minimum",
-        variant_hints={
-            "minimum": "`minimum` (Compares the tile's RGB from the tiles below, and keeps the minimum for each channel.)"},
-        variant_group="Filters")
-    def minimum(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'minimum'
-        }
-
-    @handlers.handler(
-        pattern=r"multiply",
-        variant_hints={
-            "multiply": "`multiply` (Makes the tile's RGB multiply with the tiles below.)"},
-        variant_group="Filters")
-    def subtract(ctx: HandlerContext) -> TileFields:
-        return {
-            "blending": 'multiply'
-        }
-
-    @handlers.handler(
-        pattern=r"displace(\-?\d{1,3})\/(\-?\d{1,3})",
-        variant_hints={
-            "displace": "`displace<int>/<int>` (Displaces the sprite by x pixels to the right and y pixels downwards.)"},
-        variant_group="Filters")
-    def displace(ctx: HandlerContext) -> TileFields:
-        try:
-            d = ctx.fields.get("displace")
-            return {'displace': [
-                a + b for a, b in zip((0 - int(ctx.groups[0]), 0 - int(ctx.groups[1])), d)]}
-        except TypeError:
-            return {'displace': (
-                0 - int(ctx.groups[0]), 0 - int(ctx.groups[1]))}
-
-    @handlers.handler(
-        pattern=r"displace\((-?\d+)\/(\d+)\)(?:\((-?\d+)\/(\d+)\))?",
-        variant_hints={
-            "displace": "`displace(<int>/<int>)[(<int>/<int>)]` (Overload for displace that works with fractions.)"},
-        variant_group="Filters")
-    def displace(ctx: HandlerContext) -> TileFields:
-        try:
-            d = ctx.fields.get("displace")
-            return {'displace': [a + b for a,
-                                 b in zip((0 - ((int(ctx.groups[0]) / int(ctx.groups[1])) * constants.DEFAULT_SPRITE_SIZE),
-                                           0 - ((int(ctx.groups[2]) / int(ctx.groups[3])) * constants.DEFAULT_SPRITE_SIZE)),
-                                          d)]}
-        except TypeError:
-            return {'displace': (0 - ((int(ctx.groups[0]) / int(ctx.groups[1])) * constants.DEFAULT_SPRITE_SIZE),
-                                 0 - ((int(ctx.groups[2]) / int(ctx.groups[3])) * constants.DEFAULT_SPRITE_SIZE))}
-
-    @handlers.handler(
-        pattern=r"warp\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)\((\-?[\d\.]+)\/(\-?[\d\.]+)\)",
-        variant_hints={
-            "warp": "`warp(<int>/<int>)(<int>/<int>)(<int>/<int>)(<int>/<int>)` \n Transforms the corners of the image.\n Order goes top left, top right, bottom right, bottom left. \n Values are the offset of the point, as (right/down)."},
-        variant_group="Filters")
-    def warp(ctx: HandlerContext) -> TileFields:
-        return add(
-            ctx, 'warp', ((float(
-                ctx.groups[0]), float(
-                ctx.groups[1])), (float(
-                    ctx.groups[2]), float(
-                    ctx.groups[3])), (float(
-                        ctx.groups[4]), float(
-                            ctx.groups[5])), (float(
-                                ctx.groups[6]), float(
-                                    ctx.groups[7]))))
-
-    @handlers.handler(
-        pattern=r"freeze([1,2,3])?",
-        variant_hints={
-            "freeze": "`freeze[1,2,3]` (Freezes the specified wobble frame of the tile, defaulting to the first.)"},
-        variant_group="Filters")
-    def freeze(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'freeze', int(ctx.groups[0]) if ctx.groups[0] else 1)
-
-    @handlers.handler(
-        pattern=r"melt",
-        variant_hints={
-            "melt": "`melt` (\"Melts\" the tile by displacing every column to the bottom of the sprite.)"},
-        variant_group="Filters")
-    def melt(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'melt')
-
-    @handlers.handler(
-        pattern=r"liquify",
-        variant_hints={
-            "liquify": "`liquify` (\"Liquifies\" the tile by melting every color except the main color and turning the main color into liquid, filling empty pockets.)"},
-        variant_group="Filters"
-    )
-    def liquify(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'liquify')
-
-    @handlers.handler(
-        pattern=r"planet",
-        variant_hints={
-            "planet": "`planet` (Leverages some code from the `liquify` module to attempt to make a planet from any tile.)"},
-        variant_group="Filters")
-    def planet(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'planet')
-
-    @handlers.handler(
-        pattern=r"(?:lockhue|huelock|hl)(\d+)",
-        variant_hints={
-            "lockhue": "`lockhue` (Locks the hue of the sprite's pixels to the specified degrees.)"},
-        variant_group="Filters")
-    def lockhue(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'lockhue', int(ctx.groups[0]) / 2)
-
-    @handlers.handler(
-        pattern=r"(?:lockhue_before)",
-        variant_hints={
-            "lockhue_before": "`lockhue_before` (Used internally for 2.)"},
-        variant_group="Filters"
-    )
-    def lockhue_before(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'lockhue_before')
-
-    @handlers.handler(
-        pattern=r"(?:locksat|satlock)(\d+)",
-        variant_hints={
-            "locksat": "`locksat` (Locks the saturation of the sprite's pixels to the specified amount.)"},
-        variant_group="Filters")
-    def locksat(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'locksat', int(ctx.groups[0]))
-
-    @handlers.handler(
-        pattern=r"negative|neg",
-        variant_hints={"negative": "`negative` (RGB color inversion.)"},
-        variant_group="Filters"
-    )
-    def negative(ctx: HandlerContext) -> TileFields:
-        return {'negative': True}
-
-    @handlers.handler(
-        pattern=r"complement|comp",
-        variant_hints={"complement": "`complement` (HSL hue inversion.)"},
-        variant_group="Filters"
-    )
-    def complement(ctx: HandlerContext) -> TileFields:
-        return {'hueshift': 180}
-
-    @handlers.handler(
-        pattern=r"(?:hueshift|hs)(-?[\d\.]+)",
-        variant_hints={"hueshift": "`hueshift<float>` (HSL hue shift.)"},
-        variant_group="Filters"
-    )
-    def hueshift(ctx: HandlerContext) -> TileFields:
-        return {'hueshift': float(ctx.groups[0])}
-
-    @handlers.handler(
-        pattern=r"normalizelightness|norml|nl",
-        variant_hints={
-            "normalizelightness": "`normalizelightness | norml | nl` (Normalize the HSL lightness of the sprite to 0-1, making the brightest color fully white.)"},
-        variant_group="Filters")
-    def normalizelightness(ctx: HandlerContext) -> TileFields:
-        return {'normalize_lightness': True}
-
-    @handlers.handler(
-        pattern=r"(?:palette\/|p\!)(.+)",
-        variant_hints={
-            "palette": "`(palette/ | p!)<palettename>` (Applies a different color palette to the tile.)"},
-        variant_group="Filters")
-    def palette(ctx: HandlerContext) -> TileFields:
-        assert ctx.groups[0].find('/') == -1 and ctx.groups[0].find(
-            '\\') == -1, 'No looking at the host\'s hard drive, thank you very much.'
-        return {
-            "palette": ctx.groups[0]
-        }
-
-    @handlers.handler(
-        pattern=r"(?:overlay\/|o\!)([^ ]+)",
-        variant_hints={
-            "overlay": "`(o!|overlay/)<overlayname>` (Applies an overlay on the tile.)"},
-        variant_group="Filters")
-    def overlay(ctx: HandlerContext) -> TileFields:
-        assert ctx.groups[0].find('/') == -1 and ctx.groups[0].find(
-            '\\') == -1, 'No looking at the host\'s hard drive, thank you very much.'
-        return {
-            "overlay": ctx.groups[0]
-        }
-
-    @handlers.handler(
-        pattern=r"palettesnap|palsnap|ps",
-        variant_hints={
-            "palettesnap": "`palettesnap` (Makes the colors of the tile snap to the nearest color on the specified palette.)"},
-        variant_group="Filters")
-    def palettesnap(ctx: HandlerContext) -> TileFields:
-        return {
-            "palette_snap": True
-        }
-
-    @handlers.handler(
-        pattern=r"(?:brightness|bright)([\d\.]*)",
-        variant_hints={
-            "brightness": "`brightness<factor>` (Darkens or brightens the tile by multiplying it by factor.)"},
-        variant_group="Filters")
-    def brightness(ctx: HandlerContext) -> TileFields:
-        return {"brightness": float(ctx.groups[0])}
-
-    @handlers.handler(
-        pattern=r"wavex([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
-        variant_hints={
-            "wavex": "`wavex<offset>/<amplitude>/<speed>` (Creates a wave of horizonal lines going in order from top to bottom.)"},
-        variant_group="Filters")
-    def wavex(ctx: HandlerContext) -> TileFields:
-        return add(ctx, "wavex", (float(ctx.groups[0]), float(
-            ctx.groups[1]), float(ctx.groups[2])))
-
-    @handlers.handler(
-        pattern=r"wrap(\-?\d{1,3})\/(\-?\d{1,3})",
-        variant_hints={
-            "wrap": "`wrap<int>/<int>` (Displace the sprite by x pixels to the right and y pixels downwards, and wrap the pixels around the sprite's borders.)"},
-        variant_group="Filters")
-    def wrap(ctx: HandlerContext) -> TileFields:
-        return add(ctx, "wrap", (int(ctx.groups[0]), int(ctx.groups[1])))
-
-    @handlers.handler(
-        pattern=r"wavey([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
-        variant_hints={
-            "wavey": "`wavey<offset>/<amplitude>/<speed>` (Creates a wave of vertical lines going in order from left to right.)"},
-        variant_group="Filters")
-    def wavey(ctx: HandlerContext) -> TileFields:
-        return add(ctx, "wavey", (float(ctx.groups[0]), float(
-            ctx.groups[1]), float(ctx.groups[2])))
-
-    @handlers.handler(
-        pattern=r"gradientx([\d\.]*)\/([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
-        variant_hints={
-            "gradientx": "`gradientx<start>/<end>/<startvalue>/<endvalue>` (Creates a horizonal gradient on the tile going from left to right.)"},
-        variant_group="Filters")
-    def gradientx(ctx: HandlerContext) -> TileFields:
-        return add(
-            ctx, 'gradientx', (float(
-                ctx.groups[0]), float(
-                ctx.groups[1]), float(
-                ctx.groups[2]), float(
-                    ctx.groups[3])))
-
-    @handlers.handler(
-        pattern=r"gradienty([\d\.]*)\/([\d\.]*)\/([\d\.]*)\/([\d\.]*)",
-        variant_hints={
-            "gradienty": "`gradienty<start>/<end>/<startvalue>/<endvalue>` (Creates a vertical gradient on the tile going from top to bottom.)"},
-        variant_group="Filters")
-    def gradienty(ctx: HandlerContext) -> TileFields:
-        return add(
-            ctx, 'gradienty', (float(
-                ctx.groups[0]), float(
-                ctx.groups[1]), float(
-                ctx.groups[2]), float(
-                    ctx.groups[3])))
-
-    @handlers.handler(
-        pattern=r"(abs){0,1}(?:filterimage\/|fi!|filterimage=|fi=)(.+)",
-        variant_hints={
-            "filterimage": "`[abs]filterimage/<url>` `[abs]filterimage=<url>` `[abs]fi!<url>` `[abs]fi=<url>` applies a filter image.\nWarning: big images may take a while to render.\nImages bigger than 64 pixels not recommended.\nTip: Remove the http(s):// part from the URLs!\nUse variant with `abs` in front of the name to use absolute positions!\nTo use an image from the database, use `db!<name>` as the url!"},
-        variant_group="Filters"
-    )
-    def filterimage(ctx: HandlerContext) -> TileFields:
-        a = ctx.groups[0] if ctx.groups[0] else ""
-        url = ctx.groups[1]
-        if url.startswith("db!"):
-            return {'filterimage': a + url}
-        else:
-            url = url.replace("localhost", "")
-            if url[:url.find("/")].replace(".", "").isnumeric():
-                url = ""
-            return {'filterimage': a + "https://" + url}
-
-    @handlers.handler(
-        pattern=r"crop(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)(?:\/(true|false))?",
-        variant_hints={
-            "crop": "`crop<x>/<y>/<width>/<height>[/<true_crop>]` (Crops the sprite to the rectange defined as n3 as width, n4 as height, with the point at n1/n2 being its top-left corner. The boolean argument is if you want to truly crop the sprite, changing the bounding box.)"},
-        variant_group="Filters"
-    )
-    def crop(ctx: HandlerContext) -> TileFields:
-        return add(
-            ctx, "crop", (int(
-                ctx.groups[0]), int(
-                ctx.groups[1]), int(
-                ctx.groups[2]), int(
-                    ctx.groups[3]), ctx.groups[4] == 'true'))
-
-    @handlers.handler(
-        pattern=r"snip(-?\d+?)\/(-?\d+?)\/(-?\d+?)\/(-?\d+?)",
-        variant_hints={
-            "snip": "`snip<x>/<y>/<width>/<height>` (Removes a rectangle from the sprite, which is defined as n3 in width, n4 in height, with the point at n1/n2 being its top-left corner)"},
-        variant_group="Filters")
-    def snip(ctx: HandlerContext) -> TileFields:
-        return add(ctx,
-                   "snip", (int(ctx.groups[0]), int(ctx.groups[1]), int(
-                       ctx.groups[2]), int(ctx.groups[3]))
-                   )
-
-    @handlers.handler(
-        pattern=r"mirror\/([xy])\/(front|back)",
-        variant_hints={
-            "mirror": "`mirror/<x|y>/<front|back>` (Mirrors the specified part of the sprite over the specified axis.)"},
-        variant_group="Filters")
-    def mirror(ctx: HandlerContext) -> TileFields:
-        return add(ctx, 'mirror',
-                   (ctx.groups[0] == 'x', ctx.groups[1] == 'front'))
-
-    @handlers.handler(
-        pattern=r"pad(\d+?)\/(\d+?)\/(\d+?)\/(\d+?)",
-        variant_hints={
-            "pad": "`pad<left>/<top>/<right>/<bottom>` (Pads the sprite with transparency on each of its sides.)"},
-        variant_group="Filters")
-    def pad(ctx: HandlerContext) -> TileFields:
-        return add(ctx,
-                   "pad", (int(ctx.groups[0]), int(ctx.groups[1]), int(
-                       ctx.groups[2]), int(ctx.groups[3]))
-                   )
-
-    @handlers.handler(
-        pattern=r"(?:(?:3oo)|(?:3ooskul)|(?:skul))(\d+(?:\.\d+)?)",
-        variant_hints={
-            "3oo": "`3oo<n>` (Applies content aware scale to the sprite. The size of the sprite is divided by n, then upscaled to what it was originally was.)"},
-        variant_group="Filters")
-    def pad(ctx: HandlerContext) -> TileFields:
-        return add(ctx,
-                   "threeoo", float(ctx.groups[0])
-                   )
-
-    @handlers.handler(
-        pattern=r"nothing|none|n|-",
-        variant_hints={"nothing": "`nothing` (Does nothing.)"},
-        variant_group="Filters"
-    )
-    def nothing(ctx: HandlerContext) -> TileFields:
-        return {}
-
-    @handlers.handler(
-        pattern=r"(?:color|col|c)(-?\d+)*(?:\/(-?\d+)*(?:\/(-?\d+)*)?)?",
-        variant_hints={
-            "color": "`color<start>[/<stop>[/<step>]]` (Cuts all but the selected slice of colors, sorted by frequency. Slices work like they do in Python.)"},
-        variant_group="Filters")
-    def colselect(ctx: HandlerContext) -> TileFields:
-        return add(ctx, "colselect", slice(
-            *[int(n) if n is not None and len(n) != 0 else None for n in ctx.groups]))
-
-    @handlers.handler(
-        pattern=r"(?:color|col|c)(-?\d+(?:\+-?\d+)*)",
-        variant_hints={
-            "color": "`color<n>[+<n>[+<n>...]]` (Cuts all but the specified colors from the image.)"},
-        variant_group="Filters")
-    def colselect(ctx: HandlerContext) -> TileFields:
-        return add(ctx,
-                   "colselect", [int(n) for n in ctx.groups[0].split('+')]
-                   )
-
-    @handlers.handler(
-        pattern=r"(?:aberrate|abberate|chrome|ca)(-?\d+)?(?:\/(-?\d+))?",
-        variant_hints={
-            "aberrate": "`aberrate[int]` (Performs chromatic abberation.)"},
-        variant_group="Filters"
-    )
-    def aberrate(ctx: HandlerContext) -> TileFields:
-        return add(ctx, "aberrate",
-                   (int(ctx.groups[0] or 1), int(ctx.groups[1] or 0)))
-
-    @handlers.handler(
-        pattern=r"randpal",
-        variant_hints={
-            'randpal': '`randpal` (Color with a random palette color.)'},
-        variant_group="Filters"
-    )
-    def randpal(ctx: HandlerContext) -> TileFields:
-        return {
-            "color_index": (rand.randint(0, 6), rand.randint(0, 4))
-        }
-
-    return handlers
+    bot.variants = RegexDict([(variant.pattern, variant) for variant in bot.variants])

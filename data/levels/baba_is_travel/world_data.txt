@@ -1,0 +1,14 @@
+[general]
+bonus_max=3
+clear_max=6
+prize_max=104
+name=baba is travel
+themecount=12
+start=1level
+author=Butcherberries
+firstlevel=2level
+
+[levels]
+levelid=195
+rolling_levelid=193
+

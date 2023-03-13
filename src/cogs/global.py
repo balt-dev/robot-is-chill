@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import ast
 import collections
-import functools
 import os
 import signal
+import time
+import traceback
+from pathlib import Path
 
 import requests
 
@@ -14,37 +15,23 @@ import re
 from datetime import datetime
 from io import BytesIO
 from json import load
-from time import perf_counter
-from typing import Any, OrderedDict, TYPE_CHECKING
+from typing import Any, OrderedDict, Literal
 
 import numpy as np
 import emoji
 from charset_normalizer import from_bytes
 
-import asyncio
 import aiohttp
 import discord
-from discord.ext import commands
+from discord.ext import commands, menus
 
-if TYPE_CHECKING:
-    from ..tile import RawGrid
+from src.types import SignText
+from src.utils import ButtonPages
+from ..tile import Tile, TileSkeleton, parse_variants
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
-from ..tile import RawTile
-from ..types import Bot, Context
-
-from .errorhandler import CommandErrorHandler
-
-
-async def start_timeout(function, *args, timeout_multiplier=1, **kwargs):
-    def handler(_signum, _frame):
-        raise AssertionError("The command took too long and was timed out.")
-
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(constants.TIMEOUT_DURATION * timeout_multiplier)
-    await function(*args, **kwargs)
-    signal.alarm(0)
+from ..types import Bot, Context, RegexDict
 
 
 def try_index(string: str, value: str) -> int:
@@ -67,15 +54,57 @@ def split_commas(grid: list[list[str]], prefix: str):
         for i, word in enumerate(row):
             if "," in word:
                 if word.startswith(prefix):
-                    each = word.split(",")
+                    each = re.split(r'(?<!\\),', word)
                     expanded = [each[0]]
                     expanded.extend([prefix + segment for segment in each[1:]])
                     to_add.append((i, expanded))
                 else:
-                    raise errors.SplittingException(word)
+                    pass
         for change in reversed(to_add):
             row[change[0]:change[0] + 1] = change[1]
     return grid
+
+
+async def warn_dangermode(ctx: Context):
+    warning_embed = discord.Embed(
+        title="Warning: Danger Mode",
+        color=discord.Color(16711680),
+        description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
+    await ctx.send(embed=warning_embed, delete_after=5)
+
+
+async def coro_part(func, *args, **kwargs):
+    async def wrapper():
+        result = func(*args, **kwargs)
+        return await result
+
+    return wrapper
+
+
+class FilterQuerySource(menus.ListPageSource):
+    def __init__(
+            self, data: list[str]):
+        super().__init__(data, per_page=45)
+
+    async def format_page(self, menu: menus.Menu, entries: list[str]) -> discord.Embed:
+        embed = discord.Embed(
+            title=f"{menu.current_page + 1}/{self.get_max_pages()}",
+            color=menu.bot.embed_color
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        )
+        while len(entries) > 0:
+            field = ""
+            for entry in entries[:15]:
+                field += f"{entry}\n"
+            embed.add_field(
+                name="",
+                value=field,
+                inline=True
+            )
+            del entries[:15]
+        return embed
 
 
 class GlobalCog(commands.Cog, name="Baba Is You"):
@@ -89,6 +118,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def cog_check(self, ctx):
         """Only if the bot is not loading assets."""
         return not self.bot.loading
+
+    async def start_timeout(self, ctx, *args, timeout_multiplier: float = 1.0, **kwargs):
+        def handler(_signum, _frame):
+            raise AssertionError("The command took too long and was timed out.")
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
+        await self.render_tiles(ctx, *args, **kwargs)
 
     async def handle_variant_errors(self, ctx: Context, err: errors.VariantError):
         """Handle errors raised in a command context by variant handlers."""
@@ -124,6 +160,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             return await ctx.error(
                 f"There isn't a variant called `{variant}`."
             )
+        elif isinstance(err, errors.BadVariant):
+            return await ctx.error(
+                f"The arguments for `{variant}` are not valid."
+            )
         else:
             return await ctx.error(f"{msg}.")
 
@@ -155,264 +195,318 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         else:
             return await ctx.error(f"{msg}.")
 
-    def parse_raw(
-            self, grid: list[list[list[list[str]]]], *, rule: bool) -> RawGrid:
-        """Parses a string grid into a RawTile grid."""
+    async def handle_grid(
+            self, ctx, grid, possible_variants, tile_borders=False):
+        """Parses a TileSkeleton array into a Tile grid."""
+        tile_data_cache = {
+            data.name: data async for data in self.bot.db.tiles(
+                {
+                    tile.name for tile in grid.flatten()
+                }
+            )
+        }
         return [
             [
                 [
                     [
-                        RawTile.from_str(
-                            ("-" if tile ==
-                             "-" else (tile[5:] if tile.startswith("tile_") else f"text_{tile}"))
-                        ) if rule else RawTile.from_str(
-                            ("-" if tile == "text_-" else tile)
-                        )
-                        for tile in row
+                        # grid gets passed by reference, as it is mutable
+                        await Tile.prepare(possible_variants, tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
+                        for x, tile in enumerate(row)
                     ]
-                    for row in layer
+                    for y, row in enumerate(layer)
                 ]
-                for layer in timestep
+                for z, layer in enumerate(timestep)
             ]
-            for timestep in grid
+            for w, timestep in enumerate(grid)
         ]
-
-    # From CenTdemeern1's OpenCountingBot, he gave me permission to use
-    # https://github.com/CenTdemeern1/OpenCountingBot/blob/main/cogs/count.py#L320
-    def parse_and_evaluate_expression(self, expression):
-        try:
-            tree = ast.parse(expression, mode='eval')
-        except SyntaxError:
-            raise AssertionError(
-                f'Invalid syntax in math expression! `{expression}`')
-        if not all(isinstance(node, (ast.Expression,
-                                     ast.UnaryOp, ast.unaryop,
-                                     ast.BinOp, ast.operator,
-                                     ast.Num)) for node in ast.walk(tree)):
-            raise ArithmeticError(
-                f"Sorry, `{expression}` isn't a safe expression.")
-        result = eval(compile(tree, filename='', mode='eval'))
-        return result
 
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
-        await ctx.typing()
-        start = perf_counter()
-        tiles = objects.lower().strip().replace("\\", "").replace("`", "")
-        # Replace some phrases
-        tiles = re.sub(r'<(:.+?:)\d+?>', r'\1', tiles)
-        tiles = emoji.demojize(tiles, use_aliases=True)
-        replace_list = [
-            ['а', 'a'],
-            ['в', 'b'],
-            ['е', 'e'],
-            ['з', '3'],
-            ['к', 'k'],
-            ['м', 'm'],
-            ['н', 'h'],
-            ['о', 'o'],
-            ['р', 'p'],
-            ['с', 'c'],
-            ['т', 't'],
-            ['х', 'x'],
-            ['ⓜ', ':m:']
-        ]
-        for src, dst in replace_list:
-            tiles = tiles.replace(src, dst)
-
-        # Determines if this should be a spoiler
-        spoiler = "|" in tiles
-        tiles = tiles.replace("|", "")
-
-        # Check for empty input
-        if not tiles:
-            return await ctx.error("Input cannot be blank.")
-
-        if rule:
-            tiles = tiles.replace('$', 'tile_')
-        else:
-            tiles = tiles.replace('$', 'text_')
-
-        # Split input into lines
-        word_rows = tiles.splitlines()
-
-        # Split each row into words
-        word_grid = [row.split() for row in word_rows]
-
-        # Check flags
-        potential_flags = filter(
-            lambda i: i[0].startswith("-"),
-            [(word, x, y)
-             for y, row in enumerate(word_grid)
-             for x, word in enumerate(row)]
-        )
-
-        kwargs = {}
-        to_delete = []
-        for potential_flag, x, y in potential_flags:
-            for flag in self.bot.flags.list:
-                to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
-        raw_output = kwargs.get("raw_output", False)
-        default_to_letters = kwargs.get("letters", False)
-        tborders = kwargs.get("tborders", False)
-        file_format = kwargs.get('file_format', 'gif')
-        global_variant = kwargs.get('global_variant', '')
-        do_embed = kwargs.get('do_embed', False)
-        for x, y in reversed(to_delete):
-            del word_grid[y][x]
         try:
-            if rule:
-                comma_grid = split_commas(word_grid, "tile_")
-            else:
-                comma_grid = split_commas(word_grid, "text_")
-        except errors.SplittingException as e:
-            cause = e.args[0]
-            return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
+            await ctx.typing()
+            ctx.silent = ctx.message.flags.silent
+            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:", "♥")  # keep the heart, for the people
+            tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
+            tiles = re.sub(r"\\(?=[:<])", "", tiles)
+            tiles = re.sub(r"(?<!\\)`", "", tiles)
+            # Replace some phrases
+            replace_list = [
+                ['а', 'a'],
+                ['в', 'b'],
+                ['е', 'e'],
+                ['з', '3'],
+                ['к', 'k'],
+                ['м', 'm'],
+                ['н', 'h'],
+                ['о', 'o'],
+                ['р', 'p'],
+                ['с', 'c'],
+                ['т', 't'],
+                ['х', 'x'],
+                ['ⓜ', ':m:']
+            ]
+            for src, dst in replace_list:
+                tiles = tiles.replace(src, dst)
 
-        tilecount = 0
-        maxstack = 1
-        maxdelta = 1
-        for row in comma_grid:
-            for stack in row:
-                maxstack = max(maxstack, len(stack.split("&")))
-                for timeline in stack.split("&"):
-                    maxdelta = max(maxdelta, len(timeline.split(">")))
-        w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
-            comma_grid), maxstack, maxdelta  # width, height, depth, time
-        layer_grid = np.full((t, d, h, w), '-', dtype=object)
-        if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
-            return await ctx.error(
-                f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
-        # Splits "&"-joined words into stacks
-        for y, row in enumerate(comma_grid):
-            for x, stack in enumerate(row):
-                for layer, timeline in enumerate(stack.split('&')):
-                    for d, tile in enumerate(timeline.split('>')):
-                        if len(tile):
-                            assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
-                                ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
-                            if len(tile.split(':', 1)[0].split(';', 1)[0]):
-                                tilecount += 1
-                                tile = tile.replace('rule_', 'text_')
-                                if (not (tile.find(':ng') != -
-                                         1 or tile.find(':noglobal') != -
-                                         1)) and tile != "-":
-                                    tile = re.sub(
-                                        "(.+?)(:.+|$)", rf'\1{global_variant}\2', tile)
-                                r = re.fullmatch(r"(.+?)(?::.*)?", tile)
-                                if r is not None and not rule and r.groups(
-                                )[0] == '2':  # hardcoded easter egg
-                                    async with self.bot.db.conn.cursor() as cur:
-                                        await cur.execute(
-                                            '''SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE 'text_anni' ORDER BY RANDOM() LIMIT 1''')
-                                        t = await cur.fetchall()
-                                        tile = re.sub(
-                                            '(.+?)(:.+|$)', t[0][0] + ':4/2:lockhue_before' + r'\2', tile)
-                                layer_grid[d:, layer, y, x] = tile
-                            else:
-                                if len(tile.split(';', 1)) == 2:
-                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(';', 1)[
-                                        0] + tile
-                                else:
-                                    layer_grid[d:, layer, y, x] = layer_grid[d, layer, y, x].split(':', 1)[
-                                        0] + tile
-        # Get the dimensions of the grid
-        grid_shape = layer_grid.shape
-        layer_grid = layer_grid.tolist()
-        # Don't proceed if the request is too large.
-        # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
-        if tilecount > constants.MAX_TILES and not (
-                ctx.author.id in [self.bot.owner_id, 280756504674566144]):
-            return await ctx.error(
-                f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
-        try:
+            # Determines if this should be a spoiler
+            spoiler = "||" in tiles
+            tiles = tiles.replace("||", "")
 
-            grid = self.parse_raw(layer_grid, rule=rule)
-            # Handles variants based on `:` affixes
-            buffer = BytesIO()
-            extra_buffer = BytesIO() if raw_output else None
-            extra_names = [] if raw_output else None
-            full_grid = await self.bot.handlers.handle_grid(grid, raw_output=raw_output, extra_names=extra_names,
-                                                            default_to_letters=default_to_letters,
-                                                            tile_borders=tborders)
-            avgdelta, maxdelta, tiledelta, unique_sprites = await self.bot.renderer.render(
-                await self.bot.renderer.render_full_tiles(
+            # Check for empty input
+            if not tiles:
+                return await ctx.error("Input cannot have 0 tiles.")
+
+            old_tiles = tiles
+
+            offset = 0
+            for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
+                a, b = match.span()
+                text = match.group(1)
+                prefix = "tile_" if rule else "text_"
+                sliced = re.split("([\n ]|$)", text)
+                zipped = zip(sliced[1::2], sliced[:-1:2])
+                text = "".join(f"{prefix}{t}{joiner}" if t != "-" else f"-{joiner}" for joiner, t in zipped)
+                tiles = tiles[:a - offset] + text + tiles[b - offset:]
+                offset += (b - a) - len(text)
+
+            # Split input into lines
+            word_rows = tiles.splitlines()
+
+            # Split each row into words
+            word_grid = [re.split(r"(?<!\\) ", row) for row in word_rows]
+
+            parsing_overhead = time.perf_counter()
+            # Check flags
+            potential_flags = filter(
+                lambda i: i[0].startswith("-"),
+                [(word, x, y)
+                 for y, row in enumerate(word_grid)
+                 for x, word in enumerate(row)]
+            )
+
+            kwargs = {}
+            to_delete = []
+            for potential_flag, x, y in potential_flags:
+                for flag in self.bot.flags.list:
+                    to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
+            raw_output = kwargs.get("raw_output", False)
+            image_format = kwargs.get('image_format', 'gif')
+            do_embed = kwargs.get('do_embed', False)
+            global_variant = kwargs.get('global_variant', "")
+            word_grid = split_commas(word_grid, "char_")
+            for x, y in reversed(to_delete):
+                del word_grid[y][x]
+            try:
+                if rule:
+                    comma_grid = split_commas(word_grid, "tile_")
+                else:
+                    comma_grid = split_commas(word_grid, "text_")
+                comma_grid = split_commas(comma_grid, "$")
+            except errors.SplittingException as e:
+                cause = e.args[0]
+                return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
+
+            sign_texts = []
+
+            tilecount = 0
+            maxstack = 1
+            maxdelta = 1
+            try:
+                for row in comma_grid:
+                    for stack in row:
+                        maxstack = max(maxstack, len(re.split(r'(?<!\\)&', stack)))
+                        for timeline in re.split(r'(?<!\\)&', stack):
+                            maxdelta = max(maxdelta, len(re.split(r'(?<!\\)>', timeline)))
+                w, h, d, t = max([len(comma_grid[n]) for n in range(len(comma_grid))]), len(
+                    comma_grid), maxstack, maxdelta  # width, height, depth, time
+                layer_grid = np.full((t, d, h, w), TileSkeleton(), dtype=object)
+                if maxstack > constants.MAX_STACK and ctx.author.id != self.bot.owner_id:
+                    return await ctx.error(
+                        f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
+
+                possible_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
+                font_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
+
+                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name if len(name)]
+                def catch(f, *args, **kwargs):
+                    try:
+                        return f(*args, **kwargs)
+                    except:
+                        return None
+
+                pal = kwargs.get("palette", "default")
+                for y, row in enumerate(comma_grid):
+                    for x, stack in enumerate(row):
+                        for l, timeline in enumerate(re.split(r'(?<!\\)&', stack)):
+                            for d, tile in enumerate(timeline_split := re.split(r'(?<!\\)>', timeline)):
+                                if len(tile):
+                                    if (match := re.fullmatch(r"\{(.*)}(.*)", tile)) is not None:
+                                        sign_text = SignText(text=match.group(1), x=x, y=y, time_start=d)
+                                        variants = [variant for variant in match.group(2).split(":") if len(variant)]
+                                        variants = parse_variants(font_variants, variants, self.bot).get("sign", [])
+                                        for variant in variants:
+                                            await variant.apply(sign_text, bot=self.bot, palette=pal)
+                                        layer_grid[d:, l, y, x] = TileSkeleton()
+                                        for o in range(1, maxdelta - d):
+                                            try:
+                                                text = timeline_split[d+o]
+                                                if len(text):
+                                                    break
+                                            except IndexError:
+                                                continue
+                                        else:
+                                            o = maxdelta - d
+                                        sign_text.time_end = d + o
+                                        # Sign texts sadly cannot respect layers.
+                                        sign_texts.append(sign_text)
+                                        continue
+                                    tile = re.sub(r"\\(.)", r"\1", tile)
+                                    assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
+                                        ';'), 'Error! Persistent variants (`;`) can\'t come after ephemeral ones (`:`).'
+                                    if catch(tile.index, ":") or catch(tile.index, ";") \
+                                            or ":" not in tile and ";" not in tile:
+                                        tilecount += 1
+                                        # This is done to prevent setting everything to one instance of an object.
+                                        layer_grid[d:, l, y, x] = [
+                                            await TileSkeleton.parse(
+                                                possible_variants, tile, rule,
+                                                palette=pal, bot=self.bot,
+                                                global_variant=global_variant,
+                                                possible_variant_names=possible_variant_names
+                                            )
+                                            for _ in range(layer_grid.shape[0] - d)
+                                        ]
+                                    else:
+                                        layer_grid[d:, l, y, x] = [
+                                            await TileSkeleton.parse(
+                                            possible_variants,
+                                            layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
+                                                0] + tile,
+                                            rule, bot=self.bot,
+                                            possible_variant_names=possible_variant_names)
+                                            for _ in range(layer_grid.shape[0] - d)
+                                        ]
+                # Get the dimensions of the grid
+                grid_shape = layer_grid.shape
+                # Don't proceed if the request is too large.
+                # (It shouldn't be that long to begin with because of Discord's 2000-character limit)
+                if tilecount > constants.MAX_TILES and not (
+                        ctx.author.id in [self.bot.owner_id, 280756504674566144]):
+                    return await ctx.error(
+                        f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
+                # Handles variants based on `:` affixes
+                buffer = BytesIO()
+                extra_buffer = BytesIO() if raw_output else None
+                full_grid = await self.handle_grid(ctx, layer_grid, possible_variants, kwargs.get("tileborder", False))
+                parsing_overhead = time.perf_counter() - parsing_overhead
+                full_tiles, unique_tiles, rendered_frames, render_overhead = await self.bot.renderer.render_full_tiles(
                     full_grid,
-                    palette=kwargs.get("palette", None),
                     random_animations=kwargs.get("random_animations", True),
-                    gscale=kwargs.get("gscale", 1)
-                ),
-                out=buffer,
-                extra_out=extra_buffer,
-                **kwargs
-            )
-        except errors.TileNotFound as e:
-            word = e.args[0]
-            if word.name.startswith("tile_") and await self.bot.db.tile(word.name[5:]) is not None:
-                return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word.name[5:]}`?")
-            if await self.bot.db.tile("text_" + word.name) is not None:
+                    gscale=kwargs.get("gscale", 1),
+                    frames=kwargs.get("frames", (1, 2, 3))
+                )
+                composite_overhead, saving_overhead, im_size = await self.bot.renderer.render(
+                    full_tiles,
+                    out=buffer,
+                    extra_out=extra_buffer,
+                    sign_texts=sign_texts,
+                    **kwargs
+                )
+            except errors.TileNotFound as e:
+                word = e.args[0]
+                if word.startswith("tile_") and await self.bot.db.tile(word[5:]) is not None:
+                    return await ctx.error(f"The tile `{word}` could not be found. Perhaps you meant `{word[5:]}`?")
+                if await self.bot.db.tile("text_" + word) is not None:
+                    return await ctx.error(
+                        f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word}`?")
+                return await ctx.error(f"The tile `{word}` could not be found.")
+            except errors.BadTileProperty as e:
+                traceback.print_exc()
+                return await ctx.error(f"Error! `{e.args[1]}`")
+            except errors.EmptyVariant as e:
+                word = e.args[0]
                 return await ctx.error(
-                    f"The tile `{word}` could not be found. Perhaps you meant `{'text_' + word.name}`?")
-            return await ctx.error(f"The tile `{word}` could not be found.")
-        except errors.BadTileProperty as e:
-            return await ctx.error(f"Error! `{e.args[1]}`")
-        except errors.EmptyVariant as e:
-            word = e.args[0]
-            return await ctx.error(
-                f"You provided an empty variant for `{word}`."
-            )
-        except errors.VariantError as e:
-            return await self.handle_variant_errors(ctx, e)
-        except errors.TextGenerationError as e:
-            return await self.handle_custom_text_errors(ctx, e)
+                    f"You provided an empty variant for `{word}`."
+                )
+            except errors.TooLargeTile as e:
+                return await ctx.error(f"A tile of size `{e.args[0]}` is larger than the maximum allowed size of `{constants.MAX_TILE_SIZE}`.")
+            except errors.VariantError as e:
+                return await self.handle_variant_errors(ctx, e)
+            except errors.TextGenerationError as e:
+                return await self.handle_custom_text_errors(ctx, e)
 
-        filename = datetime.utcnow().strftime(
-            f"render_%Y-%m-%d_%H.%M.%S.{file_format}")
-        delta = perf_counter() - start
-        image = discord.File(buffer, filename=filename, spoiler=spoiler)
-        description = f"{'||' if spoiler else ''}`{ctx.message.content.replace('||', '').replace('`', '')}`{'||' if spoiler else ''}"
-        if do_embed:
-            embed = discord.Embed(color=self.bot.embed_color)
+            filename = datetime.utcnow().strftime(
+                f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
+            image = discord.File(buffer, filename=filename, spoiler=spoiler)
+            description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
+            if do_embed:
+                embed = discord.Embed(color=self.bot.embed_color)
 
-            def rendertime(v):
-                v *= 1000
-                nice = False
-                if math.ceil(v) == 69:
-                    nice = True
-                if objects == "lag":
-                    v *= 100000
-                return f'{v:.4f}' + ("(nice)" if nice else "")
+                def rendertime(v):
+                    v *= 1000
+                    nice = False
+                    if math.ceil(v) == 69:
+                        nice = True
+                    if objects == "lag":
+                        v *= 100000
+                    return f'{v:.4f}' + ("(nice)" if nice else "")
 
-            totalrendertime = rendertime(delta)
-            activerendertime = rendertime(tiledelta)
-            averagerendertime = rendertime(avgdelta)
-            maxrendertime = rendertime(maxdelta)
-            stats = f'''
-			Total render time: {totalrendertime} ms
-			Active render time: {activerendertime} ms
-			Tiles rendered: {tilecount}
-			Average render time of all tiles: {averagerendertime} ms
-			Maximum render time of any tile: {maxrendertime} ms
-			Cached frames: {unique_sprites}
-            Tile matrix shape: {grid_shape}
-			'''
+                stats = f'''
+    Response time: {rendertime(parsing_overhead + render_overhead + composite_overhead + saving_overhead)} ms
+    - Parsing overhead: {rendertime(parsing_overhead)} ms
+    - Rendering overhead: {rendertime(render_overhead)} ms
+    - Compositing overhead: {rendertime(composite_overhead)} ms
+    - Saving overhead: {rendertime(saving_overhead)} ms
+    Tiles rendered: {unique_tiles}
+    Frames rendered: {rendered_frames}
+    Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
+    Image size: {im_size}
+    '''
 
-            embed.add_field(name="Render statistics", value=stats)
-        else:
-            embed = None
-        if extra_buffer is not None and extra_names is not None:
-            extra_buffer.seek(0)
-            await ctx.reply(description[:2000], embed=embed,
-                            files=[discord.File(extra_buffer, filename=f"{extra_names[0]}_raw.zip"), image])
-        else:
-            await ctx.reply(description[:2000], embed=embed, file=image)
+                embed.add_field(name="Render statistics", value=stats)
+            else:
+                embed = None
+            if extra_buffer is not None:
+                extra_buffer.seek(0)
+                await ctx.reply(description[:2000], embed=embed,
+                                files=[discord.File(extra_buffer, filename=f"raw.zip"), image])
+            else:
+                await ctx.reply(description[:2000], embed=embed, file=image)
+        finally:
+            signal.alarm(0)
 
-    # hack
-    async def log_exceptions(self, ctx, awaitable):
-        try:
-            return await awaitable
-        except Exception as e:
-            await CommandErrorHandler(self.bot).on_command_error(ctx, e)
+    @commands.command(aliases=["t"])
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    async def tile(self, ctx: Context, *, objects: str = ""):
+        """Renders the tiles provided.
+
+        **Flags**
+        * See the `flags` commands for all the valid flags.
+
+        **Variants**
+        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
+
+        **Useful tips:**
+        * `-` : Shortcut for an empty tile.
+        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
+        * `$` : `$object` renders text objects.
+        * `,` : `$x,y,...` is expanded into `$x $y ...`
+        * `||` : Marks the output gif as a spoiler.
+        * `""`: `"x y ..."` is expanded into `$x $y $...`
+
+        **Example commands:**
+        `tile baba - keke`
+        `tile --palette=marshmallow keke:d baba:s`
+        `tile text_baba,is,you`
+        `tile baba&flag ||cake||`
+        `tile -P=mountain -B baba bird:l`
+        """
+        if self.bot.config['danger_mode']:
+            await warn_dangermode(ctx)
+        await self.start_timeout(
+            ctx,
+            objects=objects,
+            rule=False)
 
     @commands.command(aliases=["text"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -430,9 +524,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         **Useful tips:**
         * `-` : Shortcut for an empty tile.
         * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `tile_` : `tile_object` renders regular objects.
-        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
+        * `$` : `$object` renders tile objects.
+        * `,` : `$x,y,...` is expanded into `$x $y ...`
         * `||` : Marks the output gif as a spoiler.
+        * `""`: `"x y ..."` is expanded into `$x $y $...`
 
         **Example commands:**
         `rule baba is you`
@@ -441,11 +536,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         `rule baba eat baba - tile_baba tile_baba:l`
         """
         if self.bot.config['danger_mode']:
-            await self.warn_dangermode(ctx)
-        await start_timeout(self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=True)
+            await warn_dangermode(ctx)
+        await self.start_timeout(
+            ctx,
+            objects=objects,
+            rule=True)
 
     # Generates tiles from a text file.
     @commands.command()
@@ -457,59 +552,18 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """
         try:
             objects = str(from_bytes((await ctx.message.attachments[0].read())).best())
-            await start_timeout(self.render_tiles,
-                                ctx,
-                                objects=objects,
-                                rule=rule in [
-                                    '-r',
-                                    '--rule',
-                                    '-rule',
-                                    '-t',
-                                    '--text',
-                                    '-text'], timeout_multiplier=1.5)
+            await self.start_timeout(
+                ctx,
+                objects=objects,
+                rule=rule in [
+                    '-r',
+                    '--rule',
+                    '-rule',
+                    '-t',
+                    '--text',
+                    '-text'], timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
-
-    # Generates an animated gif of the tiles provided, using the default
-    # palette
-    @commands.command()
-    @commands.cooldown(5, 8, type=commands.BucketType.channel)
-    async def tile(self, ctx: Context, *, objects: str = ""):
-        """Renders the tiles provided.
-
-        **Flags**
-        * See the `flags` commands for all the valid flags.
-
-        **Variants**
-        * `:variant`: Append `:variant` to a tile to change different attributes of a tile. See the `variants` command for more.
-
-        **Useful tips:**
-        * `-` : Shortcut for an empty tile.
-        * `&` : Stacks tiles on top of each other. Tiles are rendered in stack order, so in `=rule baba&cursor me`, Baba and Me would be rendered below Cursor.
-        * `tile_` : `tile_object` renders regular objects.
-        * `,` : `tile_x,y,...` is expanded into `tile_x tile_y ...`
-        * `||` : Marks the output gif as a spoiler.
-
-        **Example commands:**
-        `tile baba - keke`
-        `tile --palette=marshmallow keke:d baba:s`
-        `tile text_baba,is,you`
-        `tile baba&flag ||cake||`
-        `tile -P=mountain -B baba bird:l`
-        """
-        if self.bot.config['danger_mode']:
-            await self.warn_dangermode(ctx)
-        await start_timeout(self.render_tiles,
-                            ctx,
-                            objects=objects,
-                            rule=False)
-
-    async def warn_dangermode(self, ctx: Context):
-        warning_embed = discord.Embed(
-            title="Warning: Danger Mode",
-            color=discord.Color(16711680),
-            description="Danger Mode has been enabled by the developer.\nOutput may not be reliable or may break entirely.\nProceed at your own risk.")
-        await ctx.send(embed=warning_embed, delete_after=5)
 
     async def search_levels(self, query: str, **flags: Any) -> OrderedDict[tuple[str, str], LevelData]:
         """Finds levels by query.
@@ -519,7 +573,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `world`: Which levelpack / world the level is from.
         """
         levels: OrderedDict[tuple[str, str],
-                            LevelData] = collections.OrderedDict()
+        LevelData] = collections.OrderedDict()
         f_map = flags.get("map")
         f_world = flags.get("world")
         async with self.bot.db.conn.cursor() as cur:
@@ -734,10 +788,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         custom_level: CustomLevelData | None = None
 
         spoiler = query.count("||") >= 2
-        fine_query = query.lower().strip().replace("|", "")
+        fine_query = query.strip().replace("|", "")
 
         # [abcd-0123]
-        if re.match(r"^[a-z\d]{4}-[a-z\d]{4}$", fine_query) and not mobile:
+        if re.match(r"^[A-Za-z\d]{4}-[A-Za-z\d]{4}$", fine_query) and not mobile:
             row = await self.bot.db.conn.fetchone(
                 '''
 				SELECT * FROM custom_levels WHERE code == ?;
@@ -760,7 +814,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                 custom_level = await self.bot.get_cog("Reader").render_custom_level(fine_query)
                             except ValueError as e:
                                 return await ctx.error(
-                                    f"The level code is valid, but the level's {e.args[1]} is too big to fit in a GIF. ({e.args[0] * 48} > 65535)")
+                                    f"The level code is valid, but the level's {e.args[1]} is too big to fit in a GIF. ({e.args[0] * 24} > 65535)")
                             except aiohttp.ClientResponseError:
                                 return await ctx.error(
                                     f"The Baba Is Bookmark site returned a bad response. Try again later.")
@@ -774,77 +828,60 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             levels = {}
             level = custom_level
 
+        footer = None
         if isinstance(level, LevelData):
             path = level.unique()
-            display = level.display()
+            display = level.display().upper()
             rows = [
-                f"Name: ||{display}||" if spoiler else f"Name: {display}",
-                f"ID: {path}",
+                f"`{path}`",
             ]
             if level.subtitle:
                 rows.append(
-                    f"Subtitle: {level.subtitle}"
+                    f"_{level.subtitle}_"
                 )
             mobile_exists = os.path.exists(
                 f"target/renders/{level.world}_m/{level.id}.gif")
 
             if not mobile and mobile_exists:
-                rows.append(
-                    f"*This level is also on mobile, see `+level mobile {level.unique()}`*"
-                )
+                footer = f"This level is also on mobile, see [level mobile {level.unique()}]"
             elif mobile and mobile_exists:
-                rows.append(
-                    f"*This is the mobile version. For others, see `+level {level.unique()}`*"
-                )
+                footer = f"This is the mobile version. For others, see [level {level.unique()}]"
 
             if mobile and mobile_exists:
+                filepath = f"target/renders/{level.world}_m/{level.id}.gif"
                 gif = discord.File(
-                    f"target/renders/{level.world}_m/{level.id}.gif",
+                    filepath,
                     filename=level.world + '_m_' + level.id + '.gif',
                     spoiler=spoiler)
             else:
                 if mobile and not mobile_exists:
-                    rows.append(
-                        "*This level doesn't have a mobile version. Using the normal gif instead...*")
+                    footer = "This level doesn't have a mobile version. Using the normal gif instead..."
+                filepath = f"target/renders/{level.world}/{level.id}.gif"
                 gif = discord.File(
-                    f"target/renders/{level.world}/{level.id}.gif",
+                    filepath,
                     filename=level.world + '_' + level.id + '.gif',
                     spoiler=spoiler)
         else:
             try:
+                filepath = f"target/renders/levels/{level.code}.gif"
                 gif = discord.File(
-                    f"target/renders/levels/{level.code}.gif",
+                    filepath,
                     filename=level.code + '.gif',
                     spoiler=spoiler)
             except FileNotFoundError:
                 await self.bot.get_cog("Reader").render_custom_level(fine_query)
+                filepath = f"target/renders/levels/{level.code}.gif"
                 gif = discord.File(
-                    f"target/renders/levels/{level.code}.gif",
+                    filepath,
                     filename=level.code + '.gif',
                     spoiler=spoiler)
             path = level.unique()
-            display = level.name
+            display = f"{level.name.upper()} (by {level.author})"
             rows = [
-                f"Name: ||{display}|| (by {level.author})"
-                if spoiler else f"Name: {display} (by {level.author})",
-                f"Level code: {path}",
+                f"`{path}`",
             ]
             if level.subtitle:
-                rows.append(
-                    f"Subtitle: {level.subtitle}"
-                )
-
-        if len(levels) > 0:
-            extras = [level.unique() for level in levels.values()]
-            if len(levels) > constants.OTHER_LEVELS_CUTOFF:
-                extras = extras[:constants.OTHER_LEVELS_CUTOFF]
-            paths = ", ".join(f"{extra}" for extra in extras)
-            plural = "result" if len(extras) == 1 else "results"
-            suffix = ", ..." if len(
-                levels) > constants.OTHER_LEVELS_CUTOFF else ""
-            rows.append(
-                f"*Found {len(levels)} other {plural}: {paths}{suffix}*"
-            )
+                rows.append(f"_{level.subtitle}_")
 
         formatted = "\n".join(rows)
 
@@ -853,245 +890,175 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             everyone=False, users=[
                 ctx.author], roles=False)
 
+        gif.spoiler = True
+
+        emb = discord.Embed(
+            color=self.bot.embed_color,
+            title=display,
+            description=formatted,
+        )
+        emb.set_footer(text=footer)
         # Send the result
-        await ctx.reply(formatted, file=gif, allowed_mentions=mentions)
+        await ctx.reply(embed=emb, file=gif, allowed_mentions=mentions)
 
-    @commands.command(aliases=["filterimages", "fi"])
-    @commands.cooldown(5, 8, commands.BucketType.channel)
-    async def filterimage(self, ctx: Context, *, query: str = ""):
-        """Performs filterimage-related actions like template creation,
-        conversion and accessing the database."""
-        name = None
-        if query.startswith("convert "):
-            query = query.split(" ")
-            url = query[2]
-            if url.startswith("http://"):
-                url = url[7:]
-            if not url.startswith("https://"):
-                url = "https://" + url
-            relative = (query[1] in ("relative", "rel"))
-            ifilterimage = Image.open(requests.get(
-                url, stream=True).raw).convert("RGBA")
-            fil = np.array(ifilterimage)
-            if relative:
-                fil[:, :, 0] -= np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T -
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            else:
-                fil[:, :, 0] += np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T +
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            ifilterimage = Image.fromarray(fil)
-            out = BytesIO()
-            ifilterimage.save(out, format="png", optimize=False)
-            out.seek(0)
-            file = discord.File(out, filename="filterimage.png")
-            await ctx.reply(
-                f'Converted filterimage from {"absolute" if relative else "relative"} to {"relative" if relative else "absolute"}:',
-                file=file
-            )
-        elif query == "convert":
-            await ctx.reply("""Converts a filterimage to relative or absolute from the other type.
-Usage:
-```filterimage convert [<relative|rel|absolute|abs> <URL>]```
-URL can be supplied with or without http(s) in this command, since it's not limited by colon separation.""")
-        elif query.startswith("create "):
-            query = query.split(" ")
-            size = query[2].split(",")
-            size = int(size[0]), int(size[1])
-            relative = (query[1] in ("relative", "rel"))
-            fil = np.zeros(size + (4,), dtype="uint8")
-            fil[:, :] = (128, 128, 255, 255)
-            if not relative:
-                fil[:, :, 0] += np.arange(fil.shape[0], dtype="uint8")
-                fil[:, :, 1] = (fil[:, :, 1].T +
-                                np.arange(fil.shape[1], dtype="uint8")).T
-            ifilterimage = Image.fromarray(fil)
-            out = BytesIO()
-            ifilterimage.save(out, format="png", optimize=False)
-            out.seek(0)
-            file = discord.File(out, filename="filterimage.png")
-            await ctx.reply(
-                f'Created filterimage template of size {size} in mode {"relative" if relative else "absolute"}:',
-                file=file
-            )
-        elif query == "create":
-            await ctx.reply("""Creates a filterimage template.
-Usage:
-```filterimage create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]```""")
-        elif query == "db" or query == "database":
-            embed = discord.Embed(
-                title=f"Sub-commands",
-                color=discord.Color(8421631)).set_author(
-                name="Filterimage Database",
-                icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-            embed.add_field(
-                name="Add a new filterimage to the database",
-                value="filterimage database register <name> <relative> <absolute> <url>",
-                inline=False)
-            embed.add_field(
-                name="Find a filterimage in the database",
-                value="filterimage database get <name>",
-                inline=False)
-            embed.add_field(
-                name="Delete an entry from the database",
-                value="filterimage database delete <name>",
-                inline=False)
-            embed.add_field(
-                name="Search the database",
-                value="filterimage database search <query>",
-                inline=False)
-            embed.add_field(
-                name="Count filterimages from the database",
-                value="filterimage database count",
-                inline=False)
-            await ctx.reply(embed=embed)
-        elif query.startswith("db") or query.startswith("database"):
-            query = query.split(" ")
-            if query[1] == "register":
-                if len(query) > 6:
-                    await ctx.reply("ERROR: Too many arguments (wrong command / syntax / accidental space somewhere?)")
-                    return
-                if len(query) < 6:
-                    await ctx.reply("ERROR: Not enough arguments (wrong command / syntax / forgot some arguments?)")
-                    return
-                name = query[2].lower()
-                truthy = ("yes", "true", "1")
-                relative = query[3].lower() in truthy
-                absolute = query[4].lower() in truthy
-                url = query[5]
-                if url.startswith("http://"):
-                    url = url[7:]
-                if not url.startswith("https://"):
-                    url = "https://" + url
-                async with self.bot.db.conn.cursor() as cursor:
-                    command = "SELECT name FROM filterimages WHERE url == ?;"
-                    args = (url,)
-                    await cursor.execute(command, args)
-                    dname = await cursor.fetchone()
-                    if dname:
-                        await ctx.reply(f"Filterimage already exists in the filterimage database with name `{dname}`!")
-                        return
-                command = "INSERT INTO filterimages VALUES (?, ?, ?, ?, ?);"
-                args = (name, relative, absolute, url, ctx.author.id)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                await ctx.reply(f"Success! Registered filterimage `{name}` in the filterimage database!")
-            elif query[1] == "get":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    await ctx.reply("ERROR: No name provided.")
-                    return
-                name = query[2].lower()
-                command = "SELECT * FROM filterimages WHERE name == ?;"
-                args = (name,)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchone()
-                    if results is None:
-                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
-                        return
-                    name, relative, absolute, url, userid = results
-                if url.startswith("http://"):
-                    url = url[7:]
-                if not url.startswith("https://"):
-                    url = "https://" + url
-                truefalseemoji = (
-                    ":negative_squared_cross_mark:",
-                    ":white_check_mark:")
-                description = f"""(Right click to copy url!)
-Relative: {truefalseemoji[int(relative)]}
-Absolute: {truefalseemoji[int(absolute)]}"""
-                user = await self.bot.fetch_user(userid)
-                embed = discord.Embed(
-                    title=f"Name: {name}",
-                    color=discord.Color(8421631),
-                    description=description,
-                    url=url).set_image(
-                    url=url).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                try:
-                    embed.set_author(name=user.name, icon_url=user.avatar.url)
-                except AttributeError:
-                    embed.set_author(name="[Icon unavailable] " + user.name)
-                await ctx.reply(embed=embed)
-            elif query[1] == "delete":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    await ctx.reply("ERROR: No name provided.")
-                    return
-                name = query[2].lower()
-                command = "SELECT * FROM filterimages WHERE name == ? AND creator == ?;"
-                args = (name, ctx.author.id)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchone()
-                    if results is None:
-                        await ctx.reply(
-                            f"Could not find filterimage `{name}` in the database! Does the entry exist, and did you create it?")
-                        return
-                command = "DELETE FROM filterimages WHERE name == ? AND creator == ?;"
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                await ctx.reply("Success!")
-            elif query[1] == "search":
-                if len(query) > 3:
-                    await ctx.reply("ERROR: A name can't have spaces.")
-                    return
-                if len(query) < 3:
-                    command = "SELECT name FROM filterimages"
-                    args = tuple()
-                else:
-                    command = "SELECT name FROM filterimages WHERE INSTR(name,?)<>0;"
-                    name = query[2].lower()
-                    args = (name,)
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute(command, args)
-                    results = await cursor.fetchall()
-                    if results is None:
-                        await ctx.reply(f"Could not find filterimage `{name}` in the database!")
-                        return
-                description = '\n'.join(''.join(str(value)
-                                                for value in row) for row in results)
-                embed = discord.Embed(
-                    title=f"Filterimage Database search results",
-                    color=discord.Color(8421631),
-                    description=description).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                await ctx.reply(embed=embed)
-            elif query[1] == "count":
-                async with self.bot.db.conn.cursor() as cursor:
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages;")
-                    countall = (await cursor.fetchone())[0]
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE relative==1;")
-                    countrelative = (await cursor.fetchone())[0]
-                    await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE absolute==1;")
-                    countabsolute = (await cursor.fetchone())[0]
-                embed = discord.Embed(
-                    title=f"Filterimage Database numbers",
-                    color=discord.Color(8421631)).set_footer(
-                    text="Filterimage Database",
-                    icon_url="https://cdn.discordapp.com/attachments/580445334661234692/896745220757155840/filterimageicon.png")
-                embed.add_field(name="Total filterimages", value=int(countall))
-                embed.add_field(
-                    name="Relative filterimages",
-                    value=int(countrelative))
-                embed.add_field(
-                    name="Absolute filterimages",
-                    value=int(countabsolute))
-                await ctx.reply(embed=embed)
-        else:
-            await ctx.reply("""Sub-commands:
-```convert [<relative|rel|absolute|abs> <URL>]
-create [<relative|rel|absolute|abs> <sizeX>,<sizeY>]
-database [...]```""")
+    @commands.group(aliases=["fi", "filter"], pass_context=True, invoke_without_command=True)
+    async def filterimage(self, ctx: Context):
+        """Performs filterimage-related actions like template creation, conversion and accessing the database.
+Filterimages are formatted as follows:
+- R: X offset of pixel's UV (-127 to 128)
+- G: Y offset of pixel's UV (-127 to 128)
+- B: Brightness of pixel (0 to 255)
+- A: Alpha of pixel (0 to 255)"""
+        await ctx.invoke(ctx.bot.get_command("cmds"), "filterimage")
 
+    @filterimage.command(aliases=["cvt"])
+    async def convert(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"]):
+        """Converts a filter to its opposing mode. An attachment with the filter is required."""
+        # Get the attached image, or throw an error
+        try:
+            filter_url = ctx.message.attachments[0].url
+        except IndexError:
+            return await ctx.error("The filter to be converted wasn't attached.")
+        filter_headers = requests.head(filter_url, timeout=3).headers
+        assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
+        with Image.open(requests.get(filter_url, stream=True).raw) as im:
+            fil = np.array(im.convert("RGBA"), dtype=np.uint8)
+        fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(1 if target_mode.startswith("abs") else -1)
+        out = BytesIO()
+        Image.fromarray(fil).save(out, format="png", optimize=False)
+        out.seek(0)
+        filename = f"{Path(ctx.message.attachments[0].filename).stem}-{target_mode}.png"
+        file = discord.File(out, filename=filename)
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Converted!",
+            description=f'Converted filterimage to {target_mode}.'
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        ).set_image(url=f"attachment://{filename}")
+        await ctx.reply(embed=emb, file=file)
+
+    @filterimage.command(aliases=["make", "mk"])
+    async def create(self, ctx: Context, target_mode: Literal["abs", "absolute", "rel", "relative"], width: int,
+                     height: int):
+        """Creates a template filter."""
+        assert width > 0 and height > 0, "Can't create a filter with a non-positive area!"
+        size = (height, width)
+        fil = np.ones((*size, 4), dtype=np.uint8) * 0xFF
+        fil[..., :2] -= 0x7F
+        fil[..., :2] += np.indices(fil.shape[1::-1], dtype=np.uint8).T * target_mode.startswith("abs")
+        out = BytesIO()
+        Image.fromarray(fil).save(out, format="png", optimize=False)
+        out.seek(0)
+        filename = f"filter-{size[1]}x{size[0]}-{target_mode}.png"
+        file = discord.File(out, filename=filename)
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Created!",
+            description=f'Created filterimage template of size {size} in mode {target_mode}.'
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        ).set_image(url=f"attachment://{filename}")
+        await ctx.reply(embed=emb, file=file)
+
+    @filterimage.command(aliases=["reg"])
+    async def register(self, ctx: Context, name: str, target_mode: Literal["abs", "absolute", "rel", "relative"]):
+        """Adds a filter to the database! Requires an attachment.
+    Keep in mind that if the message sent to create this filter is deleted, it will no longer work."""
+        assert len(ctx.message.attachments), "An image to be registered has to be supplied!"
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
+            dname = await cursor.fetchone()
+            if dname is not None:
+                return await ctx.error(f"Filter of name `{name}` already exists in the database!")
+            url = ctx.message.attachments[0].url
+            await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
+            command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
+            args = (name, target_mode.startswith("abs"), url, ctx.author.id)
+            await cursor.execute(command, args)
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title="Registered!",
+                description=f'Registered filter `{name}` in the filterimage database!\n_Keep in mind that if the message sent to create this filter is deleted, it will no longer work._'
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            )
+            await ctx.reply(embed=emb)
+
+    @filterimage.command()
+    async def get(self, ctx: Context, name: str):
+        """Gets information about a filter."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT * FROM filterimages WHERE name == ?;", name)
+            attrs = await cursor.fetchone()
+            if attrs is None:
+                return await ctx.error(f"Filter of name `{name}` isn't in the database!")
+            name, mode, url, author = attrs
+            mode = "absolute" if mode else "relative"
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title=name,
+                description=f"Mode: `{mode}`"
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            ).set_image(url=url)
+            user = await ctx.bot.fetch_user(author)
+            emb.set_author(name=f"{user.name}#{user.discriminator}",
+                           icon_url=user.avatar.url if user.avatar is not None else
+                           f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
+            await ctx.reply(embed=emb)
+
+    @filterimage.command(aliases=["del", "remove", "rm"])
+    async def delete(self, ctx: Context, name: str):
+        """Removes a filter from the database. You must have made it to do this."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute(
+                f"SELECT url FROM filterimages WHERE name == ?{'' if await ctx.bot.is_owner(ctx.author) else ' AND creator == ?'};",
+                (name,) if await ctx.bot.is_owner(ctx.author) else (name, ctx.author.id))
+            url = (await cursor.fetchone())
+            assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
+            url = url[0]
+            await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
+            del self.bot.db.filter_cache[name]
+            emb = discord.Embed(
+                color=ctx.bot.embed_color,
+                title="Deleted!",
+                description=f"Removed the filter {name} from the database."
+            ).set_footer(
+                text="Filters by CenTdemeern1",
+                icon_url="https://sno.mba/assets/filter_icon.png"
+            )
+            await ctx.reply(embed=emb)
+
+    @filterimage.command(aliases=["?", "query", "find", "list"])
+    async def search(self, ctx: Context, pattern: str = ".*"):
+        """Lists filters that match a regular expression."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT name FROM filterimages WHERE name REGEXP ?", pattern)
+            names = [row[0] for row in await cursor.fetchall()]
+        return await ButtonPages(FilterQuerySource(sorted(names))).start(ctx)
+
+    @filterimage.command(aliases=["#"])
+    async def count(self, ctx: Context):
+        """Gets the amount of filters in the database."""
+        async with self.bot.db.conn.cursor() as cursor:
+            await cursor.execute("SELECT COUNT(*) FROM filterimages;")
+            count = (await cursor.fetchone())[0]
+            await cursor.execute("SELECT COUNT(*) FROM filterimages WHERE absolute == 1;")
+            count_abs = (await cursor.fetchone())[0]
+        emb = discord.Embed(
+            color=ctx.bot.embed_color,
+            title="Stats",
+            description=f"There are {count} filters in the database, {count_abs} absolute and {count - count_abs} relative."
+        ).set_footer(
+            text="Filters by CenTdemeern1",
+            icon_url="https://sno.mba/assets/filter_icon.png"
+        )
+        await ctx.reply(embed=emb)
 
 async def setup(bot: Bot):
     await bot.add_cog(GlobalCog(bot))

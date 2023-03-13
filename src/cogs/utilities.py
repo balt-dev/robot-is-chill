@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 from os import listdir
 import os.path
-from typing import Any, Sequence
+from typing import Any, Sequence, Optional
 
 import json
 
@@ -21,7 +21,9 @@ from PIL import Image, ImageFont, ImageDraw
 
 from . import flags
 from .. import constants
-from ..types import Bot, Context
+from ..tile import Tile
+from ..types import Bot, Context, Variant, Color
+from ..utils import ButtonPages
 
 
 class SearchPageSource(menus.ListPageSource):
@@ -53,7 +55,7 @@ class SearchPageSource(menus.ListPageSource):
                 continue
             else:
                 lines.append(f"({type}) {short}")
-            lines.append("\n\n")
+            lines.append("\n")
 
         if len(lines) > 1:
             lines[-1] = "```"
@@ -100,34 +102,36 @@ class FlagPageSource(menus.ListPageSource):
         )
         embed.description = '\n'.join([str(entry) for entry in entries])
         embed.set_footer(text="Page " + str(menu.current_page +
-                         1) + "/" + str(self.get_max_pages()))
+                                            1) + "/" + str(self.get_max_pages()))
         return embed
 
 
-class ButtonPages(
-        ViewMenuPages,
-        inherit_buttons=False):
-    @menus.button('⏮', position=menus.First())
-    async def go_to_first_page(self, payload):
-        await self.show_page(0)
+type_format = {
+    "sprite": "sprite augmentation",
+    "tile": "tile creation",
+    "post": "compositing",
+    "sign": "sign text parsing"
+}
 
-    @menus.button('◀', position=menus.First(1))
-    async def go_to_previous_page(self, payload):
-        await self.show_checked_page(self.current_page - 1)
+class VariantSource(menus.ListPageSource):
+    def __init__(
+            self, data: list[Variant]):
+        super().__init__(data, per_page=3)
 
-    @menus.button('▶', position=menus.Last(1))
-    async def go_to_next_page(self, payload):
-        await self.show_checked_page(self.current_page + 1)
-
-    @menus.button('⏭', position=menus.Last(2))
-    async def go_to_last_page(self, payload):
-        max_pages = self._source.get_max_pages()
-        last_page = max(max_pages - 1, 0)
-        await self.show_page(last_page)
-
-    @menus.button('⏹', position=menus.Last())
-    async def stop_pages(self, payload):
-        self.stop()
+    async def format_page(self, menu: menus.Menu, entries: list[Variant]) -> discord.Embed:
+        embed = discord.Embed(
+            title=f"{menu.current_page+1}/{self.get_max_pages()}",
+            color=menu.bot.embed_color
+        )
+        embed.description = "```ansi"
+        for entry in entries:
+            embed.description += f"""
+\u001b[1;4;37m{entry.__name__.removesuffix("Variant")}\u001b[0;30m - \u001b[0;37m{entry.__doc__}\u001b[0m
+\u001b[0;30m- \u001b[0;34mSyntax: {entry.syntax}
+\u001b[0;30m- \u001b[0;34mApplied during \u001b[1;36m{type_format[entry.type]}\u001b[0m
+"""
+        embed.description += "```"
+        return embed
 
 
 class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
@@ -165,7 +169,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def search(self, ctx: Context, *, query: str):
+    async def search(self, ctx: Context, *, query: str = ""):
         """Searches through bot data based on a query.
 
         This can return tiles, levels, palettes, variants, and sprite mods.
@@ -186,7 +190,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         * `author`: For custom levels, filters by the author.
 
         You can also filter by the result type:
-        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, or `mod`.
+        * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, `world`, or `mod`.
 
         **Example commands:**
         `search baba`
@@ -199,7 +203,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         match = re.search(flag_pattern, query)
         plain_query = query.lower()
 
-        # Whether or not to use simple string matching
+        # Whether to use simple string matching
         has_flags = bool(match)
 
         # Determine which flags to filter with
@@ -216,76 +220,67 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         results: dict[tuple[str, str], Any] = {}
 
         if flags.get("type") is None or flags.get("type") == "tile":
-            if plain_query.strip() or any(
-                    x in flags for x in (
-                        "sprite",
-                        "text",
-                        "source",
-                        "modded",
-                        "color",
-                        "tiling",
-                        "tag")):
-                color = flags.get("color")
-                f_color_x = f_color_y = None
-                if color is not None:
-                    match = re.match(r"(\d)/(\d)", color)
-                    if match is None:
-                        z = constants.COLOR_NAMES.get("color")
-                        if z is not None:
-                            f_color_x, f_color_y = z
-                    else:
-                        f_color_x = int(match.group(1))
-                        f_color_y = int(match.group(2))
-                rows = await self.bot.db.conn.fetchall(
-                    f'''
-					SELECT * FROM tiles
-					WHERE name LIKE "%" || :name || "%" AND (
-						CASE :f_text
-							WHEN NULL THEN 1
-							WHEN "false" THEN (name NOT LIKE "text_%")
-							WHEN "true" THEN (name LIKE "text_%")
-							ELSE 1
-						END
-					) AND (
-						:f_source IS NULL OR source == :f_source
-					) AND (
-						CASE :f_modded
-							WHEN NULL THEN 1
-							WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
-							WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
-							ELSE 1
-						END
-					) AND (
-						:f_color_x IS NULL AND :f_color_y IS NULL OR (
-							(
-								inactive_color_x == :f_color_x AND
-								inactive_color_y == :f_color_y
-							) OR (
-								active_color_x == :f_color_x AND
-								active_color_y == :f_color_y
-							)
-						)
-					) AND (
-						:f_tiling IS NULL OR CAST(tiling AS TEXT) == :f_tiling
-					) AND (
-						:f_tag IS NULL OR INSTR(tags, :f_tag)
-					)
-					ORDER BY name, version ASC;
-					''',
-                    dict(
-                        name=plain_query,
-                        f_text=flags.get("text"),
-                        f_source=flags.get("source"),
-                        f_modded=flags.get("modded"),
-                        f_color_x=f_color_x,
-                        f_color_y=f_color_y,
-                        f_tiling=flags.get("tiling"),
-                        f_tag=flags.get("tag")
+            color = flags.get("color")
+            f_color_x = f_color_y = None
+            if color is not None:
+                match = re.match(r"(\d)/(\d)", color)
+                if match is None:
+                    z = constants.COLOR_NAMES.get("color")
+                    if z is not None:
+                        f_color_x, f_color_y = z
+                else:
+                    f_color_x = int(match.group(1))
+                    f_color_y = int(match.group(2))
+            rows = await self.bot.db.conn.fetchall(
+                f'''
+                SELECT * FROM tiles
+                WHERE name LIKE "%" || :name || "%" AND (
+                    CASE :f_text
+                        WHEN NULL THEN 1
+                        WHEN "false" THEN (name NOT LIKE "text_%")
+                        WHEN "true" THEN (name LIKE "text_%")
+                        ELSE 1
+                    END
+                ) AND (
+                    :f_source IS NULL OR source == :f_source
+                ) AND (
+                    CASE :f_modded
+                        WHEN NULL THEN 1
+                        WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
+                        WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
+                        ELSE 1
+                    END
+                ) AND (
+                    :f_color_x IS NULL AND :f_color_y IS NULL OR (
+                        (
+                            inactive_color_x == :f_color_x AND
+                            inactive_color_y == :f_color_y
+                        ) OR (
+                            active_color_x == :f_color_x AND
+                            active_color_y == :f_color_y
+                        )
                     )
+                ) AND (
+                    :f_tiling IS NULL OR CAST(tiling AS TEXT) == :f_tiling
+                ) AND (
+                    :f_tag IS NULL OR INSTR(tags, :f_tag)
                 )
-                for row in rows:
-                    results["tile", row["name"]] = TileData.from_row(row)
-                    results["blank_space", row["name"]] = None
+                ORDER BY name, version ASC;
+                ''',
+                dict(
+                    name=plain_query,
+                    f_text=flags.get("text"),
+                    f_source=flags.get("source"),
+                    f_modded=flags.get("modded"),
+                    f_color_x=f_color_x,
+                    f_color_y=f_color_y,
+                    f_tiling=flags.get("tiling"),
+                    f_tag=flags.get("tag")
+                )
+            )
+            for row in rows:
+                results["tile", row["name"]] = TileData.from_row(row)
+                results["blank_space", row["name"]] = None
 
         if flags.get("type") is None or flags.get("type") == "level":
             if flags.get("custom") is None or flags.get("custom") == "true":
@@ -333,10 +328,9 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
             if flags.get("custom") is None or not flags.get(
                     "custom") == "false":
-                if plain_query.strip() or any(x in flags for x in ("map", "world")):
-                    levels = await self.bot.get_cog("Baba Is You").search_levels(plain_query, **flags)
-                    for (world, id), data in levels.items():
-                        results["level", f"{world}/{id}"] = data
+                levels = await self.bot.get_cog("Baba Is You").search_levels(plain_query, **flags)
+                for (world, id), data in levels.items():
+                    results["level", f"{world}/{id}"] = data
 
         if flags.get("type") is None and plain_query or flags.get(
                 "type") == "palette":
@@ -360,11 +354,16 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 results[a] = b
 
         if flags.get("type") is None and plain_query or flags.get(
-                "type") == "variant":
-            for variant in self.bot.handlers.all_variants():
-                if plain_query.lower() in variant.lower():
-                    results["variant", variant] = variant
+                "type") == "world":
+            out = []
+            for path in Path("data/levels").glob("*"):
+                out.append((("world", path.stem), path.stem))
+            out.sort()
+            for a, b in out:
+                results[a] = b
 
+        if "variant" in query:
+            await ctx.reply("_Looking for variants? They've moved to the `variants` command._", delete_after=10, mention_author=False)
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
@@ -372,15 +371,26 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             ),
         ).start(ctx)
 
-    @commands.command()
+    @commands.command(name="variants", aliases=["var", "vars", "variant"])
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def variants(self, ctx: Context):
-        """Alias for =search type:variant."""
-        await self.search(ctx, query='type:variant')
+    async def variants(self, ctx: Context, query: Optional[str] = None):
+        """Shows all the bot's variants."""
+        def sort(variant):
+            return variant.__name__
+        variants = ctx.bot.variants._values
+        if query is not None:
+            variants = [var for var in variants if (query in var.__name__.lower() or query in var.__doc__) and not var.hidden]
+        assert len(variants) > 0, f"No variants were found with the query `{query}`!"
+        await ButtonPages(
+            source=VariantSource(
+                sorted(variants, key=sort)  # Sort alphabetically
+            ),
+        ).start(ctx)
+
 
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
-    async def grabtile(self, ctx: Context, name: str):
+    async def grab(self, ctx: Context, name: str):
         """Gets the files for a specific tile from the bot."""
         #
         async with self.bot.db.conn.cursor() as cur:
@@ -425,12 +435,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             colour=self.bot.embed_color,
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
-    @commands.command(name="seedcracker", aliases=['cracker'])
-    async def send_seedcracker(self, ctx: Context):
-        """Sends the seedcracker program as a file."""
-        with open('src/seedcracker.py', mode='rb') as f:
-            await ctx.reply(file=discord.File(f, filename='seedcracker.py'))
-
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
     async def show_palette(self, ctx: Context, palette: str = 'default', color: str = None):
@@ -438,27 +442,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         This is useful for picking colors from the palette.
         """
-
-        assert palette.find(
-            '..') == -1, 'No looking at the host\'s hard drive, thank you very much.'
-        try:
-            img = Image.open(f"data/palettes/{palette}.png")
-        except FileNotFoundError:
-            img = Image.open(f"data/palettes/default.png")
-            color = palette
-            try:
-                x, y = color.split('/')
-                x, y = min(6, max(int(x), 0)), min(6, max(int(y), 0))
-                r, g, b = img.convert('RGB').getpixel((x, y))
-            except ValueError:
+        p_cache = self.bot.renderer.palette_cache
+        img = p_cache.get(palette, None)
+        if img is None:
+            if "/" not in palette:
                 return await ctx.error(f'The palette {palette} could not be found.')
+            palette, color = "default", palette
         if color is not None:
-            try:
-                x, y = color.split('/')
-                x, y = min(6, max(int(x), 0)), min(6, max(int(y), 0))
-                r, g, b = img.convert('RGB').getpixel((x, y))
-            except ValueError:
-                return await ctx.error(f'`{color}` is an invalid palette index.')
+            r, g, b, _ = Color.parse(Tile(name="<palette command>", palette=palette), p_cache, color)
             d = discord.Embed(
                 color=discord.Color.from_rgb(r, g, b),
                 title=f"Color: #{hex((r << 16) | (g << 8) | b)[2:].zfill(6)}"
@@ -466,47 +457,38 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             return await ctx.reply(embed=d)
         else:
             txtwid, txthgt = img.size
-            img = img.resize(
+            pal_img = img.resize(
                 (img.width * constants.PALETTE_PIXEL_SIZE,
                  img.height * constants.PALETTE_PIXEL_SIZE),
                 resample=Image.NEAREST
-            )
-            font = ImageFont.truetype("data/04b03.ttf", 16)
-            draw = ImageDraw.Draw(img)
+            ).convert("RGBA")
+            font = ImageFont.truetype("data/fonts/04b03.ttf", 16)
+            draw = ImageDraw.Draw(pal_img)
             for y in range(txthgt):
                 for x in range(txtwid):
-                    try:
-                        n = img.getpixel(
+                    n = pal_img.getpixel(
+                        (x * constants.PALETTE_PIXEL_SIZE,
+                         (y * constants.PALETTE_PIXEL_SIZE)))
+                    if (n[0] + n[1] + n[2]) / 3 > 128:
+                        draw.text(
                             (x * constants.PALETTE_PIXEL_SIZE,
-                             (y * constants.PALETTE_PIXEL_SIZE)))
-                        if (n[0] + n[1] + n[2]) / 3 > 128:
-                            draw.text(
-                                (x * constants.PALETTE_PIXEL_SIZE,
-                                 (y * constants.PALETTE_PIXEL_SIZE) - 2),
-                                str(x) + "," + str(y),
-                                (1,
-                                 1,
-                                 1,
-                                 255),
-                                font,
-                                layout_engine=ImageFont.LAYOUT_BASIC)
-                        else:
-                            draw.text(
-                                (x * constants.PALETTE_PIXEL_SIZE,
-                                 (y * constants.PALETTE_PIXEL_SIZE) - 2),
-                                str(x) + "," + str(y),
-                                (255,
-                                 255,
-                                 255,
-                                 255),
-                                font,
-                                layout_engine=ImageFont.LAYOUT_BASIC)
-                    except BaseException:
-                        pass
+                             (y * constants.PALETTE_PIXEL_SIZE) - 2),
+                            f"{x},{y}",
+                            (1, 1, 1, 255),
+                            font,
+                            layout_engine=ImageFont.LAYOUT_BASIC)
+                    else:
+                        draw.text(
+                            (x * constants.PALETTE_PIXEL_SIZE,
+                             (y * constants.PALETTE_PIXEL_SIZE) - 2),
+                            f"{x},{y}",
+                            (255, 255, 255, 255),
+                            font,
+                            layout_engine=ImageFont.LAYOUT_BASIC)
             buf = BytesIO()
-            img.save(buf, format="PNG")
+            pal_img.save(buf, format="PNG")
             buf.seek(0)
-            file = discord.File(buf, filename=f"palette_{palette}.png")
+            file = discord.File(buf, filename=f"{palette}.png")
             await ctx.reply(f"Palette `{palette}`:", file=file)
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
