@@ -1,0 +1,6 @@
+Tile creation variants, for the most part, manipulate which sprite of the tile you get. For example, `baba:l` gives you the sprite of `baba` facing left, while `keke:s` gives you the sprite of `keke` asleep. These variants can usually be stacked, so `it:d:s` (mind the order) gives `it`, facing down, and asleep.
+For tiles with multiple animation frames, like `belt`, `baba`, `clock`, etc, the variant `:a<n>` can choose the desired animation frame.
+To go along with this, for tiles that tile, there's special variants for manually setting its connections. These are `:tr`, `tu`, `tl`, `td`, and for tiles that support corner tiling, `tur`, `tul`, `tdr`, and `tdl`. These also stack, so `wall:tl:td` gives you a wall tiled on both horizontal sides.
+And finally, if you need specifically one animation frame and know its internal ID, it can be specified by number. `:<frame>`
+Colors can also be specified to change the tile's color. These can be specified with a color name, like `red`, `blue`, `gray`/`grey`, etc, as a palette index `x/y`, or as a hex color `#RGB[A]` or `#RRGGBB[AA]`.
+The first applied color overrides the default color as a tile variant, and subsequent colors are multiplied onto the sprite as sprite variants, which are covered on the next page.

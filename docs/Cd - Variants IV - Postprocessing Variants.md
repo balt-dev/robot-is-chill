@@ -1,0 +1,3 @@
+Post-processing variants are applied _during the placement of the tile on the grid_, meaning they apply after anything else. These are all manipulating either where or how the tile is placed. There are only two main ones, being `:<blending>` and `:disp<x>/<y>`.
+`:<blending>` sets an alternative blending mode for the tile to use. More information about these can be found in the variant description, or on [the Wikipedia page for blending modes](https://en.wikipedia.org/wiki/Blend_modes).
+`:displace<x>/<y>` displaces where the sprite will be put on the render, in pixels. This is extremely useful for making dioramas, scenes, or anything that diverges from the actual game of Baba Is You.

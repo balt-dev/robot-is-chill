@@ -288,7 +288,7 @@ _RocketRace#0798_ - Original lead
 
         await ctx.send("".join(message))
 
-    @commands.command()
+    @commands.command(aliases=["docs"])
     async def doc(self, ctx: Context, page: int = 0):
         """Get a tutorial on how to use the bot."""
         source = DocsPageSource()
