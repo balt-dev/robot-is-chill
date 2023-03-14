@@ -84,7 +84,6 @@ class DocsPageSource(menus.ListPageSource):
         super().__init__(docs, per_page=1)
 
     async def format_page(self, menu: menus.Menu, entry: tuple[str, str]) -> discord.Embed:
-        print(repr(entry))
         title, description = entry
         embed = discord.Embed(
             color=menu.bot.embed_color,
