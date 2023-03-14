@@ -18,13 +18,14 @@ If you want to display a text object in a `tile` render, prefix the object's nam
 text_baba text_is text_you
 ```
 turns into a render with the baba tile on top, and the sentence "BABA IS YOU" on bottom.
-This can be shortened with commas: ```
+This can be shortened with commas: 
+```
 text_baba,is,you
 ```
 If you're rendering using `text`, do the opposite, and prefix any tiles with `tile_`. 
 A good shorthand for `text_`/`tile_` is using `$`. `$` prefixing a tile will swap it for its counterpart, no matter if you're using `text` or `tile`. This can also be done by enclosing the tiles in quotes.
 ```
-baba - text_baba,is,you
-wall - $wall,is,stop
-flag - "flag is win"
+wall wall wall - text_baba,is,you
+tile&baba tile tile&flag - $wall,is,stop
+wall wall wall - "flag is win"
 ```

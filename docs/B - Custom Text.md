@@ -14,4 +14,4 @@ Text can also be split more than once! This works about how you'd expect.
 
 If you want to put a space, either use a `~` or escape it with `\`. That is, you can type `A~B/C~D`, or `A\ B/C\ D`. 
 
-SPOILERS: ||If you want letter-like text, like AB or KE, you can use the `:letter` variant on text to do that.||
+SPOILERS FOR BABA IS YOU: ||If you want letter-like text, like AB or KE, you can use the `:letter` variant on text to do that.||

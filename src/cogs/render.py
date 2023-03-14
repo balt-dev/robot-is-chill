@@ -197,7 +197,7 @@ class Renderer:
                 img = Image.new("RGBA", tuple(default_size[::-1]))
                 # for loop in case multiple background images are used
                 # (i.e. baba's world map)
-                bg_img: Image.Image = images[frame - 1].convert("RGBA")
+                bg_img: Image.Image = images[(frame - 1) % len(images)].convert("RGBA")
                 bg_img = bg_img.resize((bg_img.width // upscale, bg_img.height // upscale), Image.NEAREST)
                 img.paste(bg_img, (0, 0), mask=bg_img)
                 for i in range(animation_wobble):

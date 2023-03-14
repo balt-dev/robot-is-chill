@@ -334,6 +334,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     except:
                         return None
 
+                user_macros = ctx.bot.macros | kwargs.get("macro", {})
+
                 pal = kwargs.get("palette", "default")
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
@@ -343,7 +345,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     if (match := re.fullmatch(r"\{(.*)}(.*)", tile)) is not None:
                                         sign_text = SignText(text=match.group(1), x=x, y=y, time_start=d)
                                         variants = [variant for variant in match.group(2).split(":") if len(variant)]
-                                        variants = parse_variants(font_variants, variants, self.bot).get("sign", [])
+                                        variants = parse_variants(
+                                            font_variants, variants,
+                                            macros=user_macros
+                                        ).get("sign", [])
                                         for variant in variants:
                                             await variant.apply(sign_text, bot=self.bot, palette=pal)
                                         layer_grid[d:, l, y, x] = TileSkeleton()
@@ -372,18 +377,22 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                                 possible_variants, tile, rule,
                                                 palette=pal, bot=self.bot,
                                                 global_variant=global_variant,
-                                                possible_variant_names=possible_variant_names
+                                                possible_variant_names=possible_variant_names,
+                                                macros=user_macros
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
                                     else:
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
-                                            possible_variants,
-                                            layer_grid[d - 1, l, y, x].raw_string.split(";" if ";" in tile else ":", 1)[
-                                                0] + tile,
-                                            rule, bot=self.bot,
-                                            possible_variant_names=possible_variant_names)
+                                                possible_variants,
+                                                layer_grid[d - 1, l, y, x].raw_string.split(
+                                                    ";" if ";" in tile else ":", 1
+                                                )[0] + tile,
+                                                rule, bot=self.bot,
+                                                possible_variant_names=possible_variant_names,
+                                                macros=user_macros
+                                            )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
                 # Get the dimensions of the grid

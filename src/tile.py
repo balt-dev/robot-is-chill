@@ -13,17 +13,17 @@ from .types import Variant, Context, RegexDict
 
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
-                   bot=None, name=None, possible_variant_names=[]):
+                   name=None, possible_variant_names=[], macros={}):
     macro_count = 0
     out = {}
     i = 0
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
-        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in bot.macros:
+        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in macros:
             assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
             macro_count += 1
             raw_macro, *macro_args = raw_variant[2:].split("/")
-            macro = bot.macros[raw_macro].value
+            macro = macros[raw_macro].value
             for j, arg in enumerate(macro_args):
                 macro = macro.replace(f"${j + 1}", arg)
             del raw_variants[i]
@@ -58,7 +58,7 @@ class TileSkeleton:
 
     @classmethod
     async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
-                    bot=None, global_variant="", possible_variant_names=[]):
+                    bot=None, global_variant="", possible_variant_names=[], macros={}):
         out = cls()
         if string == "-":
             return out
@@ -86,8 +86,8 @@ class TileSkeleton:
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
             raw_variants.insert(0, "m!2ify")
-        out.variants |= parse_variants(possible_variants, raw_variants, bot=bot, name=out.name,
-                                       possible_variant_names=possible_variant_names)
+        out.variants |= parse_variants(possible_variants, raw_variants, name=out.name,
+                                       possible_variant_names=possible_variant_names, macros=macros)
         return out
 
 

@@ -392,16 +392,13 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def grab(self, ctx: Context, name: str):
         """Gets the files for a specific tile from the bot."""
-        #
         async with self.bot.db.conn.cursor() as cur:
             await ctx.typing()
             result = await cur.execute(
                 'SELECT DISTINCT sprite, source, active_color_x, active_color_y, tiling FROM tiles WHERE name = (?)',
                 name)
             try:
-                sprite_name, source, colorx, colory, tiling = (await result.fetchone())[:]
-            # not sure why this [:] is here but i bet it's important and i'm
-            # too lazy to test so i'm keeping it
+                sprite_name, source, colorx, colory, tiling = tuple(await result.fetchone())
             except BaseException:
                 return await ctx.error(f'Tile {name} not found!')
             files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')

@@ -12,7 +12,7 @@ from PIL import Image
 from .. import constants
 from ..errors import InvalidFlagError
 from ..tile import Tile
-from ..types import Context, Color
+from ..types import Context, Color, Macro
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -20,15 +20,15 @@ if TYPE_CHECKING:
 
 class Flag:
     def __init__(
-        self,
-        *,
-        match: str,
-        syntax: str,
-        description: str,
-        kwargs: list[str],
-        mutator=(
-            lambda x,
-            c: x)):
+            self,
+            *,
+            match: str,
+            syntax: str,
+            description: str,
+            kwargs: list[str],
+            mutator=(
+                    lambda x,
+                           c: x)):
         self.pattern = re.compile(match)
         self.syntax = syntax
         self.description = description
@@ -75,15 +75,53 @@ class Flags:
         return decorator
 
 
+async def find_message(ctx):
+    msg = None
+    do_finally = True
+    try:
+        msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+        if not msg.attachments:
+            do_finally = False
+            await ctx.error('The replied message doesn\'t have an attachment. Did you reply to the bot?')
+            return None
+    except BaseException:
+        async for m in ctx.channel.history(limit=10):
+            if m.author.id == ctx.bot.user.id and m.attachments:
+                try:
+                    reply = await ctx.channel.fetch_message(m.reference.message_id)
+                    if reply.author == ctx.message.author:
+                        msg = m
+                        break
+                except BaseException:
+                    pass
+        if msg is None:
+            do_finally = False
+            await ctx.error('None of your commands were found in the last `10` messages.')
+            return None
+    finally:
+        if do_finally:
+            # try:
+            assert int(
+                requests.head(msg.attachments[0].url, stream=True)
+                .headers.get('content-length', 0)) <= constants.COMBINE_MAX_FILESIZE, \
+                f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
+            with Image.open(requests.get(msg.attachments[0].url, stream=True).raw) as im:
+                out = []
+                for frame in range(im.n_frames):
+                    im.seek(frame)
+                    out.append(im.copy())
+                return tuple(out)
+
+
 async def setup(bot: Bot):
     flags = Flags()
     bot.flags = flags
 
     @flags.register(match=r"(?:--background|-b)(?:=("
-                         rf"(?:#(?:[0-9A-Fa-f]{{2}}){{3,4}})|"
-                         rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
-                         rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
-                         rf"(?:-?\d+\/-?\d+)))?",
+                          rf"(?:#(?:[0-9A-Fa-f]{{2}}){{3,4}})|"
+                          rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
+                          rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
+                          rf"(?:-?\d+\/-?\d+)))?",
                     syntax="(-b | --background)=#<color: Color>",
                     kwargs=["background"])
     async def background(match, _):
@@ -144,42 +182,15 @@ async def setup(bot: Bot):
                     syntax="-c | --combine",
                     kwargs=["before_images"])
     async def combine(_, ctx):
-        """Sets an image to combine this render with."""  # god this one's so jank.
-        msg = None
-        do_finally = True
-        try:
-            msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-            if not msg.attachments:
-                do_finally = False
-                return await ctx.error(
-                    'The replied message doesn\'t have an attachment. Did you reply to the bot?')
-        except BaseException:
-            async for m in ctx.channel.history(limit=10):
-                if m.author.id == bot.user.id and m.attachments:
-                    try:
-                        reply = await ctx.channel.fetch_message(m.reference.message_id)
-                        if reply.author == ctx.message.author:
-                            msg = m
-                            break
-                    except BaseException:
-                        pass
-            if msg is None:
-                do_finally = False
-                return await ctx.error('None of your commands were found in the last `10` messages.')
-        finally:
-            if do_finally:
-                # try:
-                assert int(
-                    requests.head(
-                        msg.attachments[0].url, stream=True).headers.get(
-                        'content-length',
-                        0)) <= constants.COMBINE_MAX_FILESIZE, f'Prepended image too large! Max filesize is `{constants.COMBINE_MAX_FILESIZE}` bytes.'
-                with Image.open(requests.get(msg.attachments[0].url, stream=True).raw) as im:
-                    out = []
-                    for frame in range(im.n_frames):
-                        im.seek(frame)
-                        out.append(im.copy())
-                    return tuple(out),
+        """Sets an image to combine this render with."""
+        return await find_message(ctx),
+
+    @flags.register(match=r"-bg|--combine-background",
+                    syntax="-bg | --combine-background",
+                    kwargs=["images"])
+    async def combine_background(_, ctx):
+        """Sets an image to set as the background for this render."""
+        return await find_message(ctx),
 
     @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
                     syntax="(--speed | -speed)=<speed: int>[%]",
@@ -303,4 +314,4 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
     async def macro(match, __):
         """Define macros for variants."""
         assert ";" not in match.group(2), "Can't have persistent variants in macros!"
-        return {match.group(1): match.group(2)},
+        return {match.group(1): Macro(value=match.group(2), description="<internal>", author=-1)},

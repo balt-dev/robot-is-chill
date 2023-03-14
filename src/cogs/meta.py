@@ -33,6 +33,7 @@ class CommandPageSource(menus.ListPageSource):
             if isinstance(command, commands.Group) and not command.hidden and command.name != "jishaku":
                 children = []
                 for child in command.commands:
+                    child = child.copy()
                     child.name = f"{command.name} {child.name}"
                     child.aliases = tuple(f"{command.name} {alias}" for alias in child.aliases)
                     children.append(child)
@@ -77,7 +78,7 @@ class DocsPageSource(menus.ListPageSource):
         docs = []
         for path in sorted(glob("docs/*.md")):
             with open(path, "r") as f:
-                match = re.fullmatch(r".+ - (.+)", Path(path).stem)
+                match = re.fullmatch(r".+? - (.+)", Path(path).stem)
                 assert match is not None, "One or more of the documentation files are invalid! Please contact the owner."
                 title = match.group(1)
                 docs.append((title, f.read()))

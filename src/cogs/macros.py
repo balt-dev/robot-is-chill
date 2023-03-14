@@ -37,7 +37,7 @@ class MacroCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    @commands.group(aliases=["m"], pass_context=True, invoke_without_command=True)
+    @commands.group(aliases=["m", "macros"], pass_context=True, invoke_without_command=True)
     async def macro(self, ctx: Context):
         """Front-end for letting users (that means you!) create, edit, and remove variant macros.
     Macros are simply a way of aliasing one or more variants to one name.

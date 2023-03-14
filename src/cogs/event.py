@@ -43,6 +43,9 @@ If you feel this was unjustified, please DM the bot owner.''')
         if self.bot.config['owner_only_mode'][0] and ctx.author.id != self.bot.owner_id:
             await ctx.error(f'The bot is currently in owner only mode. The owner specified this reason:\n`{config.owner_only_mode[1]}`')
             return False
+        if ctx.message.content[0] == "-":
+            await ctx.error("Bot's out of beta! :tada:\nTry to switch your muscle memory back from `-`.")
+            return False
         return True
 
 
