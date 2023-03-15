@@ -172,12 +172,14 @@ async def on_command(ctx):
     await ctx.send(embed=embed, delete_after=13)
     try:
         webhook = await bot.fetch_webhook(webhooks.logging_id)
+        ctx: Context
         embed = discord.Embed(
             description=ctx.message.content,
             color=config.logging_color)
         embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
                          icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
-        embed.set_footer(text=str(ctx.author.id))
+        if not isinstance(ctx.channel, discord.DMChannel):
+            embed.set_footer(text=f"{ctx.message.guild.name} ({ctx.message.guild.id})", icon_url=ctx.message.guild.icon.url)
         await webhook.send(embed=embed)
     except Exception as e:
         warnings.warn("\n".join(traceback.format_exception(e)))
