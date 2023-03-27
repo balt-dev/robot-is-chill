@@ -42,7 +42,8 @@
             "5",
             "4"
         ],
-        "tiling": "1"
+        "tiling": "1",
+        "source": "baba-extensions"
     },
     {
         "name": "mbaba",
