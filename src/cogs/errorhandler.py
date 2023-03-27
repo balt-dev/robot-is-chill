@@ -128,6 +128,10 @@ class CommandErrorHandler(commands.Cog):
                 await ctx.error(f'{ctx.command} has been disabled.')
                 return await self.logger.send(embed=emb)
 
+            elif isinstance(error, UserWarning):
+                await ctx.warn(error.args[0])
+                return
+
             elif isinstance(error, commands.NoPrivateMessage):
                 try:
                     await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')

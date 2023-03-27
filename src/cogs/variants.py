@@ -248,7 +248,7 @@ async def setup(bot):
             if inactive is not None:
                 color = constants.INACTIVE_COLORS[color]
             try:
-                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+                color = bot.renderer.palette_cache[palette].getpixel(color)
             except IndexError:
                 raise errors.BadPaletteIndex(sign.text, color)
         sign.color = color
@@ -273,7 +273,7 @@ async def setup(bot):
         """Sets the sign text's stroke."""
         if len(color) < 4:
             try:
-                color = *bot.renderer.palette_cache[palette].getpixel(color), 0xFF
+                color = bot.renderer.palette_cache[palette].getpixel(color)
             except IndexError:
                 raise errors.BadPaletteIndex(sign.text, color)
         sign.stroke = color, size
@@ -331,7 +331,7 @@ async def setup(bot):
     async def apply(sprite, *, tile, wobble, renderer):
         """Immediately applies the sprite's default color."""
         tile.custom_color = True
-        rgba = *renderer.palette_cache[tile.palette].getpixel(tile.color), 0xFF
+        rgba = renderer.palette_cache[tile.palette].getpixel(tile.color)
         sprite = recolor(sprite, rgba)
         return sprite
 
@@ -361,7 +361,8 @@ If [0;36minactive[0m is set and the color isn't hexadecimal, the color will sw
             if inactive is not None:
                 color = constants.INACTIVE_COLORS[color]
             try:
-                rgba = *renderer.palette_cache[tile.palette].getpixel(color), 0xFF
+                rgba = renderer.palette_cache[tile.palette].getpixel(color)
+                print(renderer.palette_cache[tile.palette])
             except IndexError:
                 raise errors.BadPaletteIndex(tile.name, color)
         return recolor(sprite, rgba)
@@ -916,7 +917,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
                     np.float32) / 255, cv2.COLOR_RGB2Lab)
             sprite_delta_e = np.sqrt(np.sum((sprite_lab - filled_color_array) ** 2, axis=-1))
             diff_matrix[i] = sprite_delta_e
-        min_indexes = np.argmin(diff_matrix, 0, keepdsprites=True).reshape(
+        min_indexes = np.argmin(diff_matrix, 0).reshape(
             diff_matrix.shape[1:])
         result = np.full(sprite.shape, 0, dtype=np.uint8)
         for i, color in enumerate(palette_colors):

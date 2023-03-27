@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import random
 import re
 from os import listdir
@@ -12,7 +11,7 @@ from PIL import Image
 from .. import constants
 from ..errors import InvalidFlagError
 from ..tile import Tile
-from ..types import Context, Color, Macro
+from ..types import Color, Macro, RenderContext
 
 if TYPE_CHECKING:
     from ...ROBOT import Bot
@@ -25,28 +24,18 @@ class Flag:
             match: str,
             syntax: str,
             description: str,
-            kwargs: list[str],
-            mutator=(
-                    lambda x,
-                           c: x)):
+            mutator=(lambda x, c: x)):
         self.pattern = re.compile(match)
         self.syntax = syntax
         self.description = description
-        self.kwargs = kwargs
         self.mutator = mutator
 
-    async def match(self, ctx: Context, potential_flag: str, x: int, y: int, kwargs: dict, to_delete: list) -> list:
+    async def match(self, potential_flag: str, ctx: RenderContext) -> bool:
         """Matches the potential flag with the flag.
         Returns the to_delete list passed in, plus the coordinates to delete if matched, and the kwargs."""
         if match := self.pattern.fullmatch(potential_flag):
-            to_delete.append((x, y))
-            values = await self.mutator(match, ctx)
-            for kwarg, value in zip(self.kwargs, values):
-                if type(kwargs.get(kwarg, None)) is dict:
-                    kwargs[kwarg] |= value
-                else:
-                    kwargs[kwarg] = value
-        return to_delete, kwargs
+            await self.mutator(match, ctx)
+        return bool(match)
 
     def __str__(self):
         nl = "\n"
@@ -62,14 +51,13 @@ class Flags:
     def __init__(self):
         self.list = []
 
-    def register(self, match: str, syntax: str, kwargs: list[str]):
+    def register(self, match: str, syntax: str):
         def decorator(f):
             self.list.append(
                 Flag(
                     match=match,
                     syntax=syntax,
                     description=f.__doc__,
-                    kwargs=kwargs,
                     mutator=f))
 
         return decorator
@@ -122,19 +110,17 @@ async def setup(bot: Bot):
                           rf"(?:#(?:[0-9A-Fa-f]){{3,4}})|"
                           rf"(?:{'|'.join(constants.COLOR_NAMES.keys())})|"
                           rf"(?:-?\d+\/-?\d+)))?",
-                    syntax="(-b | --background)=#<color: Color>",
-                    kwargs=["background"])
-    async def background(match, _):
+                    syntax="(-b | --background)=#<color: Color>")
+    async def background(match, ctx):
         """Sets the background of a render to a color."""
         m = match.group(1)
         if m is None:
-            m = "0/4"
-        return [Color.parse(Tile(palette="default"), bot.renderer.palette_cache, m)]
+            m = 0, 4
+        ctx.background = Color.parse(Tile(palette=ctx.palette), bot.renderer.palette_cache, m)
 
     @flags.register(match=r"(?:--palette|-p)=(\w+)",
-                    syntax="(-p | --palette)=<palette: str>",
-                    kwargs=["palette"])
-    async def palette(match, _):
+                    syntax="(-p | --palette)=<palette: str>")
+    async def palette(match, ctx):
         """Sets the palette to use for the render. For a list of palettes, try `search type:palette`."""
         palette = match.group(1)
         if palette == "random":
@@ -142,60 +128,57 @@ async def setup(bot: Bot):
         elif palette + ".png" not in listdir("data/palettes"):
             raise InvalidFlagError(
                 f"Could not find a palette with name \"{palette}\".")
-        return [palette]
+        ctx.palette = palette
 
     @flags.register(match=r"--raw|-r(?:=(.+))?",
-                    syntax="(-r | --raw)=<name: str>",
-                    kwargs=["raw_output", "upscale", "extra_name"])
-    async def raw(match, _):
+                    syntax="(-r | --raw)=<name: str>")
+    async def raw(match, ctx):
         """Outputs a zip file with the render as PNG frames.
         Also makes the default color white for everything, and sets the render scale to 1."""
-        return (True, 1, (match.group(1) if match.group(1) else None))
+        ctx.raw_output = True
+        ctx.upscale = 1
+        ctx.extra_name = match.group(1) if match.group(1) else None
 
     @flags.register(match=r"--comment=(.*)",
-                    syntax="--comment=<comment: str>",
-                    kwargs=[])
-    async def comment(_, __):
+                    syntax="--comment=<comment: str>")
+    async def comment(match, ctx):
         """Just a comment, does nothing."""
-        await asyncio.sleep(1)
-        return []
+        pass
 
     @flags.register(match=r"--letter",
-                    syntax="--letter",
-                    kwargs=["letters"])
-    async def letters(_, __):
+                    syntax="--letter")
+    async def letters(match, ctx):
         """Makes text default to letters."""
-        return [True]
+        ctx.letters = True
 
     @flags.register(
         match=r"(?:--frames|-frames|-f)=([123]+)",
-        syntax="(--frames | -f)=<frame: 1, 2, or 3 (arbitrary # of times)>",
-        kwargs=["frames"])
-    async def frames(match, _):
+        syntax="(--frames | -f)=<frame: 1, 2, or 3 (arbitrary # of times)>")
+    async def frames(match, ctx):
         """Sets which wobble frames to use."""
         frames = []
         for frame in list(match.group(1)):
             frames.append(int(frame))
-        return [frames]
+        ctx.frames = frames
 
     @flags.register(match=r"-c|--combine",
                     syntax="-c | --combine",
-                    kwargs=["before_images"])
-    async def combine(_, ctx):
+                    )
+    async def combine(match, ctx):
         """Sets an image to combine this render with."""
-        return await find_message(ctx),
+        ctx.before_images = await find_message(ctx)
 
     @flags.register(match=r"-bg|--combine-background",
                     syntax="-bg | --combine-background",
-                    kwargs=["images"])
-    async def combine_background(_, ctx):
+                    )
+    async def combine_background(match, ctx):
         """Sets an image to set as the background for this render."""
-        return await find_message(ctx),
+        ctx.background_images = await find_message(ctx)
 
     @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
                     syntax="(--speed | -speed)=<speed: int>[%]",
-                    kwargs=["speed"])
-    async def speed(match, _):
+                    )
+    async def speed(match, ctx):
         """Sets how fast the render is.
 Use % to set a percentage of the default render speed."""
         speed = int(match.group(1))
@@ -204,114 +187,112 @@ Use % to set a percentage of the default render speed."""
         if speed < 20:
             raise InvalidFlagError(
                 f'Frame delta of {speed} milliseconds is too small for the specified file format to handle.')
-        return speed,
+        ctx.speed = speed
 
     @flags.register(match=r"(?:--global|-g)=(.+)",
                     syntax="(--global | -g)=<variant: str>",
-                    kwargs=["global_variant"])
-    async def global_variant(match, _):
+                    )
+    async def global_variant(match, ctx):
         """Applies a variant to every tile."""
-        return ':' + match.group(1),
+        ctx.global_variant = ':' + match.group(1)
 
     @flags.register(match=r"--consistent|-co|--synchronize|-sync",
                     syntax="--consistent|-co|--synchronize|-sync",
-                    kwargs=["random_animations"])
-    async def sync(_, __):
+                    )
+    async def sync(match, ctx):
         """Removes the random animation offset."""
-        return False,
+        ctx.random_animation = False
 
     @flags.register(match=r"(?:--crop)=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--crop=<left: int>/<top: int>/<right: int>/<bottom: int>",
-                    kwargs=["crop"])
-    async def crop(match, _):
+                    )
+    async def crop(match, ctx):
         """Crops the render on each side."""
-        return ((int(match.group(1))), (int(match.group(2))),
-                (int(match.group(3))), (int(match.group(4)))),
+        ctx.crop = int(match.group(1)), int(match.group(2)), int(match.group(3)), int(match.group(4))
 
     @flags.register(match=r"--pad=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--pad=<left: int>/<top: int>/<right: int>/<bottom: int>",
-                    kwargs=["pad"])
-    async def pad(match, _):
+                    )
+    async def pad(match, ctx):
         """Pads the render on each side."""
-        return ((int(match.group(1))), (int(match.group(2))),
-                (int(match.group(3))), (int(match.group(4)))),
+        ctx.pad = int(match.group(1)), int(match.group(2)), int(match.group(3)), int(match.group(4))
 
     @flags.register(match=r"(?:--scale|-s)=(\d+)",
                     syntax="--scale|-s=<scale: int>",
-                    kwargs=["gscale"])
-    async def gscale(match, _):
+                    )
+    async def gscale(match, ctx):
         """Sets the scale of all sprites. Applied before variants."""
-        return (int(match.group(1))),
+        ctx.gscale = int(match.group(1))
 
     @flags.register(match=r"(?:--multiplier|-m)=(\d+(?:\.\d+)?)",
                     syntax="--multiplier|-m=<scale: float>",
-                    kwargs=["upscale"])
-    async def upscale(match, _):
+                    )
+    async def upscale(match, ctx):
         """Sets the scale of all sprites. Applied after variants."""
-        return (float(match.group(1))),
+        ctx.upscale = float(match.group(1))
 
     @flags.register(match=r"--verbose|-v",
                     syntax="--verbose|-v",
-                    kwargs=["do_embed"])
-    async def verbose(_, __):
+                    )
+    async def verbose(match, ctx):
         """Shows some extra stats about the render."""
-        return True,
+        ctx.do_embed = True
 
     @flags.register(match=r"--noloop|-nl",
                     syntax="--noloop|-nl",
-                    kwargs=["loop"])
-    async def noloop(_, __):
+                    )
+    async def noloop(match, ctx):
         """Makes the render not loop."""
-        return False,
+        ctx.loop = False
 
     @flags.register(match=r"--expand|-ex",
                     syntax="--expand|-ex",
-                    kwargs=["expand"])
-    async def expand(_, __):
+                    )
+    async def expand(match, ctx):
         """Expands the render for tiles displaced with the `:displace` variant."""
-        return True,
+        ctx.expand = True
 
     @flags.register(match=r"(?:--anim|-am)=(\d+)/(\d+)",
                     syntax="--anim|-am=<wobble: int>/<timestep: int>",
-                    kwargs=["animation"])
-    async def anim(match, _):
+                    )
+    async def anim(match, ctx):
         """Makes the wobble frames independent of the animation.
 The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
-        return ((int(match.group(1))), (int(match.group(2)))),
+        ctx.animation = (int(match.group(1))), (int(match.group(2)))
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
                     syntax="--format|-f=<format: gif | png>",
-                    kwargs=["image_format"])
-    async def format(match, _):
+                    )
+    async def format(match, ctx):
         """Set the format of the render.
 Note that PNG formats won't animate inside of Discord, you'll have to open them in the browser."""
-        return match.group(1),
+        ctx.image_format = match.group(1)
 
     @flags.register(match=r"(?:--spacing|-sp)=-?(\d+)",
                     syntax="(--spacing | -sp)=<spacing: int>",
-                    kwargs=["spacing"])
-    async def spacing(match, _):
+                    )
+    async def spacing(match, ctx):
         """Adds spacing to the render."""
-        return (int(match.group(1))),
+        ctx.spacing = int(match.group(1))
 
     @flags.register(match=r"--tileborder|-tb",
                     syntax="--tileborder|-tb",
-                    kwargs=["tileborder"])
-    async def tileborder(_, __):
+                    )
+    async def tileborder(match, ctx):
         """Makes the render's border connect to tiles that tile."""
-        return True,
+        ctx.tileborder = True
 
     @flags.register(match=r"--boomerang|-br",
                     syntax="--boomerang|-br",
-                    kwargs=["boomerang"])
-    async def boomerang(_, __):
+                    )
+    async def boomerang(match, ctx):
         """Make the render reverse at the end."""
-        return True,
+        ctx.boomerang = True
 
     @flags.register(match=r"(?:--macro|-mc)=(.+?)\|(.+)",
                     syntax="--macro|-mc=<name: str>|<variants: Variant[]>",
-                    kwargs=["macro"])
-    async def macro(match, __):
+                    )
+    async def macro(match, ctx):
         """Define macros for variants."""
         assert ";" not in match.group(2), "Can't have persistent variants in macros!"
-        return {match.group(1): Macro(value=match.group(2), description="<internal>", author=-1)},
+        ctx.macros |= {match.group(1): Macro(value=match.group(2), description="<internal>", author=-1)},

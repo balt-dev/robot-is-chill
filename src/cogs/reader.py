@@ -27,7 +27,7 @@ from src.db import CustomLevelData, LevelData
 from src.utils import cached_open
 from ..tile import ProcessedTile
 
-from ..types import Bot, Context, SignText
+from ..types import Bot, Context, SignText, RenderContext
 
 from more_itertools import ichunked
 
@@ -281,13 +281,15 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         out = f"target/renders/levels/{code.lower()}.gif"
         await self.bot.renderer.render(
             [objects],
-            palette=grid.palette,
-            background=(0, 4),
-            out=out,
-            sign_texts=sign_texts,
-            _no_sign_limit=True,
-            upscale=1,
-            _disable_limit=True
+            RenderContext(
+                palette=grid.palette,
+                background=(0, 4),
+                out=out,
+                sign_texts=sign_texts,
+                _no_sign_limit=True,
+                upscale=1,
+                _disable_limit=True
+            )
         )
 
         data = CustomLevelData(
@@ -356,14 +358,16 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         # Render the level
         await self.bot.renderer.render(
             [objects],
-            palette=grid.palette,
-            images=frames,
-            background=background,
-            out=f"target/renders/{grid.world}/{grid.filename}.gif",
-            upscale=1,
-            _disable_limit=True,
-            sign_texts=sign_texts,
-            _no_sign_limit=True
+            RenderContext(
+                palette=grid.palette,
+                background_images=frames,
+                background=background,
+                out=f"target/renders/{grid.world}/{grid.filename}.gif",
+                upscale=1,
+                _disable_limit=True,
+                sign_texts=sign_texts,
+                _no_sign_limit=True
+            )
         )
         # Return level metadata
         return LevelData(filename, source, grid.name, grid.subtitle,

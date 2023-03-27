@@ -231,7 +231,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.load_custom_tiles(pack_name)
         await ctx.send(f"Done. Added {sprite_name}.")
 
-    @sprite.command(aliases=['del'])
+    @sprite.command(aliases=['del', 'rm', 'remove'])
     async def delete(self, ctx: Context, sprite_name: str):
         """Deletes a specified sprite."""
         async with self.bot.db.conn.cursor() as cur:

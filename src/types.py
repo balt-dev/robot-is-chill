@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import datetime
+import inspect
 import traceback
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Coroutine, Optional
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any, Coroutine, Optional, Literal, BinaryIO
 
 from . import errors, constants
 from .db import Database
@@ -12,6 +13,7 @@ import re
 
 import discord
 from discord.ext import commands
+from PIL import Image
 
 if TYPE_CHECKING:
     from .cogs.render import Renderer
@@ -25,6 +27,8 @@ class Context(commands.Context):
                    content: str = "",
                    embed: Optional[discord.Embed] = None,
                    **kwargs) -> discord.Message: ...
+
+    async def warn(self, msg: str, **kwargs) -> discord.Message: ...
 
 
 class Bot(commands.Bot):
@@ -267,3 +271,39 @@ class SignText:
     alignment: str = "center"
     anchor: str = "md"
     stroke: tuple[tuple[int, int, int, int], int] = (0, 0, 0, 0), 0
+
+@dataclass
+class RenderContext:
+    """A holder class for all the attributes of a render."""
+    ctx: Context = None
+    before_images: list[Image] = field(default_factory=lambda: [])
+    palette: str = "default"
+    background_images: list[str] | list[Image] | None = None
+    out: str | BinaryIO = "target/renders/render.gif"
+    background: tuple[int, int] | None = None
+    upscale: int = 2
+    extra_out: str | BinaryIO | None = None
+    extra_name: str | None = None
+    frames: list[int] = (1, 2, 3)
+    animation: tuple[int, int] = None
+    speed: int = 200
+    crop: tuple[int, int, int, int] = (0, 0, 0, 0)
+    pad: tuple[int, int, int, int] = (0, 0, 0, 0)
+    image_format: str = 'gif'
+    loop: bool = True
+    spacing: int = constants.DEFAULT_SPRITE_SIZE
+    boomerang: bool = False
+    random_animations: bool = True
+    expand: bool = False
+    sign_texts: list = field(default_factory=lambda: [])
+    _disable_limit: bool = False
+    _no_sign_limit: bool = False
+    raw_output: bool = False
+    do_embed: bool = False
+    global_variant: str = ""
+    macros: dict = field(default_factory=lambda: {})
+    tileborder: bool = False
+    gscale: int = 1
+    sprite_cache: dict = field(default_factory=lambda: {})
+    tile_cache: dict = field(default_factory=lambda: {})
+    letters: bool = False

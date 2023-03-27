@@ -25,7 +25,7 @@ import aiohttp
 import discord
 from discord.ext import commands, menus
 
-from src.types import SignText
+from src.types import SignText, RenderContext
 from src.utils import ButtonPages
 from ..tile import Tile, TileSkeleton, parse_variants
 
@@ -158,11 +158,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             )
         elif isinstance(err, errors.UnknownVariant):
             return await ctx.error(
-                f"There isn't a variant called `{variant}`."
+                f"The variant for `{word}:{variant}` doesn't exist."
             )
         elif isinstance(err, errors.BadVariant):
+            matched_variant = rest[0]
             return await ctx.error(
-                f"The arguments for `{variant}` are not valid."
+                f"The arguments for `{word}:{variant}` (`{matched_variant}`) are not valid."
             )
         else:
             return await ctx.error(f"{msg}.")
@@ -284,15 +285,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                  for x, word in enumerate(row)]
             )
 
-            kwargs = {}
+            render_ctx = RenderContext(ctx=ctx)
             to_delete = []
             for potential_flag, x, y in potential_flags:
                 for flag in self.bot.flags.list:
-                    to_delete, kwargs = await flag.match(ctx, potential_flag, x, y, kwargs, to_delete)
-            raw_output = kwargs.get("raw_output", False)
-            image_format = kwargs.get('image_format', 'gif')
-            do_embed = kwargs.get('do_embed', False)
-            global_variant = kwargs.get('global_variant', "")
+                    if await flag.match(potential_flag, render_ctx):
+                        to_delete.append((x, y))
             word_grid = split_commas(word_grid, "char_")
             for x, y in reversed(to_delete):
                 del word_grid[y][x]
@@ -334,9 +332,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     except:
                         return None
 
-                user_macros = ctx.bot.macros | kwargs.get("macro", {})
+                user_macros = ctx.bot.macros | render_ctx.macros
 
-                pal = kwargs.get("palette", "default")
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
                         for l, timeline in enumerate(re.split(r'(?<!\\)&', stack)):
@@ -350,7 +347,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                             macros=user_macros
                                         ).get("sign", [])
                                         for variant in variants:
-                                            await variant.apply(sign_text, bot=self.bot, palette=pal)
+                                            await variant.apply(sign_text, bot=self.bot, ctx=render_ctx)
                                         layer_grid[d:, l, y, x] = TileSkeleton()
                                         for o in range(1, maxdelta - d):
                                             try:
@@ -375,8 +372,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
                                                 possible_variants, tile, rule,
-                                                palette=pal, bot=self.bot,
-                                                global_variant=global_variant,
+                                                palette=render_ctx.palette, bot=self.bot,
+                                                global_variant=render_ctx.global_variant,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros
                                             )
@@ -404,22 +401,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     return await ctx.error(
                         f"Too many tiles ({tilecount}). You may only render up to {constants.MAX_TILES} tiles at once, including empty tiles.")
                 # Handles variants based on `:` affixes
-                buffer = BytesIO()
-                extra_buffer = BytesIO() if raw_output else None
-                full_grid = await self.handle_grid(ctx, layer_grid, possible_variants, kwargs.get("tileborder", False))
+                render_ctx.out = BytesIO()
+                render_ctx.extra_out = BytesIO() if render_ctx.raw_output else None
+                full_grid = await self.handle_grid(ctx, layer_grid, possible_variants, render_ctx.tileborder)
                 parsing_overhead = time.perf_counter() - parsing_overhead
                 full_tiles, unique_tiles, rendered_frames, render_overhead = await self.bot.renderer.render_full_tiles(
                     full_grid,
-                    random_animations=kwargs.get("random_animations", True),
-                    gscale=kwargs.get("gscale", 1),
-                    frames=kwargs.get("frames", (1, 2, 3))
+                    ctx=render_ctx
                 )
                 composite_overhead, saving_overhead, im_size = await self.bot.renderer.render(
                     full_tiles,
-                    out=buffer,
-                    extra_out=extra_buffer,
-                    sign_texts=sign_texts,
-                    **kwargs
+                    render_ctx
                 )
             except errors.TileNotFound as e:
                 word = e.args[0]
@@ -445,10 +437,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 return await self.handle_custom_text_errors(ctx, e)
 
             filename = datetime.utcnow().strftime(
-                f"render_%Y-%m-%d_%H.%M.%S.{image_format}")
-            image = discord.File(buffer, filename=filename, spoiler=spoiler)
+                f"render_%Y-%m-%d_%H.%M.%S.{render_ctx.image_format}")
+            image = discord.File(render_ctx.out, filename=filename, spoiler=spoiler)
             description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
-            if do_embed:
+            if render_ctx.do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)
 
                 def rendertime(v):
@@ -475,10 +467,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 embed.add_field(name="Render statistics", value=stats)
             else:
                 embed = None
-            if extra_buffer is not None:
-                extra_buffer.seek(0)
+            if render_ctx.extra_out is not None:
+                render_ctx.extra_out.seek(0)
                 await ctx.reply(description[:2000], embed=embed,
-                                files=[discord.File(extra_buffer, filename=f"raw.zip"), image])
+                                files=[discord.File(render_ctx.extra_out, filename=f"raw.zip"), image])
             else:
                 await ctx.reply(description[:2000], embed=embed, file=image)
         finally:

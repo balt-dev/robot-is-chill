@@ -37,6 +37,17 @@ class Context(commands.Context):
         else:
             return await self.reply(msg, silent=self.silent)
 
+    async def warn(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+        try:
+            self.silent
+        except KeyError:
+            self.silent = False
+        await self.message.add_reaction("\u2755")
+        if embed is not None:
+            return await self.reply(msg, embed=embed, silent=self.silent, mention_author=False)
+        else:
+            return await self.reply(msg, silent=self.silent, mention_author=False)
+
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
         if len(content) > 2000:
@@ -87,7 +98,7 @@ class Bot(commands.Bot):
         self.baba_loaded = True
         for path in glob.glob("data/palettes/*.png"):
             with Image.open(path) as im:
-                self.palette_cache[Path(path).stem] = im.copy()
+                self.palette_cache[Path(path).stem] = im.convert("RGBA").copy()
         numpy_set_printoptions(
             threshold=sys.maxsize,
             linewidth=sys.maxsize
@@ -165,11 +176,6 @@ bot = Bot(
 
 @bot.event
 async def on_command(ctx):
-    embed = discord.Embed(
-        title="Notice",
-        description="The bot recently got a *huge* update, with a lot of breaking changes. Make sure to check `help`!",
-        color=config.logging_color)
-    await ctx.send(embed=embed, delete_after=13)
     try:
         webhook = await bot.fetch_webhook(webhooks.logging_id)
         ctx: Context

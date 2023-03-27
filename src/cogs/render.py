@@ -22,7 +22,7 @@ import PIL.ImageFont as ImageFont
 
 from src.tile import ProcessedTile, Tile
 from .. import constants, errors
-from ..types import Color
+from ..types import Color, RenderContext
 from ..utils import cached_open
 
 try:
@@ -95,7 +95,7 @@ class Renderer:
         self.palette_cache = {}
         for path in glob.glob("data/palettes/*.png"):
             with Image.open(path) as im:
-                self.palette_cache[Path(path).stem] = im.copy()
+                self.palette_cache[Path(path).stem] = im.convert("RGBA").copy()
         self.overlay_cache = {}
         for path in glob.glob("data/overlays/*.png"):
             with Image.open(path) as im:
@@ -104,70 +104,45 @@ class Renderer:
     async def render(
             self,
             grid: list[list[list[list[ProcessedTile]]]],
-            *,
-            before_images=None,
-            palette: str = "default",
-            images: list[str] | list[Image] | None = None,
-            out: str | BinaryIO = "target/renders/render.gif",
-            background: tuple[int] | None = None,
-            upscale: int = 2,
-            extra_out: str | BinaryIO | None = None,
-            extra_name: str | None = None,
-            frames: list[int] = (1, 2, 3),
-            animation: tuple[int, int] = None,
-            speed: int = 200,
-            crop: tuple[int, int, int, int] = (0, 0, 0, 0),
-            pad: tuple[int, int, int, int] = (0, 0, 0, 0),
-            image_format: str = 'gif',
-            loop: bool = True,
-            spacing: int = constants.DEFAULT_SPRITE_SIZE,
-            boomerang: bool = False,
-            random_animations: bool = True,
-            expand: bool = False,
-            sign_texts: list = [],
-            _disable_limit: bool = False,
-            _no_sign_limit: bool = False,
-            **_
+            ctx: RenderContext
     ):
         """Takes a list of tile objects and generates a gif with the associated sprites."""
-        if before_images is None:
-            before_images = []
         start_time = time.perf_counter()
-        if animation is not None:
-            animation_wobble, animation_timestep = animation
+        if ctx.animation is not None:
+            animation_wobble, animation_timestep = ctx.animation
         else:
-            animation_wobble, animation_timestep = 1, len(frames)  # number of frames per wobble frame, number of frames per timestep
+            animation_wobble, animation_timestep = 1, len(ctx.frames)  # number of frames per wobble frame, number of frames per timestep
         grid = np.array(grid, dtype=object)
-        durations = [speed for _ in range(animation_timestep * grid.shape[0] + len(before_images))]
-        frames = np.repeat(frames, animation_wobble).tolist()
+        durations = [ctx.speed for _ in range(animation_timestep * grid.shape[0] + len(ctx.before_images))]
+        frames = np.repeat(ctx.frames, animation_wobble).tolist()
         frames = (frames * (math.ceil(len(durations) / animation_timestep)))
         sizes = np.array(
             [get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
         sizes = sizes.reshape((*grid.shape, 2))
         assert sizes.size > 0, "The render must have at least one tile in it."
-        left_influence = np.arange(0, -spacing * sizes.shape[3], -spacing) * 2
-        top_influence = np.arange(0, -spacing * sizes.shape[2], -spacing) * 2
-        right_influence = np.arange(-spacing * (sizes.shape[3] - 1), spacing, spacing) * 2
-        bottom_influence = np.arange(-spacing * (sizes.shape[2] - 1), spacing, spacing) * 2
+        left_influence = np.arange(0, -ctx.spacing * sizes.shape[3], -ctx.spacing) * 2
+        top_influence = np.arange(0, -ctx.spacing * sizes.shape[2], -ctx.spacing) * 2
+        right_influence = np.arange(-ctx.spacing * (sizes.shape[3] - 1), ctx.spacing, ctx.spacing) * 2
+        bottom_influence = np.arange(-ctx.spacing * (sizes.shape[2] - 1), ctx.spacing, ctx.spacing) * 2
         left_sizes = sizes[..., 1] + left_influence.reshape((1, 1, 1, -1))
         top_sizes = sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
         right_sizes = sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
         bottom_sizes = sizes[..., 0] + bottom_influence.reshape((1, 1, -1, 1))
-        left = max((np.max(left_sizes - spacing) // 2) + pad[0], 0)
-        top = max((np.max(top_sizes - spacing) // 2) + pad[1], 0)
-        right = max((np.max(right_sizes - spacing) // 2) + pad[2], 0)
-        bottom = max((np.max(bottom_sizes - spacing) // 2) + pad[3], 0)
-        assert len(sign_texts) <= constants.MAX_SIGN_TEXTS or _no_sign_limit, \
-            f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(sign_texts)}`."
-        if len(sign_texts):
-            for i, sign_text in enumerate(sign_texts):
-                size = int(spacing * (upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
+        left = max((np.max(left_sizes - ctx.spacing) // 2) + ctx.pad[0], 0)
+        top = max((np.max(top_sizes - ctx.spacing) // 2) + ctx.pad[1], 0)
+        right = max((np.max(right_sizes - ctx.spacing) // 2) + ctx.pad[2], 0)
+        bottom = max((np.max(bottom_sizes - ctx.spacing) // 2) + ctx.pad[3], 0)
+        assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
+            f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
+        if len(ctx.sign_texts):
+            for i, sign_text in enumerate(ctx.sign_texts):
+                size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
                 assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
                 if sign_text.font is not None:
-                    sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
+                    ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
                 else:
-                    sign_texts[i].font = FONT.font_variant(size=size)
-        if expand:
+                    ctx.sign_texts[i].font = FONT.font_variant(size=size)
+        if ctx.expand:
             displacements = np.array(
                 [tile.displacement if not (tile is None or tile.empty) else (0, 0)
                  for tile in grid.flatten()])
@@ -180,25 +155,23 @@ class Renderer:
             top += max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
             right -= min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
             bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
-            for sign_text in sign_texts:
-                bbox = sign_text.fon
-        default_size = np.array((int(sizes.shape[2] * spacing + top + bottom),
-                                 int(sizes.shape[3] * spacing + left + right)))
-        true_size = default_size * upscale
-        if not _disable_limit:
+        default_size = np.array((int(sizes.shape[2] * ctx.spacing + top + bottom),
+                                 int(sizes.shape[3] * ctx.spacing + left + right)))
+        true_size = default_size * ctx.upscale
+        if not ctx._disable_limit:
             assert all(
                 true_size <= constants.MAX_IMAGE_SIZE), f"Image of size `{true_size}` is larger than the maximum allowed size of `{constants.MAX_IMAGE_SIZE}`!"
         steps = np.zeros(
             (((animation_timestep if animation_wobble else len(frames)) * grid.shape[0]), *default_size, 4),
             dtype=np.uint8)
 
-        if images:
+        if ctx.background_images:
             for f, frame in enumerate(frames):
                 img = Image.new("RGBA", tuple(default_size[::-1]))
                 # for loop in case multiple background images are used
                 # (i.e. baba's world map)
-                bg_img: Image.Image = images[(frame - 1) % len(images)].convert("RGBA")
-                bg_img = bg_img.resize((bg_img.width // upscale, bg_img.height // upscale), Image.NEAREST)
+                bg_img: Image.Image = ctx.background_images[(frame - 1) % len(ctx.background_images)].convert("RGBA")
+                bg_img = bg_img.resize((bg_img.width // ctx.upscale, bg_img.height // ctx.upscale), Image.NEAREST)
                 img.paste(bg_img, (0, 0), mask=bg_img)
                 for i in range(animation_wobble):
                     q = i + animation_wobble * f
@@ -211,12 +184,12 @@ class Renderer:
                         first_frame = get_first_frame(tile)
                         if tile.empty:
                             continue
-                        displacement = (y * spacing - int((first_frame[0] - spacing) / 2) + top - tile.displacement[1],
-                                        x * spacing - int((first_frame[1] - spacing) / 2) + left - tile.displacement[0])
+                        displacement = (y * ctx.spacing - int((first_frame[0] - ctx.spacing) / 2) + top - tile.displacement[1],
+                                        x * ctx.spacing - int((first_frame[1] - ctx.spacing) / 2) + left - tile.displacement[0])
                         for i, frame in enumerate(frames[animation_timestep * t:animation_timestep * (t + 1)]):
                             image_index = i + animation_timestep * t
                             wobble = tile.wobble if tile.wobble is not None else (
-                                                                                         11 * x + 13 * y + frame - 1) % 3 if random_animations else frame - 1
+                                     11 * x + 13 * y + frame - 1) % 3 if ctx.random_animations else frame - 1
                             image = tile.frames[wobble]
                             dslice = (default_size - (first_frame + displacement))
                             dst_slice = (
@@ -236,27 +209,27 @@ class Renderer:
                                 steps[index] = self.blend(tile.blending, steps[index], image, tile.keep_alpha)
                             except IndexError:
                                 pass  # warnings.warn(f"Couldn't place {tile} at {x}, {y}, {index}")
-        images = [np.array(image.convert("RGBA")) for image in before_images]
-        l, u, r, d = crop
+        background_images = [np.array(image.convert("RGBA")) for image in ctx.before_images]
+        l, u, r, d = ctx.crop
         r = r
         d = d
         wobble_range = np.arange(steps.shape[0]) // animation_timestep
         for i, step in enumerate(steps):
             step = step[u:-d if d > 0 else None, l:-r if r > 0 else None]
-            if background is not None:
-                if len(background) < 4:
-                    background = Color.parse(Tile(palette=palette), self.palette_cache, background)
-                background = np.array(background).astype(np.float32)
+            if ctx.background is not None:
+                if len(ctx.background) < 4:
+                    ctx.background = Color.parse(Tile(palette=ctx.palette), self.palette_cache, ctx.background)
+                ctx.background = np.array(ctx.background).astype(np.float32)
                 step_f = step.astype(np.float32) / 255
                 step_f[..., :3] = step_f[..., 3, np.newaxis]
-                c = ((1 - step_f) * background + step_f * step.astype(np.float32))
+                c = ((1 - step_f) * ctx.background + step_f * step.astype(np.float32))
                 step = c.astype(np.uint8)
             step = cv2.resize(
                 step,
-                (int(step.shape[1] * upscale), int(step.shape[0] * upscale)),
+                (int(step.shape[1] * ctx.upscale), int(step.shape[0] * ctx.upscale)),
                 interpolation=cv2.INTER_NEAREST
             )
-            if len(sign_texts):
+            if len(ctx.sign_texts):
                 anchor_disps = {
                     "l": 0.0,
                     "t": 0.0,
@@ -267,25 +240,25 @@ class Renderer:
                 }
                 im = Image.new("RGBA", step.shape[1::-1])
                 draw = ImageDraw(im)
-                if image_format == "gif" and background is None:
+                if ctx.image_format == "gif" and ctx.background is None:
                     draw.fontmode = "1"
-                for sign_text in sign_texts:
+                for sign_text in ctx.sign_texts:
                     if wobble_range[i] in range(sign_text.time_start, sign_text.time_end):
                         text = sign_text.text
                         text = re.sub(r"(?<!\\)\\n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
                         assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
-                        pos = (left + sign_text.xo + (spacing * upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),
-                                top + sign_text.yo + (spacing * upscale * (sign_text.y + anchor_disps[sign_text.anchor[1]])))
+                        pos = (left + sign_text.xo + (ctx.spacing * ctx.upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),
+                                top + sign_text.yo + (ctx.spacing * ctx.upscale * (sign_text.y + anchor_disps[sign_text.anchor[1]])))
                         draw.multiline_text(pos, text, font=sign_text.font,
                                             align=sign_text.alignment, anchor=sign_text.anchor,
                                             fill=sign_text.color, features=("liga", "dlig", "clig"),
                                             stroke_fill=sign_text.stroke[0], stroke_width=sign_text.stroke[1])
                 sign_arr = np.array(im)
-                if image_format == "gif" and background is None:
+                if ctx.image_format == "gif" and ctx.background is None:
                     sign_arr[..., 3][sign_arr[..., 3] > 0] = 255
                 step = self.blend("normal", step, sign_arr, True)
-            if image_format == "gif":
+            if ctx.image_format == "gif":
                 step_a = step[..., 3]
                 step = np.multiply(step[..., :3], np.dstack([step_a] * 3).astype(float) / 255,
                                    casting="unsafe").astype(np.uint8)
@@ -293,19 +266,19 @@ class Renderer:
                 too_dark_mask = np.logical_and(np.all(true_rgb < 8, axis=2), step_a != 0)
                 step[too_dark_mask, :3] = 4
                 step = np.dstack((step, step_a))
-            images.append(step)
+            background_images.append(step)
         comp_ovh = time.perf_counter() - start_time
         start_time = time.perf_counter()
-        self.save_frames(images,
-                         out,
+        self.save_frames(background_images,
+                         ctx.out,
                          durations,
-                         extra_out=extra_out,
-                         extra_name=extra_name,
-                         image_format=image_format,
-                         loop=loop,
-                         boomerang=boomerang,
-                         background=background is not None)
-        return comp_ovh, time.perf_counter() - start_time, images[0].shape[1::-1]
+                         extra_out=ctx.extra_out,
+                         extra_name=ctx.extra_name,
+                         image_format=ctx.image_format,
+                         loop=ctx.loop,
+                         boomerang=ctx.boomerang,
+                         background=ctx.background is not None)
+        return comp_ovh, time.perf_counter() - start_time, background_images[0].shape[1::-1]
 
     def blend(self, mode, src, dst, keep_alpha: bool = True) -> np.ndarray:
         keep_alpha &= mode not in ("mask", "cut")
@@ -363,10 +336,11 @@ class Renderer:
                                 tile: Tile,
                                 frame: int,
                                 raw_sprite_cache: dict[str, Image],
-                                gscale: float,
                                 x: int,
                                 y: int,
+                                ctx: RenderContext
                                 ) -> Image.Image:
+        sprite = None
         if tile.custom:
             if type(tile.sprite) == tuple:
                 sprite = await self.generate_sprite(
@@ -375,45 +349,44 @@ class Renderer:
                         "noun" if len(tile.name) < 1 else "letter"),
                     wobble=frame,
                     position=(x, y),
-                    gscale=gscale
+                    ctx=ctx
                 )
-        else:
-            if isinstance(tile.sprite, np.ndarray):
+            elif isinstance(tile.sprite, np.ndarray):
                 sprite = tile.sprite[(tile.frame * 3) + frame]
+        else:
+            path_fallback = None
+            if tile.name == "icon":
+                path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
+            elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
+                path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
+            elif tile.name == "default":
+                path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
             else:
-                path_fallback = None
-                if tile.name == "icon":
-                    path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
-                elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
-                    path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
-                elif tile.name == "default":
-                    path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
+                source, sprite_name = tile.sprite
+                if tile.frame == -1:
+                    path = f"data/sprites/{constants.BABA_WORLD}/error_0_{frame + 1}.png"
                 else:
-                    source, sprite_name = tile.sprite
-                    if tile.frame == -1:
-                        path = f"data/sprites/{constants.BABA_WORLD}/error_0_{frame + 1}.png"
-                    else:
-                        path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
-                    try:
-                        path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
-                    except BaseException:
-                        path_fallback = None
+                    path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
                 try:
+                    path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
+                except BaseException:
+                    path_fallback = None
+            try:
+                sprite = cached_open(
+                    path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
+            except FileNotFoundError:
+                try:
+                    assert path_fallback is not None
                     sprite = cached_open(
-                        path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
-                except FileNotFoundError:
-                    try:
-                        assert path_fallback is not None
-                        sprite = cached_open(
-                            path_fallback,
-                            cache=raw_sprite_cache,
-                            fn=Image.open).convert("RGBA")
-                    except (FileNotFoundError, AssertionError):
-                        raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
-                                             f'don\'t exist for it.')
-                sprite = np.array(sprite)
-            sprite = cv2.resize(sprite, (int(sprite.shape[1] * gscale), int(sprite.shape[0] * gscale)),
-                                interpolation=cv2.INTER_NEAREST)
+                        path_fallback,
+                        cache=raw_sprite_cache,
+                        fn=Image.open).convert("RGBA")
+                except (FileNotFoundError, AssertionError):
+                    raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
+                                         f'don\'t exist for it.\nSearched paths: `{path}, {path_fallback}`')
+            sprite = np.array(sprite)
+        sprite = cv2.resize(sprite, (int(sprite.shape[1] * ctx.gscale), int(sprite.shape[0] * ctx.gscale)),
+                            interpolation=cv2.INTER_NEAREST)
         return await self.apply_options_name(
             tile,
             sprite,
@@ -424,15 +397,8 @@ class Renderer:
                                tile: Tile,
                                *,
                                position: tuple[int, int],
-                               raw_sprite_cache: dict[str, Image.Image],
-                               gscale: float = 1,
-                               tile_cache=None,
-                               frames: tuple[int] = (1, 2, 3),
-                               random_animations: bool = True
-                               ) -> tuple[ProcessedTile, list[int], bool]:
+                               ctx: RenderContext) -> tuple[ProcessedTile, list[int], bool]:
         """woohoo."""
-        if tile_cache is None:
-            tile_cache = {}
         final_tile = ProcessedTile()
         if tile.empty:
             return final_tile, [], True
@@ -441,30 +407,27 @@ class Renderer:
         x, y = position
 
         rendered_frames = []
-        tile_hash = hash((tile, gscale))
-        cached = tile_hash in tile_cache.keys()
+        tile_hash = hash(tile)
+        cached = tile_hash in ctx.tile_cache.keys()
         if cached:
-            final_tile.frames = tile_cache[tile_hash]
+            final_tile.frames = ctx.tile_cache[tile_hash]
         final_tile.wobble = tile.wobble
         done_frames = [frame is not None for frame in final_tile.frames]
-        frame_range = tuple(set(frames)) if tile.wobble is None else (tile.wobble,)
+        frame_range = tuple(set(ctx.frames)) if tile.wobble is None else (tile.wobble,)
         for frame in frame_range:
             frame -= 1
             wobble = tile.wobble if tile.wobble is not None else (
-                                                                         11 * x + 13 * y + frame) % 3 if random_animations else frame
+                                                                         11 * x + 13 * y + frame) % 3 if ctx.random_animations else frame
             if not done_frames[wobble]:
-                final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, raw_sprite_cache, gscale, x, y)
+                final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, ctx.sprite_cache, x, y, ctx)
                 rendered_frames.append(wobble)
         if not cached:
-            tile_cache[tile_hash] = final_tile.frames.copy()
+            ctx.tile_cache[tile_hash] = final_tile.frames.copy()
         return final_tile, rendered_frames, cached
 
-    async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], *, random_animations: bool = False,
-                                gscale: float = 2, frames: tuple[int] = (1, 2, 3)) -> tuple[
+    async def render_full_tiles(self, grid: list[list[list[list[Tile]]]], ctx: RenderContext) -> tuple[
         list[list[list[list[ProcessedTile]]]], int, int, float]:
         """Final individual tile processing step."""
-        sprite_cache = {}
-        tile_cache = {}
         rendered_frames = 0
         d = []
         render_overhead = time.perf_counter()
@@ -478,11 +441,7 @@ class Renderer:
                         processed_tile, new_frames, cached = await self.render_full_tile(
                             tile,
                             position=(x, y),
-                            random_animations=random_animations,
-                            gscale=gscale,
-                            raw_sprite_cache=sprite_cache,
-                            tile_cache=tile_cache,
-                            frames=frames
+                            ctx=ctx
                         )
                         rendered_frames += len(new_frames)
                         for variant in tile.variants["post"]:
@@ -493,7 +452,7 @@ class Renderer:
                     b.append(c)
                 a.append(b)
             d.append(a)
-        return d, len(tile_cache), rendered_frames, time.perf_counter() - render_overhead
+        return d, len(ctx.tile_cache), rendered_frames, time.perf_counter() - render_overhead
 
     async def generate_sprite(
             self,
@@ -502,11 +461,11 @@ class Renderer:
             style: str,
             wobble: int,
             seed: int | None = None,
-            gscale: float,
-            position: tuple[int, int]
+            position: tuple[int, int],
+            ctx: RenderContext
     ) -> np.ndarray:
         """Generates a custom text sprite."""
-        text = tile.name[5:].lower().replace(" ","~")
+        text = tile.name[5:].lower().replace(" ", "~")
         raw = text.replace("/", "")
         newline_count = text.count("/")
         assert len(text) <= 64, 'Text has a maximum length of `64` characters.'
@@ -685,7 +644,7 @@ class Renderer:
 
         sprite = Image.merge("RGBA", (sprite, sprite, sprite, sprite))
         sprite = sprite.resize(
-            (int(sprite.width * gscale), int(sprite.height * gscale)), Image.NEAREST)
+            (int(sprite.width * ctx.gscale), int(sprite.height * ctx.gscale)), Image.NEAREST)
         return np.array(sprite)
 
     async def apply_options_name(
@@ -750,7 +709,12 @@ class Renderer:
                     # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
                     colors = np.unique(im.reshape(-1, 4), axis=0)
                     palette_colors = [0, 0, 0]
-                    palette_colors.extend(colors[colors[:, 3] != 0][:254, :3].flatten())
+                    formatted_colors = colors[colors[:, 3] != 0][..., :3]
+                    if formatted_colors.shape[0] > 255:
+                        # Should be a UserWarning, but I can't figure out how to catch those AND keep going
+                        raise AssertionError("Number of colors in image is above the supported amount for the GIF codec!\nTry using `-f=png`.")
+                    formatted_colors = formatted_colors[:255].flatten()
+                    palette_colors.extend(formatted_colors)
                     dummy = Image.new('P', (16, 16))
                     dummy.putpalette(palette_colors)
                     gif_images.append(Image.fromarray(im).convert('RGB').quantize(

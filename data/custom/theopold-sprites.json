@@ -241,5 +241,32 @@
             "0"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "boom",
+        "sprite": "boom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "defeat",
+        "sprite": "defeat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tele",
+        "sprite": "tele",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

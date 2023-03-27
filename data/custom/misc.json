@@ -522,15 +522,6 @@
         "tiling": "-1"
     },
     {
-        "name": "party",
-        "sprite": "party",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "broken",
         "sprite": "broken",
         "color": [
