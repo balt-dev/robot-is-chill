@@ -171,6 +171,16 @@ class Database:
 				);
 				'''
             )
+            await cur.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS macros (
+                    name TEXT UNIQUE PRIMARY KEY,
+                    value TEXT,
+                    description TEXT,
+                    creator INT
+                );
+                '''
+            )
 
     async def tile(self, name: str, *, maximum_version: int = 1000) -> TileData | None:
         """Convenience method to fetch a single thing of tile data.

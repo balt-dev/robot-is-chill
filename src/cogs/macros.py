@@ -87,7 +87,7 @@ class MacroCog(commands.Cog, name='Macros'):
         assert "value" != attribute or ";" not in new, "Sorry, but macros can't have persistent variants in them."
         async with self.bot.db.conn.cursor() as cursor:
             if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND id == ?", name, ctx.author.id)
+                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
                 check = await cursor.fetchone()
                 assert check is not None, "You can't edit a macro you don't own, silly."
             # NOTE: I know I shouldn't use fstrings with execute, but it won't allow me to specify a row name with ?.
@@ -101,7 +101,7 @@ class MacroCog(commands.Cog, name='Macros'):
         assert name in self.bot.macros, f"Macro `{name}` already isn't in the database!"
         async with self.bot.db.conn.cursor() as cursor:
             if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND id == ?", name, ctx.author.id)
+                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
                 check = await cursor.fetchone()
                 assert check is not None, "You can't delete a macro you don't own, silly."
             await cursor.execute(f"DELETE FROM macros WHERE name == ?", name)

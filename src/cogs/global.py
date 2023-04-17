@@ -304,8 +304,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 cause = e.args[0]
                 return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
 
-            sign_texts = []
-
             tilecount = 0
             maxstack = 1
             maxdelta = 1
@@ -360,7 +358,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                             o = maxdelta - d
                                         sign_text.time_end = d + o
                                         # Sign texts sadly cannot respect layers.
-                                        sign_texts.append(sign_text)
+                                        render_ctx.sign_texts.append(sign_text)
                                         continue
                                     tile = re.sub(r"\\(.)", r"\1", tile)
                                     assert not len(tile.split(':', 1)) - 1 or not tile.split(':', 1)[1].count(
@@ -509,7 +507,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             objects=objects,
             rule=False)
 
-    @commands.command(aliases=["text"])
+    @commands.command(aliases=["text", "r"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def rule(self, ctx: Context, *, objects: str = ""):
         """Renders the text tiles provided.

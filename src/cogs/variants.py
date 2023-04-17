@@ -362,7 +362,6 @@ If [0;36minactive[0m is set and the color isn't hexadecimal, the color will sw
                 color = constants.INACTIVE_COLORS[color]
             try:
                 rgba = renderer.palette_cache[tile.palette].getpixel(color)
-                print(renderer.palette_cache[tile.palette])
             except IndexError:
                 raise errors.BadPaletteIndex(tile.name, color)
         return recolor(sprite, rgba)
@@ -721,8 +720,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Centers the sprite on its visual bounding box."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
-        left, right = np.where(cols)[0][[0, -1]]
-        top, bottom = np.where(rows)[0][[0, -1]]
+        if not len(row_check := np.where(rows)[0]) or not len(col_check := np.where(cols)[0]):
+            return sprite
+        left, right = row_check[[0, -1]]
+        top, bottom = col_check[[0, -1]]
         sprite_center = sprite.shape[0] // 2 - 1, sprite.shape[1] // 2 - 1
         center = int((top + bottom) // 2), int((left + right) // 2)
         displacement = np.array((sprite_center[0] - center[0], sprite_center[1] - center[1]))

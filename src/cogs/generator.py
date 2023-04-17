@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import sys
+import typing
+from typing import Any, Literal
 
 import discord
 import numpy as np
@@ -10,91 +12,114 @@ import time
 import re
 import zlib
 import zipfile
+import cv2
 
 from io import BytesIO
 from discord.ext import commands
 from PIL import Image, ImageOps
+from cpmpy import Model, intvar, boolvar
+from cpmpy.expressions.core import Comparison
+from enum import Enum
 
 from ..types import Bot, Context
 from .. import constants
 
 
 class CharacterGenerator:
-    def generate(self, array, **attr):
-        # this is all so hacked together, but this took me too long to care
-        if 'seed' not in attr:
-            attr['seed'] = random.randint(-sys.maxsize - 1, sys.maxsize)
+    def generate(
+            self,
+            seed: int | None = None,
+            shape: Literal[*constants.CHARACTER_SHAPES] | None = None,
+            eye_count: int | None = None,
+            eye_shape: Literal["normal", "angry", "wide"] | None = None,
+            variant: Literal[*constants.CHARACTER_VARIANTS] | None = None,
+            legs: int | None = None,
+            mouth: bool | None = None,
+            ears: bool | None = None,
+            color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None
+    ) -> tuple[np.array, tuple[int, str, int, str, str, int, bool, bool, str]]:
+        # I'm not proud of this code.
+        # This sucks, a lot, and shows me being overconfident.
+        # I've removed a naive implementation for a better, less buggy one.
+        if seed is None: seed = random.randint(-sys.maxsize - 1, sys.maxsize)
         r = random.Random()
-        r.seed(attr['seed'])
-        combinations = {
-            'long': [
-                'smooth',
-                'fluffy',
-                'fuzzy',
-                'polygonal',
-                'skinny',
-                'belt-like'],
-            'tall': [
-                'smooth',
-                'fluffy',
-                'fuzzy',
-                'polygonal',
-                'skinny',
-                'belt-like'],
-            'curved': [
-                'smooth',
-                'fluffy',
-                'fuzzy',
-                'polygonal',
-                'belt-like'],
-            'round': [
-                'smooth',
-                'fluffy',
-                'fuzzy',
-                'polygonal'],
-            'segmented': [
-                'smooth',
-                'fluffy']}
+        r.seed(seed)
+
+        # There's a bit left over in the JSONs from my first implementation, but it's alright
+
+        m = Model()
+
+        # Enumeration of non-integer values
+        shapes = constants.CHARACTER_SHAPES
+        variants = constants.CHARACTER_VARIANTS
+
+        shape_cs = intvar(0, len(shapes)-1, name="shape")
+        variant_cs = intvar(0, len(variants)-1, name="variant")
+        legs_cs = intvar(0, 4, name="legs")
+        m += legs_cs != 1
+        eyes_cs = intvar(0, 4, name="eyes")
+
+        # Constraints
+
+        # -- Variant constraints
+        m += (shape_cs == shapes.index("curved")).implies(variant_cs != variants.index("skinny"))
+        m += (shape_cs == shapes.index("round")).implies(variant_cs < variants.index("skinny"))
+        m += (shape_cs == shapes.index("segmented")).implies(variant_cs < variants.index("fuzzy"))
+
+        # -- Eye constraints
+        m += ((shape_cs == shapes.index("tall")) | (shape_cs == shapes.index("curved"))).implies(eyes_cs < 4)
+        m += (shape_cs == shapes.index("segmented")).implies(eyes_cs < 3)
+
+        # -- Leg constraints
+        m += ((shape_cs == shapes.index("curved")) | (shape_cs == shapes.index("long"))).implies(
+            (legs_cs == 3) | (legs_cs == 4) | (legs_cs == 0))
+        m += ((shape_cs == shapes.index("tall")) | (shape_cs == shapes.index("round"))).implies(
+            (legs_cs == 2) | (legs_cs == 3) | (legs_cs == 0))
+        m += (shape_cs == shapes.index("segmented")).implies((legs_cs == 2) | (legs_cs == 0))
+
+        # User constraints
+
+        if shape is not None: m += Comparison("==", shape_cs, shapes.index(shape))
+        if variant is not None: m += Comparison("==", variant_cs, variants.index(variant))
+        if legs is not None: m += Comparison("==", legs_cs, legs)
+        if eye_count is not None: m += Comparison("==", eyes_cs, eye_count)
+
+        solutions = []
+
+        def collect():
+            solutions.append([
+                shape_cs.value(),
+                variant_cs.value(),
+                legs_cs.value(),
+                eyes_cs.value()
+            ])
+
+        m.solveAll(display=collect)
+
+        assert len(solutions), "There's no combination of attributes that's valid for the specified arguments."
+        shape, variant, legs, eye_count = r.choice(solutions)
+        print(shape, variant, legs, eye_count)
+        shape = shapes[shape]
+        variant = variants[variant]
+
+        eye_shape = eye_shape or r.choice(["normal", "angry", "wide"])
+        mouth = mouth if mouth is not None else r.random() > 0.5
+        ears = ears if ears is not None else r.random() > 0.5
+
         with open('data/generator/eyes/eyes.json') as f:
             eyes_json = json.load(f)
         with open('data/generator/legs/legs.json') as f:
             legs_json = json.load(f)
-        def handle(key, values, setter: function = lambda x: x, *,
-                   do_assertion=True):
-            message = f'Invalid value `{attr.get(key,"You should not see this text.")}` for `{key}`!\nPossible values are: `{", ".join([str(n) for n in values])}`'
-            attr[key] = attr.get(key, r.choice(values))
-            try:
-                attr[key] = type(values[0])(attr[key])
-            except BaseException:
-                raise AssertionError(message)
-            if do_assertion:
-                assert attr[key] in values, message
-            else:
-                attr[key] = attr[key] if attr[key] in values else r.choice(
-                    values)
-            attr[key] = setter(attr[key])
-
-        color_names = np.array(list(constants.COLOR_NAMES.keys()))
-        handle('shape', list(combinations.keys()))
-        handle('eye_count', eyes_json[attr['shape']]['allowed_values'])
-        handle('variant', combinations[attr['shape']])
-        handle('eye_shape', ['normal', 'angry', 'wide'])
-        handle('color', list(color_names[color_names != 'black']), lambda n: (
-            n, constants.COLOR_NAMES[n]))
-        handle('legs', [0] + legs_json[attr['shape']]['allowed_values'])
-        handle('mouth', (0, 1))
-        handle('ears', (0, 1))
         eye_displacement = [0, 0]
-        if attr['variant'] in eyes_json[attr['shape']]['special']:
-            eye_displacement = eyes_json[attr['shape']
-                                         ]['special'][attr['variant']]
-        eye_locations = eyes_json[attr['shape']]['generic']
+        if variant in eyes_json[shape]['special']:
+            eye_displacement = eyes_json[shape
+            ]['special'][variant]
+        eye_locations = eyes_json[shape]['generic']
         for dir in eye_locations.keys():
             for eyes, locs in eye_locations[dir].items():
                 for i, eye in enumerate(locs):
                     for j, wobble in enumerate(eye):
                         for k, loc in enumerate(wobble):
-                            displacement = [0, 0]
                             if dir == 'left':
                                 displacement = np.array(
                                     eye_displacement[0]) * [1, -1]
@@ -103,10 +128,10 @@ class CharacterGenerator:
                             else:
                                 displacement = np.array(eye_displacement[1])
                             eye_locations[dir][eyes][i][j][k] = (
-                                np.array(loc) + displacement).tolist()
-        with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-awake.png') as f:
+                                    np.array(loc) + displacement).tolist()
+        with Image.open(f'data/generator/eyes/{eye_shape}-awake.png') as f:
             eye_awake = f.copy()
-        with Image.open(f'data/generator/eyes/{attr["eye_shape"]}-sleep.png') as f:
+        with Image.open(f'data/generator/eyes/{eye_shape}-sleep.png') as f:
             eye_asleep = f.copy()
         final_arr = np.zeros((96, 24, 24, 4), dtype=np.uint8)
         for dir_name, dir_a in [('right', 0), ('up', 8),
@@ -115,92 +140,107 @@ class CharacterGenerator:
             for walkcycle_frame in range(-1, 4):
                 for wobble_frame in range(3):
                     with Image.open(
-                            f'data/generator/bodies/{attr["shape"]}-{attr["variant"]}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png') as base:
-                        if attr['ears']:
+                            f'data/generator/bodies/{shape}-{variant}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png') as base:
+                        if ears:
                             try:
                                 with Image.open(
-                                        f'data/generator/ears/{attr["shape"]}-{attr["variant"]}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png') as ears:
-                                    ears = ears.convert('RGBA')
-                                    base.paste(ears, mask=ears.getchannel('A'))
+                                        f'data/generator/ears/{shape}-{variant}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png') as ears_sprite:
+                                    ears_sprite = ears_sprite.convert('RGBA')
+                                    base.paste(ears_sprite, mask=ears_sprite.getchannel('A'))
                             except FileNotFoundError:
                                 pass
-                        if attr['legs']:
-                            try:
-                                with Image.open(
-                                        f'data/generator/legs/{attr["shape"]}-{attr["legs"]}_{(dir + min(walkcycle_frame,0)) % 32}_{wobble_frame + 1}.png') as legs:
-                                    legs = np.array(legs.convert('RGBA'))
-                                    if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
-                                        legs = np.roll(legs, (0, -1), (1, 0))
-                                    offset = legs_json[attr["shape"]]["offset"].get(attr["variant"], legs_json[attr["shape"]]["offset"]["generic"])[dir_name if dir_name != "left" else "right"]
-                                    legs = np.roll(legs, offset, (1, 0))
-                                    if (attr["variant"] == "belt-like" and dir != 8):
-                                        legs[:-7, :, :] = 0
-                                    legs = Image.fromarray(legs)
-                                    legs.paste(base, mask=base.getchannel('A'))
-                                    base = legs
-                            except FileNotFoundError:
-                                raise AssertionError(f'Invalid value for `{attr["legs"]}` with shape `{attr["shape"]}`!')
+                        if legs:
+                            with Image.open(
+                                    f'data/generator/legs/{shape}-{legs}_{(dir + min(walkcycle_frame, 0)) % 32}_{wobble_frame + 1}.png') as leg_sprite:
+                                leg_sprite = np.array(leg_sprite.convert('RGBA'))
+                                if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
+                                    leg_sprite = np.roll(leg_sprite, (0, -1), (1, 0))
+                                offset = \
+                                    legs_json[shape]["offset"].get(variant, legs_json[shape]["offset"]["generic"])[
+                                        dir_name if dir_name != "left" else "right"]
+                                leg_sprite = np.roll(leg_sprite, offset, (1, 0))
+                                if variant == "belt-like" and dir != 8:
+                                    leg_sprite[:-7, :, :] = 0
+                                leg_sprite = Image.fromarray(leg_sprite)
+                                leg_sprite.paste(base, mask=base.getchannel('A'))
+                                base = leg_sprite
                         if dir != 8:
-                            if attr['eye_count'] != 0:
+                            if eye_count != 0:
                                 eye = eye_awake if walkcycle_frame != -1 else eye_asleep
-                                if attr['variant'] != 'belt-like':
+                                if variant != 'belt-like':
                                     eye = np.array(eye, dtype=np.uint8)
                                     eye[:, :, :3] = 0
                                     eye = Image.fromarray(eye)
                                 eye_offset = (
                                     1 if walkcycle_frame == -1 else -1 if walkcycle_frame %
-                                    2 == 1 and dir != 24 else 0)
-                                for right_eye in eye_locations[dir_name if dir_name != "left" else "right"]['right_eyes'][wobble_frame][attr['eye_count'] - 1]:
+                                                                          2 == 1 and dir != 24 else 0)
+                                for right_eye in \
+                                        eye_locations[dir_name if dir_name != "left" else "right"]['right_eyes'][
+                                            wobble_frame][
+                                            eye_count - 1]:
                                     base.paste(ImageOps.mirror(eye),
                                                (np.array(right_eye) -
                                                 [3 - eye_offset, 0]).tolist()[::-1],
                                                ImageOps.mirror(eye).getchannel(3))
-                                for left_eye in eye_locations[dir_name if dir_name != "left" else "right"]['left_eyes'][wobble_frame][attr['eye_count'] - 1]:
+                                for left_eye in \
+                                        eye_locations[dir_name if dir_name != "left" else "right"]['left_eyes'][
+                                            wobble_frame][
+                                            eye_count - 1]:
                                     base.paste(eye, (np.array(
                                         left_eye) - [3 - eye_offset, 2]).tolist()[::-1], eye.getchannel(3))
-                            if attr['mouth']:
+                            if mouth:
                                 with Image.open(
-                                        f'data/generator/mouths/{attr["shape"]}/{attr["shape"]}_{dir}_{wobble_frame + 1}.png') as mouth:
-                                    mouth = np.array(mouth)
-                                if attr['variant'] == 'belt-like':
-                                    if attr['shape'] == 'tall' and dir == 24:
-                                        mouth = np.roll(mouth, (0, 3), (1, 0))
-                                    mouth[:, :, :3] = 255
+                                        f'data/generator/mouths/{shape}/{shape}_{dir}_{wobble_frame + 1}.png') as mouth_sprite:
+                                    mouth_sprite = np.array(mouth_sprite)
+                                if variant == 'belt-like':
+                                    if shape == 'tall' and dir == 24:
+                                        mouth_sprite = np.roll(mouth_sprite, (0, 3), (1, 0))
+                                    mouth_sprite[:, :, :3] = 255
                                 if walkcycle_frame > 0 and walkcycle_frame % 2 == 1:
-                                    mouth = np.roll(mouth, (0, -1), (1, 0))
-                                mouth = Image.fromarray(mouth)
-                                base.paste(mouth, mask=mouth)
+                                    mouth_sprite = np.roll(mouth_sprite, (0, -1), (1, 0))
+                                mouth_sprite = Image.fromarray(mouth_sprite)
+                                base.paste(mouth_sprite, mask=mouth_sprite)
                         final_image = np.array(base)
                         if dir_a == 16:
                             final_image = final_image[:, ::-1, :]
                         final_arr[(((dir_a + walkcycle_frame) % 32) *
                                    3) + wobble_frame] = final_image
-        if array:
-            return final_arr, attr
-        else:
-            final_zip = BytesIO()
-            with zipfile.PyZipFile(final_zip, "x") as fzip:
-                for dir_name, dir in [
-                        ('right', 0), ('up', 8), ('left', 16), ('down', 24)]:
-                    for walkcycle_frame in range(-1, 4):
-                        for wobble_frame in range(3):
-                            buffer = BytesIO()  # hey this is better than duped code
-                            Image.fromarray(
-                                final_arr[(((dir + walkcycle_frame) % 32) * 3) + wobble_frame]).save(buffer, "PNG")
-                            fzip.writestr(
-                                f"{attr['seed']}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png",
-                                buffer.getvalue())
-            final_zip.seek(0)
-            return final_zip, attr
+        if color is None:
+            color = r.choice(list(constants.COLOR_NAMES.keys()))
+        args = (
+            seed,
+            shape,
+            eye_count,
+            eye_shape,
+            variant,
+            legs,
+            mouth,
+            ears,
+            color
+        )
+        return final_arr, args
+
+
+def recolor(sprite: Image.Image, color: str,
+            palette: np.ndarray) -> Image.Image:
+    """Apply rgb color."""
+    r, g, b = palette[constants.COLOR_NAMES[color][::-1]]
+    arr = np.asarray(sprite, dtype="float64")
+    arr[..., 0] *= r / 256
+    arr[..., 1] *= g / 256
+    arr[..., 2] *= b / 256
+    return Image.fromarray(arr.astype("uint8"))
 
 
 class GeneratorCog(commands.Cog, name="Generation Commands"):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    # Rewriting Random so I can get the seed
+    # Subclassing Random so I can get the seed
     # https://stackoverflow.com/a/34699351/13290530
     class Random(random.Random):
+        _current_seed: int
+
         def seed(self, a=None, **kwargs):
             if a is None:
                 # use fractional seconds
@@ -211,63 +251,102 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         def get_seed(self):
             return self._current_seed
 
-    def recolor(self, sprite: Image.Image, color: str,
-                palette: np.ndarray) -> Image.Image:
-        """Apply rgb color."""
-        r, g, b = palette[constants.COLOR_NAMES[color][::-1]]
-        arr = np.asarray(sprite, dtype="float64")
-        arr[..., 0] *= r / 256
-        arr[..., 1] *= g / 256
-        arr[..., 2] *= b / 256
-        return Image.fromarray(arr.astype("uint8"))
-
     # New code for character generation
     @commands.command(aliases=["char"])
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def character(
-            self, ctx: Context,
-            # Discord commands don't support **kwargs
-            *flags: str
+            self, ctx: Context, *,
+            kwargs: str = ""
     ):
-        """Randomly generate a character using prefabs.
-        Try generating a character, you'll get a list of attributes from there.
-        You can specify an attribute with `name`=`value`."""
+        f"""
+        Randomly generate a character using prefabs.
+        Arguments can be specified with a `name:value` syntax.
+        The possible arguments are:
+        - `seed: any`
+            RNG seed, can be anything
+        - `shape: {'" | "'.join(constants.CHARACTER_SHAPES)}`
+            Character shape
+        - `variant: "{'" | "'.join(constants.CHARACTER_VARIANTS)}"`
+            Character variant
+        - `eye_count: int`
+            Number of eyes
+        - `eye_shape: "normal" | "angry" | "wide"
+            Eye type
+        - `legs: int`
+            Leg amount
+        - `mouth: bool`
+            Has/doesn't have a mouth
+        - `ears: bool`
+            Has/doesn't have ears
+        - `color: Color`
+            Color of the character
+        """
         await ctx.typing()
-        flags = {
-            a: b for a,
-            b in re.findall(
-                r' ?(.+?)=([^ ]+)',
-                ' '.join(flags))}
-        if 'seed' in flags and re.match(r'-?\d+', flags['seed']):
-            flags['seed'] = int(flags['seed'])
-        final_zip, attributes = CharacterGenerator().generate(False, **flags)
+        possible_kwargs = {
+            "seed": int,
+            "shape": Literal[*constants.CHARACTER_SHAPES],
+            "eye_count": int,
+            "eye_shape": Literal["normal", "angry", "wide"],
+            "variant": Literal[*constants.CHARACTER_VARIANTS],
+            "legs": int,
+            "mouth": bool,
+            "ears": bool,
+            "color": Literal[*constants.COLOR_NAMES]
+        }
+        flags = {}
+        for match in re.finditer(r"(\w+?)=(\w+?)\b", kwargs):
+            key, value = match.groups()
+            assert key in possible_kwargs, f"Invalid attribute of name `{key}`!"
+            val_type = possible_kwargs[key]
+            if len(args := typing.get_args(val_type)):
+                assert value in args, f"Invalid value `{value}` for attribute `{key}`! Allowed values are `{','.join(args)}."
+            elif val_type == bool:
+                assert value in (
+                "1", "true", "0", "false"), f"Invalid value `{value}` for attribute `{key}` of type `bool`!"
+                value = value in ("1", "true")
+            else:
+                try:
+                    value = val_type(value)
+                except (TypeError, ValueError):
+                    raise AssertionError(f"Invalid value `{value}` for attribute `{key}` of type `{val_type}`!")
+            flags[key] = value
+        print(flags)
+        final_arr, attributes = CharacterGenerator().generate(**flags)
         preview = []
-        with zipfile.PyZipFile(final_zip) as final_zip_opened:
+        zip_buffer = BytesIO()
+        with zipfile.PyZipFile(zip_buffer, "x") as final_zip:
+            for dir_name, dir in [
+                ('right', 0), ('up', 8), ('left', 16), ('down', 24)
+            ]:
+                for walkcycle_frame in range(-1, 4):
+                    for wobble_frame in range(3):
+                        buffer = BytesIO()  # hey this is better than duped code
+                        Image.fromarray(
+                            final_arr[(((dir + walkcycle_frame) % 32) * 3) + wobble_frame]).save(buffer, "PNG")
+                        final_zip.writestr(
+                            f"{attributes[0]}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png",
+                            buffer.getvalue())
             with Image.open('data/generator/preview_bg.png') as bg:
-                with Image.open(f"data/palettes/default.png").convert("RGBA") as p:
-                    palette = np.array(p)
-                bg = bg.convert('RGBA')
-                for image in final_zip_opened.namelist():
-                    with final_zip_opened.open(image) as imfile:
+                palette = np.array(self.bot.renderer.palette_cache["default"])
+                bg: Image.Image = bg.convert('RGBA')
+                for image in final_zip.namelist():
+                    with final_zip.open(image) as imfile:
                         with Image.open(imfile) as im:
-                            preview.append(
-                                Image.alpha_composite(
-                                    bg, (
-                                        Image.fromarray(
-                                            np.pad(
-                                                (
-                                                    np.array(
-                                                        im.convert('RGBA'))
-                                                    * (palette[attributes['color'][1][::-1]] / 255)
-                                                ).astype(np.uint8),
-                                                ((4, 4), (4, 4), (0, 0))
-                                            )
-                                        ).resize((256, 256),
-                                                 Image.NEAREST).convert('RGBA')
-                                    )
-                                )
+                            color = palette[constants.COLOR_NAMES[attributes[8]][::-1]]
+                            im = np.array(im.convert("RGBA"))
+                            kern = np.array(((0, 1, 0), (1, -4, 1), (0, 1, 0)))
+                            outline = cv2.filter2D(src=np.pad(im[..., 3], ((1, 1), (1, 1))), ddepth=0, kernel=kern)
+                            outline = (outline > 0).astype(np.uint8) * 255
+                            im = np.multiply(im, color / 255, casting="unsafe").astype(np.uint8)
+                            im = outline[..., np.newaxis] + np.pad(im, ((1, 1), (1, 1), (0, 0)))
+                            im = Image.fromarray(im).resize((192, 192), Image.Resampling.NEAREST)
+                            out = bg.copy()
+                            out.paste(
+                                im,
+                                (32, 32),
+                                mask=im.getchannel("A")
                             )
-        attributes['color'] = attributes['color'][0]
+                            preview.append(out)
         preview_file = BytesIO()
         preview[0].save(
             preview_file,
@@ -280,34 +359,34 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             optimize=False
         )
         preview_file.seek(0)
-        final_zip.seek(0)
+        zip_buffer.seek(0)
         embed = discord.Embed(
             color=self.bot.embed_color,
             description=None)
-        embed.description = "```" + '\n'.join([f'{a}: {b}' for a, b in attributes.items()]) + "```"
+        embed.description = "```" + '\n'.join([f'{a}: {b}' for a, b in zip(possible_kwargs.keys(), attributes)]) + "```"
         file = discord.File(preview_file, filename="preview.gif")
         embed.set_image(url=f"attachment://preview.gif")
-        await ctx.reply(embed=embed,
-                        files=[file])
-        return await ctx.send(file=discord.File(final_zip, filename='out.zip'))
+        return await ctx.reply(embed=embed, files=[file, discord.File(zip_buffer, filename='out.zip')])
 
     # Old code for character generation
-    # This code sucks absolute ass but I'm too lazy to redo it
-    # It'll be removed when new =char is done
+    # This code sucks worse than the above
+    # Only kept because people didn't want it removed
 
     def old_blacken(self, sprite: Image.Image, palette) -> np.ndarray:
         """Apply black (convenience)"""
-        return self.recolor(np.array(sprite.convert("RGBA")), "black", palette)
+        return recolor(np.array(sprite.convert("RGBA")), "black", palette)
 
     def old_paste(self, src: Image.Image, dst: Image.Image,
                   loc: tuple[int, int], snap: int = 0):
         src.paste(dst,
                   tuple([int(x - (s / 2)) for x,
-                         s in zip(loc,
-                                  dst.size)]) if snap == 0 else (int(loc[0] - (dst.width / 2)),
-                                                                 min(loc[1],
-                                                                     24 - dst.height)) if snap == 1 else (int(loc[0] - (dst.width / 2)),
-                                                                                                          loc[1] - dst.height),
+                  s in zip(loc, dst.size)]) if snap == 0 else (
+                      int(loc[0] - (dst.width / 2)),
+                      min(loc[1], 24 - dst.height)
+                  ) if snap == 1 else (
+                      int(loc[0] - (dst.width / 2)),
+                      loc[1] - dst.height
+                  ),
                   dst.convert("RGBA"))
         return src
 
@@ -346,7 +425,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                         pass
 
                 # Recolor after generation
-                im = self.recolor(np.array(im), color, palette)
+                im = recolor(np.array(im), color, palette)
 
                 # Send generated sprite
                 btio = BytesIO()
@@ -431,7 +510,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                          "sm",
                          "sw"])
         b = rand.choice(["a", "e", "i", "o", "u", "ei",
-                        "oi", "ea", "ou", "ai", "au", "bu"])
+                         "oi", "ea", "ou", "ai", "au", "bu"])
         c = rand.choice(["b",
                          "c",
                          "d",
@@ -503,7 +582,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                                    ), 'Invalid face! Eyes has to be between `0` and `6`.'
             assert mouth == '*' or (int(mouth) in range(2)
                                     ), 'Invalid face! Mouth has to be `0` or `1`.'
-            assert color == '*' or color in ['pink', 'red', 'maroon', 'yellow', 'orange', 'gold', 'brown', 'lime', 'green', 'cyan', 'blue', 'purple', 'white', 'silver',
+            assert color == '*' or color in ['pink', 'red', 'maroon', 'yellow', 'orange', 'gold', 'brown', 'lime',
+                                             'green', 'cyan', 'blue', 'purple', 'white', 'silver',
                                              'grey'], 'Invalid color!\nColor must be one of `pink, red, maroon, yellow, orange, gold, brown, lime, green, cyan, blue, purple, white, silver, grey`.'
             assert variant == '*' or variant in ['smooth', 'fuzzy', 'fluffy', 'polygonal', 'skinny',
                                                  'belt'], 'Invalid variant!\nVariant must be one of `smooth, fuzzy, fluffy, polygonal, skinny, belt`.'
@@ -666,7 +746,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         b = bytearray(
             b"\x41\x43\x48\x54\x55\x4e\x47\x21\x05\x01\x4d\x41\x50\x20\x02\x00\x00\x00\x00\x00\x4c\x41\x59\x52\x1d\x01\x00\x00\x03\x00")
         blankrow_bordered = b"\x00\x00" + \
-            (b"\xFF\xFF" * (width - 2)) + b"\x00\x00"
+                            (b"\xFF\xFF" * (width - 2)) + b"\x00\x00"
         blankrow_borderless = b"\xFF\xFF" * (width)
         for n in range(3):
             b.extend(int.to_bytes(width, length=4, byteorder="little"))

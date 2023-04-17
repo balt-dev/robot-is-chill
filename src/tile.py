@@ -20,7 +20,7 @@ def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
         if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in macros:
-            assert macro_count < 50, "Too many macros in one sprite! Are some recursing?"
+            assert macro_count < 50, "Too many macros in one sprite! Are some recursing infinitely?"
             macro_count += 1
             raw_macro, *macro_args = raw_variant[2:].split("/")
             macro = macros[raw_macro].value
@@ -186,8 +186,8 @@ class Tile:
                 value = cls(name=name, tiling=constants.TILING_NONE, variants=tile.variants, empty=False, custom=True,
                             palette=tile.palette)
             elif name[:5] == "char_" and ctx is not None:  # allow external calling for potential future things?
-                seed = int(name[5:]) if re.match(r'-?\d+', name[5:]) else name[5:]
-                character = ctx.bot.generator.generate(True, seed=seed)
+                seed = int(name[5:]) if re.fullmatch(r'-?\d+', name[5:]) else name[5:]
+                character = ctx.bot.generator.generate(seed=seed)
                 color = character[1]["color"][1]
                 value = cls(name=name, tiling=constants.TILING_CHAR, variants=tile.variants, empty=False, custom=True,
                             sprite=character[0], color=color, palette=tile.palette)

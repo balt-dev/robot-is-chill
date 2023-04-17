@@ -73,7 +73,7 @@ async def find_message(ctx):
             await ctx.error('The replied message doesn\'t have an attachment. Did you reply to the bot?')
             return None
     except BaseException:
-        async for m in ctx.channel.history(limit=10):
+        async for m in ctx.channel.history(limit=constants.MESSAGE_LIMIT):
             if m.author.id == ctx.bot.user.id and m.attachments:
                 try:
                     reply = await ctx.channel.fetch_message(m.reference.message_id)
@@ -82,11 +82,10 @@ async def find_message(ctx):
                         break
                 except BaseException:
                     pass
-        if msg is None:
-            do_finally = False
-            await ctx.error('None of your commands were found in the last `10` messages.')
-            return None
     finally:
+        if msg is None:
+            await ctx.error(f'None of your commands were found in the last `{constants.MESSAGE_LIMIT}` messages.')
+            return None
         if do_finally:
             # try:
             assert int(
@@ -166,14 +165,14 @@ async def setup(bot: Bot):
                     )
     async def combine(match, ctx):
         """Sets an image to combine this render with."""
-        ctx.before_images = await find_message(ctx)
+        ctx.before_images = await find_message(ctx.ctx)
 
     @flags.register(match=r"-bg|--combine-background",
                     syntax="-bg | --combine-background",
                     )
     async def combine_background(match, ctx):
         """Sets an image to set as the background for this render."""
-        ctx.background_images = await find_message(ctx)
+        ctx.background_images = await find_message(ctx.ctx)
 
     @flags.register(match=r"(?:--speed|-speed)=(\d+)(%)?",
                     syntax="(--speed | -speed)=<speed: int>[%]",
@@ -295,4 +294,4 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
     async def macro(match, ctx):
         """Define macros for variants."""
         assert ";" not in match.group(2), "Can't have persistent variants in macros!"
-        ctx.macros |= {match.group(1): Macro(value=match.group(2), description="<internal>", author=-1)},
+        ctx.macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)

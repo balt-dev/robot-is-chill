@@ -50,7 +50,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             not self.bot.config['owner_only_mode'][0], reason]
         await ctx.send(f'Toggled lockdown mode o{"n" if self.bot.config["owner_only_mode"][0] else "ff"}.')
 
-    @commands.command(aliases=["rekiad", "relaod", "reloa", "re;pad", "relad", "reolad", "r"])
+    @commands.command(aliases=["rekiad", "relaod", "reloa", "re;pad", "relad", "reolad", "rr"])
     @commands.is_owner()
     async def reload(self, ctx: Context, cog: str = ""):
         """Reloads extensions within the bot while the bot is running."""
@@ -389,7 +389,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.load_custom_tiles()
         await ctx.send(f"Added {name} from bab.")
 
-    @commands.command(aliases=["reboot"])
+    @commands.command(aliases=["reboot", "rs"])
     @commands.is_owner()
     async def restart(self, ctx: Context):
         """Restarts the bot process."""
@@ -399,7 +399,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         await self.bot.close()
 
     @commands.command(aliases=["kill", "yeet",
-                               "defeat", "empty", "not", "kil"])
+                               "defeat", "empty", "not", "kil", "k"])
     @commands.is_owner()
     async def logout(self, ctx: Context, endsentence: str = ""):
         """Kills the bot process."""
@@ -408,6 +408,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 if endsentence == "robot":  # Check if the argument is *actually* robot, making robot is not robot
                     await ctx.send("Poofing bot process...")
                     await self.bot.close()  # Trigger close before returning
+            print("Almost killed")
             return  # Doesn't close the bot if any of these logic statements is false
         elif ctx.invoked_with == "not":
             return  # Catch "robot is not"

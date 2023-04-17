@@ -34,5 +34,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ekek",
+        "sprite": "ekek",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ekek",
+        "sprite": "text_ekek",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
