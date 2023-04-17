@@ -258,19 +258,19 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             self, ctx: Context, *,
             kwargs: str = ""
     ):
-        f"""
+        """
         Randomly generate a character using prefabs.
-        Arguments can be specified with a `name:value` syntax.
+        Arguments can be specified with a `name=value` syntax.
         The possible arguments are:
         - `seed: any`
             RNG seed, can be anything
-        - `shape: {'" | "'.join(constants.CHARACTER_SHAPES)}`
+        - `shape: "long", "tall", "curved", "round", "segmented"`
             Character shape
-        - `variant: "{'" | "'.join(constants.CHARACTER_VARIANTS)}"`
+        - `variant: "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-like"`
             Character variant
         - `eye_count: int`
             Number of eyes
-        - `eye_shape: "normal" | "angry" | "wide"
+        - `eye_shape: "normal", "angry", "wide"`
             Eye type
         - `legs: int`
             Leg amount
@@ -367,6 +367,30 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         file = discord.File(preview_file, filename="preview.gif")
         embed.set_image(url=f"attachment://preview.gif")
         return await ctx.reply(embed=embed, files=[file, discord.File(zip_buffer, filename='out.zip')])
+
+    character.__doc__ = f"""
+        Randomly generate a character using prefabs.
+        Arguments can be specified with a `name:value` syntax.
+        The possible arguments are:
+        - `seed: any`
+            RNG seed, can be anything
+        - `shape: {'" | "'.join(constants.CHARACTER_SHAPES)}`
+            Character shape
+        - `variant: "{'" | "'.join(constants.CHARACTER_VARIANTS)}"`
+            Character variant
+        - `eye_count: int`
+            Number of eyes
+        - `eye_shape: "normal" | "angry" | "wide"`
+            Eye type
+        - `legs: int`
+            Leg amount
+        - `mouth: bool`
+            Has/doesn't have a mouth
+        - `ears: bool`
+            Has/doesn't have ears
+        - `color: Color`
+            Color of the character
+        """
 
     # Old code for character generation
     # This code sucks worse than the above
