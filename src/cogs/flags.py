@@ -200,7 +200,14 @@ Use % to set a percentage of the default render speed."""
                     )
     async def sync(match, ctx):
         """Removes the random animation offset."""
-        ctx.random_animation = False
+        ctx.random_animations = False
+
+    @flags.register(match=r"--clip|-cl",
+                    syntax="--clip|-cl",
+                    )
+    async def autocrop(match, ctx):
+        """Clips tiles extending off the border of the render. Overrides --expand."""
+        ctx.cropped = True
 
     @flags.register(match=r"(?:--crop)=(\d+)/(\d+)/(\d+)/(\d+)",
                     syntax="--crop=<left: int>/<top: int>/<right: int>/<bottom: int>",

@@ -78,5 +78,14 @@
             "0",
             "3"
         ]
+    },
+    {
+        "name": "babalpha",
+        "sprite": "babalpha",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

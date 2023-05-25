@@ -224,6 +224,8 @@ class Database:
 
         Raises FileNotFoundError on failure.
         """
+        # Strongly assure type to protect against potential security issue
+        assert type(direction) in (int, None), "Plate type wasn't allowed? This shouldn't happen."
         if direction is None:
             return (
                 Image.open(
@@ -232,7 +234,7 @@ class Database:
             )
         return (
             Image.open(
-                f"data/plates/plate_property{DIRECTIONS[direction]}_0_{wobble+1}.png").convert("RGBA"),
+                f"data/plates/plate_property{DIRECTIONS.get(direction, '')}_0_{wobble+1}.png").convert("RGBA"),
             (3, 3)
         )
 

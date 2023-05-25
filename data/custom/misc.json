@@ -423,15 +423,6 @@
         "tiling": "-1"
     },
     {
-        "name": "pizzag",
-        "sprite": "pizzag",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "hardhat",
         "sprite": "hardhat",
         "color": [
@@ -927,7 +918,7 @@
         "tiling": "-1"
     },
     {
-        "name": "em",
+        "name": "em2",
         "sprite": "eeveemaster",
         "color": [
             "2",
@@ -1282,6 +1273,78 @@
         "sprite": "text_sed",
         "color": [
             "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus3",
+        "sprite": "cactus",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cactus3",
+        "sprite": "text_cactus",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus2",
+        "sprite": "cactus",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus3",
+        "sprite": "cactus",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cactus3",
+        "sprite": "text_cactus",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus2",
+        "sprite": "cactus",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cactus3",
+        "sprite": "cactus3",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cactus3",
+        "sprite": "text_cactus3",
+        "color": [
+            "5",
             "3"
         ],
         "tiling": "-1"

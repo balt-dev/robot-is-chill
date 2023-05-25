@@ -37,7 +37,7 @@ class CharacterGenerator:
             mouth: bool | None = None,
             ears: bool | None = None,
             color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None
-    ) -> tuple[np.array, tuple[int, str, int, str, str, int, bool, bool, str]]:
+    ) -> tuple[np.array, dict[str, int, str, str, str, int, str, str, str, str, str, int, str, bool, str, bool, str, str]]:
         # I'm not proud of this code.
         # This sucks, a lot, and shows me being overconfident.
         # I've removed a naive implementation for a better, less buggy one.
@@ -53,8 +53,8 @@ class CharacterGenerator:
         shapes = constants.CHARACTER_SHAPES
         variants = constants.CHARACTER_VARIANTS
 
-        shape_cs = intvar(0, len(shapes)-1, name="shape")
-        variant_cs = intvar(0, len(variants)-1, name="variant")
+        shape_cs = intvar(0, len(shapes) - 1, name="shape")
+        variant_cs = intvar(0, len(variants) - 1, name="variant")
         legs_cs = intvar(0, 4, name="legs")
         m += legs_cs != 1
         eyes_cs = intvar(0, 4, name="eyes")
@@ -98,7 +98,6 @@ class CharacterGenerator:
 
         assert len(solutions), "There's no combination of attributes that's valid for the specified arguments."
         shape, variant, legs, eye_count = r.choice(solutions)
-        print(shape, variant, legs, eye_count)
         shape = shapes[shape]
         variant = variants[variant]
 
@@ -207,17 +206,17 @@ class CharacterGenerator:
                                    3) + wobble_frame] = final_image
         if color is None:
             color = r.choice(list(constants.COLOR_NAMES.keys()))
-        args = (
-            seed,
-            shape,
-            eye_count,
-            eye_shape,
-            variant,
-            legs,
-            mouth,
-            ears,
-            color
-        )
+        args = {
+            "seed": seed,
+            "shape": shape,
+            "eye_count": eye_count,
+            "eye_shape": eye_shape,
+            "variant": variant,
+            "legs": legs,
+            "mouth": mouth,
+            "ears": ears,
+            "color": color
+        }
         return final_arr, args
 
 
@@ -302,29 +301,31 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                 assert value in args, f"Invalid value `{value}` for attribute `{key}`! Allowed values are `{','.join(args)}."
             elif val_type == bool:
                 assert value in (
-                "1", "true", "0", "false"), f"Invalid value `{value}` for attribute `{key}` of type `bool`!"
+                    "1", "true", "0", "false"), f"Invalid value `{value}` for attribute `{key}` of type `bool`!"
                 value = value in ("1", "true")
             else:
                 try:
                     value = val_type(value)
                 except (TypeError, ValueError):
-                    raise AssertionError(f"Invalid value `{value}` for attribute `{key}` of type `{val_type}`!")
+                    if key == "seed":
+                        value = hash(value)
+                    else:
+                        raise AssertionError(f"Invalid value `{value}` for attribute `{key}` of type `{val_type}`!")
             flags[key] = value
-        print(flags)
         final_arr, attributes = CharacterGenerator().generate(**flags)
         preview = []
         zip_buffer = BytesIO()
         with zipfile.PyZipFile(zip_buffer, "x") as final_zip:
-            for dir_name, dir in [
+            for dir_name, direction in [
                 ('right', 0), ('up', 8), ('left', 16), ('down', 24)
             ]:
                 for walkcycle_frame in range(-1, 4):
                     for wobble_frame in range(3):
                         buffer = BytesIO()  # hey this is better than duped code
                         Image.fromarray(
-                            final_arr[(((dir + walkcycle_frame) % 32) * 3) + wobble_frame]).save(buffer, "PNG")
+                            final_arr[(((direction + walkcycle_frame) % 32) * 3) + wobble_frame]).save(buffer, "PNG")
                         final_zip.writestr(
-                            f"{attributes[0]}_{(dir + walkcycle_frame) % 32}_{wobble_frame + 1}.png",
+                            f"{attributes['seed']}_{(direction + walkcycle_frame) % 32}_{wobble_frame + 1}.png",
                             buffer.getvalue())
             with Image.open('data/generator/preview_bg.png') as bg:
                 palette = np.array(self.bot.renderer.palette_cache["default"])
@@ -332,7 +333,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                 for image in final_zip.namelist():
                     with final_zip.open(image) as imfile:
                         with Image.open(imfile) as im:
-                            color = palette[constants.COLOR_NAMES[attributes[8]][::-1]]
+                            color = palette[constants.COLOR_NAMES[attributes["color"]][::-1]]
                             im = np.array(im.convert("RGBA"))
                             kern = np.array(((0, 1, 0), (1, -4, 1), (0, 1, 0)))
                             outline = cv2.filter2D(src=np.pad(im[..., 3], ((1, 1), (1, 1))), ddepth=0, kernel=kern)
@@ -363,7 +364,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         embed = discord.Embed(
             color=self.bot.embed_color,
             description=None)
-        embed.description = "```" + '\n'.join([f'{a}: {b}' for a, b in zip(possible_kwargs.keys(), attributes)]) + "```"
+        embed.description = "```" + '\n'.join([f'{a}: {b}' for (a, b) in attributes.items()]) + "```"
         file = discord.File(preview_file, filename="preview.gif")
         embed.set_image(url=f"attachment://preview.gif")
         return await ctx.reply(embed=embed, files=[file, discord.File(zip_buffer, filename='out.zip')])
@@ -759,12 +760,12 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
     @commands.command()
     @commands.cooldown(4, 8, type=commands.BucketType.channel)
     async def genlevel(self, ctx: Context, width: int, height: int):
-        """Generates a blank level given a width and height."""
+        """Generates a blank level given a width and height. Example: =genlevel 20 30"""
         assert width >= 1 and height >= 1, "Too small!"
         t = time.time()
         width += 2
         height += 2
-        if width * height > 4194304 and not await ctx.bot.is_owner(ctx.author):
+        if width * height > 2048 * 2048 and not await ctx.bot.is_owner(ctx.author):
             return await ctx.error(
                 "Level size too big! Levels are capped at an area of 2048 by 2048, including borders.")
         b = bytearray(

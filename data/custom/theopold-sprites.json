@@ -268,5 +268,50 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "latter",
+        "sprite": "latter",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "former",
+        "sprite": "former",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "her",
+        "sprite": "her",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "she",
+        "sprite": "she",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "picklily",
+        "sprite": "lockpicklily",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]

@@ -120,41 +120,44 @@ class Renderer:
             [get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
         sizes = sizes.reshape((*grid.shape, 2))
         assert sizes.size > 0, "The render must have at least one tile in it."
-        left_influence = np.arange(0, -ctx.spacing * sizes.shape[3], -ctx.spacing) * 2
-        top_influence = np.arange(0, -ctx.spacing * sizes.shape[2], -ctx.spacing) * 2
-        right_influence = np.arange(-ctx.spacing * (sizes.shape[3] - 1), ctx.spacing, ctx.spacing) * 2
-        bottom_influence = np.arange(-ctx.spacing * (sizes.shape[2] - 1), ctx.spacing, ctx.spacing) * 2
-        left_sizes = sizes[..., 1] + left_influence.reshape((1, 1, 1, -1))
-        top_sizes = sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
-        right_sizes = sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
-        bottom_sizes = sizes[..., 0] + bottom_influence.reshape((1, 1, -1, 1))
-        left = max((np.max(left_sizes - ctx.spacing) // 2) + ctx.pad[0], 0)
-        top = max((np.max(top_sizes - ctx.spacing) // 2) + ctx.pad[1], 0)
-        right = max((np.max(right_sizes - ctx.spacing) // 2) + ctx.pad[2], 0)
-        bottom = max((np.max(bottom_sizes - ctx.spacing) // 2) + ctx.pad[3], 0)
-        assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
-            f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
-        if len(ctx.sign_texts):
-            for i, sign_text in enumerate(ctx.sign_texts):
-                size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
-                assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
-                if sign_text.font is not None:
-                    ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
-                else:
-                    ctx.sign_texts[i].font = FONT.font_variant(size=size)
-        if ctx.expand:
-            displacements = np.array(
-                [tile.displacement if not (tile is None or tile.empty) else (0, 0)
-                 for tile in grid.flatten()])
-            displacements = (displacements.reshape((*grid.shape, 2)))
-            left_disp = displacements[:, :, :, 0, 0]
-            top_disp = displacements[:, :, 0, :, 1]
-            right_disp = displacements[:, :, :, -1, 0]
-            bottom_disp = displacements[:, :, -1, :, 1]
-            left += max(max(left_disp.max((0, 1, 2)), left_disp.min((0, 1, 2)), key=abs), 0)
-            top += max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
-            right -= min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
-            bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
+        if ctx.cropped:
+            left = right = top = bottom = 0
+        else:
+            left_influence = np.arange(0, -ctx.spacing * sizes.shape[3], -ctx.spacing) * 2
+            top_influence = np.arange(0, -ctx.spacing * sizes.shape[2], -ctx.spacing) * 2
+            right_influence = np.arange(-ctx.spacing * (sizes.shape[3] - 1), ctx.spacing, ctx.spacing) * 2
+            bottom_influence = np.arange(-ctx.spacing * (sizes.shape[2] - 1), ctx.spacing, ctx.spacing) * 2
+            left_sizes = sizes[..., 1] + left_influence.reshape((1, 1, 1, -1))
+            top_sizes = sizes[..., 0] + top_influence.reshape((1, 1, -1, 1))
+            right_sizes = sizes[..., 1] + right_influence.reshape((1, 1, 1, -1))
+            bottom_sizes = sizes[..., 0] + bottom_influence.reshape((1, 1, -1, 1))
+            left = max((np.max(left_sizes - ctx.spacing) // 2) + ctx.pad[0], 0)
+            top = max((np.max(top_sizes - ctx.spacing) // 2) + ctx.pad[1], 0)
+            right = max((np.max(right_sizes - ctx.spacing) // 2) + ctx.pad[2], 0)
+            bottom = max((np.max(bottom_sizes - ctx.spacing) // 2) + ctx.pad[3], 0)
+            assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
+                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
+            if len(ctx.sign_texts):
+                for i, sign_text in enumerate(ctx.sign_texts):
+                    size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
+                    assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
+                    if sign_text.font is not None:
+                        ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
+                    else:
+                        ctx.sign_texts[i].font = FONT.font_variant(size=size)
+            if ctx.expand:
+                displacements = np.array(
+                    [tile.displacement if not (tile is None or tile.empty) else (0, 0)
+                     for tile in grid.flatten()])
+                displacements = (displacements.reshape((*grid.shape, 2)))
+                left_disp = displacements[:, :, :, 0, 0]
+                top_disp = displacements[:, :, 0, :, 1]
+                right_disp = displacements[:, :, :, -1, 0]
+                bottom_disp = displacements[:, :, -1, :, 1]
+                left += max(max(left_disp.max((0, 1, 2)), left_disp.min((0, 1, 2)), key=abs), 0)
+                top += max(max(top_disp.max((0, 1, 2)), top_disp.min((0, 1, 2)), key=abs), 0)
+                right -= min(max(right_disp.max((0, 1, 2)), right_disp.min((0, 1, 2)), key=abs), 0)
+                bottom -= min(max(bottom_disp.max((0, 1, 2)), bottom_disp.min((0, 1, 2)), key=abs), 0)
         default_size = np.array((int(sizes.shape[2] * ctx.spacing + top + bottom),
                                  int(sizes.shape[3] * ctx.spacing + left + right)))
         true_size = default_size * ctx.upscale
@@ -702,9 +705,9 @@ class Renderer:
             durations += durations[-2:0:-1]
         if image_format == 'gif':
             if background:
-                gif_images = [Image.fromarray(im) for im in images]
+                save_images = [Image.fromarray(im) for im in images]
             else:
-                gif_images = []
+                save_images = []
                 for i, im in enumerate(images):
                     # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
                     colors = np.unique(im.reshape(-1, 4), axis=0)
@@ -717,13 +720,13 @@ class Renderer:
                     palette_colors.extend(formatted_colors)
                     dummy = Image.new('P', (16, 16))
                     dummy.putpalette(palette_colors)
-                    gif_images.append(Image.fromarray(im).convert('RGB').quantize(
+                    save_images.append(Image.fromarray(im).convert('RGB').quantize(
                         palette=dummy, dither=0))
             kwargs = {
                 'format': "GIF",
                 'interlace': True,
                 'save_all': True,
-                'append_images': gif_images[1:],
+                'append_images': save_images[1:],
                 'loop': 0,
                 'duration': durations,
                 'disposal': 2,  # Frames don't overlap
@@ -737,23 +740,23 @@ class Renderer:
                 del kwargs['transparency']
                 del kwargs['background']
                 del kwargs['disposal']
-            gif_images[0].save(
+            save_images[0].save(
                 out,
                 **kwargs
             )
         elif image_format == 'png':
-            images = [Image.fromarray(im) for im in images]
+            save_images = [Image.fromarray(im) for im in images]
             kwargs = {
                 'format': "PNG",
                 'save_all': True,
-                'append_images': images,
+                'append_images': save_images,
                 'default_image': True,
                 'loop': 0,
                 'duration': durations
             }
             if not loop:
                 kwargs['loop'] = 1
-            images[0].save(
+            save_images[0].save(
                 out,
                 **kwargs
             )

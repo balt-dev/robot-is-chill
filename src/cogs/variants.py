@@ -242,7 +242,7 @@ async def setup(bot):
         sign.yo += y
 
     @add_variant(no_function_name=True)
-    async def sign_color(sign, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, bot, palette):
+    async def sign_color(sign, color: Color, inactive: Optional[Literal["inactive", "in"]] = None, *, bot, ctx):
         """Sets the sign text's color. See the sprite counterpart for details."""
         if len(color) < 4:
             if inactive is not None:
@@ -979,7 +979,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
 
     @add_variant()
     async def snip(sprite, x_y: list[int, int], u_v: list[int, int]):
-        """Snips the specified box out from the sprite."""
+        """Snips the specified box out of the sprite."""
         (x, y), (u, v) = x_y, u_v
         sprite[y:v, x:u] = 0
         return sprite
@@ -992,6 +992,15 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
         clip_poly = np.tile(clip_poly, (4, 1, 1)).T
         return np.multiply(sprite, clip_poly, casting="unsafe").astype(np.uint8)
+
+    @add_variant()
+    async def snippoly(sprite, *x_y: list[int, int]):
+        """Like croppoly, but also like snip. Snips the specified polygon out of the sprite."""
+        assert len(x_y) > 3, "Must have at least 3 points to define a polygon!"
+        pts = np.array([x_y], dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
+        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
+        clip_poly = np.tile(clip_poly, (4, 1, 1)).T
+        return np.multiply(sprite, 1 - clip_poly, casting="unsafe").astype(np.uint8)
 
     @add_variant("cvt")
     async def convert(sprite, direction: Literal["to", "from"],

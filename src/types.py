@@ -286,6 +286,7 @@ class RenderContext:
     extra_name: str | None = None
     frames: list[int] = (1, 2, 3)
     animation: tuple[int, int] = None
+    cropped: bool = False
     speed: int = 200
     crop: tuple[int, int, int, int] = (0, 0, 0, 0)
     pad: tuple[int, int, int, int] = (0, 0, 0, 0)

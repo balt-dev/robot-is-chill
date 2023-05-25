@@ -451,15 +451,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     return f'{v:.4f}' + ("(nice)" if nice else "")
 
                 stats = f'''
-    Response time: {rendertime(parsing_overhead + render_overhead + composite_overhead + saving_overhead)} ms
-    - Parsing overhead: {rendertime(parsing_overhead)} ms
-    - Rendering overhead: {rendertime(render_overhead)} ms
-    - Compositing overhead: {rendertime(composite_overhead)} ms
-    - Saving overhead: {rendertime(saving_overhead)} ms
-    Tiles rendered: {unique_tiles}
-    Frames rendered: {rendered_frames}
-    Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
-    Image size: {im_size}
+- Response time: {rendertime(parsing_overhead + render_overhead + composite_overhead + saving_overhead)} ms
+  - Parsing overhead: {rendertime(parsing_overhead)} ms
+  - Rendering overhead: {rendertime(render_overhead)} ms
+  - Compositing overhead: {rendertime(composite_overhead)} ms
+  - Saving overhead: {rendertime(saving_overhead)} ms
+- Tiles rendered: {unique_tiles}
+  - Tile matrix shape: {'x'.join(str(n) for n in grid_shape)}
+  - Frames rendered: {rendered_frames}
+- Image size: {im_size}
     '''
 
                 embed.add_field(name="Render statistics", value=stats)

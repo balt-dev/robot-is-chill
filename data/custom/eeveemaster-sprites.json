@@ -79,5 +79,23 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "em2",
+        "sprite": "eeveemaster",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_em2",
+        "sprite": "text_em",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

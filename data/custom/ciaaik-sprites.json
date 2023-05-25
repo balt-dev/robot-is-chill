@@ -52,5 +52,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "em",
+        "sprite": "em",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_em",
+        "sprite": "text_em",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

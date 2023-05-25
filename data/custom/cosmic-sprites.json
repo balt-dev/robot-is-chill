@@ -69,5 +69,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "cos",
+        "sprite": "cosbaba",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]
