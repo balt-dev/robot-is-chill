@@ -293,7 +293,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             "color": Literal[*constants.COLOR_NAMES]
         }
         flags = {}
-        for match in re.finditer(r"(\w+?)=(\w+?)\b", kwargs):
+        for match in re.finditer(r"(\w+?)=([\w-]+)\b", kwargs):
             key, value = match.groups()
             assert key in possible_kwargs, f"Invalid attribute of name `{key}`!"
             val_type = possible_kwargs[key]

@@ -225,7 +225,7 @@ class Database:
         Raises FileNotFoundError on failure.
         """
         # Strongly assure type to protect against potential security issue
-        assert type(direction) in (int, None), "Plate type wasn't allowed? This shouldn't happen."
+        assert type(direction) == int or direction is None, f"Plate of type {type(direction)} wasn't allowed? This shouldn't happen."
         if direction is None:
             return (
                 Image.open(
