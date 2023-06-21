@@ -248,7 +248,7 @@ async def setup(bot):
             if inactive is not None:
                 color = constants.INACTIVE_COLORS[color]
             try:
-                color = bot.renderer.palette_cache[palette].getpixel(color)
+                color = bot.renderer.palette_cache[ctx.palette].getpixel(color)
             except IndexError:
                 raise errors.BadPaletteIndex(sign.text, color)
         sign.color = color
@@ -269,11 +269,11 @@ async def setup(bot):
         sign.anchor = anchor
 
     @add_variant()
-    async def stroke(sign, color: Color, size: int, *, bot, palette):
+    async def stroke(sign, color: Color, size: int, *, bot, ctx):
         """Sets the sign text's stroke."""
         if len(color) < 4:
             try:
-                color = bot.renderer.palette_cache[palette].getpixel(color)
+                color = bot.renderer.palette_cache[ctx.palette].getpixel(color)
             except IndexError:
                 raise errors.BadPaletteIndex(sign.text, color)
         sign.stroke = color, size
