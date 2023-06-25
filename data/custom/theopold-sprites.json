@@ -484,5 +484,50 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "bavo",
+        "sprite": "bavo",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "bebe",
+        "sprite": "bebe",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "eat",
+        "sprite": "crunch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sleep",
+        "sprite": "sleep",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "open",
+        "sprite": "unlock",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
