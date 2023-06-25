@@ -529,5 +529,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sbaba",
+        "sprite": "sbaba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "sombrero",
+        "sprite": "sombrero",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
