@@ -423,15 +423,6 @@
         "tiling": "0"
     },
     {
-        "name": "snombabeta",
-        "sprite": "snombabeta",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "these",
         "sprite": "these",
         "color": [
