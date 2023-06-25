@@ -313,5 +313,230 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "brute",
+        "sprite": "brute",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "bubbub",
+        "sprite": "bubbub",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "cpu",
+        "sprite": "cpu",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "desk",
+        "sprite": "desk",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "grate",
+        "sprite": "grate",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mrock",
+        "sprite": "hard",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "izbeta",
+        "sprite": "izbeta",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "led",
+        "sprite": "led",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mega",
+        "sprite": "mega",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "oish",
+        "sprite": "oish",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "seat",
+        "sprite": "seat",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "snombabeta",
+        "sprite": "snombabeta",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "these",
+        "sprite": "these",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "they",
+        "sprite": "they",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "those",
+        "sprite": "those",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wall3",
+        "sprite": "wallplatformer",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "mwood",
+        "sprite": "wood",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wawa",
+        "sprite": "wawa",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "bavo",
+        "sprite": "bavo",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "bebe",
+        "sprite": "bebe",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "eat",
+        "sprite": "crunch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sleep",
+        "sprite": "sleep",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "open",
+        "sprite": "unlock",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sbaba",
+        "sprite": "sbaba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "sombrero",
+        "sprite": "sombrero",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
