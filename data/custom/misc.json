@@ -1348,5 +1348,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "this",
+        "sprite": "this",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "that",
+        "sprite": "that",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
