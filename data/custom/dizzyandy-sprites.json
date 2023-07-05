@@ -133,5 +133,50 @@
             "1"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "it's",
+        "sprite": "it-s",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_it's",
+        "sprite": "text_it-s",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "goop",
+        "sprite": "goop",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "trees2",
+        "sprite": "trees2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hole",
+        "sprite": "hole",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
