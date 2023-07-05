@@ -133,5 +133,77 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "magic",
+        "sprite": "magic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "angler",
+        "sprite": "angler",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fungus2",
+        "sprite": "fungus2",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dotwall",
+        "sprite": "walldotted",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "virus2",
+        "sprite": "virus",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "amoeba",
+        "sprite": "amoeba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "vial",
+        "sprite": "vial",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "beaker",
+        "sprite": "beaker",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
