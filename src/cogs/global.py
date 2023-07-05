@@ -386,7 +386,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                                 )[0] + tile,
                                                 rule, bot=self.bot,
                                                 possible_variant_names=possible_variant_names,
-                                                macros=user_macros
+                                                macros=user_macros,
+                                                palette=render_ctx.palette
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]

@@ -120,6 +120,16 @@ class Renderer:
             [get_first_frame(tile)[:2] if not (tile is None or tile.empty) else (0, 0) for tile in grid.flatten()])
         sizes = sizes.reshape((*grid.shape, 2))
         assert sizes.size > 0, "The render must have at least one tile in it."
+        assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
+                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
+        if len(ctx.sign_texts):
+            for i, sign_text in enumerate(ctx.sign_texts):
+                size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
+                assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
+                if sign_text.font is not None:
+                    ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
+                else:
+                    ctx.sign_texts[i].font = FONT.font_variant(size=size)
         if ctx.cropped:
             left = right = top = bottom = 0
         else:
@@ -135,16 +145,6 @@ class Renderer:
             top = max((np.max(top_sizes - ctx.spacing) // 2) + ctx.pad[1], 0)
             right = max((np.max(right_sizes - ctx.spacing) // 2) + ctx.pad[2], 0)
             bottom = max((np.max(bottom_sizes - ctx.spacing) // 2) + ctx.pad[3], 0)
-            assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
-                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
-            if len(ctx.sign_texts):
-                for i, sign_text in enumerate(ctx.sign_texts):
-                    size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
-                    assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
-                    if sign_text.font is not None:
-                        ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
-                    else:
-                        ctx.sign_texts[i].font = FONT.font_variant(size=size)
             if ctx.expand:
                 displacements = np.array(
                     [tile.displacement if not (tile is None or tile.empty) else (0, 0)

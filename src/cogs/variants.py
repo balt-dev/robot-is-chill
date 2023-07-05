@@ -355,6 +355,8 @@ If [0;36minactive[0m is set and the color isn't hexadecimal, the color will sw
             color = tile.color
         else:
             tile.custom_color = True
+        if type(color) is str:
+            color = constants.COLOR_NAMES[color]
         if len(color) == 4:
             rgba = color
         else:
@@ -405,13 +407,14 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return (sprite * mult_grad).astype(np.uint8)
 
     @add_variant("overlay/", "o!", no_function_name=True)
-    async def overlay(sprite, overlay: str, *, tile, wobble, renderer):
-        """Applies an overlay to a sprite."""
+    async def overlay(sprite, overlay: str, x: Optional[int] = 0, y: Optional[int] = 0, *, tile, wobble, renderer):
+        """Applies an overlay to a sprite. X and Y can be given to offset the overlay."""
         tile.custom_color = True
         assert overlay in renderer.overlay_cache, f"`{overlay}` isn't a valid overlay!"
         overlay_image = renderer.overlay_cache[overlay]
         tile_amount = np.ceil(np.array(sprite.shape[:2]) / overlay_image.shape[:2]).astype(
             int)  # Convert sprite.shape to ndarray to allow vectorized math
+        overlay_image = np.roll(overlay_image, (x, y), (0, 1))
         overlay_image = np.tile(overlay_image, (*tile_amount, 1))[:sprite.shape[0], :sprite.shape[1]].astype(float)
         return np.multiply(sprite, overlay_image / 255, casting="unsafe").astype(np.uint8)
 
@@ -518,7 +521,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return cv2.warpPerspective(sprite, final_matrix, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
 
     @add_variant()
-    async def scale(sprite, w: float, h: Optional[float] = None):
+    async def scale(sprite, w: float, h: Optional[float] = None, interpolation: Optional[Literal["nearest", "linear", "cubic", "area", "lanczos"]] = "nearest"):
         """Scales a sprite by the given multipliers."""
         if h is None:
             h = w
@@ -529,7 +532,13 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         check_size(*dst_size)
         dim = sprite.shape[:2] * np.array((h, w))
         dim = dim.astype(int)
-        return cv2.resize(sprite[:, ::-1], dim[::-1], interpolation=cv2.INTER_NEAREST)[:, ::-1]
+        return cv2.resize(sprite[:, ::-1], dim[::-1], interpolation={
+            "nearest": cv2.INTER_NEAREST,
+            "linear": cv2.INTER_LINEAR,
+            "cubic": cv2.INTER_CUBIC,
+            "area": cv2.INTER_AREA,
+            "lanczos": cv2.INTER_LANCZOS4
+        }[interpolation])[:, ::-1]
 
     @add_variant()
     async def pad(sprite, left: int, top: int, right: int, bottom: int):
@@ -543,6 +552,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         if y is None:
             y = x
         return sprite[y - 1::y, x - 1::x].repeat(y, axis=0).repeat(x, axis=1)
+
+    @add_variant()
+    async def posterize(sprite, bands: int):
+        """Posterizes the sprite."""
+        return np.dstack([np.digitize(sprite[..., i], np.linspace(0, 255, bands)) * (255 / bands) for i in range(4)])
 
     @add_variant("m")
     async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
