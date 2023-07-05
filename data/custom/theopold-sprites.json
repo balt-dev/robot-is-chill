@@ -655,5 +655,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fofofo",
+        "sprite": "fofofo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "1"
     }
 ]
