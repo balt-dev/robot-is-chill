@@ -349,5 +349,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "brolly",
+        "sprite": "brolly",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "snowman",
+        "sprite": "snowman",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
