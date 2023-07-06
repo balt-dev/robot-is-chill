@@ -664,5 +664,41 @@
             "2"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "sosad",
+        "sprite": "sosad",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "alful",
+        "sprite": "alful",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ez",
+        "sprite": "ez",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "toitoi",
+        "sprite": "toitoi",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]
