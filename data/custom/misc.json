@@ -1366,5 +1366,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "zuzu",
+        "sprite": "zuzu",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "quiqui",
+        "sprite": "qiqi",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "i2",
+        "sprite": "i2",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "oyou",
+        "sprite": "oyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]
