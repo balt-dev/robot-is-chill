@@ -1384,5 +1384,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "i2",
+        "sprite": "i2",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "oyou",
+        "sprite": "oyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]

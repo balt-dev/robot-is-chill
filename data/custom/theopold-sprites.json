@@ -700,5 +700,32 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "we",
+        "sprite": "we",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "us",
+        "sprite": "us",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "i",
+        "sprite": "i",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
