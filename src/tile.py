@@ -136,7 +136,7 @@ class Tile:
     surrounding: int = 0b00000000  # RULDEQZC
     frame: int = 0
     fallback_frame: int = 0
-    wobble: int | None = None
+    wobble_frames: tuple[int] | None = None
     custom_color: bool = False
     color: tuple[int, int] = (0, 3)
     empty: bool = True

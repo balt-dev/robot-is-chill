@@ -65,31 +65,6 @@ class SearchPageSource(menus.ListPageSource):
         return out
 
 
-class HintPageSource(menus.ListPageSource):
-    def __init__(
-            self, data: Sequence[tuple[str, dict[str, str]]], level: LevelData, others: int):
-        self.level = level
-        self.others = others
-        super().__init__(data, per_page=1)
-
-    async def format_page(self, menu: menus.Menu, entries: tuple[str, dict[str, str]]) -> discord.Embed:
-        group, hints = entries
-        embed = discord.Embed(
-            color=menu.bot.embed_color,
-            title=f"Hints for `{self.level.display()}` -- `{group}` ({menu.current_page + 1}/{self.get_max_pages()} endings)",
-        )
-        if self.others > 0:
-            embed.set_footer(
-                text=f"Found {self.others} other levels. Please change your search term if you meant any of those.")
-
-        rows = ["*Click on the spoilers to view each hint*"]
-        for kind, hint in hints.items():
-            rows.append(f"__{kind}__: ||{hint}||")
-
-        embed.description = "\n\n".join(rows)
-        return embed
-
-
 class FlagPageSource(menus.ListPageSource):
     def __init__(
             self, data: Sequence[flags.Flag]):
@@ -490,30 +465,9 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])
-    async def show_hint(self, ctx: Context, *, level_query: str):
+    async def show_hint(self, ctx: Context):
         """Shows hints for a level."""
-        levels = await self.bot.get_cog("Baba Is You").search_levels(level_query)
-        if len(levels) == 0:
-            return await ctx.error(f"No levels found with the query `{level_query}`.")
-        _, choice = levels.popitem(last=False)
-        choice: LevelData
-
-        hints = self.bot.db.hints(choice.id)
-        if hints is None:
-            if len(levels) > 0:
-                return await ctx.error(
-                    f"No hints found for `{choice.display()}`. "
-                    "Please narrow your search if you meant a different level."
-                )
-            return await ctx.error(f"No hints found for `{choice.display()}`.")
-
-        await ButtonPages(
-            source=HintPageSource(
-                list(hints.items()),
-                choice,
-                len(levels)
-            ),
-        ).start(ctx)
+        return await ctx.send("""The =hint command has been deprecated. Look at [Baba Is Hint](https://www.keyofw.com/baba-is-hint/) for an updated record of hints.""")
 
 
 async def setup(bot: Bot):

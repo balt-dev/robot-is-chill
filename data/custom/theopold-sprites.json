@@ -727,5 +727,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sama",
+        "sprite": "sama",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

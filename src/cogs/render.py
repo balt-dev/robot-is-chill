@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import glob
 import math
 import random
@@ -111,7 +112,8 @@ class Renderer:
         if ctx.animation is not None:
             animation_wobble, animation_timestep = ctx.animation
         else:
-            animation_wobble, animation_timestep = 1, len(ctx.frames)  # number of frames per wobble frame, number of frames per timestep
+            animation_wobble, animation_timestep = 1, len(
+                ctx.frames)  # number of frames per wobble frame, number of frames per timestep
         grid = np.array(grid, dtype=object)
         durations = [ctx.speed for _ in range(animation_timestep * grid.shape[0] + len(ctx.before_images))]
         frames = np.repeat(ctx.frames, animation_wobble).tolist()
@@ -121,10 +123,12 @@ class Renderer:
         sizes = sizes.reshape((*grid.shape, 2))
         assert sizes.size > 0, "The render must have at least one tile in it."
         assert len(ctx.sign_texts) <= constants.MAX_SIGN_TEXTS or ctx._no_sign_limit, \
-                f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
+            f"Too many sign texts! The limit is `{constants.MAX_SIGN_TEXTS}`, while you have `{len(ctx.sign_texts)}`."
         if len(ctx.sign_texts):
             for i, sign_text in enumerate(ctx.sign_texts):
-                size = int(ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font, 1))
+                size = int(
+                    ctx.spacing * (ctx.upscale / 2) * sign_text.size * constants.FONT_MULTIPLIERS.get(sign_text.font,
+                                                                                                      1))
                 assert size <= constants.DEFAULT_SPRITE_SIZE * 2, f"Font size of `{size}` is too large! The maximum is `{constants.DEFAULT_SPRITE_SIZE * 2}`."
                 if sign_text.font is not None:
                     ctx.sign_texts[i].font = ImageFont.truetype(f"data/fonts/{sign_text.font}.ttf", size=size)
@@ -187,13 +191,17 @@ class Renderer:
                         first_frame = get_first_frame(tile)
                         if tile.empty:
                             continue
-                        displacement = (y * ctx.spacing - int((first_frame[0] - ctx.spacing) / 2) + top - tile.displacement[1],
-                                        x * ctx.spacing - int((first_frame[1] - ctx.spacing) / 2) + left - tile.displacement[0])
+                        displacement = (
+                        y * ctx.spacing - int((first_frame[0] - ctx.spacing) / 2) + top - tile.displacement[1],
+                        x * ctx.spacing - int((first_frame[1] - ctx.spacing) / 2) + left - tile.displacement[0])
                         for i, frame in enumerate(frames[animation_timestep * t:animation_timestep * (t + 1)]):
                             image_index = i + animation_timestep * t
-                            wobble = tile.wobble if tile.wobble is not None else (
-                                     11 * x + 13 * y + frame - 1) % 3 if ctx.random_animations else frame - 1
-                            image = tile.frames[wobble]
+                            wobble = tile.wobble_frames[
+                                min(len(tile.wobble_frames) - 1, frame - 1)] if tile.wobble_frames is not None \
+                                else (11 * x + 13 * y + frame - 1) % 3 if ctx.random_animations \
+                                else frame - 1
+                            final_wobble = functools.reduce(lambda a, b: a if b is None else b, tile.frames)
+                            image = tile.frames[wobble] if tile.frames[wobble] is not None else final_wobble
                             dslice = (default_size - (first_frame + displacement))
                             dst_slice = (
                                 slice(max(-displacement[0], 0), dslice[0] if dslice[0] < 0 else None),
@@ -250,9 +258,12 @@ class Renderer:
                         text = sign_text.text
                         text = re.sub(r"(?<!\\)\\n", "\n", text)
                         text = re.sub(r"\\(.)", r"\1", text)
-                        assert len(text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
-                        pos = (left + sign_text.xo + (ctx.spacing * ctx.upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),
-                                top + sign_text.yo + (ctx.spacing * ctx.upscale * (sign_text.y + anchor_disps[sign_text.anchor[1]])))
+                        assert len(
+                            text) <= constants.MAX_SIGN_TEXT_LENGTH, f"Sign text of length {len(text)} is too long! The maximum is `{constants.MAX_SIGN_TEXT_LENGTH}`."
+                        pos = (left + sign_text.xo + (
+                                    ctx.spacing * ctx.upscale * (sign_text.x + anchor_disps[sign_text.anchor[0]])),
+                               top + sign_text.yo + (ctx.spacing * ctx.upscale * (
+                                           sign_text.y + anchor_disps[sign_text.anchor[1]])))
                         draw.multiline_text(pos, text, font=sign_text.font,
                                             align=sign_text.alignment, anchor=sign_text.anchor,
                                             fill=sign_text.color, features=("liga", "dlig", "clig"),
@@ -414,13 +425,16 @@ class Renderer:
         cached = tile_hash in ctx.tile_cache.keys()
         if cached:
             final_tile.frames = ctx.tile_cache[tile_hash]
-        final_tile.wobble = tile.wobble
+        final_tile.wobble_frames = tile.wobble_frames
         done_frames = [frame is not None for frame in final_tile.frames]
-        frame_range = tuple(set(ctx.frames)) if tile.wobble is None else (tile.wobble,)
+        frame_range = tuple(set(tile.wobble_frames)) if tile.wobble_frames is not None \
+            else tuple(set(ctx.frames))
         for frame in frame_range:
             frame -= 1
-            wobble = tile.wobble if tile.wobble is not None else (
-                                                                         11 * x + 13 * y + frame) % 3 if ctx.random_animations else frame
+            wobble = final_tile.wobble_frames[
+                min(len(final_tile.wobble_frames) - 1, frame)] if final_tile.wobble_frames is not None \
+                else (11 * x + 13 * y + frame) % 3 if ctx.random_animations \
+                else frame
             if not done_frames[wobble]:
                 final_tile.frames[wobble] = await self.render_full_frame(tile, wobble, ctx.sprite_cache, x, y, ctx)
                 rendered_frames.append(wobble)
@@ -715,7 +729,8 @@ class Renderer:
                     formatted_colors = colors[colors[:, 3] != 0][..., :3]
                     if formatted_colors.shape[0] > 255:
                         # Should be a UserWarning, but I can't figure out how to catch those AND keep going
-                        raise AssertionError("Number of colors in image is above the supported amount for the GIF codec!\nTry using `-f=png`.")
+                        raise AssertionError(
+                            "Number of colors in image is above the supported amount for the GIF codec!\nTry using `-f=png`.")
                     formatted_colors = formatted_colors[:255].flatten()
                     palette_colors.extend(formatted_colors)
                     dummy = Image.new('P', (16, 16))

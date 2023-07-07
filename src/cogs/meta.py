@@ -162,7 +162,7 @@ This help page should be able to guide you to everything you need to know.
 - If you need a list of tiles you can use, look through `search`.
 - If you need a list of commands, look at `commands`.
 - If you need to make a render, look at `commands tile`.
-- If you need help on a level, look at `hints <level name>`.
+- If you need help on a level, look at `hints`.
 - If you need to look at a level, look at `level`.
 - If you need help learning how to make renders, look at `doc`.""",
             inline=False
@@ -184,9 +184,9 @@ Tiles: {tile_amount}""",
         )
         embed.add_field(
             name="Developers",
-            value="""_balt#6423_ - Current lead
-_CenTdemeern1#3610_ - Co-lead
-_RocketRace#0798_ - Original lead
+            value="""_@baltdev_ - Current lead
+_@centdemeern1_ - Co-lead
+_@rocketrace_ - Original lead
 """,
             inline=True
         )
@@ -199,8 +199,7 @@ _RocketRace#0798_ - Original lead
         )
         embed.add_field(
             name="Credits",
-            value="""[Baba Is Bookmark](https://baba-is-bookmark.herokuapp.com/) - SpiccyMayonnaise
-        [Baba Is Hint](https://www.keyofw.com/baba-is-hint/) - keyofw""",
+            value="""[Baba Is Bookmark](https://baba-is-bookmark.herokuapp.com/) - SpiccyMayonnaise""",
             inline=True
         )
         await ctx.send(embed=embed)

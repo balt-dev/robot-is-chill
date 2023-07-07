@@ -312,10 +312,11 @@ async def setup(bot):
         tile.frame = (tile.frame - 1) % 32
 
     @add_variant("f", hashed=False)
-    async def freeze(tile, frame: Optional[int] = 1):
-        """Freezes the wobble of the tile to the specified frame."""
-        assert frame in range(1, 4), f"Wobble frame of `{frame}` is outside of the supported range!"
-        tile.wobble = frame - 1
+    async def frames(tile, *frame: int):
+        """Sets the wobble of the tile to the specified frame(s). 1 or 3 can be specified."""
+        assert all(f in range(1, 4) for f in frame), f"One or more wobble frames is outside of the supported range of [1, 3]!"
+        assert len(frame) <= 3 and len(frame) != 2, "Only 1 or 3 frames can be specified."
+        tile.wobble_frames = [f - 1 for f in frame]
 
     # --- COLORING ---
 
