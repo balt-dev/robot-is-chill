@@ -73,7 +73,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_locked",
         "sprite": "text_locked",
         "color": [
@@ -82,12 +82,30 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_fall",
         "sprite": "text_fall",
         "color": [
             "5",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "greg",
+        "sprite": "greg",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_greg",
+        "sprite": "text_greg",
+        "color": [
+            "2",
+            "3"
         ],
         "tiling": "-1"
     }

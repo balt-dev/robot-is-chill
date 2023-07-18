@@ -576,15 +576,6 @@
         "tiling": "0"
     },
     {
-        "name": "guy",
-        "sprite": "guy",
-        "color": [
-            "6",
-            "1"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "xx__xx",
         "sprite": "xx--xx",
         "color": [
@@ -736,5 +727,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "legs",
+        "sprite": "legs",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

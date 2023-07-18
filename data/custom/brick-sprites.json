@@ -122,5 +122,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "image",
+        "sprite": "painting",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1,0 +1,38 @@
+[
+    {
+        "name": "buffer",
+        "sprite": "buffer",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_buffer",
+        "sprite": "text_buffer",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "fan",
+        "sprite": "fan",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_fan",
+        "sprite": "text_fan",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

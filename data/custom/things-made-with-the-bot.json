@@ -52,5 +52,32 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "pause",
+        "sprite": "pause",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pause",
+        "sprite": "text_pause",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "play",
+        "sprite": "play",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
