@@ -98,7 +98,7 @@ async def setup(bot):
                 pattern += f"(?:{'/' if i - 1 else ''}{generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=get_args(p.annotation)[0])])})?"
             elif p.annotation in (patterns := {
                 int: r"/(-*\d+)",
-                float: r"/(-*(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))",
+                float: r"/(-*(?:(?:\d+\.?\d*)|(?:\.\d+)))",
                 # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
                 str: r"/(.+?)",
                 bool: r"/(true|false)?",
@@ -312,10 +312,11 @@ async def setup(bot):
         tile.frame = (tile.frame - 1) % 32
 
     @add_variant("f", hashed=False)
-    async def freeze(tile, frame: Optional[int] = 1):
-        """Freezes the wobble of the tile to the specified frame."""
-        assert frame in range(1, 4), f"Wobble frame of `{frame}` is outside of the supported range!"
-        tile.wobble = frame - 1
+    async def frames(tile, *frame: int):
+        """Sets the wobble of the tile to the specified frame(s). 1 or 3 can be specified."""
+        assert all(f in range(1, 4) for f in frame), f"One or more wobble frames is outside of the supported range of [1, 3]!"
+        assert len(frame) <= 3 and len(frame) != 2, "Only 1 or 3 frames can be specified."
+        tile.wobble_frames = [f - 1 for f in frame]
 
     # --- COLORING ---
 

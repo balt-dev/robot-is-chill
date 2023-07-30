@@ -23,7 +23,6 @@ class Database:
     """Everything relating to persistent readable & writable data."""
     conn: asqlite.Connection
     bot: None
-    level_hints: dict[str, dict[str, dict[str, str]]]
     filter_cache: dict[str, np.ndarray]
 
     def __init__(self, bot):
@@ -32,8 +31,6 @@ class Database:
 
     async def connect(self, db: str) -> None:
         """Startup."""
-        with open(f"data/hints/{BABA_WORLD}.json") as fp:
-            self.level_hints = json.load(fp)
         # not checking for same thread probably is a terrible idea but
         # whateverrr
         self.conn = await asqlite.connect(db, check_same_thread=False)
@@ -237,10 +234,6 @@ class Database:
                 f"data/plates/plate_property{DIRECTIONS.get(direction, '')}_0_{wobble+1}.png").convert("RGBA"),
             (3, 3)
         )
-
-    def hints(self, level_id: str) -> dict[str, dict[str, str]] | None:
-        """The hints for a baba level."""
-        return self.level_hints.get(level_id.lower())
 
     async def get_filter(self, url: str):
         """Get a filter from the database."""

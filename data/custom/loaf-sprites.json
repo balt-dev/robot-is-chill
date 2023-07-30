@@ -1,0 +1,20 @@
+[
+    {
+        "name": "kassa",
+        "sprite": "kassa",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kassa",
+        "sprite": "text_kassa",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }
+]
