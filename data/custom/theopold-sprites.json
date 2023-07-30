@@ -871,5 +871,41 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "scifidoor",
+        "sprite": "scifidoor",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bin",
+        "sprite": "bin",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cacti",
+        "sprite": "cacti",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "shrubs",
+        "sprite": "shrubbery",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
