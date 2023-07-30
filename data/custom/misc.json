@@ -1402,5 +1402,32 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "note",
+        "sprite": "note",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "note2",
+        "sprite": "note2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nudge",
+        "sprite": "text_nudge",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

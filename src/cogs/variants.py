@@ -98,7 +98,7 @@ async def setup(bot):
                 pattern += f"(?:{'/' if i - 1 else ''}{generate_pattern([inspect.Parameter(p.name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=get_args(p.annotation)[0])])})?"
             elif p.annotation in (patterns := {
                 int: r"/(-*\d+)",
-                float: r"/(-*(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+))",
+                float: r"/(-*(?:(?:\d+\.?\d*)|(?:\.\d+)))",
                 # From https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers/42629198#42629198
                 str: r"/(.+?)",
                 bool: r"/(true|false)?",

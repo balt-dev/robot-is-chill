@@ -178,5 +178,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "wood",
+        "sprite": "wood",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_wood",
+        "sprite": "text_wood",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
