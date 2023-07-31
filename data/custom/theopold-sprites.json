@@ -736,5 +736,41 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "tero",
+        "sprite": "tero",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "salt",
+        "sprite": "salt",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "babangle",
+        "sprite": "babangle",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "fofold",
+        "sprite": "weirdfofo",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

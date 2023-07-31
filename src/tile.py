@@ -209,7 +209,7 @@ class ProcessedTile:
     """A tile that's been processed, and is ready to render."""
     empty: bool = True
     name: str = "?"
-    wobble: int | None = None
+    wobble_frames: tuple[int] | None = None
     frames: list[Optional[np.ndarray], Optional[np.ndarray], Optional[np.ndarray]] = field(
         default_factory=lambda: [None, None, None], repr=False)
     blending: Literal[*tuple(constants.BLENDING_MODES.keys())] = "normal"

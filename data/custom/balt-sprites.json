@@ -96,5 +96,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "goob",
+        "sprite": "goob",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "feather",
+        "sprite": "feather",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
