@@ -738,6 +738,105 @@
         "tiling": "0"
     },
     {
+        "name": "baba2",
+        "sprite": "babangle",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "bug2",
+        "sprite": "buug",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "robotarm",
+        "sprite": "robotarm",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "isopod",
+        "sprite": "roly",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "conveyor",
+        "sprite": "beltconveyor",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "lamp2",
+        "sprite": "convenientlyshapedlamp",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dial",
+        "sprite": "dial",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "valve",
+        "sprite": "valve",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "pickkey",
+        "sprite": "keytiny",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hedgedge",
+        "sprite": "hedgeedge",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ili",
+        "sprite": "ili",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "tero",
         "sprite": "tero",
         "color": [
@@ -756,21 +855,57 @@
         "tiling": "2"
     },
     {
-        "name": "babangle",
-        "sprite": "babangle",
+        "name": "wall_xx",
+        "sprite": "wallx",
         "color": [
-            "0",
-            "3"
+            "5",
+            "4"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
-        "name": "fofold",
+        "name": "fofo2",
         "sprite": "weirdfofo",
         "color": [
             "5",
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "scifidoor",
+        "sprite": "scifidoor",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bin",
+        "sprite": "bin",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cacti",
+        "sprite": "cacti",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "shrubs",
+        "sprite": "shrubbery",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

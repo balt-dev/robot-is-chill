@@ -198,21 +198,30 @@
         "tiling": "-1"
     },
     {
-        "name": "octocat",
-        "sprite": "octocat",
+        "name": "cledge",
+        "sprite": "cledge",
         "color": [
-            "0",
-            "3"
+            "4",
+            "4"
         ],
-        "tiling": "-1"
+        "tiling": "1"
     },
     {
-        "name": "smoke",
-        "sprite": "smoke",
+        "name": "hedge2",
+        "sprite": "hedgeplatformer",
         "color": [
-            "0",
-            "1"
+            "5",
+            "2"
         ],
-        "tiling": "-1"
+        "tiling": "1"
+    },
+    {
+        "name": "cube2",
+        "sprite": "cube",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
