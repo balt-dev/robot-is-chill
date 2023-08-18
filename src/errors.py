@@ -134,4 +134,3 @@ class ScaleError(VariantError):
 
 class BadVariant(VariantError):
     """Incorrect syntax."""
-    pass

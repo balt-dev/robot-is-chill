@@ -114,5 +114,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_nuhuh",
+        "sprite": "nuhuh",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
