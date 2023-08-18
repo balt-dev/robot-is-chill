@@ -63,15 +63,6 @@
         "tiling": "2"
     },
     {
-        "name": "text_tyty",
-        "sprite": "text_tyty",
-        "color": [
-            "5",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "soso",
         "sprite": "soso",
         "color": [
@@ -189,15 +180,6 @@
         "tiling": "0"
     },
     {
-        "name": "text_brubru",
-        "sprite": "text_brubru",
-        "color": [
-            "1",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "balona",
         "sprite": "balona",
         "color": [
@@ -205,15 +187,6 @@
             "1"
         ],
         "tiling": "2"
-    },
-    {
-        "name": "text_balona",
-        "sprite": "text_balona",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "pickdoor",
@@ -825,7 +798,7 @@
             "5",
             "2"
         ],
-        "tiling": "1"
+        "tiling": "0"
     },
     {
         "name": "ili",
@@ -835,6 +808,15 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_ili",
+        "sprite": "text_ili",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "tero",
@@ -861,7 +843,7 @@
             "5",
             "4"
         ],
-        "tiling": "1"
+        "tiling": "0"
     },
     {
         "name": "fofo2",
@@ -905,6 +887,159 @@
         "color": [
             "5",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "box2",
+        "sprite": "cardbox",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "drone",
+        "sprite": "drone",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "glyph_adad",
+        "sprite": "glyph_adad",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_alal",
+        "sprite": "glyph_alal",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_balona",
+        "sprite": "glyph_balona",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_balt",
+        "sprite": "glyph_balt",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_baski",
+        "sprite": "glyph_baski",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_brubru",
+        "sprite": "glyph_brubru",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_drone",
+        "sprite": "glyph_drone",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_ili",
+        "sprite": "glyph_ili",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_letter",
+        "sprite": "glyph_letter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_nimi",
+        "sprite": "glyph_nimi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_salt",
+        "sprite": "glyph_salt",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_sama",
+        "sprite": "glyph_sama",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_sand",
+        "sprite": "glyph_sand",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_tyty",
+        "sprite": "glyph_tyty",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_zuzu",
+        "sprite": "glyph_zuzu",
+        "color": [
+            "2",
+            "3"
         ],
         "tiling": "-1"
     }

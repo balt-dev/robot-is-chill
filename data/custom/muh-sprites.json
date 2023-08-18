@@ -1,0 +1,38 @@
+[
+    {
+        "name": "chain",
+        "sprite": "chain",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "spring",
+        "sprite": "spring",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "bolt2",
+        "sprite": "mbolt",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rivet",
+        "sprite": "rivet",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]
