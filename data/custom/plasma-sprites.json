@@ -61,5 +61,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fox",
+        "sprite": "fox",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "dog2",
+        "sprite": "dog",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_dog2",
+        "sprite": "text_dog",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
