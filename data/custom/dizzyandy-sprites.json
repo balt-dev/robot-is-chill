@@ -222,6 +222,42 @@
             "5",
             "3"
         ],
+        "tiling": "-1"
+    },
+    {
+        "name": "floppy2",
+        "sprite": "floppy",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "furnace",
+        "sprite": "furnace",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "metal",
+        "sprite": "metal",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "steampackwall",
+        "sprite": "wallmetal",
+        "color": [
+            "0",
+            "1"
+        ],
         "tiling": "1"
     },
     {
@@ -232,5 +268,23 @@
             "4"
         ],
         "tiling": "2"
+	},
+	{
+        "name": "porter",
+        "sprite": "portele",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+	},
+    {
+        "name": "smoke",
+        "sprite": "smoke",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
     }
 ]
