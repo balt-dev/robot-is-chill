@@ -1429,5 +1429,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "walla",
+        "sprite": "walla",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "boxba",
+        "sprite": "boxba",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ifif",
+        "sprite": "ifif",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "atat",
+        "sprite": "atat",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

@@ -136,7 +136,7 @@
     },
     {
         "name": "it's",
-        "sprite": "it-s",
+        "sprite": "it's",
         "color": [
             "3",
             "1"
@@ -284,6 +284,87 @@
         "color": [
             "0",
             "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pice",
+        "sprite": "pice",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "it'd",
+        "sprite": "it'd",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_it'd",
+        "sprite": "text_it'd",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "eeh",
+        "sprite": "eeh",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "coro",
+        "sprite": "coro",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "yayi",
+        "sprite": "yayi",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "jimjim",
+        "sprite": "jimjim",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "dustes",
+        "sprite": "dustes",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pixels",
+        "sprite": "pixels",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

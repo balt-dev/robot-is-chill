@@ -1042,5 +1042,212 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_bobo",
+        "sprite": "text_bobo",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hoot",
+        "sprite": "hoot",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "chacha",
+        "sprite": "chacha",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "eel",
+        "sprite": "eel",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "dude",
+        "sprite": "dude",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "zat",
+        "sprite": "zat",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "woe",
+        "sprite": "woe",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "roro",
+        "sprite": "roro",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "thethe",
+        "sprite": "thethe",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "clam",
+        "sprite": "clam",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "krill",
+        "sprite": "krill",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "alga",
+        "sprite": "alga",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "algaes",
+        "sprite": "algaes",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mote",
+        "sprite": "mote",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dusteses",
+        "sprite": "dusteses",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dusteses2",
+        "sprite": "dusteses_old",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "onebrick",
+        "sprite": "onebrick",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "oneplank",
+        "sprite": "oneplank",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "onebubble",
+        "sprite": "onebubble",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "oneflower",
+        "sprite": "oneflower",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pebble2",
+        "sprite": "pebble",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pixelses",
+        "sprite": "pixelses",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "puddle",
+        "sprite": "puddle",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

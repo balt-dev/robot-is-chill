@@ -519,7 +519,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_has",
@@ -528,7 +528,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_write",
@@ -537,7 +537,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_and",
