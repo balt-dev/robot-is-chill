@@ -592,5 +592,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "glyph_metatext2",
+        "sprite": "glyph_metatext2",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_meta2",
+        "sprite": "glyph_meta2",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

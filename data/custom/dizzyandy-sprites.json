@@ -367,5 +367,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "octocat",
+        "sprite": "octocat",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ohno",
+        "sprite": "ohno",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cycat",
+        "sprite": "cycat",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
