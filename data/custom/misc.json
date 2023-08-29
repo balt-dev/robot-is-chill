@@ -1546,5 +1546,32 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pixel2",
+        "sprite": "pixel2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "tf2tele",
+        "sprite": "tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_tf2tele",
+        "sprite": "text_tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "1"
     }
 ]
