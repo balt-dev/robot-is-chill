@@ -394,5 +394,32 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "gavel",
+        "sprite": "gavel",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ele",
+        "sprite": "elephant",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "dopairs",
+        "sprite": "dopairs",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
