@@ -430,5 +430,50 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "drop2",
+        "sprite": "drop",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dollartock",
+        "sprite": "stockup",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stock",
+        "sprite": "stock",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dollartock",
+        "sprite": "text_stockup",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_stock",
+        "sprite": "text_stock",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

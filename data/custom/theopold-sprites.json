@@ -1249,5 +1249,14 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "sososo",
+        "sprite": "sososo",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "1"
     }
 ]
