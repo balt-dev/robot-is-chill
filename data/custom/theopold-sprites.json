@@ -126,15 +126,6 @@
         "tiling": "0"
     },
     {
-        "name": "youoc",
-        "sprite": "you-oc",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "andoc",
         "sprite": "andoc",
         "color": [

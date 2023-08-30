@@ -421,5 +421,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "star2",
+        "sprite": "star2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

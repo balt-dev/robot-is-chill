@@ -1582,5 +1582,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "crosshair",
+        "sprite": "crosshair",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bwot",
+        "sprite": "bwot",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]
