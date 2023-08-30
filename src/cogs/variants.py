@@ -562,6 +562,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
     @add_variant("m")
     async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
         """Applies a meta filter to an image."""
+        if level is None: level = 1
         assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
         # Not padding at negative values is intentional
         padding = max(level, 0)
