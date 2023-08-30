@@ -167,7 +167,7 @@ class Renderer:
         true_size = default_size * ctx.upscale
         if not ctx._disable_limit:
             assert all(
-                true_size <= constants.MAX_IMAGE_SIZE), f"Image of size `{true_size}` is larger than the maximum allowed size of `{constants.MAX_IMAGE_SIZE}`!"
+                true_size[::-1] <= constants.MAX_IMAGE_SIZE), f"Image of size `{true_size[::-1]}` is larger than the maximum allowed size of `{constants.MAX_IMAGE_SIZE}`!"
         steps = np.zeros(
             (((animation_timestep if animation_wobble else len(frames)) * grid.shape[0]), *default_size, 4),
             dtype=np.uint8)
