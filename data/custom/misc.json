@@ -1429,5 +1429,158 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "walla",
+        "sprite": "walla",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "boxba",
+        "sprite": "boxba",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ifif",
+        "sprite": "ifif",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "atat",
+        "sprite": "atat",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "u",
+        "sprite": "u",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "d",
+        "sprite": "d",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "l",
+        "sprite": "l",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "r",
+        "sprite": "r",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ur",
+        "sprite": "ur",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dl",
+        "sprite": "dl",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ul",
+        "sprite": "ul",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dr",
+        "sprite": "dr",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "o",
+        "sprite": "o",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pixel2",
+        "sprite": "pixel2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "tf2tele",
+        "sprite": "tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tf2tele",
+        "sprite": "text_tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "her2",
+        "sprite": "her",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
