@@ -40,19 +40,6 @@
         ]
     },
     {
-        "name": "text_pacman",
-        "sprite": "text_pacman",
-        "tiling": "-1",
-        "color": [
-            "6",
-            "1"
-        ],
-        "active": [
-            "2",
-            "4"
-        ]
-    },
-    {
         "name": "adad",
         "sprite": "adad",
         "color": [
