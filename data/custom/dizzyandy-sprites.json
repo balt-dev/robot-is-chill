@@ -475,5 +475,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ixix",
+        "sprite": "ixix",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ixix",
+        "sprite": "text_ixix",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

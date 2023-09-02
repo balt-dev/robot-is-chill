@@ -1600,5 +1600,68 @@
             "1"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "carrot",
+        "sprite": "carrot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_maroon",
+        "sprite": "text_maroon",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_gold",
+        "sprite": "text_gold",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lili2",
+        "sprite": "lilinew",
+        "tiling": "0",
+        "color": [
+            "4",
+            "2"
+        ]
+    },
+    {
+        "name": "text_lili",
+        "sprite": "text_lilinew",
+        "tiling": "-1",
+        "color": [
+            "4",
+            "2"
+        ]
+    },
+    {
+        "name": "group",
+        "sprite": "group",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "3"
+        ]
+    },
+    {
+        "name": "lilo",
+        "sprite": "lilo",
+        "tiling": "3",
+        "color": [
+            "2",
+            "4"
+        ]
     }
 ]
