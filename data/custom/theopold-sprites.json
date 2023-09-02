@@ -1111,7 +1111,7 @@
         "sprite": "thethe",
         "color": [
             "2",
-            "1"
+            "2"
         ],
         "tiling": "0"
     },
@@ -1258,5 +1258,32 @@
             "2"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "ranger",
+        "sprite": "ranger",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "gogo",
+        "sprite": "gogo",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "evilevil",
+        "sprite": "evilevil",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
