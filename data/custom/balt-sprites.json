@@ -123,5 +123,23 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "scug",
+        "sprite": "scug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_scug",
+        "sprite": "text_scug",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
