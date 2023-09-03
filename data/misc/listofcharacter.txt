@@ -1,6 +1,4 @@
-mandel
 baski
-kijetesantakalu
 sobabh
 fearoc
 writeoc
@@ -54,8 +52,6 @@ et
 gugu
 babaglitch
 bibad
-adoballs
-crewmate
 fbufbu
 beba2
 ouch
@@ -65,11 +61,9 @@ folt
 jilt
 ilt
 cece
-tbh
 beba
 snombalt
 kobad
-glider
 fu
 jaja
 babalpha
@@ -81,11 +75,8 @@ errorbeta
 handbeta
 skullbeta
 belbel
-soweli
 josh
 stronske
-errorflag
-enemy
 abab
 kyberhyper-skullmutantnightmaremonster-batpowerspikemon
 ekek
@@ -116,7 +107,6 @@ ant
 badbad_old
 tuto
 hbaba
-discord
 debug
 f0f0
 page
@@ -126,9 +116,7 @@ chadchad
 bird_old
 bribri
 abomination
-whee
 ship
-patrick2
 he
 dufu
 monkey
@@ -147,10 +135,8 @@ flafla
 skele
 lili
 kibi
-patrick
 fox
 tabbit
-bloba
 feller
 nimi
 armor
