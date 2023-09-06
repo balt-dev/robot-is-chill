@@ -69,7 +69,7 @@
             "0",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "soli",
@@ -625,7 +625,7 @@
         "sprite": "sosad",
         "color": [
             "6",
-            "1"
+            "2"
         ],
         "tiling": "0"
     },
@@ -1285,5 +1285,32 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "teltel",
+        "sprite": "teltel",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "kuku",
+        "sprite": "kuku",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "namnam",
+        "sprite": "namnam",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
