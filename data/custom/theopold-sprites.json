@@ -1312,5 +1312,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "dider",
+        "sprite": "dider",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "4"
     }
 ]
