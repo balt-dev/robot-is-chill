@@ -1321,5 +1321,14 @@
             "0"
         ],
         "tiling": "4"
+    },
+    {
+        "name": "susu",
+        "sprite": "susu",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
