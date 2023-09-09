@@ -1,0 +1,128 @@
+[
+    {
+        "name": "fearoc",
+        "sprite": "fearoc",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "writeoc",
+        "sprite": "writeoc",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "weakoc",
+        "sprite": "weakoc",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hideoc",
+        "sprite": "hideoc",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "packoc",
+        "sprite": "packoc",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "makeoc",
+        "sprite": "make-oc",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "swapoc",
+        "sprite": "swapoc",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "isoc",
+        "sprite": "isoc",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "andoc",
+        "sprite": "andoc",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "openoc",
+        "sprite": "openoc",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "winoc",
+        "sprite": "winoc",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "pivotisoc",
+        "sprite": "pivotis-oc",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "stopoc",
+        "sprite": "stop-oc",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_oc",
+        "sprite": "text_oc",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    }
+]

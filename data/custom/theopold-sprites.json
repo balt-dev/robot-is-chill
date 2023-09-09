@@ -117,33 +117,6 @@
         "tiling": "-1"
     },
     {
-        "name": "isoc",
-        "sprite": "isoc",
-        "color": [
-            "4",
-            "2"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "andoc",
-        "sprite": "andoc",
-        "color": [
-            "0",
-            "2"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "openoc",
-        "sprite": "openoc",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "oisplayer",
         "sprite": "oisplayer",
         "color": [
@@ -187,24 +160,6 @@
             "1"
         ],
         "tiling": "1"
-    },
-    {
-        "name": "makeoc",
-        "sprite": "make-oc",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "swapoc",
-        "sprite": "swapoc",
-        "color": [
-            "4",
-            "0"
-        ],
-        "tiling": "0"
     },
     {
         "name": "boom",
