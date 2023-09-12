@@ -139,6 +139,15 @@
         "sprite": "powered-oc",
         "color": [
             "4",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "poweroc",
+        "sprite": "power-oc",
+        "color": [
+            "4",
             "4"
         ],
         "tiling": "0"
