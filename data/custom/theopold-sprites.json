@@ -1294,5 +1294,14 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "popo",
+        "sprite": "popo",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]
