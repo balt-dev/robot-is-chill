@@ -1285,5 +1285,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "venven",
+        "sprite": "venven",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]

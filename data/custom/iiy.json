@@ -124,5 +124,59 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "shiftoc",
+        "sprite": "shift-oc",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "poweredoc",
+        "sprite": "powered-oc",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "leftoc",
+        "sprite": "leftoc",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "rightoc",
+        "sprite": "rightoc",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "upoc",
+        "sprite": "upoc",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "downoc",
+        "sprite": "downoc",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
