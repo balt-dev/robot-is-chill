@@ -1667,10 +1667,10 @@
     {
         "name": "goob2",
         "sprite": "goob",
-        "tiling": "0",
         "color": [
             "1",
             "3"
-        ]
+        ],
+        "tiling": "0"
     }
 ]
