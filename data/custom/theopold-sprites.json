@@ -744,7 +744,7 @@
             "5",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "1"
     },
     {
         "name": "ili",
@@ -789,7 +789,7 @@
             "5",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "1"
     },
     {
         "name": "fofo2",
@@ -1283,6 +1283,24 @@
         "color": [
             "0",
             "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "venven",
+        "sprite": "venven",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "popo",
+        "sprite": "popo",
+        "color": [
+            "3",
+            "1"
         ],
         "tiling": "0"
     }
