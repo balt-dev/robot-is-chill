@@ -504,10 +504,19 @@
         "tiling": "2"
     },
     {
-        "name": "text_filler",
+        "name": "text_undef",
         "sprite": "text_filler",
         "color": [
             "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "seastar2",
+        "sprite": "seastar2",
+        "color": [
+            "2",
             "3"
         ],
         "tiling": "-1"
