@@ -493,5 +493,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kaka",
+        "sprite": "kaka",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_filler",
+        "sprite": "text_filler",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

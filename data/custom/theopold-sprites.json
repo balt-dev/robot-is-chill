@@ -1303,5 +1303,23 @@
             "1"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "swu",
+        "sprite": "swu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "unun",
+        "sprite": "unun",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
