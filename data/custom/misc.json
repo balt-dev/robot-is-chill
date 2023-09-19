@@ -1698,7 +1698,7 @@
             "3",
             "2"
         ],
-        "tiling": "1"
+        "tiling": "2"
     },
     {
         "name": "wave",
@@ -1708,5 +1708,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "glitch",
+        "sprite": "glitch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
