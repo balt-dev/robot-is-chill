@@ -1,0 +1,9 @@
+name: push checking
+run-name: checking push for validity...
+on: [push]
+jobs:
+  Validate-Push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: json-yaml-validate
+      uses: GrantBirki/json-yaml-validate@v2.3.1  
