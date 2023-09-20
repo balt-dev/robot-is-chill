@@ -34,5 +34,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+	{
+        "name": "tritri",
+        "sprite": "tritri",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "text_tritri",
+        "sprite": "text_tritri",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

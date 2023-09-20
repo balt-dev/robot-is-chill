@@ -1,6 +1,6 @@
 abab
-abomination
 adad
+alal
 alful
 amoeba
 andoc
@@ -48,6 +48,7 @@ bug2
 bunny
 cat
 cbaba
+ceba
 cece
 chacha
 chadchad
@@ -131,6 +132,7 @@ it's
 ixix
 iz
 izbeta
+izzy
 jaja
 jaja
 jelly
@@ -139,6 +141,7 @@ jilt
 jimjim
 josh
 josh2
+kaka
 kassa
 keke
 kekebeta
@@ -176,6 +179,7 @@ oyou
 packoc
 page
 pivotisoc
+popo
 pumpkin
 quiqui
 rat
@@ -207,6 +211,7 @@ sunbad
 susu
 swapoc
 swi
+swu
 tabbit
 teltel
 tero
@@ -218,10 +223,12 @@ they
 this
 those
 toitoi
+tritri
 turtle
 tuto
 tyty
 ufo
+unun
 us
 venven
 virus
