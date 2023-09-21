@@ -28,7 +28,6 @@ bebe
 bee
 belbel
 beta
-beta
 bibad
 bibi
 bibo
@@ -46,6 +45,7 @@ bubu
 bug
 bug2
 bunny
+bwot
 cat
 cbaba
 ceba
@@ -180,6 +180,8 @@ packoc
 page
 pivotisoc
 popo
+poweredoc
+poweroc
 pumpkin
 quiqui
 rat
