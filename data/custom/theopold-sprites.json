@@ -1321,5 +1321,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "grgr",
+        "sprite": "grgr",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

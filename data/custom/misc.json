@@ -1680,7 +1680,7 @@
             "2",
             "2"
         ],
-        "tiling": "3"
+        "tiling": "2"
     },
     {
         "name": "tar",
@@ -1753,5 +1753,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "nest",
+        "sprite": "nest",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nest",
+        "sprite": "text_nest",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
