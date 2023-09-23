@@ -918,15 +918,6 @@
         "tiling": "-1"
     },
     {
-        "name": "em2",
-        "sprite": "eeveemaster",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "text_pride",
         "sprite": "text_pride",
         "color": [
@@ -1680,7 +1671,7 @@
             "2",
             "2"
         ],
-        "tiling": "3"
+        "tiling": "2"
     },
     {
         "name": "tar",
@@ -1753,5 +1744,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "nest",
+        "sprite": "nest",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nest",
+        "sprite": "text_nest",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

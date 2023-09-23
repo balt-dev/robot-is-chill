@@ -783,7 +783,7 @@
         "tiling": "-1"
     },
     {
-        "name": "chain",
+        "name": "babchain",
         "sprite": "chain",
         "color": [
             "0",

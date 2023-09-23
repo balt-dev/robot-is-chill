@@ -1321,5 +1321,50 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "grgr",
+        "sprite": "grgr",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "lele",
+        "sprite": "lele",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "sasa",
+        "sprite": "sasa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ee",
+        "sprite": "ee",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_ee",
+        "sprite": "text_ee",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
