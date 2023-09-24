@@ -1366,5 +1366,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "doda",
+        "sprite": "doda",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
