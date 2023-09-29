@@ -342,7 +342,7 @@
         ]
     },
     {
-        "name": "kat",
+        "name": "babkat",
         "sprite": "kat",
         "tiling": "-1",
         "color": [
@@ -630,7 +630,7 @@
         "tiling": "-1"
     },
     {
-        "name": "prop",
+        "name": "babprop",
         "sprite": "prop",
         "color": [
             "0",
@@ -819,7 +819,7 @@
         "tiling": "-1"
     },
     {
-        "name": "sine",
+        "name": "babsine",
         "sprite": "sine",
         "color": [
             "6",

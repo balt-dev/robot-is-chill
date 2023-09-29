@@ -67,9 +67,11 @@ dag
 debug
 debugc
 dider
+doda
 dog
 dude
 dufu
+ebace
 eeh
 eel
 ekek
@@ -103,6 +105,7 @@ goob2
 goopi
 goose
 greg
+grgr
 gugu
 gugu2
 hand
@@ -133,7 +136,6 @@ ixix
 iz
 izbeta
 izzy
-jaja
 jaja
 jelly
 jiji
