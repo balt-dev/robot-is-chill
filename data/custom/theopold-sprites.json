@@ -1197,15 +1197,6 @@
         "tiling": "-1"
     },
     {
-        "name": "wudwud",
-        "sprite": "wudwud",
-        "color": [
-            "5",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "sososo",
         "sprite": "sososo",
         "color": [
@@ -1375,5 +1366,23 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "wudwud",
+        "sprite": "wudwud",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ebace",
+        "sprite": "ebace",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "2"
     }
 ]
