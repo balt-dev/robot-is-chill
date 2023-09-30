@@ -7,6 +7,8 @@ import json
 import zipfile
 import pathlib
 import re
+from json import JSONDecodeError
+
 import requests
 import itertools
 import collections
@@ -742,78 +744,81 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             return d
 
         async with self.bot.db.conn.cursor() as cur:
-            for path in pathlib.Path("data/custom").glob(f"{file}.json"):
-                source = path.parts[-1].split(".")[0]
-                with open(path) as fp:
-                    objects = [prepare(source, obj) for obj in json.load(fp)]
-                await cur.executemany(
-                    '''
-                    INSERT INTO tiles
-                    VALUES (
-                        :name,
-                        :sprite,
-                        :source,
-                        2,
-                        :inactive_color_x,
-                        :inactive_color_y,
-                        :active_color_x,
-                        :active_color_y,
-                        :tiling,
-                        :text_type,
-                        :text_direction,
-                        :tags
+            try:
+                for path in pathlib.Path("data/custom").glob(f"{file}.json"):
+                    source = path.parts[-1].split(".")[0]
+                    with open(path) as fp:
+                        objects = [prepare(source, obj) for obj in json.load(fp)]
+                    await cur.executemany(
+                        '''
+                        INSERT INTO tiles
+                        VALUES (
+                            :name,
+                            :sprite,
+                            :source,
+                            2,
+                            :inactive_color_x,
+                            :inactive_color_y,
+                            :active_color_x,
+                            :active_color_y,
+                            :tiling,
+                            :text_type,
+                            :text_direction,
+                            :tags
+                        )
+                        ON CONFLICT(name, version)
+                        DO UPDATE SET
+                            sprite=excluded.sprite,
+                            source=excluded.source,
+                            inactive_color_x=excluded.inactive_color_x,
+                            inactive_color_y=excluded.inactive_color_y,
+                            active_color_x=excluded.active_color_x,
+                            active_color_y=excluded.active_color_y,
+                            tiling=excluded.tiling,
+                            text_type=excluded.text_type,
+                            text_direction=excluded.text_direction,
+                            tags=excluded.tags;
+                        ''',
+                        objects
                     )
-                    ON CONFLICT(name, version)
-                    DO UPDATE SET
-                        sprite=excluded.sprite,
-                        source=excluded.source,
-                        inactive_color_x=excluded.inactive_color_x,
-                        inactive_color_y=excluded.inactive_color_y,
-                        active_color_x=excluded.active_color_x,
-                        active_color_y=excluded.active_color_y,
-                        tiling=excluded.tiling,
-                        text_type=excluded.text_type,
-                        text_direction=excluded.text_direction,
-                        tags=excluded.tags;
-                    ''',
-                    objects
-                )
-                # this is a mega HACK, but I'm keeping it because the
-                # alternative is a headache
-                hacks = [
-                    x for x in objects if "baba_special" in x["tags"].split("\t")]
-                await cur.executemany(
-                    '''
-                    INSERT INTO tiles
-                    VALUES (
-                        :name,
-                        :sprite,
-                        :source,
-                        0,
-                        :inactive_color_x,
-                        :inactive_color_y,
-                        :active_color_x,
-                        :active_color_y,
-                        :tiling,
-                        :text_type,
-                        :text_direction,
-                        :tags
+                    # this is a mega HACK, but I'm keeping it because the
+                    # alternative is a headache
+                    hacks = [
+                        x for x in objects if "baba_special" in x["tags"].split("\t")]
+                    await cur.executemany(
+                        '''
+                        INSERT INTO tiles
+                        VALUES (
+                            :name,
+                            :sprite,
+                            :source,
+                            0,
+                            :inactive_color_x,
+                            :inactive_color_y,
+                            :active_color_x,
+                            :active_color_y,
+                            :tiling,
+                            :text_type,
+                            :text_direction,
+                            :tags
+                        )
+                        ON CONFLICT(name, version)
+                        DO UPDATE SET
+                            sprite=excluded.sprite,
+                            source=excluded.source,
+                            inactive_color_x=excluded.inactive_color_x,
+                            inactive_color_y=excluded.inactive_color_y,
+                            active_color_x=excluded.active_color_x,
+                            active_color_y=excluded.active_color_y,
+                            tiling=excluded.tiling,
+                            text_type=excluded.text_type,
+                            text_direction=excluded.text_direction,
+                            tags=excluded.tags;
+                        ''',
+                        hacks
                     )
-                    ON CONFLICT(name, version)
-                    DO UPDATE SET
-                        sprite=excluded.sprite,
-                        source=excluded.source,
-                        inactive_color_x=excluded.inactive_color_x,
-                        inactive_color_y=excluded.inactive_color_y,
-                        active_color_x=excluded.active_color_x,
-                        active_color_y=excluded.active_color_y,
-                        tiling=excluded.tiling,
-                        text_type=excluded.text_type,
-                        text_direction=excluded.text_direction,
-                        tags=excluded.tags;
-                    ''',
-                    hacks
-                )
+            except JSONDecodeError as e:
+                raise AssertionError(f"Failed to parse `{path}`!\n{e.msg}")
 
     @commands.command()
     @commands.is_owner()

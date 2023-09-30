@@ -342,7 +342,7 @@
         ]
     },
     {
-        "name": "kat",
+        "name": "babkat",
         "sprite": "kat",
         "tiling": "-1",
         "color": [
@@ -630,7 +630,7 @@
         "tiling": "-1"
     },
     {
-        "name": "prop",
+        "name": "babprop",
         "sprite": "prop",
         "color": [
             "0",
@@ -783,7 +783,7 @@
         "tiling": "-1"
     },
     {
-        "name": "chain",
+        "name": "babchain",
         "sprite": "chain",
         "color": [
             "0",
@@ -819,7 +819,7 @@
         "tiling": "-1"
     },
     {
-        "name": "sine",
+        "name": "babsine",
         "sprite": "sine",
         "color": [
             "6",
@@ -856,7 +856,7 @@
     },
     {
         "name": "text_whoa",
-        "sprite": "text_:o",
+        "sprite": "babbonus",
         "color": [
             "4",
             "1"

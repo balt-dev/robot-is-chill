@@ -34,5 +34,131 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "mcoral",
+        "sprite": "coral",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bench",
+        "sprite": "bench",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "cube3",
+        "sprite": "cube",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "drop",
+        "sprite": "drop",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flake",
+        "sprite": "flake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "grave",
+        "sprite": "grave",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "heat",
+        "sprite": "heat",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "leaves",
+        "sprite": "leaves",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "log",
+        "sprite": "log",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "pebble",
+        "sprite": "pebble",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rake",
+        "sprite": "rake",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "silver",
+        "sprite": "silver",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "treeses",
+        "sprite": "treeses",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dwarf",
+        "sprite": "dwarf",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
