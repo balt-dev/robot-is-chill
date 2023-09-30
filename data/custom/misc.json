@@ -1762,5 +1762,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "scheme",
+        "sprite": "scheme",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
