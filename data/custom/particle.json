@@ -1,0 +1,164 @@
+[
+	{
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_snow",
+        "sprite": "background_snow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_cloud",
+        "sprite": "background_cloud",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_smoke",
+        "sprite": "background_smoke",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_pollen",
+        "sprite": "background_pollen",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_star",
+        "sprite": "background_star",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_glitter",
+        "sprite": "background_glitter",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_leaf",
+        "sprite": "background_leaf",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_leaf2",
+        "sprite": "background_leaf2",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_rain",
+        "sprite": "background_rain",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_blossom",
+        "sprite": "background_blossom",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "background_bubble",
+        "sprite": "background_bubble",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    }
+]

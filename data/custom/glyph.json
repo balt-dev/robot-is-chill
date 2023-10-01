@@ -166,7 +166,7 @@
         "sprite": "glyph_box",
         "color": [
             "6",
-            "3\1"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -200,6 +200,15 @@
     {
         "name": "glyph_key",
         "sprite": "glyph_key",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_key_old",
+        "sprite": "glyph_key2",
         "color": [
             "2",
             "4"
@@ -265,6 +274,15 @@
         "sprite": "glyph_tile",
         "color": [
             "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_grass_old",
+        "sprite": "glyph_grass2",
+        "color": [
+            "5",
             "1"
         ],
         "tiling": "-1"
@@ -519,7 +537,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_has",
@@ -528,7 +546,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_write",
@@ -537,7 +555,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "glyph_and",
@@ -590,6 +608,123 @@
         "color": [
             "3",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metatext2",
+        "sprite": "glyph_metatext2",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_meta2",
+        "sprite": "glyph_meta2",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_boat",
+        "sprite": "glyph_boat",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_cliff",
+        "sprite": "glyph_cliff",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_eye",
+        "sprite": "glyph_eye",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_group2",
+        "sprite": "glyph_group2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_hedge",
+        "sprite": "glyph_hedge",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_hide",
+        "sprite": "glyph_hide",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_jelly",
+        "sprite": "glyph_jelly",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_monster",
+        "sprite": "glyph_monster",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_robot",
+        "sprite": "glyph_robot",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_swap",
+        "sprite": "glyph_swap",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_quote",
+        "sprite": "text_quote",
+        "color": [
+            "3",
+            "3"
         ],
         "tiling": "-1"
     }

@@ -918,15 +918,6 @@
         "tiling": "-1"
     },
     {
-        "name": "em2",
-        "sprite": "eeveemaster",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "text_pride",
         "sprite": "text_pride",
         "color": [
@@ -1381,7 +1372,7 @@
         "sprite": "qiqi",
         "color": [
             "3",
-            "3"
+            "2"
         ],
         "tiling": "2"
     },
@@ -1426,6 +1417,348 @@
         "sprite": "text_nudge",
         "color": [
             "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "walla",
+        "sprite": "walla",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "boxba",
+        "sprite": "boxba",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ifif",
+        "sprite": "ifif",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "atat",
+        "sprite": "atat",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "u",
+        "sprite": "u",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "d",
+        "sprite": "d",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "l",
+        "sprite": "l",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "r",
+        "sprite": "r",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ur",
+        "sprite": "ur",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dl",
+        "sprite": "dl",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ul",
+        "sprite": "ul",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dr",
+        "sprite": "dr",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "o",
+        "sprite": "o",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pixel2",
+        "sprite": "pixel2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "tf2tele",
+        "sprite": "tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tf2tele",
+        "sprite": "text_tf2tele",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "her2",
+        "sprite": "her",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "crosshair",
+        "sprite": "crosshair",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bwot",
+        "sprite": "bwot",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "carrot",
+        "sprite": "carrot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_maroon",
+        "sprite": "text_maroon",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_gold",
+        "sprite": "text_gold",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lili2",
+        "sprite": "lilinew",
+        "tiling": "0",
+        "color": [
+            "4",
+            "2"
+        ]
+    },
+    {
+        "name": "text_lili",
+        "sprite": "text_lilinew",
+        "tiling": "-1",
+        "color": [
+            "4",
+            "2"
+        ]
+    },
+    {
+        "name": "lilo",
+        "sprite": "lilo",
+        "tiling": "3",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "goob2",
+        "sprite": "goob",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "group",
+        "sprite": "group",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "3"
+        ]
+    },
+    {
+        "name": "mario",
+        "sprite": "mario",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "tar",
+        "sprite": "tar",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "izzy",
+        "sprite": "izzy",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "wave",
+        "sprite": "wave",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glitch",
+        "sprite": "glitch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_melted",
+        "sprite": "text_melted",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_parsing",
+        "sprite": "text_parsing",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_mario",
+        "sprite": "text_mario",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "canopy",
+        "sprite": "canopy",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "nest",
+        "sprite": "nest",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nest",
+        "sprite": "text_nest",
+        "color": [
+            "2",
             "3"
         ],
         "tiling": "-1"

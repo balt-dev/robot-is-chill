@@ -7,50 +7,5 @@
             "3"
         ],
         "tiling": "2"
-    },
-    {
-        "name": "fearoc",
-        "sprite": "fearoc",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "writeoc",
-        "sprite": "writeoc",
-        "color": [
-            "6",
-            "2"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "weakoc",
-        "sprite": "weakoc",
-        "color": [
-            "0",
-            "2"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "hideoc",
-        "sprite": "hideoc",
-        "color": [
-            "1",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "packoc",
-        "sprite": "packoc",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "2"
     }
 ]

@@ -136,7 +136,7 @@
     },
     {
         "name": "it's",
-        "sprite": "it-s",
+        "sprite": "it's",
         "color": [
             "3",
             "1"
@@ -268,8 +268,8 @@
             "4"
         ],
         "tiling": "2"
-	},
-	{
+    },
+    {
         "name": "porter",
         "sprite": "portele",
         "color": [
@@ -277,7 +277,7 @@
             "4"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "smoke",
         "sprite": "smoke",
@@ -286,5 +286,248 @@
             "0"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pice",
+        "sprite": "pice",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "it'd",
+        "sprite": "it'd",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_it'd",
+        "sprite": "text_it'd",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "eeh",
+        "sprite": "eeh",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "coro",
+        "sprite": "coro",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "yayi",
+        "sprite": "yayi",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "jimjim",
+        "sprite": "jimjim",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "dustes",
+        "sprite": "dustes",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pixels",
+        "sprite": "pixels",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "octocat",
+        "sprite": "octocat",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ohno",
+        "sprite": "ohno",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cycat",
+        "sprite": "cycat",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gavel",
+        "sprite": "gavel",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ele",
+        "sprite": "elephant",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "dopairs",
+        "sprite": "dopairs",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "star2",
+        "sprite": "star2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "drop2",
+        "sprite": "drop",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dollartock",
+        "sprite": "stockup",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stock",
+        "sprite": "stock",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dollartock",
+        "sprite": "text_stockup",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_stock",
+        "sprite": "text_stock",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ixix",
+        "sprite": "ixix",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ixix",
+        "sprite": "text_ixix",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kaka",
+        "sprite": "kaka",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_undef",
+        "sprite": "text_filler",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "seastar2",
+        "sprite": "seastar2",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sine",
+        "sprite": "sine",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]

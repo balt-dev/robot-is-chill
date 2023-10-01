@@ -16,5 +16,14 @@
             "0",
             "3"
         ]
+    },
+	{
+        "name": "color",
+        "sprite": "color",
+        "tiling": "2",
+        "color": [
+            "4",
+            "3"
+        ]
     }
 ]
