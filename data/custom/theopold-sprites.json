@@ -1381,7 +1381,16 @@
         "sprite": "ebace",
         "color": [
             "2",
-            "0"
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "obo2",
+        "sprite": "obo",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "2"
     }
