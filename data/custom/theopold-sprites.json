@@ -1368,15 +1368,6 @@
         "tiling": "0"
     },
     {
-        "name": "wudwud",
-        "sprite": "wudwud",
-        "color": [
-            "5",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "ebace",
         "sprite": "ebace",
         "color": [

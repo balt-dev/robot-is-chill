@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "name": "wudwud",
+        "sprite": "wudwud",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    }
+]
