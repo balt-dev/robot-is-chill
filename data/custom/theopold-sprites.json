@@ -1384,5 +1384,41 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "his",
+        "sprite": "his",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "kari",
+        "sprite": "kari",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "vava",
+        "sprite": "vava",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "nunu",
+        "sprite": "nunu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
