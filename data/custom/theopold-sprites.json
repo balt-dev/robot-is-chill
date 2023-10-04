@@ -1389,10 +1389,19 @@
         "name": "his",
         "sprite": "his",
         "color": [
-            "2",
+            "3",
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "lifi",
+        "sprite": "lifi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
     },
     {
         "name": "kari",
