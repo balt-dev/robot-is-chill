@@ -1,5 +1,32 @@
 [
     {
+        "name": "gk9",
+        "sprite": "gabeyk9",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "justdont",
+        "sprite": "justdont",
+        "color": [
+            "6",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "pixel2",
+        "sprite": "pixel2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
         "name": "tesho",
         "sprite": "tesho",
         "color": [

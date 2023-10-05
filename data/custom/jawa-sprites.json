@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "name": "wudwud",
+        "sprite": "wudwud",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_underscore",
+        "sprite": "text_underscore",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_blunderscore",
+        "sprite": "text_blunderscore",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

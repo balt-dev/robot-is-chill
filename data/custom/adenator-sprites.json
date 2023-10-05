@@ -7,5 +7,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "errorc",
+        "sprite": "errorchar",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
