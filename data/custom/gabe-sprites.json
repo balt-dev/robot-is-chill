@@ -3,8 +3,8 @@
         "name": "gk9",
         "sprite": "gabeyk9",
         "color": [
-            "5",
-            "1"
+            "1",
+            "4"
         ],
         "tiling": "2"
     },
@@ -12,8 +12,8 @@
         "name": "justdont",
         "sprite": "justdont",
         "color": [
-            "6",
-            "4"
+            "5",
+            "3"
         ],
         "tiling": "2"
     },
