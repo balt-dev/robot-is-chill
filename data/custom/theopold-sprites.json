@@ -1429,5 +1429,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "ieie",
+        "sprite": "ieie",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
