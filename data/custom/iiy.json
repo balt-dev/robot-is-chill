@@ -129,14 +129,14 @@
         "name": "shiftoc",
         "sprite": "shift-oc",
         "color": [
-            "5",
-            "1"
+            "6",
+            "0"
         ],
         "tiling": "0"
     },
     {
         "name": "poweredoc",
-        "sprite": "powered-oc",
+        "sprite": "poweredoc",
         "color": [
             "4",
             "3"

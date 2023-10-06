@@ -1539,15 +1539,6 @@
         "tiling": "-1"
     },
     {
-        "name": "pixel2",
-        "sprite": "pixel2",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "1"
-    },
-    {
         "name": "tf2tele",
         "sprite": "tf2tele",
         "color": [
@@ -1770,6 +1761,15 @@
             "0",
             "3"
         ],
+    },
+    {
         "tiling": "-1"
+        "name": "wyg",
+        "sprite": "babywug",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
     }
 ]

@@ -1368,20 +1368,74 @@
         "tiling": "0"
     },
     {
-        "name": "wudwud",
-        "sprite": "wudwud",
+        "name": "ebace",
+        "sprite": "ebace",
         "color": [
-            "5",
+            "2",
             "1"
         ],
         "tiling": "2"
     },
     {
-        "name": "ebace",
-        "sprite": "ebace",
+        "name": "obo2",
+        "sprite": "obo",
         "color": [
             "2",
-            "0"
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "his",
+        "sprite": "his",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "lifi",
+        "sprite": "lifi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "kari",
+        "sprite": "kari",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "vava",
+        "sprite": "vava",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "nunu",
+        "sprite": "nunu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ieie",
+        "sprite": "ieie",
+        "color": [
+            "1",
+            "2"
         ],
         "tiling": "2"
     }
