@@ -1438,5 +1438,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "itnoatmgtmmitnoatmgtmm",
+        "sprite": "itnoatmgtmmitnoatmgtmm",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]
