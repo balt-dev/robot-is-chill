@@ -88,5 +88,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "rocroc",
+        "sprite": "rocroc",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]

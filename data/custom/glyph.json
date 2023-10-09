@@ -727,5 +727,140 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_symbol",
+        "sprite": "text_symbol",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metglyph",
+        "sprite": "text_meta",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metexta",
+        "sprite": "text_metatext",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_inscribe",
+        "sprite": "text_inscribe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_become",
+        "sprite": "text_become",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_inscribe",
+        "sprite": "glyph_inscribe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_is",
+        "sprite": "glyph_is",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_symbol",
+        "sprite": "glyph_symbol",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_love",
+        "sprite": "glyph_love",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_more",
+        "sprite": "glyph_more",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_nextto",
+        "sprite": "glyph_nextto",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_on",
+        "sprite": "glyph_on",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_on",
+        "sprite": "glyph_on",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_color",
+        "sprite": "glyph_color",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_select",
+        "sprite": "glyph_select",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
