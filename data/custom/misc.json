@@ -1757,13 +1757,13 @@
     {
         "name": "scheme",
         "sprite": "scheme",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
-        ],
+        ]
     },
     {
-        "tiling": "-1"
         "name": "wyg",
         "sprite": "babywug",
         "tiling": "2",
@@ -1771,5 +1771,23 @@
             "2",
             "4"
         ]
+    },
+    {
+        "name": "sed_f",
+        "sprite": "sed_f",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_sed_f",
+        "sprite": "text_sed",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
