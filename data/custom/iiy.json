@@ -111,8 +111,8 @@
         "name": "stopoc",
         "sprite": "stop-oc",
         "color": [
-            "1",
-            "2"
+            "5",
+            "3"
         ],
         "tiling": "0"
     },
@@ -185,6 +185,24 @@
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "besideoc",
+        "sprite": "beside",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "cutoc",
+        "sprite": "cutoc",
+        "color": [
+            "5",
+            "4"
         ],
         "tiling": "0"
     }
