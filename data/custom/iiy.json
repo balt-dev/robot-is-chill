@@ -112,7 +112,7 @@
         "sprite": "stop-oc",
         "color": [
             "5",
-            "2"
+            "3"
         ],
         "tiling": "0"
     },
@@ -187,5 +187,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "besideoc",
+        "sprite": "beside",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

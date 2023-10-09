@@ -34,5 +34,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "ryry",
+        "sprite": "ryry",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
