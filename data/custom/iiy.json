@@ -196,5 +196,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "cutoc",
+        "sprite": "cutoc",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]

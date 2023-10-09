@@ -1446,6 +1446,15 @@
             "2",
             "1"
         ],
-        "tiling": "2"
+        "tiling": "-1"
+    },
+    {
+        "name": "tili",
+        "sprite": "tili",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
     }
 ]
