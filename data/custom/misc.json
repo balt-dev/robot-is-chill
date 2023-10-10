@@ -1762,5 +1762,14 @@
             "2",
             "4"
         ]
+    },
+    {
+        "name": "rithere",
+        "sprite": "rithere",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]

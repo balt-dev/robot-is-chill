@@ -27,6 +27,7 @@ beba2
 bebe
 bee
 belbel
+besideoc
 beta
 bibad
 bibi
@@ -62,6 +63,7 @@ cpu
 crab
 cucu
 cucu2
+cutoc
 cycat
 dag
 debug
@@ -79,6 +81,7 @@ em
 em2
 error
 errorbeta
+errorchar
 et
 evilevil
 eye
@@ -119,9 +122,11 @@ her2
 hfofo
 hideoc
 him
+his
 hoot
 i
 i2
+ieie
 ifif
 ili
 ilt
@@ -132,6 +137,7 @@ it
 it'd
 it's
 it's
+itnoatmgtmmitnoatmgtmm
 ixix
 iz
 izbeta
@@ -143,7 +149,9 @@ jilt
 jimjim
 josh
 josh2
+justdont
 kaka
+kari
 kassa
 keke
 kekebeta
@@ -156,6 +164,7 @@ krill
 kuku
 kyberhyper-skullmutantnightmaremonster-batpowerspikemon
 latter
+lifi
 lili
 lili2
 lilo
@@ -172,10 +181,13 @@ mu
 namnam
 nimi
 nobaba
+nunu
 obo
+obo2
 ohno
 oish
 openoc
+orbo
 ouch
 oyou
 packoc
@@ -186,11 +198,16 @@ poweredoc
 poweroc
 pumpkin
 quiqui
+raaagh
+ranger
 rat
 rere
+rithere
 robot
 robotarm
+rocroc
 roro
+ryry
 salt
 sama
 sbaba
@@ -219,6 +236,7 @@ swu
 tabbit
 teltel
 tero
+tesho
 that
 them
 these
@@ -226,6 +244,7 @@ thethe
 they
 this
 those
+tili
 toitoi
 tritri
 turtle
@@ -234,6 +253,7 @@ tyty
 ufo
 unun
 us
+vava
 venven
 virus
 virus2
@@ -247,6 +267,7 @@ woe
 worm
 writeoc
 wug
+wyg
 xx__xx
 yayi
 yoyu

@@ -529,5 +529,14 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "raaagh",
+        "sprite": "raaagh",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "0"
     }
 ]
