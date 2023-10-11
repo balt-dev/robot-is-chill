@@ -1440,15 +1440,6 @@
         "tiling": "0"
     },
     {
-        "name": "ifif",
-        "sprite": "ifif",
-        "color": [
-            "6",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "atat",
         "sprite": "atat",
         "color": [
@@ -1771,5 +1762,14 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "waterwraith",
+        "sprite": "waterwraith",
+        "color": [
+            "0",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]

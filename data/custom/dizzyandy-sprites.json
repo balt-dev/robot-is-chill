@@ -538,5 +538,14 @@
             "0"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "glyph_scug",
+        "sprite": "glyph_scug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
