@@ -1825,5 +1825,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sed_h",
+        "sprite": "sed_h",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_sed_h",
+        "sprite": "text_sed",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
