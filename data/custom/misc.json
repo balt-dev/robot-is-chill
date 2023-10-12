@@ -1771,5 +1771,14 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "tuft",
+        "sprite": "grass_strand",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
     }
 ]
