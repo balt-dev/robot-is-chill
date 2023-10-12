@@ -1789,5 +1789,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sed_c",
+        "sprite": "sed_c",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_sed_c",
+        "sprite": "text_sed",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
