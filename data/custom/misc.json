@@ -1780,5 +1780,14 @@
             "0"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "support",
+        "sprite": "support",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
