@@ -529,5 +529,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "raaagh",
+        "sprite": "raaagh",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_scug",
+        "sprite": "glyph_scug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

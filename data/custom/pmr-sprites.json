@@ -1,0 +1,74 @@
+[
+    {
+        "name": "ifif",
+        "sprite": "ifif",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "corner",
+        "sprite": "corner",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "dart",
+        "sprite": "dart",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "oval",
+        "sprite": "oval",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "recta",
+        "sprite": "recta",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rhombus",
+        "sprite": "rhombus",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "semi",
+        "sprite": "semi",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "quatre",
+        "sprite": "quatre",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    }
+]

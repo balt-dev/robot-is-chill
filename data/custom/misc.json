@@ -1440,15 +1440,6 @@
         "tiling": "0"
     },
     {
-        "name": "ifif",
-        "sprite": "ifif",
-        "color": [
-            "6",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "atat",
         "sprite": "atat",
         "color": [
@@ -1784,6 +1775,8 @@
     {
         "name": "text_sed_f",
         "sprite": "text_sed",
+        "name": "rithere",
+        "sprite": "rithere",
         "color": [
             "3",
             "1"
@@ -1823,6 +1816,23 @@
         "color": [
             "4",
             "3"
+        "tiling": "2"
+    },
+    {
+        "name": "waterwraith",
+        "sprite": "waterwraith",
+        "color": [
+            "0",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "tuft",
+        "sprite": "grass_strand",
+        "color": [
+            "5",
+            "0"
         ],
         "tiling": "-1"
     },
@@ -1859,6 +1869,15 @@
         "color": [
             "2",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "support",
+        "sprite": "support",
+        "color": [
+            "0",
+            "1"
         ],
         "tiling": "-1"
     }

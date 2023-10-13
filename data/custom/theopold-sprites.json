@@ -1219,7 +1219,7 @@
         "sprite": "gogo",
         "color": [
             "5",
-            "0"
+            "1"
         ],
         "tiling": "2"
     },
@@ -1456,5 +1456,14 @@
             "0"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "weiun",
+        "sprite": "weiun",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "0"
     }
 ]
