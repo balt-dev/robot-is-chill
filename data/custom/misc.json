@@ -1773,10 +1773,17 @@
         "tiling": "0"
     },
     {
-        "name": "text_sed_f",
-        "sprite": "text_sed",
         "name": "rithere",
         "sprite": "rithere",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sed_f",
+        "sprite": "text_sed",
         "color": [
             "3",
             "1"
@@ -1816,6 +1823,7 @@
         "color": [
             "4",
             "3"
+        ],
         "tiling": "2"
     },
     {
