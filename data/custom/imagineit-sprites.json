@@ -1,0 +1,20 @@
+[
+    {
+        "name": "aaxia",
+        "sprite": "aaxia",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "gmalls",
+        "sprite": "gmalls",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    }
+]
