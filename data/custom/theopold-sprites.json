@@ -85,9 +85,9 @@
         "sprite": "swi",
         "color": [
             "1",
-            "3"
+            "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "alal",
@@ -498,7 +498,7 @@
         "name": "xx__xx",
         "sprite": "xx--xx",
         "color": [
-            "2",
+            "4",
             "2"
         ],
         "tiling": "0"
@@ -1474,5 +1474,32 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "giz",
+        "sprite": "zwim",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "solt",
+        "sprite": "solt",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "sosobeta",
+        "sprite": "sosobeta",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
