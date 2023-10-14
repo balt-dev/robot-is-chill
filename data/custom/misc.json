@@ -1767,7 +1767,7 @@
         "name": "waterwraith",
         "sprite": "waterwraith",
         "color": [
-            "0",
+            "1",
             "4"
         ],
         "tiling": "0"

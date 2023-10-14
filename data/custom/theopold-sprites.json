@@ -1465,5 +1465,14 @@
             "0"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "tyrant",
+        "sprite": "tyrant",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]

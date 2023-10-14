@@ -547,5 +547,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "it'll",
+        "sprite": "it'll",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
