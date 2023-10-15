@@ -1789,5 +1789,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tree3",
+        "sprite": "tree3",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
