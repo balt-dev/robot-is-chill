@@ -1300,7 +1300,7 @@
         "sprite": "swu",
         "color": [
             "1",
-            "2"
+            "3"
         ],
         "tiling": "0"
     },
@@ -1501,5 +1501,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "wfofo",
+        "sprite": "wfofo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

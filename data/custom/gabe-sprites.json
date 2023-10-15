@@ -12,8 +12,8 @@
         "name": "justdont",
         "sprite": "justdont",
         "color": [
-            "5",
-            "3"
+            "6",
+            "4"
         ],
         "tiling": "2"
     },
@@ -61,5 +61,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "toshu",
+        "sprite": "toshu",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]
