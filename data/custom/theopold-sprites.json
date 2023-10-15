@@ -96,7 +96,7 @@
             "4",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "pump",
@@ -1508,6 +1508,24 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "wjiji",
+        "sprite": "wjiji",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hamis",
+        "sprite": "spidey",
+        "color": [
+            "3",
+            "0"
         ],
         "tiling": "2"
     }

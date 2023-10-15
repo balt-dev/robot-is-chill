@@ -115,6 +115,7 @@ greg
 grgr
 gugu
 gugu2
+hamis
 hand
 handbeta
 hbaba
@@ -233,6 +234,7 @@ soli
 solt
 sosad
 soso
+sosobeta
 statue
 stopoc
 stronske
@@ -254,6 +256,7 @@ this
 those
 tili
 toitoi
+toshu
 tritri
 turtle
 tuto
@@ -271,8 +274,10 @@ wawa
 we
 weakoc
 weiun
+wfofo
 wina
 winoc
+wjiji
 woe
 worm
 writeoc
