@@ -1525,8 +1525,26 @@
         "sprite": "spidey",
         "color": [
             "3",
-            "0"
+            "1"
         ],
-        "tiling": "2"
+        "tiling": "-1"
+    },
+    {
+        "name": "vivi",
+        "sprite": "vivi",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "akak",
+        "sprite": "akak",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]
