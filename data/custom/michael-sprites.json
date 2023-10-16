@@ -61,5 +61,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_stubbn",
+        "sprite": "text_stubbn",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stubbn",
+        "sprite": "stubbn",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
