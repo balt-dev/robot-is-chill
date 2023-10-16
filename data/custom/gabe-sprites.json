@@ -70,5 +70,23 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "token",
+        "sprite": "token",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "btoken",
+        "sprite": "btoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
