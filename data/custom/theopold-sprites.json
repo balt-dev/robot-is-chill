@@ -85,9 +85,9 @@
         "sprite": "swi",
         "color": [
             "1",
-            "3"
+            "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "alal",
@@ -96,7 +96,7 @@
             "4",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "pump",
@@ -498,7 +498,7 @@
         "name": "xx__xx",
         "sprite": "xx--xx",
         "color": [
-            "2",
+            "4",
             "2"
         ],
         "tiling": "0"
@@ -1300,7 +1300,7 @@
         "sprite": "swu",
         "color": [
             "1",
-            "2"
+            "3"
         ],
         "tiling": "0"
     },
@@ -1463,6 +1463,105 @@
         "color": [
             "5",
             "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "tyrant",
+        "sprite": "tyrant",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "giz",
+        "sprite": "zwim",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "solt",
+        "sprite": "solt",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "sosobeta",
+        "sprite": "sosobeta",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wfofo",
+        "sprite": "wfofo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "wjiji",
+        "sprite": "wjiji",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hamis",
+        "sprite": "spidey",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "vivi",
+        "sprite": "vivi",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "akak",
+        "sprite": "akak",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "tata",
+        "sprite": "tata",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "swag",
+        "sprite": "swag",
+        "color": [
+            "1",
+            "3"
         ],
         "tiling": "0"
     }

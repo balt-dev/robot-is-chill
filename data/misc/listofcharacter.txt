@@ -103,9 +103,11 @@ frog
 fu
 fufu
 ghost
+giz
 gogo
 goob
 goob2
+goodgood
 goopi
 goose
 gmalls
@@ -113,6 +115,7 @@ greg
 grgr
 gugu
 gugu2
+hamis
 hand
 handbeta
 hbaba
@@ -137,7 +140,7 @@ isopod
 iss
 it
 it'd
-it's
+it'll
 it's
 itnoatmgtmmitnoatmgtmm
 ixix
@@ -227,8 +230,11 @@ snombabeta
 snombad
 snombalt
 sobabh
+soli
+solt
 sosad
 soso
+sosobeta
 statue
 stopoc
 stronske
@@ -250,9 +256,11 @@ this
 those
 tili
 toitoi
+toshu
 tritri
 turtle
 tuto
+tyrant
 tyty
 ufo
 unun
@@ -265,8 +273,11 @@ walla
 wawa
 we
 weakoc
+weiun
+wfofo
 wina
 winoc
+wjiji
 woe
 worm
 writeoc

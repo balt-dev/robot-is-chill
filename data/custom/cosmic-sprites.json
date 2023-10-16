@@ -65,5 +65,14 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "goodgood",
+        "sprite": "goodgood",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]
