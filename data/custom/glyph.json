@@ -862,5 +862,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "glyph_feeling",
+        "sprite": "glyph_feeling",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_cheese",
+        "sprite": "glyph_cheese",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

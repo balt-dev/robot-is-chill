@@ -1548,15 +1548,6 @@
         "tiling": "-1"
     },
     {
-        "name": "her2",
-        "sprite": "her",
-        "color": [
-            "1",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "crosshair",
         "sprite": "crosshair",
         "color": [
@@ -1830,7 +1821,7 @@
         "name": "waterwraith",
         "sprite": "waterwraith",
         "color": [
-            "0",
+            "1",
             "4"
         ],
         "tiling": "0"
@@ -1886,6 +1877,15 @@
         "color": [
             "0",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tree3",
+        "sprite": "tree3",
+        "color": [
+            "4",
+            "2"
         ],
         "tiling": "-1"
     }
