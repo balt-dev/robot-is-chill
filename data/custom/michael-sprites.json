@@ -52,5 +52,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "baba3",
+        "sprite": "baba2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
