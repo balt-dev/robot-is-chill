@@ -97,5 +97,50 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "gafo",
+        "sprite": "gafo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "jeke",
+        "sprite": "jeke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "koji",
+        "sprite": "koji",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "madbad",
+        "sprite": "madbad",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "we2",
+        "sprite": "we",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "2"
     }
 ]
