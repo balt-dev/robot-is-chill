@@ -565,5 +565,14 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "traitrai",
+        "sprite": "traitrai",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

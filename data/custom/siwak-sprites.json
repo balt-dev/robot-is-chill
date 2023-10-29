@@ -1,0 +1,20 @@
+[
+    {
+        "name": "sand",
+        "sprite": "sand",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "cactus4",
+        "sprite": "cactus",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]

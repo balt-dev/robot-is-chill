@@ -8,4 +8,13 @@
         ],
         "tiling": "-1"
     }
+    {
+        "name": "message2",
+        "sprite": "message",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
 ]
