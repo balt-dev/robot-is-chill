@@ -96,7 +96,6 @@ AUTO_VARIANTS = {
 COLOR_NAMES: dict[str, tuple[int, int]] = {
     "maroon": (2, 1),  # Not actually a word in the game
     "gold": (6, 2),  # Not actually a word in the game
-    "navy": (1, 1),  # Not actually a word in the game
     "red": (2, 2),
     "orange": (2, 3),
     "yellow": (2, 4),
