@@ -1,0 +1,108 @@
+[
+    {
+        "name": "text_offline2",
+        "sprite": "text_offline2",
+        "color": [
+"2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_channel1",
+        "sprite": "text_channel1",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_offline3",
+        "sprite": "text_offline3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_channel3",
+        "sprite": "text_channel3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+},
+    {
+        "name": "text_offline",
+        "sprite": "text_offline",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_router",
+        "sprite": "text_router",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_channel2",
+"sprite": "text_channel2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_local2",
+        "sprite": "text_local2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },{
+        "name": "text_local3",
+        "sprite": "text_local3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_local1",
+        "sprite": "text_local1",
+        "color": [
+            "2",
+            "1"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_local",
+        "sprite": "text_local",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_offline1",
+        "sprite": "text_offline1",
+"color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+]

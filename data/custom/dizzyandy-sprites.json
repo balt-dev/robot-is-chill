@@ -574,5 +574,23 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "special",
+        "sprite": "special",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_special",
+        "sprite": "text_special",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
