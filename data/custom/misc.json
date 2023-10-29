@@ -1251,24 +1251,6 @@
         "tiling": "0"
     },
     {
-        "name": "sed",
-        "sprite": "sed",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "text_sed",
-        "sprite": "text_sed",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "cactus3",
         "sprite": "cactus",
         "color": [
@@ -1737,15 +1719,6 @@
         "tiling": "-1"
     },
     {
-        "name": "scheme",
-        "sprite": "scheme",
-        "tiling": "-1",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
         "name": "wyg",
         "sprite": "babywug",
         "tiling": "2",
@@ -1753,69 +1726,6 @@
             "2",
             "4"
         ]
-    },
-    {
-        "name": "sed_f",
-        "sprite": "sed_f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "rithere",
-        "sprite": "rithere",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_sed_f",
-        "sprite": "text_sed",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "sed_c",
-        "sprite": "sed_c",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_sed_c",
-        "sprite": "text_sed",
-        "color": [
-            "5",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "sed_w",
-        "sprite": "sed_w",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_sed_w",
-        "sprite": "text_sed",
-        "color": [
-            "4",
-            "3"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "waterwraith",
