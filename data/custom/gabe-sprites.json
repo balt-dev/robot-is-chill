@@ -94,8 +94,17 @@
         "sprite": "moli",
         "color": [
             "1",
-            "4"
+            "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "glyph_gk9",
+        "sprite": "glyph_gk9",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

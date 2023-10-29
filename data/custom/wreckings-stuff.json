@@ -205,5 +205,32 @@
             "2",
             "2"
         ]
+    },
+	{
+        "name": "baaba",
+        "sprite": "baaba",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+	{
+        "name": "text_baaba",
+        "sprite": "text_baaba",
+        "tiling": "-1",
+        "color": [
+            "4",
+            "1"
+        ]
+    },
+	{
+        "name": "ke",
+        "sprite": "ke",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
+        ]
     }
 ]

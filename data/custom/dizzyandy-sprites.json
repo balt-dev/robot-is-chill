@@ -556,5 +556,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "banner",
+        "sprite": "banner",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
