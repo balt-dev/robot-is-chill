@@ -131,8 +131,8 @@
         "name": "text_out",
         "sprite": "text_out",
         "color": [
-            "4",
-            "2"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },

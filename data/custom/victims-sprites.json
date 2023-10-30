@@ -3,8 +3,8 @@
         "name": "dna",
         "sprite": "dna",
         "color": [
-            "3",
-            "4"
+            "2",
+            "3"
         ],
         "tiling": "0"
     },
@@ -21,8 +21,8 @@
         "name": "idea",
         "sprite": "idea",
         "color": [
-            "4",
-            "2"
+            "1",
+            "4"
         ],
         "tiling": "0"
     },
