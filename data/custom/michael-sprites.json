@@ -17,15 +17,6 @@
         ],
         "tiling": "2"
     },
-    {
-        "name": "dyekwyalarnmambmbmsmqmemmmdmkgd",
-        "sprite": "doyouevenknowwhatyouarelookingatrightnowmiamigomibromibrothermisistermiquagmiremiemomimommidadmiketchupgangerdoppler",
-        "color": [
-            "6",
-            "4"
-        ],
-        "tiling": "2"
-    },
 	{
         "name": "text_her",
         "sprite": "text_her",
@@ -59,6 +50,24 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "text_stubbn",
+        "sprite": "text_stubbn",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stubbn",
+        "sprite": "stubbn",
+        "color": [
+            "2",
+            "2"
         ],
         "tiling": "2"
     }

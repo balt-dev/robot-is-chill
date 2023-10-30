@@ -556,5 +556,41 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "banner",
+        "sprite": "banner",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "traitrai",
+        "sprite": "traitrai",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "special",
+        "sprite": "special",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_special",
+        "sprite": "text_special",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

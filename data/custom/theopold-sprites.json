@@ -456,7 +456,7 @@
             "0",
             "3"
         ],
-        "tiling": "2"
+        "tiling": "-1"
     },
     {
         "name": "we",
@@ -1562,6 +1562,24 @@
         "color": [
             "1",
             "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "haha",
+        "sprite": "haha",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "waz",
+        "sprite": "waz",
+        "color": [
+            "1",
+            "2"
         ],
         "tiling": "0"
     }

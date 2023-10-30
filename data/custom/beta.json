@@ -2,7 +2,7 @@
     {
        "name": "annibeta",
        "sprite": "annibeta",
-       "tiling": "2",
+       "tiling": "3",
        "color": [
           "6",
           "0"
@@ -11,7 +11,7 @@
     {
        "name": "bababeta",
        "sprite": "bababeta",
-       "tiling": "2",
+       "tiling": "3",
        "color": [
           "0",
           "3"
@@ -128,7 +128,7 @@
      {
          "name": "kekebeta",
          "sprite": "kekebeta",
-         "tiling": "2",
+         "tiling": "3",
          "color": [
             "2",
             "2"
@@ -155,7 +155,7 @@
       {
           "name": "mebeta",
           "sprite": "mebeta",
-          "tiling": "2",
+          "tiling": "3",
           "color": [
              "3",
              "1"
@@ -182,7 +182,7 @@
 	  {
          "name": "skullbeta",
          "sprite": "skullbeta",
-         "tiling": "2",
+         "tiling": "0",
          "color": [
             "2",
             "0"
