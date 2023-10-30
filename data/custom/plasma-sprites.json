@@ -88,5 +88,41 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "this_cursor_relay",
+        "sprite": "this_cursor_relay",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "relay_indicator",
+        "sprite": "relay_indicator",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "stable_indicator",
+        "sprite": "stable_indicator",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cut",
+        "sprite": "text_cut",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

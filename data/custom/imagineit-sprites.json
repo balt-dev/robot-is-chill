@@ -16,5 +16,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_gmalls",
+        "sprite": "text_gmalls",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

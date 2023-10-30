@@ -108,5 +108,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "loot",
+        "sprite": "loot",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_loot",
+        "sprite": "text_loot",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_out",
+        "sprite": "text_out",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mblock2",
+        "sprite": "mblockold",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
