@@ -27,15 +27,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_this",
-        "sprite": "text_this",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "text_block",
         "sprite": "text_block",
         "color": [
@@ -124,5 +115,50 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_guard",
+        "sprite": "text_guard",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pack",
+        "sprite": "text_pack",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_that",
+        "sprite": "text_that",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_these",
+        "sprite": "text_these",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_those",
+        "sprite": "text_those",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
