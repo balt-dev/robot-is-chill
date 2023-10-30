@@ -7,5 +7,23 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "memsme",
+        "sprite": "memsme",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_memsme",
+        "sprite": "text_memsme",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
