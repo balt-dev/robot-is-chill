@@ -126,15 +126,6 @@
         "tiling": "-1"
   },
   {
-        "name": "text_scarce",
-        "sprite": "text_scarce",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "-1"
-  },
-  {
         "name": "text_sometimes",
         "sprite": "text_sometimes",
         "color": [
