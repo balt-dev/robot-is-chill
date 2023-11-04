@@ -592,5 +592,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "roy",
+        "sprite": "roy",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "glyph_metanot",
+        "sprite": "glyph_metanot",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metanot2",
+        "sprite": "glyph_metanot2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
