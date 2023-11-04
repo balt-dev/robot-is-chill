@@ -144,7 +144,7 @@
         "tiling": "-1"
     },
     {
-        "name": "groupplayer",
+        "name": "gplayer",
         "sprite": "groupplayer",
         "color": [
             "4",
@@ -153,8 +153,8 @@
         "tiling": "0"
     },
     {
-        "name": "groupplayer1",
-        "sprite": "groupplayer1",
+        "name": "gplayer2",
+        "sprite": "groupplayer2",
         "color": [
             "4",
             "2"
@@ -162,8 +162,8 @@
         "tiling": "0"
     },
     {
-        "name": "groupplayer2",
-        "sprite": "groupplayer2",
+        "name": "gwincon",
+        "sprite": "groupwincon",
         "color": [
             "4",
             "2"
