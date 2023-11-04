@@ -165,10 +165,10 @@
         "name": "gwincon",
         "sprite": "groupwincon",
         "color": [
-            "4",
-            "2"
+            "2",
+            "4"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "ion",
@@ -178,5 +178,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "jaejae",
+        "sprite": "jaejae",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
