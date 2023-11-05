@@ -21,8 +21,8 @@
         "name": "pixel2",
         "sprite": "pixel2",
         "color": [
-            "3",
-            "1"
+            "0",
+            "3"
         ],
         "tiling": "1"
     },
@@ -129,14 +129,14 @@
         "name": "genemy2",
         "sprite": "groupenemy2",
         "color": [
-            "4",
+            "2",
             "2"
         ],
         "tiling": "-1"
     },
     {
         "name": "gextra",
-        "sprite": "gextra",
+        "sprite": "groupextra",
         "color": [
             "4",
             "1"
@@ -148,7 +148,7 @@
         "sprite": "groupplayer",
         "color": [
             "4",
-            "2"
+            "1"
         ],
         "tiling": "0"
     },
@@ -157,7 +157,7 @@
         "sprite": "groupplayer2",
         "color": [
             "4",
-            "2"
+            "1"
         ],
         "tiling": "0"
     },
