@@ -17,6 +17,33 @@
         ],
         "tiling": "2"
     },
+    {
+        "name": "dork",
+        "sprite": "dork",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "yoyo",
+        "sprite": "yoyo",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ptpt",
+        "sprite": "ptpt",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
 	{
         "name": "glyph_n1",
         "sprite": "glyph_reroute",

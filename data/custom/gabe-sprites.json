@@ -106,5 +106,86 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "genemy",
+        "sprite": "groupenemy",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "genemy1",
+        "sprite": "groupenemy1",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "genemy2",
+        "sprite": "groupenemy2",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gextra",
+        "sprite": "gextra",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gplayer",
+        "sprite": "groupplayer",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "gplayer2",
+        "sprite": "groupplayer2",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "gwincon",
+        "sprite": "groupwincon",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ion",
+        "sprite": "ion",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jaejae",
+        "sprite": "jaejae",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

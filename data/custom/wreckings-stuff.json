@@ -385,5 +385,23 @@
             "0",
             "3"
         ]
+    },
+	{
+        "name": "text_sauosolewbiye",
+        "sprite": "text_sauosolewbiye",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+	{
+        "name": "sauosolewbiye",
+        "sprite": "sauosolewbiye",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
     }
 ]
