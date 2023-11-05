@@ -1,5 +1,5 @@
 [
-	{
+  {
         "name": "text_inf",
         "sprite": "text_inf",
         "color": [
@@ -8,7 +8,7 @@
         ],
         "tiling": "-1"
   },
-	{
+  {
         "name": "text_kekeprop",
         "sprite": "text_kekeprop",
         "color": [
@@ -17,7 +17,7 @@
         ],
         "tiling": "-1"
   },
-	{
+  {
         "name": "text_maybe",
         "sprite": "text_maybe",
         "color": [
@@ -26,7 +26,7 @@
         ],
         "tiling": "-1"
   },
-	{
+  {
         "name": "text_neardl",
         "sprite": "text_neardl",
         "color": [
@@ -160,5 +160,5 @@
             "2"
         ],
         "tiling": "-1"
-  },
+  }
 ]
