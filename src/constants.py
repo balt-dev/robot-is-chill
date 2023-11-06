@@ -269,7 +269,8 @@ BLENDING_MODES = (
     "mask",
     "dodge",
     "burn",
-    "cut"
+    "cut",
+    "xor"
 )
 
 FILTER_MAX_SIZE = 524288

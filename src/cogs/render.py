@@ -336,6 +336,8 @@ class Renderer:
                 b[..., 3] = 1 - b[..., 3]
             c[..., 3] *= b[..., 3]
             c[c[..., 3] == 0] = 0
+        elif mode == "xor":
+            c = a ^ b
         else:
             raise AssertionError(f"Blending mode `{mode}` isn't implemented yet.")
         if keep_alpha:
