@@ -880,5 +880,32 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "glyph_chill",
+        "sprite": "glyph_chill",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_eat",
+        "sprite": "glyph_eat",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_orb",
+        "sprite": "glyph_orb",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

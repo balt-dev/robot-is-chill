@@ -169,5 +169,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_relay",
+        "sprite": "text_relay",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
