@@ -1,0 +1,11 @@
+[
+    {
+        "name": "ibib",
+        "sprite": "ibib",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    }
+]
