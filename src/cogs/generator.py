@@ -36,7 +36,8 @@ class CharacterGenerator:
             legs: int | None = None,
             mouth: bool | None = None,
             ears: bool | None = None,
-            color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None
+            color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None,
+            customid: int | None = None
     ) -> tuple[np.array, dict[str, int, str, str, str, int, str, str, str, str, str, int, str, bool, str, bool, str, str]]:
         # I'm not proud of this code.
         # This sucks, a lot, and shows me being overconfident.
@@ -44,6 +45,36 @@ class CharacterGenerator:
         if seed is None: seed = random.randint(-sys.maxsize - 1, sys.maxsize)
         r = random.Random()
         r.seed(seed)
+
+        # please tell me if i've done this wrong -gk9
+
+        if type(customid) != type(1154):
+            customid = 0
+            customid += constants.COLOR_NAMES.keys().index(color)
+            customid += int(ears) * 19
+            customid += int(mouth) * 19 * 2
+            customid += legs * 19 * 2 * 2
+            customid += list(constants.CHARACTER_VARIANTS).index(variant) * 19 * 2 * 2 * 5
+            customid += ["normal", "angry", "wide"].index(eye_shape) * 19 * 2 * 2 * 5 * 6
+            customid += eye_count * 19 * 2 * 2 * 5 * 6 * 3
+            customid += list(constants.CHARACTER_SHAPES).index(shape) * 19 * 2 * 2 * 5 * 6 * 3 * 5
+        else:
+            cid = customid
+            color = tuple(constants.COLOR_NAMES.keys())[cid % 19]
+            cid = cid // 19
+            ears = cid % 2 > 0.5
+            cid = cid // 2
+            mouth = cid % 2 > 0.5
+            cid = cid // 2
+            legs = cid % 5
+            cid = cid // 5
+            variant = constants.CHARACTER_VARIANTS[cid % 6]
+            cid = cid // 6
+            eye_shape = ("normal", "angry", "wide")[cid % 3]
+            cid = cid // 3
+            eye_count = cid % 5
+            cid = cid // 5
+            shape = constants.CHARACTER_SHAPES[cid % 5]
 
         # There's a bit left over in the JSONs from my first implementation, but it's alright
 
@@ -215,7 +246,8 @@ class CharacterGenerator:
             "legs": legs,
             "mouth": mouth,
             "ears": ears,
-            "color": color
+            "color": color,
+            "customid": customid
         }
         return final_arr, args
 
@@ -279,6 +311,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             Has/doesn't have ears
         - `color: Color`
             Color of the character
+        - `customid: int`
+            Indicator, like the seed, but you can set variants and it will update.
         """
         await ctx.typing()
         possible_kwargs = {
@@ -290,7 +324,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             "legs": int,
             "mouth": bool,
             "ears": bool,
-            "color": Literal[*constants.COLOR_NAMES]
+            "color": Literal[*constants.COLOR_NAMES],
+            "customid": int
         }
         flags = {}
         for match in re.finditer(r"(\w+?)=([\w-]+)\b", kwargs):
@@ -369,9 +404,10 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         embed.set_image(url=f"attachment://preview.gif")
         return await ctx.reply(embed=embed, files=[file, discord.File(zip_buffer, filename='out.zip')])
 
+    # This said name:value but it's name=value
     character.__doc__ = f"""
         Randomly generate a character using prefabs.
-        Arguments can be specified with a `name:value` syntax.
+        Arguments can be specified with a `name=value` syntax.
         The possible arguments are:
         - `seed: any`
             RNG seed, can be anything
@@ -391,6 +427,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             Has/doesn't have ears
         - `color: Color`
             Color of the character
+        - `customid: int`
+            Indicator, like the seed, but you can set variants and it will update.
         """
 
     # Old code for character generation
