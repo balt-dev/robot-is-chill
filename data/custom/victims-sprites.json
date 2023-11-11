@@ -43,5 +43,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+	{
+        "name": "text_graph",
+        "sprite": "text_graph",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "text_sunrise",
+        "sprite": "text_sunrise",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
