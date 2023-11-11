@@ -456,7 +456,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Makes custom words appear as letter groups."""
         tile.style = "letter"
 
-    @add_variant("let")
+    @add_variant("1line", "1l")
     async def oneline(tile):
         """Makes custom words appear in one line."""
         tile.style = "oneline"
@@ -841,7 +841,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
         sprite[sprite > 255] = 255
         return sprite
 
-    @add_variant()
+    @add_variant("alpha", "op")
     async def opacity(sprite, amount: float):
         """Sets the opacity of the sprite, from 0 to 1."""
         sprite[:, :, 3] = np.multiply(sprite[:, :, 3], np.clip(amount, 0, 1), casting="unsafe")
