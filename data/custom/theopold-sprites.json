@@ -1573,14 +1573,5 @@
             "2"
         ],
         "tiling": "0"
-    },
-    {
-        "name": "bleble",
-        "sprite": "bleble",
-        "color": [
-            "6",
-            "1"
-        ],
-        "tiling": "0"
     }
 ]
