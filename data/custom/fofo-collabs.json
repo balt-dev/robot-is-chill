@@ -44,7 +44,7 @@
         ],
         "tiling": "2"
     },
-	{
+    {
         "name": "glyph_n1",
         "sprite": "glyph_reroute",
         "color": [
@@ -331,5 +331,113 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "glyph_n33",
+        "sprite": "glyph_n33",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n34",
+        "sprite": "glyph_n34",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n35",
+        "sprite": "glyph_n35",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n36",
+        "sprite": "glyph_n36",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n37",
+        "sprite": "glyph_n37",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n38",
+        "sprite": "glyph_n38",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n39",
+        "sprite": "glyph_n39",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n40",
+        "sprite": "glyph_n40",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n41",
+        "sprite": "glyph_n41",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n42",
+        "sprite": "glyph_n42",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n43",
+        "sprite": "glyph_n43",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n44",
+        "sprite": "glyph_n44",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
