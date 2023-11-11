@@ -1573,5 +1573,32 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "pipo",
+        "sprite": "pipo",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "baka",
+        "sprite": "ba-ka",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "bleble",
+        "sprite": "bleble",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]
