@@ -66,8 +66,8 @@
         "name": "text_alkali",
         "sprite": "text_alkali",
         "color": [
-            "5",
-            "1"
+            "4",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -75,8 +75,8 @@
         "name": "text_toxic",
         "sprite": "text_toxic",
         "color": [
-            "3",
-            "1"
+            "5",
+            "3"
         ],
         "tiling": "-1"
     },
@@ -93,7 +93,7 @@
         "name": "text_type",
         "sprite": "text_type",
         "color": [
-            "3",
+            "0",
             "3"
         ],
         "tiling": "-1"
