@@ -25,5 +25,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+	{
+        "name": "text_lulu",
+        "sprite": "text_lulu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
