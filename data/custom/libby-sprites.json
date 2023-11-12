@@ -1,0 +1,29 @@
+[
+    {
+        "name": "text_libby",
+        "sprite": "text_libby",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_tuwih",
+        "sprite": "text_tuwih",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "lulu",
+        "sprite": "lulu",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    }
+]
