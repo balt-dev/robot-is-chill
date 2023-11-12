@@ -187,7 +187,7 @@ Use % to set a percentage of the default render speed."""
             raise InvalidFlagError(
                 f'Frame delta of {speed} milliseconds is too small for the specified file format to handle.')
         # gifs store their speed in a u16 so the speed can't exceed this
-        if speed > 655350:
+        if speed >= 655360:
             raise InvalidFlagError(
                 f'Frame delta of {speed} milliseconds is too large for the specified file format to handle.')
         ctx.speed = speed
@@ -268,6 +268,9 @@ Use % to set a percentage of the default render speed."""
     async def anim(match, ctx):
         """Makes the wobble frames independent of the animation.
 The first number is how many frames are in a wobble frame, and the second is how many frames are in a timestep."""
+        animation_wobble = int(match.group(1))
+        assert animation_wobble <= (2 ** 10), f"An animation wobble of {animation_wobble} is too large to reasonably " \
+                                              f"fit a render."
         ctx.animation = (int(match.group(1))), (int(match.group(2)))
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
