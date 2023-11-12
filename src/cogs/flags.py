@@ -186,6 +186,10 @@ Use % to set a percentage of the default render speed."""
         if speed < 20:
             raise InvalidFlagError(
                 f'Frame delta of {speed} milliseconds is too small for the specified file format to handle.')
+        # gifs store their speed in a u16 so the speed can't exceed this
+        if speed > 655350:
+            raise InvalidFlagError(
+                f'Frame delta of {speed} milliseconds is too large for the specified file format to handle.')
         ctx.speed = speed
 
     @flags.register(match=r"(?:--global|-g)=(.+)",
