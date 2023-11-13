@@ -543,7 +543,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             rule=True)
 
     # Generates tiles from a text file.
-    @commands.command()
+    @commands.command(aliases=["f"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def file(self, ctx: Context, rule: str = ''):
         """Renders the text from a file attatchment.
