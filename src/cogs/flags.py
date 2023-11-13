@@ -271,6 +271,10 @@ The first number is how many frames are in a wobble frame, and the second is how
         animation_wobble = int(match.group(1))
         assert animation_wobble <= (2 ** 10), f"An animation wobble of {animation_wobble} is too large to reasonably " \
                                               f"fit a render."
+        assert (2 ** 0) <= animation_wobble, f"An animation wobble of 0 is impossible."
+        assert int(match.group(2)) <= (2 ** 10), f"An animation timestep of {int(match.group(2))} is too large to reasonably " \
+                                              f"fit a render."
+        assert (2 ** 0) <= int(match.group(2)), f"An animation timestep of 0 is impossible."
         ctx.animation = (int(match.group(1))), (int(match.group(2)))
 
     @flags.register(match=r'(?:--format|-f)=(gif|png)',
