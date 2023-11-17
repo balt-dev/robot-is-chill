@@ -84,8 +84,7 @@ async def find_message(ctx):
                     pass
     finally:
         if msg is None:
-            await ctx.error(f'None of your commands were found in the last `{constants.MESSAGE_LIMIT}` messages.')
-            return None
+            return await ctx.error(f'None of your commands were found in the last `{constants.MESSAGE_LIMIT}` messages.')
         if do_finally:
             # try:
             assert int(
