@@ -149,7 +149,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             )
         elif isinstance(err, errors.BadLetterVariant):
             return await ctx.error(
-                f"{msg}, since letter-style text can only be 1 or 2 letters wide."
+                f"{msg}, since letter-style text can only be 1-3 letters wide."
             )
         elif isinstance(err, errors.BadMetaVariant):
             depth = rest[0]
