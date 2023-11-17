@@ -594,6 +594,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_pi",
+        "sprite": "text_pi",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "roy",
         "sprite": "roy",
         "color": [
