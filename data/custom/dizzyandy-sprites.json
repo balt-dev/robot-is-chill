@@ -603,7 +603,6 @@
         "tiling": "-1"
     },
 	{
-	    {
         "name": "text_num",
         "sprite": "text_num",
         "color": [
@@ -613,7 +612,6 @@
         "tiling": "-1"
     },
 	{
-	    {
         "name": "text_this_arrow",
         "sprite": "text_this_arrow",
         "color": [
@@ -623,7 +621,6 @@
         "tiling": "0"
     },
 	{
-	    {
         "name": "text_that_arrow",
         "sprite": "text_that_arrow",
         "color": [
@@ -633,7 +630,6 @@
         "tiling": "0"
     },
 	{
-	    {
         "name": "text_these_arrow",
         "sprite": "text_these_arrow",
         "color": [
@@ -643,7 +639,6 @@
         "tiling": "0"
     },
 	{
-	    {
         "name": "text_those_arrow",
         "sprite": "text_those_arrow",
         "color": [
