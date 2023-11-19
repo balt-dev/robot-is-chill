@@ -245,6 +245,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 ['т', 't'],
                 ['х', 'x'],
                 ['ⓜ', ':m:']
+		[':thumbsdown:', ':-1:']
             ]
             for src, dst in replace_list:
                 tiles = tiles.replace(src, dst)
