@@ -403,7 +403,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                             im = np.array(im.convert("RGBA"))
                             kern = np.array(((0, 1, 0), (1, -4, 1), (0, 1, 0)))
                             outline = cv2.filter2D(src=np.pad(im[..., 3], ((1, 1), (1, 1))), ddepth=0, kernel=kern)
-                            outline = (outline > 0).astype(np.uint8) * 255
+                            outline = (outline > 0).astype(np.uint8) * 128
                             im = np.multiply(im, color / 255, casting="unsafe").astype(np.uint8)
                             im = outline[..., np.newaxis] + np.pad(im, ((1, 1), (1, 1), (0, 0)))
                             im = Image.fromarray(im).resize((192, 192), Image.Resampling.NEAREST)
