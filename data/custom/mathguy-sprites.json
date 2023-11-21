@@ -104,5 +104,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_final",
+        "sprite": "text_final",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_banned",
+        "sprite": "text_banned",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

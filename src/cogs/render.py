@@ -304,7 +304,7 @@ class Renderer:
             a, b = src.astype(float) / 255, dst.astype(float) / 255
         if mode == "add":
             c = a + b
-        elif mode == "subtract":
+        elif mode in ("subtract", "sub"):
             c = a - b
         elif mode == "multiply":
             c = a * b
