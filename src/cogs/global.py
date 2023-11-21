@@ -122,6 +122,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
     async def start_timeout(self, ctx, *args, timeout_multiplier: float = 1.0, **kwargs):
         def handler(_signum, _frame):
             raise AssertionError("The command took too long and was timed out.")
+
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(int(constants.TIMEOUT_DURATION * timeout_multiplier))
         await self.render_tiles(ctx, *args, **kwargs)
@@ -211,7 +212,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 [
                     [
                         # grid gets passed by reference, as it is mutable
-                        await Tile.prepare(possible_variants, tile, tile_data_cache, grid, (w, z, y, x), tile_borders, ctx)
+                        await Tile.prepare(possible_variants, tile, tile_data_cache, grid, (w, z, y, x), tile_borders,
+                                           ctx)
                         for x, tile in enumerate(row)
                     ]
                     for y, row in enumerate(layer)
@@ -226,7 +228,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         try:
             await ctx.typing()
             ctx.silent = ctx.message.flags.silent
-            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:", "♥")  # keep the heart, for the people
+            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:",
+                                                                              "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)
             tiles = re.sub(r"(?<!\\)`", "", tiles)
@@ -244,7 +247,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 ['с', 'c'],
                 ['т', 't'],
                 ['х', 'x'],
-                ['ⓜ', ':m:']
+                ['ⓜ', ':m:'],
+                [':thumbsdown:', ':-1:']
             ]
             for src, dst in replace_list:
                 tiles = tiles.replace(src, dst)
@@ -320,10 +324,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     return await ctx.error(
                         f"Stack too high ({maxstack}).\nYou may only stack up to {constants.MAX_STACK} tiles on one space.")
 
-                possible_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
-                font_variants = RegexDict([(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
+                possible_variants = RegexDict(
+                    [(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
+                font_variants = RegexDict(
+                    [(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
 
-                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name if len(name)]
+                possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name if
+                                          len(name)]
+
                 def catch(f, *args, **kwargs):
                     try:
                         return f(*args, **kwargs)
@@ -349,7 +357,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         layer_grid[d:, l, y, x] = TileSkeleton()
                                         for o in range(1, maxdelta - d):
                                             try:
-                                                text = timeline_split[d+o]
+                                                text = timeline_split[d + o]
                                                 if len(text):
                                                     break
                                             except IndexError:
@@ -429,7 +437,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     f"You provided an empty variant for `{word}`."
                 )
             except errors.TooLargeTile as e:
-                return await ctx.error(f"A tile of size `{e.args[0]}` is larger than the maximum allowed size of `{constants.MAX_TILE_SIZE}`.")
+                return await ctx.error(
+                    f"A tile of size `{e.args[0]}` is larger than the maximum allowed size of `{constants.MAX_TILE_SIZE}`.")
             except errors.VariantError as e:
                 return await self.handle_variant_errors(ctx, e)
             except errors.TextGenerationError as e:
@@ -543,7 +552,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             rule=True)
 
     # Generates tiles from a text file.
-    @commands.command()
+    @commands.command(aliases=["f"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     async def file(self, ctx: Context, rule: str = ''):
         """Renders the text from a file attatchment.
@@ -923,7 +932,8 @@ Filterimages are formatted as follows:
         assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
         with Image.open(requests.get(filter_url, stream=True).raw) as im:
             fil = np.array(im.convert("RGBA"), dtype=np.uint8)
-        fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(1 if target_mode.startswith("abs") else -1)
+        fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(
+            1 if target_mode.startswith("abs") else -1)
         out = BytesIO()
         Image.fromarray(fil).save(out, format="png", optimize=False)
         out.seek(0)
@@ -1059,6 +1069,7 @@ Filterimages are formatted as follows:
             icon_url="https://sno.mba/assets/filter_icon.png"
         )
         await ctx.reply(embed=emb)
+
 
 async def setup(bot: Bot):
     await bot.add_cog(GlobalCog(bot))

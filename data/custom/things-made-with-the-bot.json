@@ -142,14 +142,5 @@
             "0"
         ],
         "tiling": "2"
-    },
-    {
-        "name": "foji",
-        "sprite": "foji",
-        "color": [
-            "5",
-            "1"
-        ],
-        "tiling": "2"
     }
 ]
