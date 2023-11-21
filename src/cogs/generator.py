@@ -46,35 +46,34 @@ class CharacterGenerator:
         r = random.Random()
         r.seed(seed)
 
-        # please tell me if i've done this wrong -gk9
+        # *half of customid implementation moved down
 
-        if type(customid) != type(1154):
-            customid = 0
-            customid += constants.COLOR_NAMES.keys().index(color)
-            customid += int(ears) * 19
-            customid += int(mouth) * 19 * 2
-            customid += legs * 19 * 2 * 2
-            customid += list(constants.CHARACTER_VARIANTS).index(variant) * 19 * 2 * 2 * 5
-            customid += ["normal", "angry", "wide"].index(eye_shape) * 19 * 2 * 2 * 5 * 6
-            customid += eye_count * 19 * 2 * 2 * 5 * 6 * 3
-            customid += list(constants.CHARACTER_SHAPES).index(shape) * 19 * 2 * 2 * 5 * 6 * 3 * 5
-        else:
+        tcolor = None
+        tears = None
+        tmouth = None
+        tlegs = None
+        tvariant = None
+        teye_shape = None
+        teye_count = None
+        tshape = None
+
+        if type(customid) == type(1154):
             cid = customid
-            color = tuple(constants.COLOR_NAMES.keys())[cid % 19]
+            tcolor = tuple(constants.COLOR_NAMES.keys())[cid % 19]
             cid = cid // 19
-            ears = cid % 2 > 0.5
+            tears = cid % 2 > 0.5
             cid = cid // 2
-            mouth = cid % 2 > 0.5
+            tmouth = cid % 2 > 0.5
             cid = cid // 2
-            legs = cid % 5
+            tlegs = cid % 5
             cid = cid // 5
-            variant = constants.CHARACTER_VARIANTS[cid % 6]
+            tvariant = constants.CHARACTER_VARIANTS[cid % 6]
             cid = cid // 6
-            eye_shape = ("normal", "angry", "wide")[cid % 3]
+            teye_shape = ("normal", "angry", "wide")[cid % 3]
             cid = cid // 3
-            eye_count = cid % 5
+            teye_count = cid % 5
             cid = cid // 5
-            shape = constants.CHARACTER_SHAPES[cid % 5]
+            tshape = constants.CHARACTER_SHAPES[cid % 5]
 
         # There's a bit left over in the JSONs from my first implementation, but it's alright
 
@@ -115,6 +114,13 @@ class CharacterGenerator:
         if legs is not None: m += Comparison("==", legs_cs, legs)
         if eye_count is not None: m += Comparison("==", eyes_cs, eye_count)
 
+        # Customid constraints
+
+        if tshape is not None: m += Comparison("==", shape_cs, shapes.index(tshape))
+        if tvariant is not None: m += Comparison("==", variant_cs, variants.index(tvariant))
+        if tlegs is not None: m += Comparison("==", legs_cs, tlegs)
+        if teye_count is not None: m += Comparison("==", eyes_cs, teye_count)
+
         solutions = []
 
         def collect():
@@ -136,6 +142,31 @@ class CharacterGenerator:
         mouth = mouth if mouth is not None else r.random() > 0.5
         ears = ears if ears is not None else r.random() > 0.5
 
+        if color is None:
+            color = r.choice(list(constants.COLOR_NAMES.keys()))
+
+        # please tell me if i've done this wrong -gk9
+
+        if type(customid) != type(1154):
+            customid = 0
+            customid += list(constants.COLOR_NAMES.keys()).index(color)
+            customid += int(ears) * 19
+            customid += int(mouth) * 19 * 2
+            customid += legs * 19 * 2 * 2
+            customid += list(constants.CHARACTER_VARIANTS).index(variant) * 19 * 2 * 2 * 5
+            customid += ["normal", "angry", "wide"].index(eye_shape) * 19 * 2 * 2 * 5 * 6
+            customid += eye_count * 19 * 2 * 2 * 5 * 6 * 3
+            customid += list(constants.CHARACTER_SHAPES).index(shape) * 19 * 2 * 2 * 5 * 6 * 3 * 5
+        else:
+            color = tcolor
+            ears = tears
+            mouth = tmouth
+            legs = tlegs
+            variant = tvariant
+            eye_shape = teye_shape
+            eye_count = teye_count
+            shape = tshape
+        
         with open('data/generator/eyes/eyes.json') as f:
             eyes_json = json.load(f)
         with open('data/generator/legs/legs.json') as f:
@@ -235,8 +266,7 @@ class CharacterGenerator:
                             final_image = final_image[:, ::-1, :]
                         final_arr[(((dir_a + walkcycle_frame) % 32) *
                                    3) + wobble_frame] = final_image
-        if color is None:
-            color = r.choice(list(constants.COLOR_NAMES.keys()))
+        
         args = {
             "seed": seed,
             "shape": shape,
@@ -250,6 +280,7 @@ class CharacterGenerator:
             "customid": customid
         }
         return final_arr, args
+
 
 
 def recolor(sprite: Image.Image, color: str,
