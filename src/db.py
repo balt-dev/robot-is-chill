@@ -43,7 +43,8 @@ class Database:
 
     async def close(self) -> None:
         """Teardown."""
-        await self.conn.close()
+        if hasattr(self, "conn"):
+            await self.conn.close()
 
     async def create_tables(self) -> None:
         """Creates tables in the database according to a schema in code.

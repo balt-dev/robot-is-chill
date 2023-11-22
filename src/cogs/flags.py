@@ -4,6 +4,7 @@ import random
 import re
 from os import listdir
 from typing import TYPE_CHECKING
+import discord
 
 import requests
 from PIL import Image
@@ -70,9 +71,8 @@ async def find_message(ctx):
         msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
         if not msg.attachments:
             do_finally = False
-            await ctx.error('The replied message doesn\'t have an attachment. Did you reply to the bot?')
-            return None
-    except BaseException:
+            raise AssertionError('The replied message doesn\'t have an attachment. Did you reply to the bot?')
+    except discord.NotFound:
         async for m in ctx.channel.history(limit=constants.MESSAGE_LIMIT):
             if m.author.id == ctx.bot.user.id and m.attachments:
                 try:
@@ -80,12 +80,10 @@ async def find_message(ctx):
                     if reply.author == ctx.message.author:
                         msg = m
                         break
-                except BaseException:
+                except discord.NotFound:
                     pass
     finally:
-        if msg is None:
-            await ctx.error(f'None of your commands were found in the last `{constants.MESSAGE_LIMIT}` messages.')
-            return None
+        assert msg is not None, f'None of your commands were found in the last `{constants.MESSAGE_LIMIT}` messages.'
         if do_finally:
             # try:
             assert int(

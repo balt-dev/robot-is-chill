@@ -191,6 +191,12 @@ class Tile:
                 color = character[1]["color"]
                 value = cls(name=name, tiling=constants.TILING_CHAR, variants=tile.variants, empty=False, custom=True,
                             sprite=character[0], color=color, palette=tile.palette)
+            elif name[:6] == "cchar_" and ctx is not None:  # allow external calling for potential future things? again?
+                customid = int(name[6:]) if re.fullmatch(r'-?\d+', name[6:]) else name[6:]
+                character = ctx.bot.generator.generate(customid=customid)
+                color = character[1]["color"]
+                value = cls(name=name, tiling=constants.TILING_CHAR, variants=tile.variants, empty=False, custom=True,
+                            sprite=character[0], color=color, palette=tile.palette)
             else:
                 raise errors.TileNotFound(name)
         for variant in value.variants["tile"]:
