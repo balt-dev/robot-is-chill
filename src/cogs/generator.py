@@ -36,7 +36,8 @@ class CharacterGenerator:
             legs: int | None = None,
             mouth: bool | None = None,
             ears: bool | None = None,
-            color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None
+            color: Literal[*tuple(constants.COLOR_NAMES.keys())] | None = None,
+            customid: int | None = None
     ) -> tuple[np.array, dict[str, int, str, str, str, int, str, str, str, str, str, int, str, bool, str, bool, str, str]]:
         # I'm not proud of this code.
         # This sucks, a lot, and shows me being overconfident.
@@ -44,6 +45,35 @@ class CharacterGenerator:
         if seed is None: seed = random.randint(-sys.maxsize - 1, sys.maxsize)
         r = random.Random()
         r.seed(seed)
+
+        # *half of customid implementation moved down
+
+        tcolor = None
+        tears = None
+        tmouth = None
+        tlegs = None
+        tvariant = None
+        teye_shape = None
+        teye_count = None
+        tshape = None
+
+        if type(customid) == type(1154):
+            cid = customid
+            tcolor = tuple(constants.COLOR_NAMES.keys())[cid % 19]
+            cid = cid // 19
+            tears = cid % 2 > 0.5
+            cid = cid // 2
+            tmouth = cid % 2 > 0.5
+            cid = cid // 2
+            tlegs = cid % 5
+            cid = cid // 5
+            tvariant = constants.CHARACTER_VARIANTS[cid % 6]
+            cid = cid // 6
+            teye_shape = ("normal", "angry", "wide")[cid % 3]
+            cid = cid // 3
+            teye_count = cid % 5
+            cid = cid // 5
+            tshape = constants.CHARACTER_SHAPES[cid % 5]
 
         # There's a bit left over in the JSONs from my first implementation, but it's alright
 
@@ -84,6 +114,13 @@ class CharacterGenerator:
         if legs is not None: m += Comparison("==", legs_cs, legs)
         if eye_count is not None: m += Comparison("==", eyes_cs, eye_count)
 
+        # Customid constraints
+
+        if tshape is not None: m += Comparison("==", shape_cs, shapes.index(tshape))
+        if tvariant is not None: m += Comparison("==", variant_cs, variants.index(tvariant))
+        if tlegs is not None: m += Comparison("==", legs_cs, tlegs)
+        if teye_count is not None: m += Comparison("==", eyes_cs, teye_count)
+
         solutions = []
 
         def collect():
@@ -105,6 +142,31 @@ class CharacterGenerator:
         mouth = mouth if mouth is not None else r.random() > 0.5
         ears = ears if ears is not None else r.random() > 0.5
 
+        if color is None:
+            color = r.choice(list(constants.COLOR_NAMES.keys()))
+
+        # please tell me if i've done this wrong -gk9
+
+        if type(customid) != type(1154):
+            customid = 0
+            customid += list(constants.COLOR_NAMES.keys()).index(color)
+            customid += int(ears) * 19
+            customid += int(mouth) * 19 * 2
+            customid += legs * 19 * 2 * 2
+            customid += list(constants.CHARACTER_VARIANTS).index(variant) * 19 * 2 * 2 * 5
+            customid += ["normal", "angry", "wide"].index(eye_shape) * 19 * 2 * 2 * 5 * 6
+            customid += eye_count * 19 * 2 * 2 * 5 * 6 * 3
+            customid += list(constants.CHARACTER_SHAPES).index(shape) * 19 * 2 * 2 * 5 * 6 * 3 * 5
+        else:
+            color = tcolor
+            ears = tears
+            mouth = tmouth
+            legs = tlegs
+            variant = tvariant
+            eye_shape = teye_shape
+            eye_count = teye_count
+            shape = tshape
+        
         with open('data/generator/eyes/eyes.json') as f:
             eyes_json = json.load(f)
         with open('data/generator/legs/legs.json') as f:
@@ -204,8 +266,7 @@ class CharacterGenerator:
                             final_image = final_image[:, ::-1, :]
                         final_arr[(((dir_a + walkcycle_frame) % 32) *
                                    3) + wobble_frame] = final_image
-        if color is None:
-            color = r.choice(list(constants.COLOR_NAMES.keys()))
+        
         args = {
             "seed": seed,
             "shape": shape,
@@ -215,9 +276,11 @@ class CharacterGenerator:
             "legs": legs,
             "mouth": mouth,
             "ears": ears,
-            "color": color
+            "color": color,
+            "customid": customid
         }
         return final_arr, args
+
 
 
 def recolor(sprite: Image.Image, color: str,
@@ -279,6 +342,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             Has/doesn't have ears
         - `color: Color`
             Color of the character
+        - `customid: int`
+            Indicator, like the seed, but you can set variants and it will update.
         """
         await ctx.typing()
         possible_kwargs = {
@@ -290,7 +355,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             "legs": int,
             "mouth": bool,
             "ears": bool,
-            "color": Literal[*constants.COLOR_NAMES]
+            "color": Literal[*constants.COLOR_NAMES],
+            "customid": int
         }
         flags = {}
         for match in re.finditer(r"(\w+?)=([\w-]+)\b", kwargs):
@@ -337,7 +403,7 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
                             im = np.array(im.convert("RGBA"))
                             kern = np.array(((0, 1, 0), (1, -4, 1), (0, 1, 0)))
                             outline = cv2.filter2D(src=np.pad(im[..., 3], ((1, 1), (1, 1))), ddepth=0, kernel=kern)
-                            outline = (outline > 0).astype(np.uint8) * 255
+                            outline = (outline > 0).astype(np.uint8) * 128
                             im = np.multiply(im, color / 255, casting="unsafe").astype(np.uint8)
                             im = outline[..., np.newaxis] + np.pad(im, ((1, 1), (1, 1), (0, 0)))
                             im = Image.fromarray(im).resize((192, 192), Image.Resampling.NEAREST)
@@ -369,9 +435,10 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
         embed.set_image(url=f"attachment://preview.gif")
         return await ctx.reply(embed=embed, files=[file, discord.File(zip_buffer, filename='out.zip')])
 
+    # This said name:value but it's name=value
     character.__doc__ = f"""
         Randomly generate a character using prefabs.
-        Arguments can be specified with a `name:value` syntax.
+        Arguments can be specified with a `name=value` syntax.
         The possible arguments are:
         - `seed: any`
             RNG seed, can be anything
@@ -391,6 +458,8 @@ class GeneratorCog(commands.Cog, name="Generation Commands"):
             Has/doesn't have ears
         - `color: Color`
             Color of the character
+        - `customid: int`
+            Indicator, like the seed, but you can set variants and it will update.
         """
 
     # Old code for character generation
