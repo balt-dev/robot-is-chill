@@ -223,13 +223,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for w, timestep in enumerate(grid)
         ]
 
-    async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
+
+    async def render_tiles(self, ctx: Context, *, objects: str, rule: bool, glyph: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
             ctx.silent = ctx.message.flags.silent
-            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:",
-                                                                              "♥")  # keep the heart, for the people
+            tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:", "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
             tiles = re.sub(r"\\(?=[:<])", "", tiles)
             tiles = re.sub(r"(?<!\\)`", "", tiles)
@@ -268,6 +268,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 a, b = match.span()
                 text = match.group(1)
                 prefix = "tile_" if rule else "text_"
+                if glyph:
+                    prefix = "glyph_"
                 sliced = re.split("([\n ]|$)", text)
                 zipped = zip(sliced[1::2], sliced[:-1:2])
                 text = "".join(f"{prefix}{t}{joiner}" if t != "-" else f"-{joiner}" for joiner, t in zipped)
@@ -299,11 +301,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for x, y in reversed(to_delete):
                 del word_grid[y][x]
             try:
-                if rule:
+                if rule or glyph:
                     comma_grid = split_commas(word_grid, "tile_")
+                    if glyph:
+                        split_commas(word_grid, "text_")
                 else:
                     comma_grid = split_commas(word_grid, "text_")
                 comma_grid = split_commas(comma_grid, "$")
+                comma_grid = split_commas(comma_grid, "#")
             except errors.SplittingException as e:
                 cause = e.args[0]
                 return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
@@ -328,10 +333,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     [(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type != "sign"])
                 font_variants = RegexDict(
                     [(variant.pattern, variant) for variant in ctx.bot.variants._values if variant.type == "sign"])
-
                 possible_variant_names = [name for variant in ctx.bot.variants._values for name in variant.name if
                                           len(name)]
-
                 def catch(f, *args, **kwargs):
                     try:
                         return f(*args, **kwargs)
@@ -357,7 +360,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         layer_grid[d:, l, y, x] = TileSkeleton()
                                         for o in range(1, maxdelta - d):
                                             try:
-                                                text = timeline_split[d + o]
+                                                text = timeline_split[d+o]
                                                 if len(text):
                                                     break
                                             except IndexError:
@@ -377,11 +380,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         # This is done to prevent setting everything to one instance of an object.
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
-                                                possible_variants, tile, rule,
+                                                possible_variants, tile, rule, glyph,
                                                 palette=render_ctx.palette, bot=self.bot,
                                                 global_variant=render_ctx.global_variant,
                                                 possible_variant_names=possible_variant_names,
-                                                macros=user_macros
+                                                macros=user_macros, 
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
@@ -392,10 +395,10 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                                 layer_grid[d - 1, l, y, x].raw_string.split(
                                                     ";" if ";" in tile else ":", 1
                                                 )[0] + tile,
-                                                rule, bot=self.bot,
+                                                rule, glyph, bot=self.bot,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros,
-                                                palette=render_ctx.palette
+                                                palette=render_ctx.palette,
                                             )
                                             for _ in range(layer_grid.shape[0] - d)
                                         ]
@@ -483,6 +486,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await ctx.reply(description[:2000], embed=embed, file=image)
         finally:
             signal.alarm(0)
+            pass
 
     @commands.command(aliases=["t"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -515,7 +519,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await self.start_timeout(
             ctx,
             objects=objects,
-            rule=False)
+            rule=False, glyph=False)
 
     @commands.command(aliases=["text", "r"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
@@ -549,7 +553,27 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         await self.start_timeout(
             ctx,
             objects=objects,
-            rule=True)
+            rule=True, glyph=False)
+
+    @commands.command(aliases=["g"])
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    async def glyph(self, ctx: Context, *, objects: str = ""):
+        """Renders the glyph tiles provided.
+
+        See =tile and =rule for most of the things.
+
+        **Useful tips:**
+        * `#` : `#object` swaps tiles and glyphs.
+
+        **Example commands:**
+        `try it yourself`
+        """
+        if self.bot.config['danger_mode']:
+            await warn_dangermode(ctx)
+        await self.start_timeout(
+            ctx,
+            objects=objects,
+            glyph=True, rule=False)
 
     # Generates tiles from a text file.
     @commands.command(aliases=["f"])
