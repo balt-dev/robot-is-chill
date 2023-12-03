@@ -102,7 +102,7 @@ class TileSkeleton:
             async with bot.db.conn.cursor() as cur:
                 await cur.execute(exc)
                 out.name = (await cur.fetchall())[0][0]
-            # raw_variants.insert(0, "m!" + num + "ify")
+            raw_variants.insert(0, "m!" + num + "ify")
         out.variants |= parse_variants(possible_variants, raw_variants, name=out.name,
                                        possible_variant_names=possible_variant_names, macros=macros)
         return out
