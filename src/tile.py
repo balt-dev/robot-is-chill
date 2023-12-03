@@ -57,7 +57,7 @@ class TileSkeleton:
     easter_egg: bool = False
 
     @classmethod
-    async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
+    async def parse(cls, possible_variants, string: str, rule: bool = True, glyph: bool = False, palette: str = "default",
                     bot=None, global_variant="", possible_variant_names=[], macros={}):
         out = cls()
         if string == "-":
@@ -67,25 +67,42 @@ class TileSkeleton:
                 string = string[5:]
             elif string[0] == "$":
                 string = string[1:]
+                if string[0] == "#":
+                    string = "glyph_" + string[1:]
             else:
                 string = "text_" + string
+        elif glyph:
+            if string[:5] == "tile_":
+                string = string[5:]
+            elif string[0] == "#":
+                string = string[1:]
+                if string[0] == "$":
+                    string = "text_" + string[1:]
+            else:
+                string = "glyph_" + string
         elif string[0] == "$":
             string = "text_" + string[1:]
+        elif string[0] == "#":
+            string = "glyph_" + string[1:]
         out.empty = False
         out.raw_string = string
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
         raw_variants[0:0] = global_variant.split(":")
-        if out.name == "2" and bot is not None:
+        if out.name in ["-1", "0", "1", "2", "3", "4"] and bot is not None:
+            num = out.name
             # Easter egg!
             out.easter_egg = True
-            async with bot.db.conn.cursor() as cur:
-                await cur.execute("SELECT DISTINCT name FROM tiles WHERE tiling LIKE 2 AND name NOT LIKE"
-                                  "'text_anni' ORDER BY RANDOM() LIMIT 1")
+            exc = "SELECT DISTINCT name FROM tiles WHERE tiling LIKE " + num
+            if num == "2":
+                exc += " AND name NOT LIKE 'text_anni'"
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
+            exc += " ORDER BY RANDOM() LIMIT 1"
+            async with bot.db.conn.cursor() as cur:
+                await cur.execute(exc)
                 out.name = (await cur.fetchall())[0][0]
-            raw_variants.insert(0, "m!2ify")
+            # raw_variants.insert(0, "m!" + num + "ify")
         out.variants |= parse_variants(possible_variants, raw_variants, name=out.name,
                                        possible_variant_names=possible_variant_names, macros=macros)
         return out
