@@ -594,6 +594,60 @@
         "tiling": "-1"
     },
     {
+        "name": "text_pi",
+        "sprite": "text_pi",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "text_num",
+        "sprite": "text_num",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "text_this_arrow",
+        "sprite": "text_this_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "text_that_arrow",
+        "sprite": "text_that_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "text_these_arrow",
+        "sprite": "text_these_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "text_those_arrow",
+        "sprite": "text_those_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "roy",
         "sprite": "roy",
         "color": [
