@@ -566,7 +566,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         * `#` : `#object` swaps tiles and glyphs.
 
         **Example commands:**
-        `try it yourself`
+        `glyph baba you #baba`
+        `glyph baba you - #$baba,is,you`
         """
         if self.bot.config['danger_mode']:
             await warn_dangermode(ctx)
