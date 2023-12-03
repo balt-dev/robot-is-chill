@@ -613,6 +613,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return sprite.astype(np.uint8)
 
     @add_variant()
+    async def clip(sprite):
+        """Sets the sprite to only be in the 24x24 grid space."""
+        width = sprite.shape[1]
+        height = sprite.shape[0]
+        left = (width - 24) // 2
+        up = (height - 24) // 2
+        right = (width + 24) // 2
+        down = (height + 24) // 2
+        return await crop(sprite, [left,up], [right,down], True)
+
+    @add_variant()
     async def warp(sprite, x1_y1: list[int, int], x2_y2: list[int, int], x3_y3: list[int, int], x4_y4: list[int, int]):
         """Warps the sprite by displacing the bounding box's corners.
     Point 1 is top-left, point 2 is top-right, point 3 is bottom-right, and point 4 is bottom-left.
