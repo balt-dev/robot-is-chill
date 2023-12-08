@@ -11,6 +11,88 @@ from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context, RegexDict
 
+#vvv used for the <> below vvv
+def mult(a,b):
+    try:
+        return a*b
+    except:
+        return "don't."
+def add(a,b):
+    try:
+        return a+b
+    except:
+        return "don't."
+def sub(a,b):
+    try:
+        return a-b
+    except:
+        return "don't."
+def div(a,b):
+    try:
+        return a/b
+    except:
+        return "don't."
+def exp(a,b):
+    try:
+        return a**b
+    except:
+        return "don't."
+
+# thanks to https://stackoverflow.com/questions/13055884/parsing-math-expression-in-python-and-solving-to-find-an-answer for this
+def parse_expression(x):
+    try:
+        operators = set('+-*/^')
+        op_out = [] 
+        num_out = []
+        buff = []
+        for c in x:
+            if c in operators:  
+                num_out.append(''.join(buff))
+                buff = []
+                op_out.append(c)
+            else:
+                buff.append(c)
+        num_out.append(''.join(buff))
+        operator_order = ('^','*/','+-')
+        
+        num_out2 = []
+        for num in num_out:
+            num2 = num
+            if len(num) > 0:
+                if num[0] == "!":
+                    num2 = "-" + num[1:]
+            try:
+                float(num2)
+            except:
+                return "*Didn't work!*"
+            num_out2.append(num2)
+        
+        num_out = num_out2
+
+        op_dict = {'*':mult,
+                '/':div,
+                '+':add,
+                '-':sub,
+                '^':exp}
+        value = None
+        for op in operator_order:                   
+            while any(o in op_out for o in op):        
+                idx,oo = next((i,o) for i,o in enumerate(op_out) if o in op)
+                op_out.pop(idx)
+                value1 = float(num_out[idx])
+                value2 = float(num_out[idx+1])
+                value = op_dict[oo](value1, value2)
+                if value == "don't.":
+                    return "*Didn't work!*"
+                num_out[idx:idx+2] = [value]
+
+        num = num_out[0]
+        if num%1 == 0:
+            num = int(num)
+        
+        return str(num)
+    except:
+        return "*Didn't work!*"
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
                    name=None, possible_variant_names=[], macros={}):
@@ -26,8 +108,37 @@ def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str
             macro = macros[raw_macro].value
             for j, arg in enumerate(macro_args):
                 macro = macro.replace(f"${j + 1}", arg)
+            # parsing <>s
+            k = 0
+            checking = False
+            start = 0
+            while k < len(macro):
+                char = macro[k]
+                if char == "<":
+                    oper = False
+                    start = k
+                    current = ""
+                    checking = True
+                elif char == ">" and checking:
+                    num = parse_expression(current)
+                    if num != "*Didn't work!*":
+                        macro = macro[:start] + num + macro[k+1:]
+                        checking = False
+                        k = -1
+                elif char == ":":
+                    checking = False
+                elif checking:
+                    if oper:
+                        if char == "-":
+                            char = "!"
+                        oper = False
+                    else:
+                        if char in "+-*/":
+                            oper = True
+                    current += char
+                k += 1
             del raw_variants[i]
-            raw_variants[i:i] = macro.split(":")  # Extend at index i
+            raw_variants[i:i] = macro.split(":")  # Extend at index i # wait you can do that? -gabeyk9
             continue
         try:
             final_variant = possible_variants[raw_variant]
