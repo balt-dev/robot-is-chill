@@ -304,11 +304,14 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 if rule or glyph:
                     comma_grid = split_commas(word_grid, "tile_")
                     if glyph:
-                        split_commas(word_grid, "text_")
+                        comma_grid = split_commas(comma_grid, "#")
+                    else:
+                        comma_grid = split_commas(comma_grid, "$") 
                 else:
                     comma_grid = split_commas(word_grid, "text_")
-                comma_grid = split_commas(comma_grid, "$")
-                comma_grid = split_commas(comma_grid, "#")
+                    comma_grid = split_commas(comma_grid, "glyph_")
+                    comma_grid = split_commas(comma_grid, "$")
+                    comma_grid = split_commas(comma_grid, "#")
             except errors.SplittingException as e:
                 cause = e.args[0]
                 return await ctx.error(f"I couldn't split the following input into separate objects: \"{cause}\".")
@@ -595,7 +598,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     '-rule',
                     '-t',
                     '--text',
-                    '-text'], timeout_multiplier=1.5)
+                    '-text'],
+                glyph=rule in [
+                    '-g'
+                    '--glyph'
+                    '-glyph'
+                ], 
+                timeout_multiplier=1.5)
         except IndexError:
             await ctx.error('You forgot to attach a file.')
 
