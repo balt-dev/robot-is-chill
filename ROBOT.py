@@ -156,7 +156,7 @@ bot = Bot(
     activity=discord.Game(name=config.activity),
     description=config.description,
     # Never mention roles, @everyone or @here
-    allowed_mentions=discord.AllowedMentions(everyone=False, roles=False),
+    allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
     # Only receive message and reaction events
     intents=discord.Intents(messages=True, reactions=True, guilds=True, message_content=True),
     # Disable the member cache
