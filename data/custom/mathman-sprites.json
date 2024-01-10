@@ -1,4 +1,4 @@
-{
+[
   {
         "name": "text_beside",
         "sprite": "text_beside",
@@ -77,4 +77,4 @@
         ],
         "tiling": "-1"
     }
-}
+]
