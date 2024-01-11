@@ -1,5 +1,14 @@
 [
     {
+        "name": "rotom2",
+        "sprite": "rotom2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "sed",
         "sprite": "sed",
         "color": [
