@@ -1,0 +1,80 @@
+[
+  {
+        "name": "text_beside",
+        "sprite": "text_beside",
+        "color": [
+            "1",
+            "2"
+        ],
+        "active": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_de",
+        "sprite": "text_de",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ed",
+        "sprite": "text_ed",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_debonus",
+        "sprite": "text_debonus",
+        "color": [
+            "4",
+            "0"
+        ],
+        "active": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_next",
+        "sprite": "text_next",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_nexttwo",
+        "sprite": "text_nexttwo",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]
