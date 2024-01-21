@@ -230,7 +230,7 @@ Use % to set a percentage of the default render speed."""
                     )
     async def gscale(match, ctx):
         """Sets the scale of all sprites. Applied before variants."""
-        ctx.gscale = int(match.group(1))
+        ctx.gscale = max(min(int(match.group(1)), 4), 0)
 
     @flags.register(match=r"(?:--multiplier|-m)=(\d+(?:\.\d+)?)",
                     syntax="--multiplier|-m=<scale: float>",

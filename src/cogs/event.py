@@ -1,11 +1,17 @@
+import asyncio
+import datetime
+import multiprocessing
+import sys
+
 import discord
 from discord.ext import commands
 
 import time
 
-from ..types import Bot
+from ..types import Bot, Context
 
 import config
+
 
 
 class EventCog(commands.Cog, name='Events'):
@@ -23,7 +29,7 @@ class EventCog(commands.Cog, name='Events'):
         async with self.bot.db.conn.cursor() as cur:
             await cur.execute(f'''DELETE FROM ServerActivity WHERE id LIKE ?;''', (guild.id))
 
-    async def bot_check(self, ctx):
+    async def bot_check(self, ctx: Context):
         async with self.bot.db.conn.cursor() as cur:
             # this is risky but guaranteed int so i think it's fine?
             await cur.execute(f'SELECT DISTINCT * FROM BLACKLISTEDUSERS WHERE id = ?;', ctx.author.id)
@@ -43,11 +49,11 @@ If you feel this was unjustified, please DM the bot owner.''')
         if self.bot.config['owner_only_mode'][0] and ctx.author.id != self.bot.owner_id:
             await ctx.error(f'The bot is currently in owner only mode. The owner specified this reason:\n`{config.owner_only_mode[1]}`')
             return False
-        if ctx.message.content[0] == "-":
-            await ctx.error("Bot's out of beta! :tada:\nTry to switch your muscle memory back from `-`.")
-            return False
+        if self.bot.config['debug']:
+            content = ctx.message.content[:100]
+            content = "".join(c if (32 <= ord(c) < 127) | (ord(c) == 10) else f"\\x{ord(c):02X}" for c in content)
+            print(f"{datetime.datetime.now()}\n{ctx.author.name}\n{content}", flush=True)
         return True
-
 
 async def setup(bot: Bot):
     await bot.add_cog(EventCog(bot))

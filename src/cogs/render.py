@@ -6,6 +6,7 @@ import glob
 import math
 import random
 import re
+import struct
 import sys
 import time
 import traceback
@@ -283,6 +284,28 @@ class Renderer:
             background_images.append(step)
         comp_ovh = time.perf_counter() - start_time
         start_time = time.perf_counter()
+        if self.bot.config["debug"]:
+            # Print to thermal printer (I have one for this)
+            first = background_images[0]
+            ratio = first.shape[0] / first.shape[1]
+            first = cv2.resize(
+                first,
+                (int(min(1 / ratio, 1) * 384), int(min(ratio, 1) * 384)),
+                interpolation=cv2.INTER_NEAREST
+            )
+            image = Image.fromarray(first)
+            background = Image.new("RGB", first.shape[1::-1], (0, 0, 0))
+            background.paste(image, mask=image.split()[3])
+            arr = ~np.array(background.convert("1"))
+            (height, width) = arr.shape[:2]
+            sys.stdout.buffer.write(b"\x1Dv00")
+            bytewidth = (width + 7) // 8
+            buf = struct.pack("<2H", bytewidth, height)
+            sys.stdout.buffer.write(buf)
+            packed = np.packbits(arr, axis=1)
+            sys.stdout.buffer.write(packed.tobytes())
+            sys.stdout.flush()
+
         self.save_frames(background_images,
                          ctx.out,
                          durations,

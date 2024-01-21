@@ -1097,7 +1097,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "baaba",
         "sprite": "baaba",
         "tiling": "2",
@@ -1106,7 +1106,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "text_baaba",
         "sprite": "text_baaba",
         "tiling": "-1",
@@ -1114,5 +1114,14 @@
             "0",
             "3"
         ]
+    },
+    {
+        "name": "text_slogkat",
+        "sprite": "text_slogkat",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

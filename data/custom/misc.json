@@ -856,7 +856,7 @@
     },
     {
         "name": "he",
-        "sprite": "He",
+        "sprite": "he",
         "color": [
             "2",
             "3"
@@ -865,7 +865,7 @@
     },
     {
         "name": "text_he",
-        "sprite": "text_He",
+        "sprite": "text_he",
         "color": [
             "2",
             "3"
