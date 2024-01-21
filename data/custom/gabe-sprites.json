@@ -187,5 +187,221 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "basbii",
+        "sprite": "basbii",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_basbii",
+        "sprite": "text_basbii",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kescii",
+        "sprite": "kescii",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_kescii",
+        "sprite": "text_kescii",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flasgii",
+        "sprite": "flasgii",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flasgii",
+        "sprite": "text_flasgii",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "fosfii",
+        "sprite": "fosfii",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_fosfii",
+        "sprite": "text_fosfii",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rocsii",
+        "sprite": "rocsii",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rocsii",
+        "sprite": "text_rocsii",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jisjii",
+        "sprite": "jisjii",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_jisjii",
+        "sprite": "text_jisjii",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "istii",
+        "sprite": "istii",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_istii",
+        "sprite": "text_istii",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "walsii",
+        "sprite": "walsii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_walsii",
+        "sprite": "text_walsii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tilsii",
+        "sprite": "text_tilsii",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tilsii",
+        "sprite": "tilsii",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_mescii",
+        "sprite": "text_mescii",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mescii",
+        "sprite": "mescii",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_grascii",
+        "sprite": "text_grascii",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "grascii",
+        "sprite": "grascii",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_watsii",
+        "sprite": "text_watsii",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "watsii",
+        "sprite": "watsii",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

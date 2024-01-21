@@ -564,6 +564,8 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Applies a meta filter to an image."""
         if level is None: level = 1
         if size is None: size = 1
+        assert size < 0, f"Size of {size} too small!"
+        assert size > MAX_META_SIZE, f"Size of {size} too small!"
         assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
         # Not padding at negative values is intentional
         padding = max(level*size, 0)
