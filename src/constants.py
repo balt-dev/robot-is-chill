@@ -5,6 +5,7 @@ from typing import Literal
 # limits
 MAX_STACK = 2584
 MAX_META_DEPTH = 48
+MAX_META_SIZE = 10
 MAX_TILES = 2584
 MAX_TEXT_LENGTH = 32
 
