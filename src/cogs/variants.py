@@ -560,7 +560,40 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         return np.dstack([np.digitize(sprite[..., i], np.linspace(0, 255, bands)) * (255 / bands) for i in range(4)])
 
     @add_variant("m")
-    async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full"):
+    async def meta(sprite, level: Optional[int] = 1, kernel: Optional[Literal["full", "edge"]] = "full", size: Optional[int] = 1):
+        """Applies a meta filter to an image."""
+        if level is None: level = 1
+        if size is None: size = 1
+        assert size > 0, f"The given meta size of {size} is too small!"
+        assert size <= constants.MAX_META_SIZE, f"The given meta size of {size} is too large! Try something lower than `{constants.MAX_META_SIZE}`."
+        assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large! Try something lower than `{constants.MAX_META_DEPTH}`."
+        # Not padding at negative values is intentional
+        padding = max(level*size, 0)
+        orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
+        check_size(*orig.shape[size::-1])
+        base = orig[..., 3]
+        if level < 0:
+            base = 255 - base
+        ksize = 2*size + 1
+        ker = np.ones((ksize, ksize))
+        if kernel == 'full':
+            ker[size, size] = - ksize**2 + 1
+        elif kernel == 'edge':
+            ker[size, size] = - ksize**2 + 5
+            ker[0,0] = 0
+            ker[0,ksize-1] = 0
+            ker[ksize-1,ksize-1] = 0
+            ker[ksize-1,0] = 0
+        for _ in range(abs(level)):
+            base = cv2.filter2D(src=base, ddepth=-1, kernel=ker)
+        base = np.dstack((base, base, base, base))
+        mask = orig[..., 3] > 0
+        if not (level % 2) and level > 0:
+            base[mask, ...] = orig[mask, ...]
+        else:
+            base[mask ^ (level < 0), ...] = 0
+        return base
+
         """Applies a meta filter to an image."""
         if level is None: level = 1
         assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
@@ -775,6 +808,16 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         # Crops the alpha channel back to the original size and positioning
         sprite[:, :, 3][mask] = sprite_flooded[1:-1, 1:-1][mask].astype(np.uint8)
         sprite[(sprite[:, :] == [0, 0, 0, 255]).all(2)] = color
+        return sprite
+    
+    @add_variant("rm")
+    async def remove(sprite, color: Color, invert: Optional[bool] = False, *, tile, wobble, renderer):
+        """Removes a certain color from the sprite. If [36minvert[0m is on, then it removes all but that color."""
+        color = Color.parse(tile, renderer.palette_cache, color)
+        if invert:
+            sprite[(sprite[:, :, 0] != color[0]) | (sprite[:, :, 1] != color[1]) | (sprite[:, :, 2] != color[2])] = 0
+        else:
+            sprite[(sprite[:, :, 0] == color[0]) & (sprite[:, :, 1] == color[1]) & (sprite[:, :, 2] == color[2])] = 0
         return sprite
 
     def slice_image(sprite, color_slice: slice):
