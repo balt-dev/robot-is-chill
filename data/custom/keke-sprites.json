@@ -1,0 +1,11 @@
+[
+    {
+        "name": "arrow3",
+        "sprite": "arrow2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    }
+]

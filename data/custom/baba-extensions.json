@@ -144,5 +144,95 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "buhbuh",
+        "sprite": "buhbuh",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "masterkey",
+        "sprite": "skeletonkey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flarge",
+        "sprite": "bigflag",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mothership",
+        "sprite": "mothership",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nimbus",
+        "sprite": "cumulonimbus",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "path",
+        "sprite": "path",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gate_spore",
+        "sprite": "gate_spore",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gate_orb",
+        "sprite": "gate_orb",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gate_blossom",
+        "sprite": "gate_blossom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gate_ind",
+        "sprite": "gate_indicator",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
