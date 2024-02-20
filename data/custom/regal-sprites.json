@@ -72,24 +72,6 @@
         "tiling": "-1"
     },
     {
-        "name": "cnimi",
-        "sprite": "nimicrown",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "text_cnimi",
-        "sprite": "text_nimicrown",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "sand",
         "sprite": "sand",
         "color": [
@@ -355,6 +337,42 @@
         "sprite": "text_acorn",
         "color": [
             "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "fairy",
+        "sprite": "fairy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "text_fairy",
+        "sprite": "text_fairy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "candle",
+        "sprite": "candle",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_candle",
+        "sprite": "text_candle",
+        "color": [
+            "2",
             "2"
         ],
         "tiling": "-1"

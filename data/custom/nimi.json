@@ -1,0 +1,128 @@
+[
+    {
+        "name": "cnimi",
+        "sprite": "nimicrown",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cnimi",
+        "sprite": "text_nimicrown",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "animi",
+        "sprite": "nimiastronaut",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "hnimi",
+        "sprite": "nimicave",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "cownimi",
+        "sprite": "nimicowboy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "enimi",
+        "sprite": "nimiheadphones",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "mnimi",
+        "sprite": "nimimagician",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "gnimi",
+        "sprite": "nimiscientist",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "znimi",
+        "sprite": "nimiscuba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "bnimi",
+        "sprite": "nimisnow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "fnimi",
+        "sprite": "nimistraw",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "snimi",
+        "sprite": "nimisunglasses",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "lnimi",
+        "sprite": "nimizelda",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "wnimi",
+        "sprite": "nimiwitch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    }
+]
