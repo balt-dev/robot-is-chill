@@ -63,7 +63,7 @@
         "tiling": "0"
     },
     {
-        "name": "text_armor",
+        "name": "text_armour",
         "sprite": "text_armour",
         "color": [
             "0",
@@ -123,7 +123,7 @@
             "3",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "4"
     },
     {
         "name": "angler",
@@ -373,6 +373,168 @@
         "sprite": "text_candle",
         "color": [
             "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "file2",
+        "sprite": "file",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_file",
+        "sprite": "text_file",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hat2",
+        "sprite": "hat",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hat",
+        "sprite": "text_hat",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "warning2",
+        "sprite": "warning",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_warning2",
+        "sprite": "text_warning",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_yield",
+        "sprite": "text_yield",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bomb3",
+        "sprite": "bomb",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bomb3",
+        "sprite": "text_bomb",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dig",
+        "sprite": "text_dig",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_throw",
+        "sprite": "text_throw",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bouncy",
+        "sprite": "text_bouncy",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_choco",
+        "sprite": "text_choco",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_magic",
+        "sprite": "text_magic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_angler",
+        "sprite": "text_angler",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_amoeba",
+        "sprite": "text_amoeba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_vial",
+        "sprite": "text_vial",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_beaker",
+        "sprite": "text_beaker",
+        "color": [
+            "1",
             "2"
         ],
         "tiling": "-1"
