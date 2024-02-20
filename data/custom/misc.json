@@ -1665,15 +1665,6 @@
         "tiling": "1"
     },
     {
-        "name": "text_melted",
-        "sprite": "text_melted",
-        "color": [
-            "1",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_parsing",
         "sprite": "text_parsing",
         "color": [
