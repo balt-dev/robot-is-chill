@@ -1816,5 +1816,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bake",
+        "sprite": "bake",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

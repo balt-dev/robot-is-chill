@@ -205,5 +205,158 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "wand2",
+        "sprite": "wand",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "tumble",
+        "sprite": "tumble",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_tumble",
+        "sprite": "text_tumble",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sweetwall",
+        "sprite": "sweetwall",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "torch",
+        "sprite": "torch",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_torch",
+        "sprite": "text_torch",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "templewall",
+        "sprite": "templewall",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "shroom",
+        "sprite": "shroom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_shroom",
+        "sprite": "text_shroom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "shrooms",
+        "sprite": "shrooms",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_shrooms",
+        "sprite": "text_shrooms",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tile2",
+        "sprite": "templetile",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "jelly2",
+        "sprite": "jelly",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cherry2",
+        "sprite": "cherry",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cherry2",
+        "sprite": "text_cherry",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "acorn",
+        "sprite": "acorn",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_acorn",
+        "sprite": "text_acorn",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
