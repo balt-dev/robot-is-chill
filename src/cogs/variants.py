@@ -397,7 +397,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             grad = np.clip(grad, 0, 1)
         grad_center = maxside // 2, maxside // 2
         rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
-        warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[:2], flags=cv2.INTER_LINEAR)
+        warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_LINEAR)
         if steps:
             warped_grad = np.round(warped_grad * steps) / steps
         mult_grad = np.clip(((1 - warped_grad) * src + warped_grad * dst), 0, 255)

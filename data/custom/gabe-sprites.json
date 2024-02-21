@@ -403,5 +403,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "balscii",
+        "sprite": "balscii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_balscii",
+        "sprite": "text_balscii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
