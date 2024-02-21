@@ -709,5 +709,50 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "dumass",
+        "sprite": "dumass",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "koke",
+        "sprite": "koke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_koke",
+        "sprite": "text_koke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "brick2",
+        "sprite": "brick2",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "drinkey",
+        "sprite": "drinkey",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

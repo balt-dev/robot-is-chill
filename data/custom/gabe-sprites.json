@@ -419,6 +419,13 @@
         "color": [
             "0",
             "1"
+	},
+	{
+        "name": "onethem",
+        "sprite": "onethem",
+        "color": [
+            "5",
+            "3"
         ],
         "tiling": "-1"
     }

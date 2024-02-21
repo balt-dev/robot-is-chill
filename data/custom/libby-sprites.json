@@ -34,5 +34,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+	{
+        "name": "rubrub",
+        "sprite": "rubrub",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "text_rubrub",
+        "sprite": "text_rubrub",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

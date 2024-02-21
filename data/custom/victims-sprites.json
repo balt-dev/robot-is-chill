@@ -17,7 +17,7 @@
         ],
         "tiling": "4"
     },
-	{
+    {
         "name": "idea",
         "sprite": "idea",
         "color": [
@@ -26,7 +26,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "sunrise",
         "sprite": "sunrise",
         "color": [
@@ -35,7 +35,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "keys",
         "sprite": "keys",
         "color": [
@@ -44,21 +44,39 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "text_graph",
-        "sprite": "text_graph",
+    {
+        "name": "lele",
+        "sprite": "lele",
         "color": [
             "4",
-            "4"
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_lele",
+        "sprite": "text_lele",
+        "color": [
+            "4",
+            "2"
         ],
         "tiling": "-1"
     },
-	{
-        "name": "text_sunrise",
-        "sprite": "text_sunrise",
+    {
+        "name": "velvel",
+        "sprite": "velvel",
         "color": [
-            "2",
-            "2"
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_velvel",
+        "sprite": "text_velvel",
+        "color": [
+            "3",
+            "1"
         ],
         "tiling": "-1"
     }
