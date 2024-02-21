@@ -1,0 +1,38 @@
+[
+    {
+        "name": "isyou",
+        "sprite": "isyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_isyou",
+        "sprite": "text_isyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "xix",
+        "sprite": "xix",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_xix",
+        "sprite": "text_xix",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

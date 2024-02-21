@@ -756,7 +756,7 @@
         "tiling": "-1"
     },
     {
-        "name": "tero",
+        "name": "aelous",
         "sprite": "tero",
         "color": [
             "6",
@@ -1314,7 +1314,7 @@
         "tiling": "2"
     },
     {
-        "name": "lele",
+        "name": "lele2",
         "sprite": "lele",
         "color": [
             "4",
@@ -1600,5 +1600,230 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "stripey",
+        "sprite": "stripey",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "dydy",
+        "sprite": "dydy",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "keke2",
+        "sprite": "keke2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "riri",
+        "sprite": "riri",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ruru",
+        "sprite": "ruru",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "floatoc",
+        "sprite": "floatoc",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "munmun",
+        "sprite": "munmun",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "tssssh",
+        "sprite": "tssssh",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "words",
+        "sprite": "words",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "papa",
+        "sprite": "papa",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zi",
+        "sprite": "zi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_zi",
+        "sprite": "text_zi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bigmote",
+        "sprite": "puff",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cucu2",
+        "sprite": "cucu2",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cucu2",
+        "sprite": "text_cucu2",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gleebgleeb",
+        "sprite": "gleebgleeb",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_gleebgleeb",
+        "sprite": "text_gleebgleeb",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obob",
+        "sprite": "obob",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "mech",
+        "sprite": "mech",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "biubiu",
+        "sprite": "biubiu",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ticx",
+        "sprite": "ticx",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ticx",
+        "sprite": "text_ticx",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pft",
+        "sprite": "pft",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_pft",
+        "sprite": "text_pft",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bake",
+        "sprite": "bake",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
