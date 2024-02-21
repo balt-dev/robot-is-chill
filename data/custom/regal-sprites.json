@@ -414,7 +414,7 @@
         "tiling": "-1"
     },
     {
-        "name": "warning2",
+        "name": "yield",
         "sprite": "warning",
         "color": [
             "2",
@@ -536,6 +536,141 @@
         "color": [
             "1",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "faucet",
+        "sprite": "faucet",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_castle",
+        "sprite": "icon_castle",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_cave",
+        "sprite": "icon_cave",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_desert",
+        "sprite": "icon_desert",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_digital",
+        "sprite": "icon_digital",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_lab",
+        "sprite": "icon_lab",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_lab",
+        "sprite": "icon_lab",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_magic",
+        "sprite": "icon_magic",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_map",
+        "sprite": "icon_map",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_mars",
+        "sprite": "icon_mars",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_peak",
+        "sprite": "icon_peak",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_plains",
+        "sprite": "icon_plains",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_temple",
+        "sprite": "icon_temple",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_trench",
+        "sprite": "icon_trench",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "icon_woods",
+        "sprite": "icon_woods",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

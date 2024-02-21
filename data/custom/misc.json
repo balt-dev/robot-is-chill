@@ -1798,5 +1798,14 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "carrot2",
+        "sprite": "carrot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
