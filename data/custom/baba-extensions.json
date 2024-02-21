@@ -182,15 +182,6 @@
         "tiling": "-1"
     },
     {
-        "name": "nimbus",
-        "sprite": "cumulonimbus",
-        "color": [
-            "1",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "path",
         "sprite": "path",
         "color": [
