@@ -419,6 +419,8 @@
         "color": [
             "0",
             "1"
+        ],
+        "tiling": "-1"
 	},
 	{
         "name": "onethem",

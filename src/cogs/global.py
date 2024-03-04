@@ -974,16 +974,21 @@ Filterimages are formatted as follows:
         await ctx.reply(embed=emb, file=file)
 
     @filterimage.command(aliases=["reg"])
-    async def register(self, ctx: Context, name: str, target_mode: Literal["abs", "absolute", "rel", "relative"]):
-        """Adds a filter to the database! Requires an attachment.
-    Keep in mind that if the message sent to create this filter is deleted, it will no longer work."""
-        assert len(ctx.message.attachments), "An image to be registered has to be supplied!"
+    async def register(
+            self,
+            ctx: Context,
+            name: str,
+            target_mode: Literal["abs", "absolute", "rel", "relative"],
+            url: str
+    ):
+        """Adds a filter to the database from a URL."""
+        assert not len(ctx.message.attachments), "Images can't be given using attachments anymore."\
+                                                 "I recommend [Catbox](https://catbox.moe) for hosting."
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
             dname = await cursor.fetchone()
             if dname is not None:
                 return await ctx.error(f"Filter of name `{name}` already exists in the database!")
-            url = ctx.message.attachments[0].url
             await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
             command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
             args = (name, target_mode.startswith("abs"), url, ctx.author.id)
