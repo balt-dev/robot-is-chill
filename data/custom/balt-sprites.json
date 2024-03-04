@@ -159,5 +159,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_betabeta",
+        "sprite": "text_betabeta",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
