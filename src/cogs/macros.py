@@ -145,11 +145,9 @@ class MacroCog(commands.Cog, name='Macros'):
         """Executes some given macroscript and outputs its return value."""
         try:
             macros = ctx.bot.macros | {}
-            args = []
-            if match := re.match(r"^\s*--?args=((?:(?!(?<!\\)[\s,]).)*)", macro):
-                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
             while match := re.match(r"^\s*--?mc=((?:(?!(?<!\\)\|).)*)\|((?:(?!(?<!\\)\s).)*)", macro):
                 macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
+                macro = macro[match.end():]
             last = None
             passes = 0
 

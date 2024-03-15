@@ -5,17 +5,22 @@ from random import random
 
 variables = {}
 
+
 def reset_vars():
     variables = {}
 
+
 def to_float(v: str):
+    if "j" in v:
+        return complex(v)
     return float(v)
+
 
 # bool("false") == True because it's not empty
 def to_boolean(v: str):
-    if v in ("true", "1", "True", "1.0"):
+    if v in ("true", "1", "True", "1.0", "1.0+0.0j"):
         return True
-    elif v in ("false", "0", "False", "0.0"):
+    elif v in ("false", "0", "False", "0.0", "0.0+0.0j"):
         return False
     else:
         raise AssertionError(f"could not convert string to boolean: '{v}'")
@@ -29,6 +34,16 @@ def add(a: str, b: str):
 def pow(a: str, b: str):
     a, b = to_float(a), to_float(b)
     return str(a ** b)
+
+
+def real(value: str):
+    value = to_float(value) + 0j
+    return str(value.real)
+
+
+def imag(value: str):
+    value = to_float(value) + 0j
+    return str(value.imag)
 
 
 def rand():
@@ -50,7 +65,9 @@ def divide(a: str, b: str):
     try:
         return str(a / b)
     except ZeroDivisionError:
-        if a > 0:
+        if type(a) is complex:
+            return "nan"
+        elif a > 0:
             return "inf"
         elif a < 0:
             return "-inf"
@@ -59,7 +76,7 @@ def divide(a: str, b: str):
 
 
 def int_(value: str):
-    return str(int(float(value)))
+    return str(int(to_float(value)))
 
 
 def if_(*args: str):
@@ -95,7 +112,7 @@ def or_(a: str, b: str):
     return str(to_boolean(a) or to_boolean(b)).lower()
 
 
-def error(message: str):
+def error(_message: str):
     raise AssertionError(f"custom error")
 
 
@@ -121,6 +138,7 @@ def load(name):
 def drop(name):
     del variables[name]
     return ""
+
 
 def concat(*args):
     return "".join(args)

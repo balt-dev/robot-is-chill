@@ -17,6 +17,8 @@ builtins = {
     "multiply": builtin_macros.multiply,
     "divide": builtin_macros.divide,
     "pow": builtin_macros.pow,
+    "real": builtin_macros.real,
+    "imag": builtin_macros.imag,
     "int": builtin_macros.int_,
     "if": builtin_macros.if_,
     "equal": builtin_macros.equal,
@@ -43,16 +45,18 @@ def parse_macros(objects: str, macros) -> str:
         found += 1
         assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}."
         terminal = match.group(1)
+        print(objects, "=> ", end="")
         objects = (
             objects[:match.start()] +
             parse_term_macro(terminal, macros) +
             objects[match.end():]
         )
+        print(objects)
     return objects
 
 
 def parse_term_macro(raw_variant, macros) -> str:
-    raw_macro, *macro_args = raw_variant.split("/")
+    raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
     if raw_macro in builtins:
         try:
             macro = builtins[raw_macro](*macro_args)

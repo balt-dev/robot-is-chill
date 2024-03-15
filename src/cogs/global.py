@@ -268,11 +268,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             parsing_overhead = time.perf_counter()
 
             render_ctx = RenderContext(ctx=ctx)
-            while match := re.match(r"^\s*(--?((?:(?!=)\S)+)(?:=(?:(?!(?<!\\)\s).)*)?)", tiles):
-                potential_flag = match.group(1).replace(",", " ")
+            while match := re.match(r"^\s*(--?((?:(?!=)\S)+)(?:=(?:(?!(?<!\\)\s).)+)?)", tiles):
+                potential_flag = match.group(1)
                 for flag in self.bot.flags.list:
                     if await flag.match(potential_flag, render_ctx):
                         tiles = tiles[match.end():]
+                        break
+                else:
+                    interp = match.group().strip().replace('`', "'")
+                    raise AssertionError(f"Flag `{interp}` isn't valid.")
 
             offset = 0
             for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
