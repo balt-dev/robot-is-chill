@@ -288,3 +288,6 @@ MESSAGE_LIMIT = 10
 
 CHARACTER_SHAPES = "long", "tall", "curved", "round", "segmented"
 CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-like"
+
+
+MACRO_LIMIT = 5000

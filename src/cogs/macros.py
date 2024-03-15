@@ -183,7 +183,7 @@ class MacroCog(commands.Cog, name='Macros'):
         value = re.sub(
             r"(\$\d+)", r"\\x1b[36m\1\\x1b[0m",
             macro.value.replace("$#", r"\\x1b[35m$#\\x1b[0m")
-        ).replace(":", r"\\x1b[30m:\\x1b[0m")
+        ).replace(":", r"\\x1b[30m:\\x1b[0m").replace(r"\x1b", "\x1b")
         emb = discord.Embed(
             title=name
         )

@@ -13,16 +13,22 @@ def to_float(v: str):
 
 # bool("false") == True because it's not empty
 def to_boolean(v: str):
-    if v == "true":
+    if v in ("true", "1", "True", "1.0"):
         return True
-    elif v == "false":
+    elif v in ("false", "0", "False", "0.0"):
         return False
     else:
         raise AssertionError(f"could not convert string to boolean: '{v}'")
 
+
 def add(a: str, b: str):
     a, b = to_float(a), to_float(b)
     return str(a + b)
+
+
+def pow(a: str, b: str):
+    a, b = to_float(a), to_float(b)
+    return str(a ** b)
 
 
 def rand():
@@ -80,6 +86,7 @@ def less(a: str, b: str):
 def not_(value: str):
     return str(not to_boolean(value)).lower()
 
+
 def and_(a: str, b: str):
     return str(to_boolean(a) and to_boolean(b)).lower()
 
@@ -93,9 +100,9 @@ def error(message: str):
 
 
 def slice_(string: str, start: str | None = None, end: str | None = None, step: str | None = None):
-    start = int(to_float(start)) if start is not None else None
-    end = int(to_float(end)) if end is not None else None
-    step = int(to_float(step)) if step is not None else None
+    start = int(to_float(start)) if start is not None and len(start) != 0 else None
+    end = int(to_float(end)) if end is not None and len(end) != 0 else None
+    step = int(to_float(step)) if step is not None and len(step) != 0 else None
     slicer = slice(start, end, step)
     return string[slicer]
 

@@ -11,13 +11,12 @@ from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context, RegexDict
 
-macro_count = 0
-
 builtins = {
     "add": builtin_macros.add,
     "subtract": builtin_macros.subtract,
     "multiply": builtin_macros.multiply,
     "divide": builtin_macros.divide,
+    "pow": builtin_macros.pow,
     "int": builtin_macros.int_,
     "if": builtin_macros.if_,
     "equal": builtin_macros.equal,
@@ -34,101 +33,32 @@ builtins = {
     "concat": builtin_macros.concat
 }
 
-def parse_args(variant_name, raw_args) -> list[str]:
-    # we need to respect brackets
-    current = ""
-    escaped = False
-    args = []
-    depth = []
-    for i, char in enumerate(raw_args):
-        if escaped:
-            current += char
-            continue
-        if char == "\\":
-            escaped = True
-            continue
-        if char == "[":
-            depth.append(i)
-        if char == "]":
-            try:
-                depth.pop()
-            except IndexError:
-                # empty
-                raise AssertionError(
-                    f"Failed to parse macro `{variant_name}`: unbalanced brackets at character {i} of arguments")
-        if char == "/" and len(depth) == 0:
-            args.append(current)
-            current = ""
-        else:
-            current += char
-    if len(depth) > 0:
-        raise AssertionError(
-            f"Failed to parse macro `{variant_name}`: unbalanced brackets at character {depth[-1]} of arguments")
-    if current != "":
-        args.append(current)
-
-    return args
-
-def parse_raw_macro(raw_variant) -> tuple[str, list[str]]:
-    if "/" not in raw_variant:
-        return raw_variant, []
-    name, raw_args = raw_variant.split("/", 1)
-    print(name, raw_args)
-    args = parse_args(name, raw_args)
-    return name, args
-
 
 def parse_macros(objects: str, macros) -> str:
+    builtin_macros.reset_vars()
+
     # split the string into where []s lie
-    out = ""
-    depth = 0
-    start = 0
     found = 0
-    escaped = False
-    for i, char in enumerate(objects):
-        if escaped:
-            escaped = False
-            continue
-        if char == "\\":
-            escaped = True
-        elif char == "[":
-            if depth == 0:
-                out += objects[start:i]
-                start = i + 1
-            depth += 1
-        elif char == "]" and depth > 0 and found < 5000:
-            depth -= 1
-            if depth == 0:
-                found += 1
-                out += parse_macro(objects[start:i], macros)
-                start = i + 1
-    if start != len(objects):
-        out += objects[start:]
-
-    return out
+    while match := re.search(r"(?!(?!\\)\\)\[([^\[]*?)]", objects, re.RegexFlag.M):
+        found += 1
+        assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}."
+        terminal = match.group(1)
+        objects = (
+            objects[:match.start()] +
+            parse_term_macro(terminal, macros) +
+            objects[match.end():]
+        )
+    return objects
 
 
-def parse_macro(raw_variant, macros, depth=0) -> str:
-    if depth == 0:
-        builtin_macros.reset_vars()
-    if depth > 50:
-        return raw_variant
-    global macro_count  # fuck it
-    raw_macro, macro_args = parse_raw_macro(raw_variant)
-    for i, arg in enumerate(macro_args):
-        if match := re.fullmatch(r"\[(.*?)]", arg):
-            macro_count += 1
-            try:
-                macro_args[i] = parse_macro(match.group(1), macros, depth + 1)
-            except RecursionError:
-                raise AssertionError(f"Entered infinite recursion when trying to parse the macro `{raw_macro}`!")
+def parse_term_macro(raw_variant, macros) -> str:
+    raw_macro, *macro_args = raw_variant.split("/")
     if raw_macro in builtins:
         try:
             macro = builtins[raw_macro](*macro_args)
         except Exception as err:
             raise errors.FailedBuiltinMacro(raw_variant, err)
     elif raw_macro in macros:
-        assert macro_count < 5000, "Too many macros in one sprite! Are some recursing infinitely?"
         macro = macros[raw_macro].value
         macro = macro.replace("$#", str(len(macro_args)))
         for j, arg in enumerate(macro_args):
@@ -140,19 +70,16 @@ def parse_macro(raw_variant, macros, depth=0) -> str:
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
                    name=None, possible_variant_names=None, macros=None):
-    global macro_count  # fuck it
     if macros is None:
         macros = {}
     if possible_variant_names is None:
         possible_variant_names = []
-    macro_count = 0
     out = {}
     i = 0
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
         if raw_variant.startswith("m!"):
-            macro_count += 1
-            macro = str(parse_macro(raw_variant[2:], macros))
+            macro = str(parse_macros(f"[{raw_variant[2:]}]", macros))
             del raw_variants[i]
             raw_variants[i:i] = macro.split(":")  # Extend at index i
             continue
