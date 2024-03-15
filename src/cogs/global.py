@@ -303,7 +303,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             parsing_overhead = time.perf_counter()
 
             render_ctx = RenderContext(ctx=ctx)
-            while match := re.match(r"^\s*(--?((?:(?!=)\S)*)(?:=(?:(?!(?<!\\)\s).)*)?)", tiles):
+            while match := re.match(r"^\s*(--?((?:(?!=)\S)+)(?:=(?:(?!(?<!\\)\s).)*)?)", tiles):
                 potential_flag = match.group(1).replace(",", " ")
                 for flag in self.bot.flags.list:
                     if await flag.match(potential_flag, render_ctx):
