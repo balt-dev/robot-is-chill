@@ -3,6 +3,11 @@
 
 from random import random
 
+variables = {}
+
+def reset_vars():
+    variables = {}
+
 def to_float(v: str):
     return float(v)
 
@@ -84,4 +89,31 @@ def or_(a: str, b: str):
 
 
 def error(message: str):
-    raise AssertionError(f"custom error: {message}")
+    raise AssertionError(f"custom error")
+
+
+def slice_(string: str, start: str | None = None, end: str | None = None, step: str | None = None):
+    start = int(to_float(start)) if start is not None else None
+    end = int(to_float(end)) if end is not None else None
+    step = int(to_float(step)) if step is not None else None
+    slicer = slice(start, end, step)
+    return string[slicer]
+
+
+def store(name: str, value: str):
+    assert len(variables) <= 16, "cannot have more than 16 variables at once"
+    assert len(value) <= 256, "values must be at most 256 characters long"
+    variables[name] = value
+    return ""
+
+
+def load(name):
+    return variables[name]
+
+
+def drop(name):
+    del variables[name]
+    return ""
+
+def concat(*args):
+    return "".join(args)

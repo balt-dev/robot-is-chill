@@ -13,7 +13,7 @@ from .types import Variant, Context, RegexDict
 
 macro_count = 0
 
-builtin_macros = {
+builtins = {
     "add": builtin_macros.add,
     "subtract": builtin_macros.subtract,
     "multiply": builtin_macros.multiply,
@@ -26,7 +26,12 @@ builtin_macros = {
     "and": builtin_macros.and_,
     "or": builtin_macros.or_,
     "error": builtin_macros.error,
-    "rand": builtin_macros.random
+    "rand": builtin_macros.random,
+    "slice": builtin_macros.slice_,
+    "store": builtin_macros.store,
+    "load": builtin_macros.load,
+    "drop": builtin_macros.drop,
+    "concat": builtin_macros.concat
 }
 
 def parse_args(variant_name, raw_args) -> list[str]:
@@ -66,25 +71,60 @@ def parse_args(variant_name, raw_args) -> list[str]:
 
 def parse_raw_macro(raw_variant) -> tuple[str, list[str]]:
     if "/" not in raw_variant:
-        return raw_variant[2:], []
-    name, raw_args = raw_variant[2:].split("/", 1)
+        return raw_variant, []
+    name, raw_args = raw_variant.split("/", 1)
+    print(name, raw_args)
     args = parse_args(name, raw_args)
     return name, args
 
 
-def parse_macro(raw_variant, macros) -> str:
+def parse_macros(objects: str, macros) -> str:
+    # split the string into where []s lie
+    out = ""
+    depth = 0
+    start = 0
+    found = 0
+    escaped = False
+    for i, char in enumerate(objects):
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\":
+            escaped = True
+        elif char == "[":
+            if depth == 0:
+                out += objects[start:i]
+                start = i + 1
+            depth += 1
+        elif char == "]" and depth > 0 and found < 5000:
+            depth -= 1
+            if depth == 0:
+                found += 1
+                out += parse_macro(objects[start:i], macros)
+                start = i + 1
+    if start != len(objects):
+        out += objects[start:]
+
+    return out
+
+
+def parse_macro(raw_variant, macros, depth=0) -> str:
+    if depth == 0:
+        builtin_macros.reset_vars()
+    if depth > 50:
+        return raw_variant
     global macro_count  # fuck it
     raw_macro, macro_args = parse_raw_macro(raw_variant)
     for i, arg in enumerate(macro_args):
-        if match := re.fullmatch(r"\[(m!.*?)]", arg):
+        if match := re.fullmatch(r"\[(.*?)]", arg):
             macro_count += 1
             try:
-                macro_args[i] = parse_macro(match.group(1), macros)
+                macro_args[i] = parse_macro(match.group(1), macros, depth + 1)
             except RecursionError:
                 raise AssertionError(f"Entered infinite recursion when trying to parse the macro `{raw_macro}`!")
-    if raw_macro in builtin_macros:
+    if raw_macro in builtins:
         try:
-            macro = builtin_macros[raw_macro](*macro_args)
+            macro = builtins[raw_macro](*macro_args)
         except Exception as err:
             raise errors.FailedBuiltinMacro(raw_variant, err)
     elif raw_macro in macros:
@@ -96,6 +136,7 @@ def parse_macro(raw_variant, macros) -> str:
     else:
         raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
     return str(macro)
+
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
                    name=None, possible_variant_names=None, macros=None):
@@ -111,7 +152,7 @@ def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str
         raw_variant = raw_variants[i]
         if raw_variant.startswith("m!"):
             macro_count += 1
-            macro = str(parse_macro(raw_variant, macros))
+            macro = str(parse_macro(raw_variant[2:], macros))
             del raw_variants[i]
             raw_variants[i:i] = macro.split(":")  # Extend at index i
             continue

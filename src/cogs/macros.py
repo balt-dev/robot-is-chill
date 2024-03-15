@@ -1,12 +1,34 @@
+import io
+import signal
+from datetime import datetime
 from typing import Literal
 
 import discord
 from discord.ext import commands, menus
 
+from .. import constants
 from ..types import Bot, Context, Macro
 from ..utils import ButtonPages
+from ..tile import parse_macros
 
 import re
+
+
+async def coro_part(func, *args, **kwargs):
+    async def wrapper():
+        result = func(*args, **kwargs)
+        return await result
+
+    return wrapper
+
+
+async def start_timeout(fn, *args, **kwargs):
+    def handler(_signum, _frame):
+        raise AssertionError("The command took too long and was timed out.")
+
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(int(constants.TIMEOUT_DURATION))
+    fn(*args, **kwargs)
 
 
 class MacroQuerySource(menus.ListPageSource):
@@ -29,7 +51,6 @@ class MacroQuerySource(menus.ListPageSource):
             embed.add_field(
                 name="",
                 value=field,
-                inline=True
             )
             del entries[:15]
         return embed
@@ -118,6 +139,41 @@ class MacroCog(commands.Cog, name='Macros'):
             await cursor.execute("SELECT name FROM macros WHERE name REGEXP ?", pattern)
             names = [name for (name,) in await cursor.fetchall()]
         return await ButtonPages(MacroQuerySource(sorted(names))).start(ctx)
+
+    @macro.command(aliases=["x", "run"])
+    async def execute(self, ctx: Context, *, macro: str):
+        """Executes some given macroscript and outputs its return value."""
+        try:
+            macros = ctx.bot.macros | {}
+            args = []
+            if match := re.match(r"^\s*--?args=((?:(?!(?<!\\)[\s,]).)*)", macro):
+                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
+            while match := re.match(r"^\s*--?mc=((?:(?!(?<!\\)\|).)*)\|((?:(?!(?<!\\)\s).)*)", macro):
+                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
+            last = None
+            passes = 0
+
+            def parse():
+                nonlocal macro, last
+                while last != macro and passes < 50:
+                    last = macro
+                    macro = parse_macros(macro.strip(), ctx.bot.macros)
+
+            await start_timeout(parse)
+
+            if len(macro) > 1900:
+                out = io.BytesIO()
+                out.write(bytes(macro, 'utf-8'))
+                out.seek(0)
+                return await ctx.reply(
+                    'Output:',
+                    file=discord.File(out, filename=f'output-{datetime.now().isoformat()}.txt')
+                )
+            return await ctx.reply(
+                f'Output: ```\n{macro.replace("```", "``ˋ")}\n```',
+            )
+        finally:
+            signal.alarm(0)
 
     @macro.command(aliases=["i", "get"])
     async def info(self, ctx: Context, name: str):
