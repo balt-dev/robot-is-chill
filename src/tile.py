@@ -6,26 +6,112 @@ from typing import Literal, Optional
 import re
 import numpy as np
 
-from . import errors, constants
+from . import errors, constants, builtin_macros
 from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context, RegexDict
 
+macro_count = 0
+
+builtin_macros = {
+    "add": builtin_macros.add,
+    "subtract": builtin_macros.subtract,
+    "multiply": builtin_macros.multiply,
+    "divide": builtin_macros.divide,
+    "int": builtin_macros.int_,
+    "if": builtin_macros.if_,
+    "equal": builtin_macros.equal,
+    "less": builtin_macros.less,
+    "not": builtin_macros.not_,
+    "and": builtin_macros.and_,
+    "or": builtin_macros.or_,
+    "error": builtin_macros.error,
+    "rand": builtin_macros.random
+}
+
+def parse_args(variant_name, raw_args) -> list[str]:
+    # we need to respect brackets
+    current = ""
+    escaped = False
+    args = []
+    depth = []
+    for i, char in enumerate(raw_args):
+        if escaped:
+            current += char
+            continue
+        if char == "\\":
+            escaped = True
+            continue
+        if char == "[":
+            depth.append(i)
+        if char == "]":
+            try:
+                depth.pop()
+            except IndexError:
+                # empty
+                raise AssertionError(
+                    f"Failed to parse macro `{variant_name}`: unbalanced brackets at character {i} of arguments")
+        if char == "/" and len(depth) == 0:
+            args.append(current)
+            current = ""
+        else:
+            current += char
+    if len(depth) > 0:
+        raise AssertionError(
+            f"Failed to parse macro `{variant_name}`: unbalanced brackets at character {depth[-1]} of arguments")
+    if current != "":
+        args.append(current)
+
+    return args
+
+def parse_raw_macro(raw_variant) -> tuple[str, list[str]]:
+    if "/" not in raw_variant:
+        return raw_variant[2:], []
+    name, raw_args = raw_variant[2:].split("/", 1)
+    args = parse_args(name, raw_args)
+    return name, args
+
+
+def parse_macro(raw_variant, macros) -> str:
+    global macro_count  # fuck it
+    raw_macro, macro_args = parse_raw_macro(raw_variant)
+    for i, arg in enumerate(macro_args):
+        if match := re.fullmatch(r"\[(m!.*?)]", arg):
+            macro_count += 1
+            try:
+                macro_args[i] = parse_macro(match.group(1), macros)
+            except RecursionError:
+                raise AssertionError(f"Entered infinite recursion when trying to parse the macro `{raw_macro}`!")
+    if raw_macro in builtin_macros:
+        try:
+            macro = builtin_macros[raw_macro](*macro_args)
+        except Exception as err:
+            raise errors.FailedBuiltinMacro(raw_variant, err)
+    elif raw_macro in macros:
+        assert macro_count < 5000, "Too many macros in one sprite! Are some recursing infinitely?"
+        macro = macros[raw_macro].value
+        macro = macro.replace("$#", str(len(macro_args)))
+        for j, arg in enumerate(macro_args):
+            macro = macro.replace(f"${j + 1}", arg)
+    else:
+        raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
+    return str(macro)
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
-                   name=None, possible_variant_names=[], macros={}):
+                   name=None, possible_variant_names=None, macros=None):
+    global macro_count  # fuck it
+    if macros is None:
+        macros = {}
+    if possible_variant_names is None:
+        possible_variant_names = []
     macro_count = 0
     out = {}
     i = 0
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
-        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in macros:
-            assert macro_count < 50, "Too many macros in one sprite! Are some recursing infinitely?"
+        if raw_variant.startswith("m!"):
             macro_count += 1
-            raw_macro, *macro_args = raw_variant[2:].split("/")
-            macro = macros[raw_macro].value
-            for j, arg in enumerate(macro_args):
-                macro = macro.replace(f"${j + 1}", arg)
+            macro = str(parse_macro(raw_variant, macros))
             del raw_variants[i]
             raw_variants[i:i] = macro.split(":")  # Extend at index i
             continue

@@ -35,7 +35,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_keep",
         "sprite": "text_keep",
         "color": [
@@ -124,5 +124,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "elec",
+        "sprite": "elec",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "1"
     }
 ]

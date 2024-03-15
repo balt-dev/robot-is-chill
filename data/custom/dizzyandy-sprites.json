@@ -602,7 +602,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_num",
         "sprite": "text_num",
         "color": [
@@ -611,7 +611,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_this_arrow",
         "sprite": "text_this_arrow",
         "color": [
@@ -620,7 +620,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_that_arrow",
         "sprite": "text_that_arrow",
         "color": [
@@ -629,7 +629,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_these_arrow",
         "sprite": "text_these_arrow",
         "color": [
@@ -638,7 +638,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_those_arrow",
         "sprite": "text_those_arrow",
         "color": [
@@ -751,6 +751,33 @@
         "sprite": "drinkey",
         "color": [
             "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wallpha",
+        "sprite": "wallpha",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "verified",
+        "sprite": "verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_verified",
+        "sprite": "text_verified",
+        "color": [
+            "1",
             "4"
         ],
         "tiling": "-1"

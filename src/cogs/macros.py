@@ -8,6 +8,7 @@ from ..utils import ButtonPages
 
 import re
 
+
 class MacroQuerySource(menus.ListPageSource):
     def __init__(
             self, data: list[str]):
@@ -33,6 +34,7 @@ class MacroQuerySource(menus.ListPageSource):
             del entries[:15]
         return embed
 
+
 class MacroCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -43,11 +45,12 @@ class MacroCog(commands.Cog, name='Macros'):
     Macros are simply a way of aliasing one or more variants to one name.
     For example, if a macro called `face` with the value `csel-1` exists,
     rendering `baba:m!face` would actually render `baba:csel-1`.
-    Arguments can be specified in macros with $#. As an example,
+    Arguments can be specified in macros with $<number>. As an example,
     `transpose` aliased to `rot$1:scale$2` would mean that
     rendering `baba:m!transpose/45/2` would give you `baba:rot45:scale2`.
     Important to note, double negatives are valid inputs to variants, so
-    something like `baba:scale--2` would give the same as `baba:scale2`."""
+    something like `baba:scale--2` would give the same as `baba:scale2`.
+    $# will be replaced with the amount of arguments given to the macro."""
         await ctx.invoke(ctx.bot.get_command("cmds"), "macro")
 
     @macro.command(aliases=["r"])
@@ -121,8 +124,10 @@ class MacroCog(commands.Cog, name='Macros'):
         """Gets info about a specific macro."""
         assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
         macro = self.bot.macros[name]
-        value = re.sub(r"(\$\d+)", r"[36m\1[0m", macro.value) \
-            .replace(":", r"[30m:[0m")
+        value = re.sub(
+            r"(\$\d+)", r"\\x1b[36m\1\\x1b[0m",
+            macro.value.replace("$#", r"\\x1b[35m$#\\x1b[0m")
+        ).replace(":", r"\\x1b[30m:\\x1b[0m")
         emb = discord.Embed(
             title=name
         )
@@ -140,6 +145,7 @@ class MacroCog(commands.Cog, name='Macros'):
                        icon_url=user.avatar.url if user.avatar is not None else
                        f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
         await ctx.reply(embed=emb)
+
 
 async def setup(bot: Bot):
     await bot.add_cog(MacroCog(bot))

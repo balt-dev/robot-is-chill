@@ -27,7 +27,7 @@ from discord.ext import commands, menus
 
 from src.types import SignText, RenderContext
 from src.utils import ButtonPages
-from ..tile import Tile, TileSkeleton, parse_variants
+from ..tile import Tile, TileSkeleton, parse_variants, parse_macro
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
@@ -223,6 +223,42 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for w, timestep in enumerate(grid)
         ]
 
+    @staticmethod
+    def parse_macros(objects: str, macros) -> str:
+        # split the string into where []s lie
+        out_list = []
+        depth = 0
+        start = 0
+        escaped = False
+        for i, char in enumerate(objects):
+            if escaped:
+                escaped = False
+                continue
+            if char == "\\":
+                escaped = True
+            elif char == "[":
+                if depth == 0:
+                    out_list.append((False, objects[start:i]))
+                    start = i + 1
+                depth += 1
+            elif char == "]" and depth > 0:
+                depth -= 1
+                if depth == 0:
+                    out_list.append((True, objects[start:i]))
+                    start = i + 1
+        if start != len(objects):
+            out_list.append((False, objects[start:]))
+
+        out = ""
+
+        for parse, string in out_list:
+            if parse:
+                string = parse_macro(string, macros)
+            out += string
+
+        return out
+
+
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
@@ -261,7 +297,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if not tiles:
                 return await ctx.error("Input cannot have 0 tiles.")
 
+            # Check flags
             old_tiles = tiles
+
+            parsing_overhead = time.perf_counter()
+
+            render_ctx = RenderContext(ctx=ctx)
+            while match := re.match(r"^\s*(--?((?:(?!=)\S)*)(?:=(?:(?!(?<!\\)\s).)*)?)", tiles):
+                potential_flag = match.group(1).replace(",", " ")
+                for flag in self.bot.flags.list:
+                    if await flag.match(potential_flag, render_ctx):
+                        tiles = tiles[match.end():]
 
             offset = 0
             for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
@@ -274,30 +320,17 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 tiles = tiles[:a - offset] + text + tiles[b - offset:]
                 offset += (b - a) - len(text)
 
+            user_macros = ctx.bot.macros | render_ctx.macros
+            tiles = self.parse_macros(tiles, user_macros).strip()
+
             # Split input into lines
             word_rows = tiles.splitlines()
 
             # Split each row into words
             word_grid = [re.split(r"(?<!\\) ", row) for row in word_rows]
 
-            parsing_overhead = time.perf_counter()
-            # Check flags
-            potential_flags = filter(
-                lambda i: i[0].startswith("-"),
-                [(word, x, y)
-                 for y, row in enumerate(word_grid)
-                 for x, word in enumerate(row)]
-            )
 
-            render_ctx = RenderContext(ctx=ctx)
-            to_delete = []
-            for potential_flag, x, y in potential_flags:
-                for flag in self.bot.flags.list:
-                    if await flag.match(potential_flag, render_ctx):
-                        to_delete.append((x, y))
             word_grid = split_commas(word_grid, "char_")
-            for x, y in reversed(to_delete):
-                del word_grid[y][x]
             try:
                 if rule:
                     comma_grid = split_commas(word_grid, "tile_")
@@ -337,8 +370,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         return f(*args, **kwargs)
                     except:
                         return None
-
-                user_macros = ctx.bot.macros | render_ctx.macros
 
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):

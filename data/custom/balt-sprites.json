@@ -168,5 +168,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "cba",
+        "sprite": "cba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cba",
+        "sprite": "text_cba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
