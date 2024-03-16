@@ -1,12 +1,13 @@
 # imma keep it a buck i do not care about code quality in this codebase anymore
 # it's already shit so why care tbh
-
+import re
 from random import random
 
 variables = {}
 
 
 def reset_vars():
+    global variables
     variables = {}
 
 
@@ -53,6 +54,11 @@ def rand():
 def subtract(a: str, b: str):
     a, b = to_float(a), to_float(b)
     return str(a - b)
+
+
+def replace(value: str, pattern: str, replacement: str):
+    print(value, pattern, replacement)
+    return re.sub(pattern, replacement, value)
 
 
 def multiply(a: str, b: str):
@@ -105,6 +111,10 @@ def chr_(value: str):
 
 def ord_(value: str):
     return str(ord(value))
+
+
+def len_(value: str):
+    return str(len(value))
 
 
 def split(value: str, delim: str, index: str):

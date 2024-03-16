@@ -11,12 +11,14 @@ from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context, RegexDict
 
+# FIXME: this system suckls
 builtins = {
     "add": builtin_macros.add,
     "subtract": builtin_macros.subtract,
     "multiply": builtin_macros.multiply,
     "divide": builtin_macros.divide,
     "mod": builtin_macros.modulo,
+    "replace": builtin_macros.replace,
     "pow": builtin_macros.pow,
     "real": builtin_macros.real,
     "imag": builtin_macros.imag,
@@ -25,6 +27,7 @@ builtins = {
     "hex": builtin_macros.hex_,
     "chr": builtin_macros.chr_,
     "ord": builtin_macros.ord_,
+    "len": builtin_macros.len_,
     "if": builtin_macros.if_,
     "equal": builtin_macros.equal,
     "less": builtin_macros.less,

@@ -781,5 +781,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_\u26d0",
+        "sprite": "caraccident",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
