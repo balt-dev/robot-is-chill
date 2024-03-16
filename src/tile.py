@@ -16,10 +16,15 @@ builtins = {
     "subtract": builtin_macros.subtract,
     "multiply": builtin_macros.multiply,
     "divide": builtin_macros.divide,
+    "mod": builtin_macros.modulo,
     "pow": builtin_macros.pow,
     "real": builtin_macros.real,
     "imag": builtin_macros.imag,
     "int": builtin_macros.int_,
+    "split": builtin_macros.split,
+    "hex": builtin_macros.hex_,
+    "chr": builtin_macros.chr_,
+    "ord": builtin_macros.ord_,
     "if": builtin_macros.if_,
     "equal": builtin_macros.equal,
     "less": builtin_macros.less,
@@ -65,6 +70,7 @@ def parse_term_macro(raw_variant, macros) -> str:
     elif raw_macro in macros:
         macro = macros[raw_macro].value
         macro = macro.replace("$#", str(len(macro_args)))
+        macro = macro.replace("$0", "/".join(macro_args))
         for j, arg in enumerate(macro_args):
             macro = macro.replace(f"${j + 1}", arg)
     else:

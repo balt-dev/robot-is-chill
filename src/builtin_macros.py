@@ -75,8 +75,41 @@ def divide(a: str, b: str):
             return "nan"
 
 
-def int_(value: str):
-    return str(int(to_float(value)))
+def modulo(a: str, b: str):
+    a, b = to_float(a), to_float(b)
+    try:
+        return str(a % b)
+    except ZeroDivisionError:
+        if a > 0:
+            return "inf"
+        elif a < 0:
+            return "-inf"
+        else:
+            return "nan"
+
+
+def int_(value: str, base: str = "10"):
+    try:
+        return str(int(value, base=int(to_float(base))))
+    except (ValueError, TypeError):
+        return str(int(to_float(value)))
+
+
+def hex_(value: str):
+    return str(hex(int(to_float(value))))
+
+
+def chr_(value: str):
+    return str(chr(int(to_float(value))))
+
+
+def ord_(value: str):
+    return str(ord(value))
+
+
+def split(value: str, delim: str, index: str):
+    index = int(to_float(index))
+    return value.split(delim)[index]
 
 
 def if_(*args: str):
