@@ -754,5 +754,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "cove",
+        "sprite": "cmbox",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mount",
+        "sprite": "cmplayer",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

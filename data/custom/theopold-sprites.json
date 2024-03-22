@@ -1834,5 +1834,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bfdi",
+        "sprite": "bfdiface",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
