@@ -1825,5 +1825,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_bake",
+        "sprite": "text_bake",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
