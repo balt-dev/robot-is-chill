@@ -405,7 +405,7 @@
         ]
     },
 	{
-        "name": "gvao",
+        "name": "g'vao",
         "sprite": "g'vao",
         "tiling": "0",
         "color": [
@@ -414,7 +414,7 @@
         ]
     },
 	{
-        "name": "text_gvao",
+        "name": "text_g'vao",
         "sprite": "text_g'vao",
         "tiling": "-1",
         "color": [
