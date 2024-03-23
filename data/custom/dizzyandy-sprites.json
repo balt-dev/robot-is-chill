@@ -784,7 +784,7 @@
     },
 	{
         "name": "num",
-        "sprite": "num",
+        "sprite": "number",
         "color": [
             "0",
             "3"
