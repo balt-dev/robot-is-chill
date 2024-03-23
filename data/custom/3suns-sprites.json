@@ -1,0 +1,56 @@
+[
+    {
+        "name": "bamboo",
+        "sprite": "bamboo",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "hay",
+        "sprite": "hay",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "helmet",
+        "sprite": "helmet",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "parrot",
+        "sprite": "parrot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "rat",
+        "sprite": "rat",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "trap",
+        "sprite": "trap",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "1"
+    }
+]

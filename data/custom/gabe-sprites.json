@@ -421,5 +421,32 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "ba",
+        "sprite": "ba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "catile_h",
+        "sprite": "catile_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "catext_h",
+        "sprite": "catext_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

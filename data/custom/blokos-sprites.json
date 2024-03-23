@@ -25,5 +25,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "atom",
+        "sprite": "atom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_atom",
+        "sprite": "text_atom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

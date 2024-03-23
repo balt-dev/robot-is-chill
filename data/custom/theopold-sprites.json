@@ -1870,5 +1870,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "g.a",
+        "sprite": "g-a",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hasli",
+        "sprite": "hasli",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

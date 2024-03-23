@@ -907,5 +907,41 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "nama",
+        "sprite": "nama",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_metanot",
+        "sprite": "text_metanot",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "trunk",
+        "sprite": "trunk",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "caevent_h",
+        "sprite": "caevent_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -261,5 +261,23 @@
             "2"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "text_plush",
+        "sprite": "text_plush",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_yoink",
+        "sprite": "text_yoink",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
