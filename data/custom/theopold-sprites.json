@@ -1861,5 +1861,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "knighfo",
+        "sprite": "cowfo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

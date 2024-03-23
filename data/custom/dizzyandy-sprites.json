@@ -414,8 +414,8 @@
         "tiling": "0"
     },
     {
-        "name": "dopairs",
-        "sprite": "dopairs",
+        "name": "dopairs_old",
+        "sprite": "dopairs_old",
         "color": [
             "0",
             "3"
@@ -788,6 +788,105 @@
         "color": [
             "1",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babeta",
+        "sprite": "baba_12px",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "num",
+        "sprite": "num",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dopairs",
+        "sprite": "dopairs",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_dopairs",
+        "sprite": "dopairs",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "del",
+        "sprite": "del",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_del",
+        "sprite": "text_del",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "new",
+        "sprite": "new",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_new",
+        "sprite": "text_new",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "letter",
+        "sprite": "letter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_letter",
+        "sprite": "text_letter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "selector",
+        "sprite": "selector",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

@@ -16,5 +16,14 @@
             "1"
         ],
         "tiling": "2"
+    },
+	{
+        "name": "text_鰪",
+        "sprite": "text_鰪",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
