@@ -801,15 +801,6 @@
         "tiling": "2"
     },
     {
-        "name": "text_dopairs",
-        "sprite": "dopairs",
-        "color": [
-            "4",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "del",
         "sprite": "del",
         "color": [

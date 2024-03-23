@@ -1899,15 +1899,6 @@
         "tiling": "2"
     },
     {
-        "name": "this2",
-        "sprite": "thisface",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "ed",
         "sprite": "ed",
         "color": [
