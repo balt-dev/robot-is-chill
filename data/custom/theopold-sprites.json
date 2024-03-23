@@ -1888,5 +1888,41 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_this2",
+        "sprite": "thisface",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "this2",
+        "sprite": "thisface",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ed",
+        "sprite": "ed",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "pistachio",
+        "sprite": "pistachio",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]
