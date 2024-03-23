@@ -76,5 +76,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "welcomeback",
+        "sprite": "welcomeback",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

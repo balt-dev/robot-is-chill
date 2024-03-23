@@ -889,5 +889,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sofa",
+        "sprite": "sofa",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "it've",
+        "sprite": "it've",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

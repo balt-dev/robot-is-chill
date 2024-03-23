@@ -412,5 +412,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ixor",
+        "sprite": "ixor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]
