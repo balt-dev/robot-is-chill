@@ -774,24 +774,6 @@
         "tiling": "-1"
     },
     {
-        "name": "verified",
-        "sprite": "verified",
-        "color": [
-            "1",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_verified",
-        "sprite": "text_verified",
-        "color": [
-            "1",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "babeta",
         "sprite": "baba_12px",
         "color": [
@@ -941,6 +923,42 @@
         "color": [
             "5",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wallpha",
+        "sprite": "wallpha",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "verified",
+        "sprite": "verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_verified",
+        "sprite": "text_verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u26d0",
+        "sprite": "caraccident",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }
