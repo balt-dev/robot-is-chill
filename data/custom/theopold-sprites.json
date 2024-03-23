@@ -1843,5 +1843,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "spoon",
+        "sprite": "spoon",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_spoon",
+        "sprite": "text_spoon",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

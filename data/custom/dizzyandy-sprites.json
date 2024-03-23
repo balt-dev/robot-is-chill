@@ -772,5 +772,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "verified",
+        "sprite": "verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_verified",
+        "sprite": "text_verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
