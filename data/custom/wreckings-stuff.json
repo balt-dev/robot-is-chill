@@ -403,5 +403,23 @@
             "0",
             "3"
         ]
+    },
+	{
+        "name": "g'vao",
+        "sprite": "g'vao",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+	{
+        "name": "text_g'vao",
+        "sprite": "text_g'vao",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
     }
 ]

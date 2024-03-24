@@ -16,5 +16,32 @@
             "1"
         ],
         "tiling": "2"
+    },
+	{
+        "name": "text_\u9c2a",
+        "sprite": "text_U09C2A",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "atom",
+        "sprite": "atom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_atom",
+        "sprite": "text_atom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -70,5 +70,32 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "event_true",
+        "sprite": "event_true",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_false",
+        "sprite": "event_false",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_with",
+        "sprite": "event_with",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

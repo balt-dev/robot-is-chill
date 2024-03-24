@@ -782,5 +782,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "example",
+        "sprite": "example",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

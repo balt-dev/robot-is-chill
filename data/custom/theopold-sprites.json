@@ -1825,5 +1825,95 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_bake",
+        "sprite": "text_bake",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bfdi",
+        "sprite": "bfdiface",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "spoon",
+        "sprite": "spoon",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_spoon",
+        "sprite": "text_spoon",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "knighfo",
+        "sprite": "cowfo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "g.a",
+        "sprite": "g-a",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hasli",
+        "sprite": "hasli",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_this2",
+        "sprite": "thisface",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ed",
+        "sprite": "ed",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "pistachio",
+        "sprite": "pistachio",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

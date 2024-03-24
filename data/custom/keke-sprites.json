@@ -7,5 +7,32 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "button",
+        "sprite": "button",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_arrow2",
+        "sprite": "text_arrow2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_button",
+        "sprite": "text_button",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
