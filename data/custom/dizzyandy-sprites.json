@@ -900,6 +900,15 @@
         "tiling": "-1"
     },
     {
+        "name": "jiji2",
+        "sprite": "jiji2",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "trunk",
         "sprite": "trunk",
         "color": [
