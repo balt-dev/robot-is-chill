@@ -6,26 +6,93 @@ from typing import Literal, Optional
 import re
 import numpy as np
 
-from . import errors, constants
+from . import errors, constants, builtin_macros
 from .cogs.variants import parse_signature
 from .db import TileData
 from .types import Variant, Context, RegexDict
 
+# FIXME: this system suckls
+builtins = {
+    "add": builtin_macros.add,
+    "subtract": builtin_macros.subtract,
+    "multiply": builtin_macros.multiply,
+    "divide": builtin_macros.divide,
+    "mod": builtin_macros.modulo,
+    "replace": builtin_macros.replace,
+    "pow": builtin_macros.pow,
+    "real": builtin_macros.real,
+    "imag": builtin_macros.imag,
+    "int": builtin_macros.int_,
+    "split": builtin_macros.split,
+    "hex": builtin_macros.hex_,
+    "chr": builtin_macros.chr_,
+    "ord": builtin_macros.ord_,
+    "len": builtin_macros.len_,
+    "if": builtin_macros.if_,
+    "equal": builtin_macros.equal,
+    "less": builtin_macros.less,
+    "not": builtin_macros.not_,
+    "and": builtin_macros.and_,
+    "or": builtin_macros.or_,
+    "error": builtin_macros.error,
+    "rand": builtin_macros.random,
+    "slice": builtin_macros.slice_,
+    "store": builtin_macros.store,
+    "load": builtin_macros.load,
+    "drop": builtin_macros.drop,
+    "concat": builtin_macros.concat
+}
+
+
+def parse_macros(objects: str, macros) -> str:
+    builtin_macros.reset_vars()
+
+    # split the string into where []s lie
+    found = 0
+    while match := re.search(r"(?!(?!\\)\\)\[([^\[]*?)]", objects, re.RegexFlag.M):
+        found += 1
+        assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}."
+        terminal = match.group(1)
+        print(objects, "=> ", end="")
+        objects = (
+            objects[:match.start()] +
+            parse_term_macro(terminal, macros) +
+            objects[match.end():]
+        )
+        print(objects)
+    return objects
+
+
+def parse_term_macro(raw_variant, macros) -> str:
+    raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
+    if raw_macro in builtins:
+        try:
+            macro = builtins[raw_macro](*macro_args)
+        except Exception as err:
+            raise errors.FailedBuiltinMacro(raw_variant, err)
+    elif raw_macro in macros:
+        macro = macros[raw_macro].value
+        macro = macro.replace("$#", str(len(macro_args)))
+        macro = macro.replace("$0", "/".join(macro_args))
+        for j, arg in enumerate(macro_args):
+            macro = macro.replace(f"${j + 1}", arg)
+    else:
+        raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
+    return str(macro)
+
 
 def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
-                   name=None, possible_variant_names=[], macros={}):
-    macro_count = 0
+                   name=None, possible_variant_names=None, macros=None):
+    if macros is None:
+        macros = {}
+    if possible_variant_names is None:
+        possible_variant_names = []
     out = {}
     i = 0
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
-        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in macros:
-            assert macro_count < 50, "Too many macros in one sprite! Are some recursing infinitely?"
-            macro_count += 1
-            raw_macro, *macro_args = raw_variant[2:].split("/")
-            macro = macros[raw_macro].value
-            for j, arg in enumerate(macro_args):
-                macro = macro.replace(f"${j + 1}", arg)
+        if raw_variant.startswith("m!"):
+            macro = str(parse_macros(f"[{raw_variant[2:]}]", macros))
             del raw_variants[i]
             raw_variants[i:i] = macro.split(":")  # Extend at index i
             continue

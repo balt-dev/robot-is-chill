@@ -27,7 +27,7 @@ from discord.ext import commands, menus
 
 from src.types import SignText, RenderContext
 from src.utils import ButtonPages
-from ..tile import Tile, TileSkeleton, parse_variants
+from ..tile import Tile, TileSkeleton, parse_variants, parse_macros
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
@@ -223,6 +223,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for w, timestep in enumerate(grid)
         ]
 
+
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
@@ -261,7 +262,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if not tiles:
                 return await ctx.error("Input cannot have 0 tiles.")
 
+            # Check flags
             old_tiles = tiles
+
+            parsing_overhead = time.perf_counter()
+
+            render_ctx = RenderContext(ctx=ctx)
+            while match := re.match(r"^\s*(--?((?:(?!=)\S)+)(?:=(?:(?!(?<!\\)\s).)+)?)", tiles):
+                potential_flag = match.group(1)
+                for flag in self.bot.flags.list:
+                    if await flag.match(potential_flag, render_ctx):
+                        tiles = tiles[match.end():]
+                        break
+                else:
+                    interp = match.group().strip().replace('`', "'")
+                    raise AssertionError(f"Flag `{interp}` isn't valid.")
 
             offset = 0
             for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
@@ -274,30 +289,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 tiles = tiles[:a - offset] + text + tiles[b - offset:]
                 offset += (b - a) - len(text)
 
+            user_macros = ctx.bot.macros | render_ctx.macros
+            last_tiles = None
+            passes = 0
+            while last_tiles != tiles and passes < 50:
+                last_tiles = tiles
+                tiles = parse_macros(tiles, user_macros).strip()
+                passes += 1
+
             # Split input into lines
             word_rows = tiles.splitlines()
 
             # Split each row into words
             word_grid = [re.split(r"(?<!\\) ", row) for row in word_rows]
 
-            parsing_overhead = time.perf_counter()
-            # Check flags
-            potential_flags = filter(
-                lambda i: i[0].startswith("-"),
-                [(word, x, y)
-                 for y, row in enumerate(word_grid)
-                 for x, word in enumerate(row)]
-            )
-
-            render_ctx = RenderContext(ctx=ctx)
-            to_delete = []
-            for potential_flag, x, y in potential_flags:
-                for flag in self.bot.flags.list:
-                    if await flag.match(potential_flag, render_ctx):
-                        to_delete.append((x, y))
             word_grid = split_commas(word_grid, "char_")
-            for x, y in reversed(to_delete):
-                del word_grid[y][x]
             try:
                 if rule:
                     comma_grid = split_commas(word_grid, "tile_")
@@ -337,8 +343,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                         return f(*args, **kwargs)
                     except:
                         return None
-
-                user_macros = ctx.bot.macros | render_ctx.macros
 
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
@@ -974,16 +978,21 @@ Filterimages are formatted as follows:
         await ctx.reply(embed=emb, file=file)
 
     @filterimage.command(aliases=["reg"])
-    async def register(self, ctx: Context, name: str, target_mode: Literal["abs", "absolute", "rel", "relative"]):
-        """Adds a filter to the database! Requires an attachment.
-    Keep in mind that if the message sent to create this filter is deleted, it will no longer work."""
-        assert len(ctx.message.attachments), "An image to be registered has to be supplied!"
+    async def register(
+            self,
+            ctx: Context,
+            name: str,
+            target_mode: Literal["abs", "absolute", "rel", "relative"],
+            url: str
+    ):
+        """Adds a filter to the database from a URL."""
+        assert not len(ctx.message.attachments), "Images can't be given using attachments anymore."\
+                                                 "I recommend [Catbox](https://catbox.moe) for hosting."
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
             dname = await cursor.fetchone()
             if dname is not None:
                 return await ctx.error(f"Filter of name `{name}` already exists in the database!")
-            url = ctx.message.attachments[0].url
             await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
             command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
             args = (name, target_mode.startswith("abs"), url, ctx.author.id)

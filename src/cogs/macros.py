@@ -1,12 +1,35 @@
+import io
+import signal
+from datetime import datetime
 from typing import Literal
 
 import discord
 from discord.ext import commands, menus
 
+from .. import constants
 from ..types import Bot, Context, Macro
 from ..utils import ButtonPages
+from ..tile import parse_macros
 
 import re
+
+
+async def coro_part(func, *args, **kwargs):
+    async def wrapper():
+        result = func(*args, **kwargs)
+        return await result
+
+    return wrapper
+
+
+async def start_timeout(fn, *args, **kwargs):
+    def handler(_signum, _frame):
+        raise AssertionError("The command took too long and was timed out.")
+
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(int(constants.TIMEOUT_DURATION))
+    fn(*args, **kwargs)
+
 
 class MacroQuerySource(menus.ListPageSource):
     def __init__(
@@ -28,10 +51,10 @@ class MacroQuerySource(menus.ListPageSource):
             embed.add_field(
                 name="",
                 value=field,
-                inline=True
             )
             del entries[:15]
         return embed
+
 
 class MacroCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
@@ -43,11 +66,12 @@ class MacroCog(commands.Cog, name='Macros'):
     Macros are simply a way of aliasing one or more variants to one name.
     For example, if a macro called `face` with the value `csel-1` exists,
     rendering `baba:m!face` would actually render `baba:csel-1`.
-    Arguments can be specified in macros with $#. As an example,
+    Arguments can be specified in macros with $<number>. As an example,
     `transpose` aliased to `rot$1:scale$2` would mean that
     rendering `baba:m!transpose/45/2` would give you `baba:rot45:scale2`.
     Important to note, double negatives are valid inputs to variants, so
-    something like `baba:scale--2` would give the same as `baba:scale2`."""
+    something like `baba:scale--2` would give the same as `baba:scale2`.
+    $# will be replaced with the amount of arguments given to the macro."""
         await ctx.invoke(ctx.bot.get_command("cmds"), "macro")
 
     @macro.command(aliases=["r"])
@@ -116,13 +140,48 @@ class MacroCog(commands.Cog, name='Macros'):
             names = [name for (name,) in await cursor.fetchall()]
         return await ButtonPages(MacroQuerySource(sorted(names))).start(ctx)
 
+    @macro.command(aliases=["x", "run"])
+    async def execute(self, ctx: Context, *, macro: str):
+        """Executes some given macroscript and outputs its return value."""
+        try:
+            macros = ctx.bot.macros | {}
+            while match := re.match(r"^\s*--?mc=((?:(?!(?<!\\)\|).)*)\|((?:(?!(?<!\\)\s).)*)", macro):
+                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
+                macro = macro[match.end():]
+            last = None
+            passes = 0
+
+            def parse():
+                nonlocal macro, last
+                while last != macro and passes < 50:
+                    last = macro
+                    macro = parse_macros(macro.strip(), ctx.bot.macros)
+
+            await start_timeout(parse)
+
+            if len(macro) > 1900:
+                out = io.BytesIO()
+                out.write(bytes(macro, 'utf-8'))
+                out.seek(0)
+                return await ctx.reply(
+                    'Output:',
+                    file=discord.File(out, filename=f'output-{datetime.now().isoformat()}.txt')
+                )
+            return await ctx.reply(
+                f'Output: ```\n{macro.replace("```", "``ˋ")}\n```',
+            )
+        finally:
+            signal.alarm(0)
+
     @macro.command(aliases=["i", "get"])
     async def info(self, ctx: Context, name: str):
         """Gets info about a specific macro."""
         assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
         macro = self.bot.macros[name]
-        value = re.sub(r"(\$\d+)", r"[36m\1[0m", macro.value) \
-            .replace(":", r"[30m:[0m")
+        value = re.sub(
+            r"(\$\d+)", r"\\x1b[36m\1\\x1b[0m",
+            macro.value.replace("$#", r"\\x1b[35m$#\\x1b[0m")
+        ).replace(":", r"\\x1b[30m:\\x1b[0m").replace(r"\x1b", "\x1b")
         emb = discord.Embed(
             title=name
         )
@@ -140,6 +199,7 @@ class MacroCog(commands.Cog, name='Macros'):
                        icon_url=user.avatar.url if user.avatar is not None else
                        f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
         await ctx.reply(embed=emb)
+
 
 async def setup(bot: Bot):
     await bot.add_cog(MacroCog(bot))

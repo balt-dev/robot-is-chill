@@ -276,7 +276,7 @@ BLENDING_MODES = (
 
 FILTER_MAX_SIZE = 524288
 
-MAX_SIGN_TEXTS = 12
+MAX_SIGN_TEXTS = 32
 MAX_SIGN_TEXT_LENGTH = 64
 
 FONT_MULTIPLIERS = {
@@ -288,3 +288,6 @@ MESSAGE_LIMIT = 10
 
 CHARACTER_SHAPES = "long", "tall", "curved", "round", "segmented"
 CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-like"
+
+
+MACRO_LIMIT = 5000
