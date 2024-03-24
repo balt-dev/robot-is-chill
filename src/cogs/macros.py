@@ -1,205 +1,277 @@
-import io
-import signal
-from datetime import datetime
-from typing import Literal
-
-import discord
-from discord.ext import commands, menus
-
-from .. import constants
-from ..types import Bot, Context, Macro
-from ..utils import ButtonPages
-from ..tile import parse_macros
-
 import re
+from random import random
+from typing import Optional, Callable
+
+from discord.ext import commands
+
+from .. import constants, errors
+from ..types import Bot
 
 
-async def coro_part(func, *args, **kwargs):
-    async def wrapper():
-        result = func(*args, **kwargs)
-        return await result
+class MacroCog:
 
-    return wrapper
-
-
-async def start_timeout(fn, *args, **kwargs):
-    def handler(_signum, _frame):
-        raise AssertionError("The command took too long and was timed out.")
-
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(int(constants.TIMEOUT_DURATION))
-    fn(*args, **kwargs)
-
-
-class MacroQuerySource(menus.ListPageSource):
-    def __init__(
-            self, data: list[str]):
-        self.count = len(data)
-        super().__init__(data, per_page=45)
-
-    async def format_page(self, menu: menus.Menu, entries: list[str]) -> discord.Embed:
-        embed = discord.Embed(
-            title="Search results",
-            # color=menu.bot.embed_color  I think the theme color suits it better.
-        ).set_footer(
-            text=f"Page {menu.current_page + 1} of {self.get_max_pages()}   ({self.count} entries)",
-        )
-        while len(entries) > 0:
-            field = ""
-            for entry in entries[:15]:
-                field += f"{entry}\n"
-            embed.add_field(
-                name="",
-                value=field,
-            )
-            del entries[:15]
-        return embed
-
-
-class MacroCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
         self.bot = bot
+        self.variables = {}
+        self.builtins = {}
 
-    @commands.group(aliases=["m", "macros"], pass_context=True, invoke_without_command=True)
-    async def macro(self, ctx: Context):
-        """Front-end for letting users (that means you!) create, edit, and remove variant macros.
-    Macros are simply a way of aliasing one or more variants to one name.
-    For example, if a macro called `face` with the value `csel-1` exists,
-    rendering `baba:m!face` would actually render `baba:csel-1`.
-    Arguments can be specified in macros with $<number>. As an example,
-    `transpose` aliased to `rot$1:scale$2` would mean that
-    rendering `baba:m!transpose/45/2` would give you `baba:rot45:scale2`.
-    Important to note, double negatives are valid inputs to variants, so
-    something like `baba:scale--2` would give the same as `baba:scale2`.
-    $# will be replaced with the amount of arguments given to the macro."""
-        await ctx.invoke(ctx.bot.get_command("cmds"), "macro")
+        def builtin(name: str):
+            def wrapper(func: Callable):
+                self.builtins[name] = func
+                return func
 
-    @macro.command(aliases=["r"])
-    @commands.is_owner()
-    async def refresh(self, ctx: Context):
-        """Refreshes the macro database."""
-        self.bot.macros = {}
-        async with self.bot.db.conn.cursor() as cur:
-            await cur.execute("SELECT * from macros")
-            for (name, value, description, author) in await cur.fetchall():
-                self.bot.macros[name] = Macro(value, description, author)
-        return await ctx.reply("Refreshed database.")
+            return wrapper
 
-    @macro.command(aliases=["mk", "make"])
-    async def create(self, ctx: Context, name: str, value: str, *, description: str = None):
-        """Adds a macro to the database."""
-        async with self.bot.db.conn.cursor() as cursor:
-            await cursor.execute("SELECT value FROM macros WHERE name == ?", name)
-            dname = await cursor.fetchone()
-            if dname is not None:
-                return await ctx.error(
-                    f"Macro of name `{name}` already exists in the database!")
-            assert ";" not in value, "Sorry, but macros can't have persistent variants in them."
-            assert "/" not in name, "A macro's name can't have `/` in it, as it'd clash with parsing arguments."
-            # Call the user out on not adding a description, hopefully making them want to add a good one
-            assert description is not None, "A description is _required_. Please describe what your macro does understandably!"
-            command = "INSERT INTO macros VALUES (?, ?, ?, ?);"
-            args = (name, value, description, ctx.author.id)
-            self.bot.macros[name] = Macro(value, description, ctx.author.id)
-            await cursor.execute(command, args)
-            return await ctx.reply(f"Successfully added `{name}` to the database, aliased to `{value}`!")
+        @builtin("to_float")
+        def to_float(v):
+            if "j" in v:
+                return complex(v)
+            return float(v)
 
-    @macro.command(aliases=["e"])
-    async def edit(self, ctx: Context, name: str, attribute: Literal["value", "description"], *, new: str):
-        """Edits a macro. You must own said macro to edit it."""
-        assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
-        assert "value" != attribute or ";" not in new, "Sorry, but macros can't have persistent variants in them."
-        async with self.bot.db.conn.cursor() as cursor:
-            if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
-                check = await cursor.fetchone()
-                assert check is not None, "You can't edit a macro you don't own, silly."
-            # NOTE: I know I shouldn't use fstrings with execute, but it won't allow me to specify a row name with ?.
-            await cursor.execute(f"UPDATE macros SET {attribute} = ? WHERE name == ?", new, name)
-        setattr(self.bot.macros[name], attribute, new)
-        return await ctx.reply(f"Edited `{name}`'s {attribute} to be `{new}`.")
+        @builtin("to_boolean")
+        def to_boolean(v: str):
+            if v in ("true", "1", "True", "1.0", "1.0+0.0j"):
+                return True
+            elif v in ("false", "0", "False", "0.0", "0.0+0.0j"):
+                return False
+            else:
+                raise AssertionError(f"could not convert string to boolean: '{v}'")
 
-    @macro.command(aliases=["rm", "remove", "del"])
-    async def delete(self, ctx: Context, name: str):
-        """Deletes a macro. You must own said macro to delete it."""
-        assert name in self.bot.macros, f"Macro `{name}` already isn't in the database!"
-        async with self.bot.db.conn.cursor() as cursor:
-            if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
-                check = await cursor.fetchone()
-                assert check is not None, "You can't delete a macro you don't own, silly."
-            await cursor.execute(f"DELETE FROM macros WHERE name == ?", name)
-        del self.bot.macros[name]
-        return await ctx.reply(f"Deleted `{name}`.")
+        @builtin("add")
+        def add(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            return str(a + b)
 
-    @macro.command(aliases=["?", "list", "query"])
-    async def search(self, ctx: Context, pattern: str = '.*'):
-        """Searches the database for macros."""
-        async with self.bot.db.conn.cursor() as cursor:
-            await cursor.execute("SELECT name FROM macros WHERE name REGEXP ?", pattern)
-            names = [name for (name,) in await cursor.fetchall()]
-        return await ButtonPages(MacroQuerySource(sorted(names))).start(ctx)
+        @builtin("is_number")
+        def is_number(value: str):
+            try:
+                to_float(value)
+                return "true"
+            except (TypeError, ValueError):
+                return "false"
 
-    @macro.command(aliases=["x", "run"])
-    async def execute(self, ctx: Context, *, macro: str):
-        """Executes some given macroscript and outputs its return value."""
-        try:
-            macros = ctx.bot.macros | {}
-            while match := re.match(r"^\s*--?mc=((?:(?!(?<!\\)\|).)*)\|((?:(?!(?<!\\)\s).)*)", macro):
-                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
-                macro = macro[match.end():]
-            last = None
-            passes = 0
+        @builtin("pow")
+        def pow(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            return str(a ** b)
 
-            def parse():
-                nonlocal macro, last
-                while last != macro and passes < 50:
-                    last = macro
-                    macro = parse_macros(macro.strip(), ctx.bot.macros)
+        @builtin("real")
+        def real(value: str):
+            value = to_float(value) + 0j
+            return str(value.real)
 
-            await start_timeout(parse)
+        @builtin("imag")
+        def imag(value: str):
+            value = to_float(value) + 0j
+            return str(value.imag)
 
-            if len(macro) > 1900:
-                out = io.BytesIO()
-                out.write(bytes(macro, 'utf-8'))
-                out.seek(0)
-                return await ctx.reply(
-                    'Output:',
-                    file=discord.File(out, filename=f'output-{datetime.now().isoformat()}.txt')
+        @builtin("rand")
+        def rand():
+            return str(random())
+
+        @builtin("subtract")
+        def subtract(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            return str(a - b)
+
+        @builtin("replace")
+        def replace(value: str, pattern: str, replacement: str):
+            print(value, pattern, replacement)
+            return re.sub(pattern, replacement, value)
+
+        @builtin("multiply")
+        def multiply(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            return str(a * b)
+
+        @builtin("divide")
+        def divide(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            try:
+                return str(a / b)
+            except ZeroDivisionError:
+                if type(a) is complex:
+                    return "nan"
+                elif a > 0:
+                    return "inf"
+                elif a < 0:
+                    return "-inf"
+                else:
+                    return "nan"
+
+        @builtin("mod")
+        def mod(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            try:
+                return str(a % b)
+            except ZeroDivisionError:
+                if a > 0:
+                    return "inf"
+                elif a < 0:
+                    return "-inf"
+                else:
+                    return "nan"
+
+        @builtin("int")
+        def int_(value: str, base: str = "10"):
+            try:
+                return str(int(value, base=int(to_float(base))))
+            except (ValueError, TypeError):
+                return str(int(to_float(value)))
+
+        @builtin("hex")
+        def hex_(value: str):
+            return str(hex(int(to_float(value))))
+
+        @builtin("chr")
+        def chr_(value: str):
+            return str(chr(int(to_float(value))))
+
+        @builtin("ord")
+        def ord_(value: str):
+            return str(ord(value))
+
+        @builtin("len")
+        def len_(value: str):
+            return str(len(value))
+
+        @builtin("split")
+        def split(value: str, delim: str, index: str):
+            index = int(to_float(index))
+            return value.split(delim)[index]
+
+        @builtin("if")
+        def if_(*args: str):
+            assert len(args) >= 3, "must have at least three arguments"
+            assert len(args) % 2 == 1, "must have at an odd number of arguments"
+            conditions = args[::2]
+            replacements = args[1::2]
+            print(conditions, replacements)
+            for (condition, replacement) in zip(conditions, replacements):
+                if to_boolean(condition):
+                    return replacement
+            return conditions[-1]
+
+        @builtin("equal")
+        def equal(a: str, b: str):
+            return str(a == b).lower()
+
+        @builtin("less")
+        def less(a: str, b: str):
+            a, b = to_float(a), to_float(b)
+            return str(a < b).lower()
+
+        @builtin("not")
+        def not_(value: str):
+            return str(not to_boolean(value)).lower()
+
+        @builtin("and")
+        def and_(a: str, b: str):
+            return str(to_boolean(a) and to_boolean(b)).lower()
+
+        @builtin("or")
+        def or_(a: str, b: str):
+            return str(to_boolean(a) or to_boolean(b)).lower()
+
+        @builtin("error")
+        def error(_message: str):
+            raise AssertionError(f"custom error")
+
+        @builtin("assert")
+        def assert_(value: str, message: str):
+            assert to_boolean(value), message
+            return ""
+
+        @builtin("slice")
+        def slice_(string: str, start: str | None = None, end: str | None = None, step: str | None = None):
+            start = int(to_float(start)) if start is not None and len(start) != 0 else None
+            end = int(to_float(end)) if end is not None and len(end) != 0 else None
+            step = int(to_float(step)) if step is not None and len(step) != 0 else None
+            slicer = slice(start, end, step)
+            return string[slicer]
+
+        @builtin("store")
+        def store(name: str, value: str):
+            assert len(self.variables) <= 16, "cannot have more than 16 variables at once"
+            assert len(value) <= 256, "values must be at most 256 characters long"
+            self.variables[name] = value
+            return ""
+
+        @builtin("get")
+        def get(name: str, value: str):
+            try:
+                return self.variables[name]
+            except KeyError:
+                self.variables[name] = value
+                return self.variables[name]
+
+        @builtin("load")
+        def load(name):
+            return self.variables[name]
+
+        @builtin("drop")
+        def drop(name):
+            del self.variables[name]
+            return ""
+
+        @builtin("concat")
+        def concat(*args):
+            return "".join(args)
+
+    def parse_macros(self, objects: str, debug_info: bool, macros = None) -> (Optional[str], Optional[list[str]]):
+        self.variables = {}
+        if macros is None:
+            macros = self.bot.macros
+
+        debug = None
+        if debug_info:
+            debug = []
+
+        # Find each outmost pair of brackets
+        found = 0
+        while match := re.search(r"(?!(?!\\)\\)\[([^\[]*?)]", objects, re.RegexFlag.M):
+            found += 1
+            if debug_info:
+                if found > constants.MACRO_LIMIT:
+                    debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
+                    return None, debug
+            else:
+                assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {found}."
+            terminal = match.group(1)
+            if debug_info:
+                debug.append(f"[Step {found}] {objects}")
+            try:
+                objects = (
+                        objects[:match.start()] +
+                        self.parse_term_macro(terminal, macros) +
+                        objects[match.end():]
                 )
-            return await ctx.reply(
-                f'Output: ```\n{macro.replace("```", "``ˋ")}\n```',
-            )
-        finally:
-            signal.alarm(0)
+            except errors.FailedBuiltinMacro as err:
+                if debug_info:
+                    debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
+                    return None, debug
+                raise err
+        if debug_info:
+            debug.append(f"[Out] {objects}")
+        return objects, debug
 
-    @macro.command(aliases=["i", "get"])
-    async def info(self, ctx: Context, name: str):
-        """Gets info about a specific macro."""
-        assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
-        macro = self.bot.macros[name]
-        value = re.sub(
-            r"(\$\d+)", r"\\x1b[36m\1\\x1b[0m",
-            macro.value.replace("$#", r"\\x1b[35m$#\\x1b[0m")
-        ).replace(":", r"\\x1b[30m:\\x1b[0m").replace(r"\x1b", "\x1b")
-        emb = discord.Embed(
-            title=name
-        )
-        emb.add_field(
-            name="",
-            value=macro.description
-        )
-        emb.add_field(
-            name="Value",
-            value=f"```ansi\n{value}```",
-            inline=False
-        )
-        user = await ctx.bot.fetch_user(macro.author)
-        emb.set_footer(text=f"{user.name}#{user.discriminator}",
-                       icon_url=user.avatar.url if user.avatar is not None else
-                       f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
-        await ctx.reply(embed=emb)
+    def parse_term_macro(self, raw_variant, macros) -> str:
+        raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
+        if raw_macro in self.builtins:
+            try:
+                macro = self.builtins[raw_macro](*macro_args)
+            except Exception as err:
+                raise errors.FailedBuiltinMacro(raw_variant, err)
+        elif raw_macro in macros:
+            macro = macros[raw_macro].value
+            macro = macro.replace("$#", str(len(macro_args)))
+            macro = macro.replace("$0", "/".join(macro_args))
+            for j, arg in enumerate(macro_args):
+                macro = macro.replace(f"${j + 1}", arg)
+        else:
+            raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
+        return str(macro)
 
 
 async def setup(bot: Bot):
-    await bot.add_cog(MacroCog(bot))
+    bot.macro_handler = MacroCog(bot)
