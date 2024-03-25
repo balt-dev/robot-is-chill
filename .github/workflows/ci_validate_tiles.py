@@ -90,9 +90,7 @@ def check_json(path: str, sprite_root: str, blacklisted: bool):
                 matched = regex.match(file.lower())
                 if not matched:
                     continue
-                assert_fn(file.startswith(tile_sprite),
-                          f"Sprite `{tile_sprite}` from world `{world_name}` has casing"
-                          f"that is mismatched with file name `{file}` from `{sprite_root}`")
+                assert_fn(file.startswith(tile_sprite), f"Sprite `{tile_sprite}` from world `{world_name}` has casing that is mismatched with file name `{file}` from `{sprite_root}`")
                 found_tile, found_frame = matched.groups()
                 found_tile, found_frame = int(found_tile), int(found_frame)
                 found_tiles.add(found_tile)
