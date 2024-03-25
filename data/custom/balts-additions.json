@@ -1,14 +1,5 @@
 [
     {
-        "name": "text_flafla",
-        "sprite": "text_flafla",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "cucu",
         "sprite": "cucu",
         "tiling": "2",

@@ -39,6 +39,7 @@
     {
         "name": "warn",
         "sprite": "warn",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -47,6 +48,7 @@
     {
         "name": "point",
         "sprite": "point",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -55,6 +57,7 @@
     {
         "name": "comma",
         "sprite": "comma",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -63,6 +66,7 @@
     {
         "name": "text_'",
         "sprite": "text_'",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -71,6 +75,7 @@
     {
         "name": "text_asterisk",
         "sprite": "text_asterisk",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -79,6 +84,7 @@
     {
         "name": "slash",
         "sprite": "slash",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -87,6 +93,7 @@
     {
         "name": "minus",
         "sprite": "minus",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -95,6 +102,7 @@
     {
         "name": "equals",
         "sprite": "equals",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
@@ -103,6 +111,7 @@
     {
         "name": "no",
         "sprite": "no",
+        "tiling": "-1",
         "color": [
             "2",
             "2"
@@ -111,6 +120,7 @@
     {
         "name": "yes",
         "sprite": "yes",
+        "tiling": "-1",
         "color": [
             "5",
             "3"
@@ -209,15 +219,6 @@
     {
         "name": "cactus2",
         "sprite": "cactus",
-        "tiling": "-1",
-        "color": [
-            "5",
-            "2"
-        ]
-    },
-    {
-        "name": "text_cactus",
-        "sprite": "text_cactus",
         "tiling": "-1",
         "color": [
             "5",
@@ -780,7 +781,7 @@
             "3",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "abomination",
@@ -861,7 +862,7 @@
             "2",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "text_he",
@@ -1063,7 +1064,7 @@
     },
     {
         "name": "heart",
-        "sprite": "../baba/love",
+        "sprite": "love",
         "color": [
             "2",
             "2"
@@ -1260,15 +1261,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_cactus3",
-        "sprite": "text_cactus",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "cactus2",
         "sprite": "cactus",
         "color": [
@@ -1287,11 +1279,11 @@
         "tiling": "-1"
     },
     {
-        "name": "text_cactus3",
+        "name": "text_cactus",
         "sprite": "text_cactus",
         "color": [
             "5",
-            "3"
+            "4"
         ],
         "tiling": "-1"
     },
@@ -1307,15 +1299,6 @@
     {
         "name": "cactus3",
         "sprite": "cactus3",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_cactus3",
-        "sprite": "text_cactus3",
         "color": [
             "5",
             "3"
@@ -1593,15 +1576,6 @@
         ]
     },
     {
-        "name": "lilo",
-        "sprite": "lilo",
-        "tiling": "3",
-        "color": [
-            "2",
-            "4"
-        ]
-    },
-    {
         "name": "goob2",
         "sprite": "goob",
         "color": [
@@ -1735,33 +1709,6 @@
             "0"
         ],
         "tiling": "-1"
-    },
-    {
-        "name": "sed_h",
-        "sprite": "sed_h",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_sed_h",
-        "sprite": "text_sed",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "sed_s",
-        "sprite": "sed_s",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
     },
     {
         "name": "text_sed_s",

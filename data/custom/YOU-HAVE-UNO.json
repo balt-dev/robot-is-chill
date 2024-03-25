@@ -51,7 +51,7 @@
             "3",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "unowild",
@@ -74,15 +74,6 @@
     {
         "name": "unodeck",
         "sprite": "unodeck",
-        "color": [
-            "2",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_unodeck",
-        "sprite": "text_unodeck",
         "color": [
             "2",
             "2"

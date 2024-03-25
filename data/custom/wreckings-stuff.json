@@ -164,13 +164,13 @@
     {
         "name": "text_switch",
         "sprite": "text_switch",
-        "tiling": "0",
+        "tiling": "-1",
         "color": [
             "0",
             "3"
         ]
     },
-	{
+    {
         "name": "color",
         "sprite": "color",
         "tiling": "2",
@@ -206,25 +206,7 @@
             "3"
         ]
     },
-	{
-        "name": "baaba",
-        "sprite": "baaba",
-        "tiling": "2",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-	{
-        "name": "text_baaba",
-        "sprite": "text_baaba",
-        "tiling": "-1",
-        "color": [
-            "4",
-            "1"
-        ]
-    },
-	{
+    {
         "name": "ke",
         "sprite": "ke",
         "tiling": "-1",
@@ -233,7 +215,7 @@
             "4"
         ]
     },
-	{
+    {
         "name": "bigconcave",
         "sprite": "bigconcave",
         "tiling": "0",
@@ -242,7 +224,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "biground",
         "sprite": "biground",
         "tiling": "0",
@@ -251,7 +233,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "center",
         "sprite": "center",
         "tiling": "-1",
@@ -260,7 +242,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "concave",
         "sprite": "concave",
         "tiling": "0",
@@ -269,7 +251,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "diag",
         "sprite": "diag",
         "tiling": "0",
@@ -278,7 +260,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "middle",
         "sprite": "middle",
         "tiling": "0",
@@ -287,7 +269,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "revconcave",
         "sprite": "revconcave",
         "tiling": "0",
@@ -296,7 +278,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "revround",
         "sprite": "revround",
         "tiling": "0",
@@ -305,7 +287,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "round",
         "sprite": "round",
         "tiling": "0",
@@ -314,7 +296,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "roundcenter",
         "sprite": "roundcenter",
         "tiling": "-1",
@@ -323,7 +305,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "slab",
         "sprite": "slab",
         "tiling": "0",
@@ -332,7 +314,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "small",
         "sprite": "small",
         "tiling": "0",
@@ -341,7 +323,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "smalltri",
         "sprite": "smalltri",
         "tiling": "0",
@@ -350,7 +332,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "smallwedge",
         "sprite": "smallwedge",
         "tiling": "0",
@@ -359,7 +341,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "thin",
         "sprite": "thin",
         "tiling": "0",
@@ -368,7 +350,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "tri",
         "sprite": "tri",
         "tiling": "0",
@@ -377,7 +359,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "wedge",
         "sprite": "wedge",
         "tiling": "0",
@@ -386,7 +368,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "text_sauosolewbiye",
         "sprite": "text_simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
         "tiling": "-1",
@@ -395,7 +377,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "sauosolewbiye",
         "sprite": "simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
         "tiling": "0",
@@ -404,7 +386,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "g'vao",
         "sprite": "g'vao",
         "tiling": "0",
@@ -413,7 +395,7 @@
             "3"
         ]
     },
-	{
+    {
         "name": "text_g'vao",
         "sprite": "text_g'vao",
         "tiling": "-1",

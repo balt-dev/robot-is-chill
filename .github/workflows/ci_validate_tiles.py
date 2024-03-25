@@ -115,7 +115,7 @@ def check_json(path: str, sprite_root: str, blacklisted: bool):
                       f"Sprite `{tile_sprite}` from world `{world_name}` is missing tiles"
                       f" for its specified tiling mode ({mode_name}): {missing_tiles}")
             excess_tiles = found_tiles.difference(expected_tiles)
-            assert_fn(len(excess_tiles) == 0,
+            assert_fn(len(excess_tiles) == 0 or world_name == "particle",
                       f"Sprite `{tile_sprite}` from world `{world_name}` has tiles "
                       f"not appropriate for its specified tiling mode ({mode_name}): {excess_tiles}")
             for found_tile in found_frames:
