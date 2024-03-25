@@ -72,8 +72,7 @@ def check_json(path: str, sprite_root: str, blacklisted: bool):
         tile_sprite: str = assert_index(tile, "sprite", f"Tile `{tile_name}` in `{path}` is missing a sprite name")
         if tile_sprite is None:
             continue
-        assert_fn(check_lowercase(tile_name),
-                  f"The tile name of the tile `{tile_name}` in `{world_name}` should be lowercase.")
+        assert_fn(check_lowercase(tile_name), f"The tile name of the tile `{tile_name}` in `{world_name}` should be lowercase.")
         if not blacklisted:
             tile_mode: str = assert_index(tile, "tiling", f"Tiling mode for tile `{tile_name}` in `{world_name}` is missing.")
             if tile_mode is None:
@@ -82,8 +81,7 @@ def check_json(path: str, sprite_root: str, blacklisted: bool):
                 tile_mode = str(tile_mode)
                 assert_fn(False, f"Tiling mode for tile `{tile_name}` in `{world_name}` is not a string.")
             if tile_mode not in tiling_mode_names:
-                assert_fn(False,
-                          f"Tiling mode for tile `{tile_name}` in `{world_name}` does not exist (`{repr(tile_mode)}` is not a real tiling mode).")
+                assert_fn(False, f"Tiling mode for tile `{tile_name}` in `{world_name}` does not exist (`{repr(tile_mode)}` is not a real tiling mode).")
                 return
             regex = re.compile(rf"{re.escape(tile_sprite.lower())}_(\d+)_(\d)\.png")
             found_tiles: set[int] = set()
@@ -101,30 +99,21 @@ def check_json(path: str, sprite_root: str, blacklisted: bool):
                 if found_tile not in found_frames:
                     found_frames[found_tile] = set()
                 found_frames[found_tile].add(found_frame)
-
             mode_name = tiling_mode_names[tile_mode]
             expected_tiles = copy.copy(tiling_modes[tile_mode])
-
             if tile_mode == "1":
                 if len(diagtile_extras.intersection(found_tiles)) != 0:
                     expected_tiles |= diagtile_extras
                     mode_name = "Diagonal Tile"
-
             missing_tiles = expected_tiles.difference(found_tiles)
-            assert_fn(len(missing_tiles) == 0,
-                      f"Sprite `{tile_sprite}` from world `{world_name}` is missing tiles"
-                      f" for its specified tiling mode ({mode_name}): {missing_tiles}")
+            assert_fn(len(missing_tiles) == 0, f"Sprite `{tile_sprite}` from world `{world_name}` is missing tiles for its specified tiling mode ({mode_name}): {missing_tiles}")
             excess_tiles = found_tiles.difference(expected_tiles)
-            assert_fn(len(excess_tiles) == 0 or world_name == "particle",
-                      f"Sprite `{tile_sprite}` from world `{world_name}` has tiles "
-                      f"not appropriate for its specified tiling mode ({mode_name}): {excess_tiles}")
+            assert_fn(len(excess_tiles) == 0 or world_name == "particle", f"Sprite `{tile_sprite}` from world `{world_name}` has tiles not appropriate for its specified tiling mode ({mode_name}): {excess_tiles}")
             for found_tile in found_frames:
                 found_frames_for_tile = found_frames[found_tile]
-                assert_fn(1 in found_frames_for_tile,
-                          f"Sprite `{tile_sprite}` from world `{world_name}` is missing frame 1")
+                assert_fn(1 in found_frames_for_tile, f"Sprite `{tile_sprite}` from world `{world_name}` is missing frame 1")
                 excess_frames = found_frames_for_tile.difference(valid_frames)
-                assert_fn(len(excess_frames) == 0,
-                          f"Sprite `{tile_sprite}` from world `{world_name}` has excess frames: {excess_frames}")
+                assert_fn(len(excess_frames) == 0, f"Sprite `{tile_sprite}` from world `{world_name}` has excess frames: {excess_frames}")
 
 
 def check_folder(path: str, sprite_path: str, blacklist: list[str], sprite_blacklist: list[str]):
