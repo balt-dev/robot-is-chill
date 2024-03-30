@@ -34,5 +34,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "timi",
+        "sprite": "timi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_timi",
+        "sprite": "text_timi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

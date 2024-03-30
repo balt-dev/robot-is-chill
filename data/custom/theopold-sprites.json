@@ -1915,5 +1915,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "widdershins",
+        "sprite": "spiral",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
