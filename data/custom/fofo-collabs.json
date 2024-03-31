@@ -439,5 +439,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kyky",
+        "sprite": "kyky",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

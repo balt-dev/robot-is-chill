@@ -9,6 +9,24 @@
         "tiling": "0"
     },
     {
+        "name": "aaxia_old",
+        "sprite": "aaxia_old",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "aaxia_half",
+        "sprite": "halfaaxia",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "gmalls",
         "sprite": "gmalls",
         "color": [
@@ -23,6 +41,15 @@
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_aaxia",
+        "sprite": "text_aaxia",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

@@ -62,7 +62,7 @@
         "tiling": "-1"
     },
     {
-        "name": "sflafla",
+        "name": "flafla",
         "sprite": "sflafla",
         "color": [
             "2",
@@ -71,7 +71,7 @@
         "tiling": "2"
     },
     {
-        "name": "flafla",
+        "name": "flafla_old",
         "sprite": "flafla",
         "color": [
             "2",
@@ -114,5 +114,59 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "flifli",
+        "sprite": "flifli",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "flig",
+        "sprite": "flig",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flifli",
+        "sprite": "text_flifli",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flig",
+        "sprite": "text_flig",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nova",
+        "sprite": "nova",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_nova",
+        "sprite": "text_nova",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

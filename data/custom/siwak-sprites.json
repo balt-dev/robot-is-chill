@@ -16,5 +16,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bodbod",
+        "sprite": "badbadb",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
     }
 ]

@@ -12,20 +12,19 @@ from .db import TileData
 from .types import Variant, Context, RegexDict
 
 
-def parse_variants(possible_variants: RegexDict[Variant], raw_variants: list[str],
-                   name=None, possible_variant_names=[], macros={}):
-    macro_count = 0
+def parse_variants(bot, possible_variants: RegexDict[Variant], raw_variants: list[str],
+                   name=None, possible_variant_names=None, macros=None):
+    if macros is None:
+        macros = {}
+    if possible_variant_names is None:
+        possible_variant_names = []
     out = {}
     i = 0
     while i < len(raw_variants):
         raw_variant = raw_variants[i]
-        if raw_variant.startswith("m!") and raw_variant[2:].split("/", 1)[0] in macros:
-            assert macro_count < 50, "Too many macros in one sprite! Are some recursing infinitely?"
-            macro_count += 1
-            raw_macro, *macro_args = raw_variant[2:].split("/")
-            macro = macros[raw_macro].value
-            for j, arg in enumerate(macro_args):
-                macro = macro.replace(f"${j + 1}", arg)
+        if raw_variant.startswith("m!"):
+            parsed, _ = bot.macro_handler.parse_macros(f"[{raw_variant[2:]}]", False, macros)
+            macro = str(parsed)
             del raw_variants[i]
             raw_variants[i:i] = macro.split(":")  # Extend at index i
             continue
@@ -57,10 +56,10 @@ class TileSkeleton:
     easter_egg: bool = False
 
     @classmethod
-    async def parse(cls, possible_variants, string: str, rule: bool = True, palette: str = "default",
-                    bot=None, global_variant="", possible_variant_names=[], macros={}):
+    async def parse(cls, bot, possible_variants, string: str, rule: bool = True, palette: str = "default",
+                    global_variant="", possible_variant_names=[], macros={}):
         out = cls()
-        if string == "-":
+        if string in ("-", "."):
             return out
         if rule:
             if string[:5] == "tile_":
@@ -77,7 +76,7 @@ class TileSkeleton:
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
         raw_variants[0:0] = global_variant.split(":")
-        if out.name == "2" and bot is not None:
+        if out.name == "2":
             # Easter egg!
             out.easter_egg = True
             async with bot.db.conn.cursor() as cur:
@@ -86,7 +85,7 @@ class TileSkeleton:
                 # NOTE: text_anni should be tiling -1, but Hempuli messed it up I guess
                 out.name = (await cur.fetchall())[0][0]
             raw_variants.insert(0, "m!2ify")
-        out.variants |= parse_variants(possible_variants, raw_variants, name=out.name,
+        out.variants |= parse_variants(bot, possible_variants, raw_variants, name=out.name,
                                        possible_variant_names=possible_variant_names, macros=macros)
         return out
 

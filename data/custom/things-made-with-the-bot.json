@@ -142,5 +142,14 @@
             "0"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "hkeke",
+        "sprite": "hkeke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

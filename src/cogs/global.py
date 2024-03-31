@@ -257,11 +257,21 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             spoiler = "||" in tiles
             tiles = tiles.replace("||", "")
 
-            # Check for empty input
-            if not tiles:
-                return await ctx.error("Input cannot have 0 tiles.")
-
+            # Check flags
             old_tiles = tiles
+
+            parsing_overhead = time.perf_counter()
+
+            render_ctx = RenderContext(ctx=ctx)
+            while match := re.match(r"^\s*(--?((?:(?!=)\S)+)(?:=(?:(?!(?<!\\)\s).)+)?)", tiles):
+                potential_flag = match.group(1)
+                for flag in self.bot.flags.list:
+                    if await flag.match(potential_flag, render_ctx):
+                        tiles = tiles[match.end():]
+                        break
+                else:
+                    interp = match.group().strip().replace('`', "'")
+                    raise AssertionError(f"Flag `{interp}` isn't valid.")
 
             offset = 0
             for match in re.finditer(r"(?<!\\)\"(.*?)(?<!\\)\"", tiles, flags=re.RegexFlag.DOTALL):
@@ -274,30 +284,26 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 tiles = tiles[:a - offset] + text + tiles[b - offset:]
                 offset += (b - a) - len(text)
 
+            user_macros = ctx.bot.macros | render_ctx.macros
+            last_tiles = None
+            passes = 0
+            while last_tiles != tiles and passes < 50:
+                last_tiles = tiles
+                tiles, _ = ctx.bot.macro_handler.parse_macros(tiles, False, user_macros)
+                tiles = tiles.strip()
+                passes += 1
+
+            # Check for empty input
+            if not tiles:
+                return await ctx.error("Input cannot have 0 tiles.")
+
             # Split input into lines
             word_rows = tiles.splitlines()
 
             # Split each row into words
             word_grid = [re.split(r"(?<!\\) ", row) for row in word_rows]
 
-            parsing_overhead = time.perf_counter()
-            # Check flags
-            potential_flags = filter(
-                lambda i: i[0].startswith("-"),
-                [(word, x, y)
-                 for y, row in enumerate(word_grid)
-                 for x, word in enumerate(row)]
-            )
-
-            render_ctx = RenderContext(ctx=ctx)
-            to_delete = []
-            for potential_flag, x, y in potential_flags:
-                for flag in self.bot.flags.list:
-                    if await flag.match(potential_flag, render_ctx):
-                        to_delete.append((x, y))
             word_grid = split_commas(word_grid, "char_")
-            for x, y in reversed(to_delete):
-                del word_grid[y][x]
             try:
                 if rule:
                     comma_grid = split_commas(word_grid, "tile_")
@@ -338,8 +344,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                     except:
                         return None
 
-                user_macros = ctx.bot.macros | render_ctx.macros
-
                 for y, row in enumerate(comma_grid):
                     for x, stack in enumerate(row):
                         for l, timeline in enumerate(re.split(r'(?<!\\)&', stack)):
@@ -349,6 +353,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         sign_text = SignText(text=match.group(1), x=x, y=y, time_start=d)
                                         variants = [variant for variant in match.group(2).split(":") if len(variant)]
                                         variants = parse_variants(
+                                            self.bot,
                                             font_variants, variants,
                                             macros=user_macros
                                         ).get("sign", [])
@@ -377,8 +382,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         # This is done to prevent setting everything to one instance of an object.
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
-                                                possible_variants, tile, rule,
-                                                palette=render_ctx.palette, bot=self.bot,
+                                                self.bot, possible_variants, tile, rule,
+                                                palette=render_ctx.palette,
                                                 global_variant=render_ctx.global_variant,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros
@@ -388,11 +393,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     else:
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
+                                                self.bot,
                                                 possible_variants,
                                                 layer_grid[d - 1, l, y, x].raw_string.split(
                                                     ";" if ";" in tile else ":", 1
                                                 )[0] + tile,
-                                                rule, bot=self.bot,
+                                                rule,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros,
                                                 palette=render_ctx.palette
@@ -931,6 +937,7 @@ Filterimages are formatted as follows:
         filter_headers = requests.head(filter_url, timeout=3).headers
         assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
         with Image.open(requests.get(filter_url, stream=True).raw) as im:
+            assert im.width <= 256 and im.height <= 256, "Can't create a filter greater than 256 pixels on either side!"
             fil = np.array(im.convert("RGBA"), dtype=np.uint8)
         fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(
             1 if target_mode.startswith("abs") else -1)
@@ -954,6 +961,7 @@ Filterimages are formatted as follows:
                      height: int):
         """Creates a template filter."""
         assert width > 0 and height > 0, "Can't create a filter with a non-positive area!"
+        assert width <= 256 and height <= 256, "Can't create a filter greater than 256 pixels on either side!"
         size = (height, width)
         fil = np.ones((*size, 4), dtype=np.uint8) * 0xFF
         fil[..., :2] -= 0x7F
@@ -974,16 +982,21 @@ Filterimages are formatted as follows:
         await ctx.reply(embed=emb, file=file)
 
     @filterimage.command(aliases=["reg"])
-    async def register(self, ctx: Context, name: str, target_mode: Literal["abs", "absolute", "rel", "relative"]):
-        """Adds a filter to the database! Requires an attachment.
-    Keep in mind that if the message sent to create this filter is deleted, it will no longer work."""
-        assert len(ctx.message.attachments), "An image to be registered has to be supplied!"
+    async def register(
+            self,
+            ctx: Context,
+            name: str,
+            target_mode: Literal["abs", "absolute", "rel", "relative"],
+            url: str
+    ):
+        """Adds a filter to the database from a URL."""
+        assert not len(ctx.message.attachments), "Images can't be given using attachments anymore." \
+                                                 "I recommend [Catbox](https://catbox.moe) for hosting."
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
             dname = await cursor.fetchone()
             if dname is not None:
                 return await ctx.error(f"Filter of name `{name}` already exists in the database!")
-            url = ctx.message.attachments[0].url
             await self.bot.db.get_filter(url.removeprefix("https://"))  # Cache filter
             command = "INSERT INTO filterimages VALUES (?, ?, ?, ?);"
             args = (name, target_mode.startswith("abs"), url, ctx.author.id)

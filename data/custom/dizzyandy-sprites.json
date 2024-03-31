@@ -414,8 +414,8 @@
         "tiling": "0"
     },
     {
-        "name": "dopairs",
-        "sprite": "dopairs",
+        "name": "dopairs_old",
+        "sprite": "dopairs_old",
         "color": [
             "0",
             "3"
@@ -602,7 +602,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_num",
         "sprite": "text_num",
         "color": [
@@ -611,7 +611,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_this_arrow",
         "sprite": "text_this_arrow",
         "color": [
@@ -620,7 +620,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_that_arrow",
         "sprite": "text_that_arrow",
         "color": [
@@ -629,7 +629,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_these_arrow",
         "sprite": "text_these_arrow",
         "color": [
@@ -638,7 +638,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "text_those_arrow",
         "sprite": "text_those_arrow",
         "color": [
@@ -706,6 +706,258 @@
         "sprite": "text_two words",
         "color": [
             "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dumass",
+        "sprite": "dumass",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "koke",
+        "sprite": "koke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_koke",
+        "sprite": "text_koke",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "brick2",
+        "sprite": "brick2",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "drinkey",
+        "sprite": "drinkey",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cove",
+        "sprite": "cmbox",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mount",
+        "sprite": "cmplayer",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babeta",
+        "sprite": "baba_12px",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "num",
+        "sprite": "number",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dopairs",
+        "sprite": "dopairs",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "del",
+        "sprite": "del",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_del",
+        "sprite": "text_del",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "new",
+        "sprite": "new",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_new",
+        "sprite": "text_new",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "letter",
+        "sprite": "letter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_letter",
+        "sprite": "text_letter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "selector",
+        "sprite": "selector",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sofa",
+        "sprite": "sofa",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "it've",
+        "sprite": "it've",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "nama",
+        "sprite": "nama",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_metanot",
+        "sprite": "text_metanot",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jiji2",
+        "sprite": "jiji2",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "trunk",
+        "sprite": "trunk",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "caevent_h",
+        "sprite": "caevent_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wallpha",
+        "sprite": "wallpha",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "verified",
+        "sprite": "verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_verified",
+        "sprite": "text_verified",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u26d0",
+        "sprite": "caraccident",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"

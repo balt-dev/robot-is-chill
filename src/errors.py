@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+
 class BabaError(Exception):
     """Base class for convenient catching."""
 
@@ -43,6 +46,7 @@ class EmptyVariant(BabaError):
     args: tile
     """
 
+
 # === Variants ===
 
 
@@ -60,8 +64,16 @@ class BadMetaVariant(VariantError):
     """
 
 
+@dataclass
+class FailedBuiltinMacro(BabaError):
+    """Builtin macro failed to compute."""
+    raw: str
+    message: Exception
+
+
 class BadPaletteIndex(VariantError):
     """Not in the palette."""
+
 
 # TODO: more specific errors for this
 
@@ -94,6 +106,7 @@ class UnknownVariant(VariantError):
 
 class TooLargeTile(VariantError):
     """Tile exceeds the limit."""
+
 
 # === Custom text ===
 

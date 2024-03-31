@@ -1,0 +1,47 @@
+[
+    {
+        "name": "piston",
+        "sprite": "piston",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "piston2",
+        "sprite": "pistonlong",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_piston",
+        "sprite": "text_piston",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "baab",
+        "sprite": "baab",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_baab",
+        "sprite": "text_baab",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

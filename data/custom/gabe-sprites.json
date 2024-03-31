@@ -403,5 +403,68 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "balscii",
+        "sprite": "balscii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_balscii",
+        "sprite": "text_balscii",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+	},
+	{
+        "name": "onethem",
+        "sprite": "onethem",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ixor",
+        "sprite": "ixor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "ba",
+        "sprite": "ba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "catile_h",
+        "sprite": "catile_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "catext_h",
+        "sprite": "catext_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

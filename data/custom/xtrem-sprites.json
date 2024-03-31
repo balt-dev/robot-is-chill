@@ -1,1 +1,20 @@
-[]
+[
+	{
+        "name": "spire",
+        "sprite": "spire",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_spire",
+        "sprite": "text_spire",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]
