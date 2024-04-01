@@ -375,13 +375,25 @@ If [0;36minactive[0m is set and the color isn't hexadecimal, the color will sw
     This does not work if a color is specified!"""
         tile.color = constants.INACTIVE_COLORS[tile.color]
 
+    bayer_matrix = np.array([
+        [ 0, 32,  8, 40,  2, 34, 10, 42],
+        [48, 16, 56, 24, 50, 18, 58, 26],
+        [12, 44,  4, 36, 14, 46,  6, 38],
+        [60, 28, 52, 20, 62, 30, 54, 22],
+        [ 3, 35, 11, 43,  1, 33,  9, 41],
+        [51, 19, 59, 27, 49, 17, 57, 25],
+        [15, 47,  7, 39, 13, 45,  5, 37],
+        [63, 31, 55, 23, 61, 29, 53, 21],
+    ]) / 64
+
     @add_variant("grad")
     async def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
                        offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
-                       extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
+                       extrapolate: Optional[bool] = False, dither: Optional[bool] = False, *, tile, wobble, renderer):
         """Applies a gradient to a tile.
 Interpolates color through CIELUV color space by default. This can be toggled with [0;36mraw[0m.
-If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%."""
+If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%.
+[0;36Dither[0ming does nothing with [0;36steps[0m set to 0."""
         tile.custom_color = True
         src = Color.parse(tile, renderer.palette_cache)
         dst = Color.parse(tile, renderer.palette_cache, color=color)
@@ -399,7 +411,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
         warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_LINEAR)
         if steps:
-            warped_grad = np.round(warped_grad * steps) / steps
+            if dither:
+                needed_size = np.ceil(np.array(warped_grad.shape) / 8).astype(int)
+                image_matrix = np.tile(bayer_matrix, needed_size[:2])[:warped_grad.shape[0], :warped_grad.shape[1]]
+                mod_warped_grad = warped_grad[:, :, 0]
+                mod_warped_grad *= steps
+                mod_warped_grad %= 1.0
+                mod_warped_grad = (mod_warped_grad > image_matrix).astype(int)
+                warped_grad = (np.floor(warped_grad[:, :, 1] * steps) + mod_warped_grad) / steps
+                warped_grad = np.array((warped_grad.T, warped_grad.T, warped_grad.T, warped_grad.T)).T
+            else:
+                warped_grad = np.round(warped_grad * steps) / steps
         mult_grad = np.clip(((1 - warped_grad) * src + warped_grad * dst), 0, 255)
         if not raw:
             mult_grad[:, :, :3] = cv2.cvtColor(mult_grad[:, :, :3].astype(np.uint8), cv2.COLOR_Luv2RGB).astype(
