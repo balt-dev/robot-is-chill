@@ -466,5 +466,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "whatesho",
+        "sprite": "whatesho",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1801,11 +1801,83 @@
     },
     {
         "name": "carrot2",
-        "sprite": "carrot",
+        "sprite": "carrot2",
         "color": [
             "2",
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "trash",
+        "sprite": "trash",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tray",
+        "sprite": "tray",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "trident",
+        "sprite": "trident",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "trident",
+        "sprite": "trident",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "needle",
+        "sprite": "needle",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "kebab",
+        "sprite": "kebab",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "boom2",
+        "sprite": "boom",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sword_old",
+        "sprite": "forwardsword",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

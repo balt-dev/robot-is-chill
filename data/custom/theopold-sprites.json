@@ -1924,5 +1924,86 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ednac",
+        "sprite": "everydulstukneedsacrendel",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ednac",
+        "sprite": "text_everydulstukneedsacrendel",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "brubrubeta",
+        "sprite": "brubrubeta",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "balonabeta",
+        "sprite": "balonabeta",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_brubrubeta",
+        "sprite": "text_brubrubeta",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_balonabeta",
+        "sprite": "text_balonabeta",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "skeletonkey",
+        "sprite": "skelekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_skeletonkey",
+        "sprite": "text_skelekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_oppose",
+        "sprite": "text_oppose",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
