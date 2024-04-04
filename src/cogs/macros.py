@@ -1,5 +1,6 @@
 import re
 from random import random
+from cmath import log
 from typing import Optional, Callable
 
 from discord.ext import commands
@@ -54,6 +55,15 @@ class MacroCog:
         def pow(a: str, b: str):
             a, b = to_float(a), to_float(b)
             return str(a ** b)
+
+        @builtin("log")
+        def log(x: str, base: str | None = None):
+            x = to_float(x)
+            if base is None:
+                return str(log(x))
+            else:
+                base = to_float(base)
+                return str(log(x, base))
 
         @builtin("real")
         def real(value: str):
@@ -175,7 +185,7 @@ class MacroCog:
 
         @builtin("error")
         def error(_message: str):
-            raise AssertionError(f"custom error")
+            raise AssertionError(f"custom error: {_message}")
 
         @builtin("assert")
         def assert_(value: str, message: str):
@@ -213,6 +223,10 @@ class MacroCog:
         def drop(name):
             del self.variables[name]
             return ""
+
+        @builtin("is_stored")
+        def is_stored(name):
+            return str(name in self.variables).lower()
 
         @builtin("concat")
         def concat(*args):
