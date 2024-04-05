@@ -232,7 +232,7 @@ class MacroCog:
         def concat(*args):
             return "".join(args)
 
-    def parse_macros(self, objects: str, debug_info: bool, macros = None) -> (Optional[str], Optional[list[str]]):
+    def parse_macros(self, objects: str, debug_info: bool, macros = None) -> tuple[Optional[str], Optional[list[str]]]:
         self.variables = {}
         if macros is None:
             macros = self.bot.macros
