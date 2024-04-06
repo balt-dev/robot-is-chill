@@ -2005,5 +2005,41 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ququ",
+        "sprite": "ququ",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ququ",
+        "sprite": "text_ququ",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "duhduh",
+        "sprite": "deeedeee",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "vme",
+        "sprite": "vme",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]
