@@ -1,13 +1,13 @@
 import re
-from random import random
+from random import random, seed
 from cmath import log
 from typing import Optional, Callable
+import json
 
 from discord.ext import commands
 
 from .. import constants, errors
 from ..types import Bot
-
 
 class MacroCog:
 
@@ -76,7 +76,11 @@ class MacroCog:
             return str(value.imag)
 
         @builtin("rand")
-        def rand():
+        def rand(seed_: str | None = None):
+            if seed_ is not None:
+                seed_ = to_float(seed_)
+                assert isinstance(seed_, float), "Seed cannot be complex"
+                seed(seed_)
             return str(random())
 
         @builtin("subtract")
@@ -231,7 +235,70 @@ class MacroCog:
         @builtin("concat")
         def concat(*args):
             return "".join(args)
-
+        
+        @builtin("unescape")
+        def unescape(string: str):
+            return string.replace("\\/", "/")
+        
+        @builtin("json.get")
+        def jsonget(data: str, key: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            if isinstance(data, list):
+                key = int(key)
+            return json.dumps(data[key])
+        
+        @builtin("json.set")
+        def jsonset(data: str, key: str, value: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            value = json.loads(value)
+            if isinstance(data, list):
+                key = int(key)
+            data[key] = value
+            return json.dumps(data)
+        
+        @builtin("json.remove")
+        def jsonremove(data: str, key: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            if isinstance(data, list):
+                key = int(key)
+            del data[key]
+            return json.dumps(data)
+        
+        @builtin("json.len")
+        def jsonlen(data: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            return len(data)
+        
+        @builtin("json.append")
+        def jsonappend(data: str, value: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, list), "json must be an array"
+            value = json.loads(value)
+            data.append(value)
+            return json.dumps(data)
+        
+        @builtin("json.insert")
+        def jsoninsert(data: str, index: str, value: str):
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, list), "json must be an array"
+            value = json.loads(value)
+            index = int(index)
+            data.insert(index, value)
+            return json.dumps(data)
+        
     def parse_macros(self, objects: str, debug_info: bool, macros = None) -> tuple[Optional[str], Optional[list[str]]]:
         self.variables = {}
         if macros is None:
