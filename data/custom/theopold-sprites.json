@@ -2037,8 +2037,17 @@
         "name": "vme",
         "sprite": "vme",
         "color": [
-            "3",
-            "1"
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "tis",
+        "sprite": "tis",
+        "color": [
+            "1",
+            "2"
         ],
         "tiling": "2"
     }
