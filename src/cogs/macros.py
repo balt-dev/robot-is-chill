@@ -346,12 +346,26 @@ class MacroCog:
         elif raw_macro in macros:
             macro = macros[raw_macro].value
             macro = macro.replace("$#", str(len(macro_args)))
-            macro = macro.replace("$0", "/".join(macro_args))
-            for j, arg in enumerate(macro_args):
-                macro = macro.replace(f"${j + 1}", arg)
+            macro_args = ["/".join(macro_args), *macro_args]
+            arg_amount = 0
+            while (match := re.search(r"\$(-?\d+|#)", macro)) is not None:
+                arg_amount += 1
+                if arg_amount > 100:
+                    break
+                argument = match.group(1)
+                if argument == "#":
+                    infix = str(len(macro_args))
+                else:
+                    argument = int(argument)
+                    try:
+                        infix = macro_args[argument]
+                    except IndexError:
+                        infix = "\0" + str(argument)
+                macro = macro[:match.start()] + infix + macro[match.end():]
         else:
             raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
-        return str(macro)
+        return str(macro).replace("\0", "$")
+
 
 
 async def setup(bot: Bot):

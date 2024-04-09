@@ -1,0 +1,11 @@
+[
+    {
+        "name": "tutu",
+        "sprite": "tutu",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]
