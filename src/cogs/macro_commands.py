@@ -141,7 +141,7 @@ class MacroCommandCog(commands.Cog, name='Macros'):
         """Edits a macro. You must own said macro to edit it."""
         assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
         if attribute == "name":
-            assert new in self.bot.macros, f"Macro `{new}` is already in the database!"
+            assert new not in self.bot.macros, f"Macro `{new}` is already in the database!"
         async with self.bot.db.conn.cursor() as cursor:
             if not await ctx.bot.is_owner(ctx.author):
                 await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
