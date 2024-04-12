@@ -226,12 +226,13 @@ class MacroCog:
         @builtin("error")
         def error(_message: str):
             """Raises an error with a specified message."""
-            raise AssertionError(f"custom error: {_message}")
+            raise errors.CustomMacroError(f"custom error: {_message}")
 
         @builtin("assert")
         def assert_(value: str, message: str):
             """If the first argument doesn't evaluate to true, errors with a specified message."""
-            assert to_boolean(value), message
+            if not to_boolean(value):
+                raise errors.CustomMacroError(f"assertion failed: {message}")
             return ""
 
         @builtin("slice")
@@ -405,7 +406,7 @@ class MacroCog:
             try:
                 macro = self.builtins[raw_macro].function(*macro_args)
             except Exception as err:
-                raise errors.FailedBuiltinMacro(raw_variant, err)
+                raise errors.FailedBuiltinMacro(raw_variant, err, isinstance(err, errors.CustomMacroError))
         elif raw_macro in macros:
             macro = macros[raw_macro].value
             macro = macro.replace("$#", str(len(macro_args)))
