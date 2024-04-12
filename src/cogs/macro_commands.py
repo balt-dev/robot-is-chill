@@ -6,10 +6,9 @@ from typing import Literal
 import discord
 from discord import Member, User
 from discord.ext import commands, menus
-from discord.ext.commands import UserNotFound
 
 from .. import constants
-from ..types import Bot, Context, Macro
+from ..types import Bot, Context, Macro, BuiltinMacro
 from ..utils import ButtonPages
 
 import re
@@ -57,6 +56,25 @@ class MacroQuerySource(menus.ListPageSource):
         return embed
 
 
+class BuiltinMacroQuerySource(menus.ListPageSource):
+    def __init__(
+            self, data: list[tuple[str, BuiltinMacro]]):
+        self.count = len(data)
+        super().__init__(data, per_page=5)
+
+    async def format_page(self, menu: menus.Menu, entries: list[tuple[str, BuiltinMacro]]) -> discord.Embed:
+        embed = discord.Embed(
+            title="Built-in Macros",
+        ).set_footer(
+            text=f"Page {menu.current_page + 1} of {self.get_max_pages()}   ({self.count} entries)",
+        )
+        desc = []
+        for (name, macro) in entries:
+            desc.append(f"**{name}**\n> {macro.description}")
+        embed.description = "\n".join(desc)
+        return embed
+
+
 class MacroCommandCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -98,7 +116,6 @@ class MacroCommandCog(commands.Cog, name='Macros'):
             """, dest.id, source.id)
         return await ctx.reply(f"Done. Moved all macros from account {source} to account {dest}.")
 
-
     @macro.command(aliases=["mk", "make"])
     async def create(self, ctx: Context, name: str, value: str, *, description: str = None):
         """Adds a macro to the database."""
@@ -120,9 +137,11 @@ class MacroCommandCog(commands.Cog, name='Macros'):
             return await ctx.reply(f"Successfully added `{name}` to the database, aliased to `{value}`!")
 
     @macro.command(aliases=["e"])
-    async def edit(self, ctx: Context, name: str, attribute: Literal["value", "description"], *, new: str):
+    async def edit(self, ctx: Context, name: str, attribute: Literal["value", "description", "name"], *, new: str):
         """Edits a macro. You must own said macro to edit it."""
         assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
+        if attribute == "name":
+            assert new not in self.bot.macros, f"Macro `{new}` is already in the database!"
         async with self.bot.db.conn.cursor() as cursor:
             if not await ctx.bot.is_owner(ctx.author):
                 await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
@@ -130,7 +149,12 @@ class MacroCommandCog(commands.Cog, name='Macros'):
                 assert check is not None, "You can't edit a macro you don't own, silly."
             # NOTE: I know I shouldn't use fstrings with execute, but it won't allow me to specify a row name with ?.
             await cursor.execute(f"UPDATE macros SET {attribute} = ? WHERE name == ?", new, name)
-        setattr(self.bot.macros[name], attribute, new)
+        if attribute == "name":
+            mac = self.bot.macros[name]
+            del self.bot.macros[name]
+            self.bot.macros[new] = mac
+        else:
+            setattr(self.bot.macros[name], attribute, new)
         return await ctx.reply(f"Edited `{name}`'s {attribute} to be `{new}`.")
 
     @macro.command(aliases=["rm", "remove", "del"])
@@ -253,6 +277,13 @@ class MacroCommandCog(commands.Cog, name='Macros'):
             buf.write(macro.value.encode("utf-8", "ignore"))
             buf.seek(0)
             await ctx.reply(embed=emb, file=discord.File(buf, filename=f"{name}-value.txt"))
+
+    @macro.command(aliases=["b"])
+    async def builtins(self, ctx: Context):
+        """Lists off the builtin macros of the bot."""
+        return await ButtonPages(BuiltinMacroQuerySource(
+            list(ctx.bot.macro_handler.builtins.items())
+        )).start(ctx)
 
 
 async def setup(bot: Bot):

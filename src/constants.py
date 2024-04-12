@@ -98,13 +98,13 @@ COLOR_NAMES: dict[str, tuple[int, int]] = {
     "maroon": (2, 1),  # Not actually a word in the game
     "gold": (6, 2),  # Not actually a word in the game
     "teal": (1, 2), # Also not actually a word in the game
-    "blue": (2, 2),
+    "red": (2, 2),
     "orange": (2, 3),
     "yellow": (2, 4),
     "lime": (5, 3),
     "green": (5, 2),
     "cyan": (1, 4),
-    "red": (3, 2),
+    "blue": (3, 2),
     "purple": (3, 1),
     "pink": (4, 1),
     "rosy": (4, 2),
