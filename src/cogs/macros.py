@@ -1,6 +1,7 @@
 import re
 from random import random, seed
 from cmath import log
+from functools import reduce
 from typing import Optional, Callable
 import json
 
@@ -39,9 +40,9 @@ class MacroCog:
                 raise AssertionError(f"could not convert string to boolean: '{v}'")
 
         @builtin("add")
-        def add(a: str, b: str):
-            a, b = to_float(a), to_float(b)
-            return str(a + b)
+        def add(*args: str):
+            assert len(args) >= 2, "add macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x + y.to_number(), args, 0))
 
         @builtin("is_number")
         def is_number(value: str):
@@ -94,9 +95,9 @@ class MacroCog:
             return re.sub(pattern, replacement, value)
 
         @builtin("multiply")
-        def multiply(a: str, b: str):
-            a, b = to_float(a), to_float(b)
-            return str(a * b)
+        def multiply(*args: str):
+            assert len(args) >= 2, "multiply macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x * y.to_number(), args, 1))
 
         @builtin("divide")
         def divide(a: str, b: str):
@@ -180,13 +181,15 @@ class MacroCog:
             return str(not to_boolean(value)).lower()
 
         @builtin("and")
-        def and_(a: str, b: str):
-            return str(to_boolean(a) and to_boolean(b)).lower()
+        def and_(*args: str):
+            assert len(args) >= 2, "and macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x and y.to_boolean(), args, True)).lower()
 
         @builtin("or")
-        def or_(a: str, b: str):
-            return str(to_boolean(a) or to_boolean(b)).lower()
-
+        def or_(*args: str):
+            assert len(args) >= 2, "or macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x or y.to_boolean(), args, False)).lower()
+        
         @builtin("error")
         def error(_message: str):
             raise AssertionError(f"custom error: {_message}")
