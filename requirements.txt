@@ -14,4 +14,7 @@ aiohttp~=3.8.1
 setuptools~=58.1.0
 visual-center
 more_itertools
-tldextract
+tldextract~=3.4.0
+
+attrs~=22.2.0
+cpmpy~=0.9.12
