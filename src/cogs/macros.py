@@ -243,6 +243,22 @@ class MacroCog:
             step = int(to_float(step)) if step is not None and len(step) != 0 else None
             slicer = slice(start, end, step)
             return string[slicer]
+        
+        @builtin("find")
+        def find(string: str, substring: str, start: str | None = None, end: str | None = None):
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return str(string.index(substring, start, end))
+        
+        @builtin("count")
+        def count(string: str, substring: str, start: str | None = None, end: str | None = None):
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return string.count(substring, start, end)
 
         @builtin("store")
         def store(name: str, value: str):
