@@ -1,6 +1,7 @@
 import re
 from random import random, seed
 from cmath import log
+from functools import reduce
 from typing import Optional, Callable
 import json
 
@@ -40,10 +41,9 @@ class MacroCog:
                 raise AssertionError(f"could not convert string to boolean: '{v}'")
 
         @builtin("add")
-        def add(a: str, b: str):
-            """Adds two numbers together."""
-            a, b = to_float(a), to_float(b)
-            return str(a + b)
+        def add(*args: str):
+            assert len(args) >= 2, "add macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x + to_float(y), args, 0))
 
         @builtin("is_number")
         def is_number(value: str):
@@ -104,10 +104,9 @@ class MacroCog:
             return re.sub(pattern, replacement, value)
 
         @builtin("multiply")
-        def multiply(a: str, b: str):
-            """Multiplies two values."""
-            a, b = to_float(a), to_float(b)
-            return str(a * b)
+        def multiply(*args: str):
+            assert len(args) >= 2, "multiply macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x * to_float(y), args, 1))
 
         @builtin("divide")
         def divide(a: str, b: str):
@@ -215,24 +214,25 @@ class MacroCog:
             return str(not to_boolean(value)).lower()
 
         @builtin("and")
-        def and_(a: str, b: str):
-            """Takes the logical AND of two booleans."""
-            return str(to_boolean(a) and to_boolean(b)).lower()
+        def and_(*args: str):
+            assert len(args) >= 2, "and macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x and to_boolean(y), args, True)).lower()
 
         @builtin("or")
-        def or_(a: str, b: str):
-            """Takes the logical OR of two booleans."""
-            return str(to_boolean(a) or to_boolean(b)).lower()
-
+        def or_(*args: str):
+            assert len(args) >= 2, "or macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x or to_boolean(y), args, False)).lower()
+        
         @builtin("error")
         def error(_message: str):
             """Raises an error with a specified message."""
-            raise AssertionError(f"custom error: {_message}")
+            raise errors.CustomMacroError(f"custom error: {_message}")
 
         @builtin("assert")
         def assert_(value: str, message: str):
             """If the first argument doesn't evaluate to true, errors with a specified message."""
-            assert to_boolean(value), message
+            if not to_boolean(value):
+                raise errors.CustomMacroError(f"assertion failed: {message}")
             return ""
 
         @builtin("slice")
@@ -243,6 +243,22 @@ class MacroCog:
             step = int(to_float(step)) if step is not None and len(step) != 0 else None
             slicer = slice(start, end, step)
             return string[slicer]
+        
+        @builtin("find")
+        def find(string: str, substring: str, start: str | None = None, end: str | None = None):
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return str(string.index(substring, start, end))
+        
+        @builtin("count")
+        def count(string: str, substring: str, start: str | None = None, end: str | None = None):
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return string.count(substring, start, end)
 
         @builtin("store")
         def store(name: str, value: str):
@@ -290,41 +306,46 @@ class MacroCog:
         @builtin("json.get")
         def jsonget(data: str, key: str):
             """Gets a value from a JSON object."""
+            data = data.replace("\\[", "[").replace("\\]", "]")
             assert len(data) <= 256, "json data must be at most 256 characters long"
             data = json.loads(data)
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             if isinstance(data, list):
                 key = int(key)
-            return json.dumps(data[key])
+            return json.dumps(data[key]).replace("[", "\\[").replace("\\]", "]")
 
         @builtin("json.set")
         def jsonset(data: str, key: str, value: str):
             """Sets a value in a JSON object."""
             assert len(data) <= 256, "json data must be at most 256 characters long"
             assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
             data = json.loads(data)
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             value = json.loads(value)
             if isinstance(data, list):
                 key = int(key)
             data[key] = value
-            return json.dumps(data)
+            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
 
         @builtin("json.remove")
         def jsonremove(data: str, key: str):
             """Removes a value from a JSON object."""
             assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
             data = json.loads(data)
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             if isinstance(data, list):
                 key = int(key)
             del data[key]
-            return json.dumps(data)
+            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
 
         @builtin("json.len")
         def jsonlen(data: str):
             """Gets the length of a JSON object."""
             assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
             data = json.loads(data)
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             return len(data)
@@ -334,23 +355,27 @@ class MacroCog:
             """Appends a value to a JSON array."""
             assert len(data) <= 256, "json data must be at most 256 characters long"
             assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
             data = json.loads(data)
             assert isinstance(data, list), "json must be an array"
             value = json.loads(value)
             data.append(value)
-            return json.dumps(data)
+            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
 
         @builtin("json.insert")
         def jsoninsert(data: str, index: str, value: str):
             """Inserts a value into a JSON array at an index."""
             assert len(data) <= 256, "json data must be at most 256 characters long"
             assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
             data = json.loads(data)
             assert isinstance(data, list), "json must be an array"
             value = json.loads(value)
             index = int(index)
             data.insert(index, value)
-            return json.dumps(data)
+            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
@@ -365,7 +390,7 @@ class MacroCog:
 
         # Find each outmost pair of brackets
         found = 0
-        while match := re.search(r"(?!(?!\\)\\)\[([^\[]*?)]", objects, re.RegexFlag.M):
+        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
             found += 1
             if debug_info:
                 if found > constants.MACRO_LIMIT:
@@ -397,7 +422,7 @@ class MacroCog:
             try:
                 macro = self.builtins[raw_macro].function(*macro_args)
             except Exception as err:
-                raise errors.FailedBuiltinMacro(raw_variant, err)
+                raise errors.FailedBuiltinMacro(raw_variant, err, isinstance(err, errors.CustomMacroError))
         elif raw_macro in macros:
             macro = macros[raw_macro].value
             macro = macro.replace("$#", str(len(macro_args)))
