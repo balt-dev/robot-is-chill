@@ -260,7 +260,6 @@ BLENDING_MODES = (
     "normal",
     "add",
     "subtract",
-    "sub",
     "multiply",
     "divide",
     "max",
