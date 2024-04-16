@@ -259,6 +259,10 @@ class MacroCog:
             if end is not None:
                 end = int(end)
             return string.count(substring, start, end)
+        
+        @builtin("join")
+        def join(joiner: str, *strings: str):
+            return joiner.join(strings)
 
         @builtin("store")
         def store(name: str, value: str):
