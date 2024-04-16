@@ -1,0 +1,38 @@
+[
+    {
+        "name": "he",
+        "sprite": "he",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "flag2",
+        "sprite": "flag2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "coin2",
+        "sprite": "coin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_coin2",
+        "sprite": "text_coin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]
