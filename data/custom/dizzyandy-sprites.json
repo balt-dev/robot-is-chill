@@ -961,5 +961,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "robaba",
+        "sprite": "robaba",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_robaba",
+        "sprite": "text_robaba",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lucy",
+        "sprite": "lucy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_lucy",
+        "sprite": "text_lucy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
