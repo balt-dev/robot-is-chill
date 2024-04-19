@@ -316,7 +316,7 @@ class MacroCog:
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             if isinstance(data, list):
                 key = int(key)
-            return json.dumps(data[key]).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data[key]).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.set")
         def jsonset(data: str, key: str, value: str):
@@ -331,7 +331,7 @@ class MacroCog:
             if isinstance(data, list):
                 key = int(key)
             data[key] = value
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.remove")
         def jsonremove(data: str, key: str):
@@ -343,7 +343,7 @@ class MacroCog:
             if isinstance(data, list):
                 key = int(key)
             del data[key]
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.len")
         def jsonlen(data: str):
@@ -365,7 +365,7 @@ class MacroCog:
             assert isinstance(data, list), "json must be an array"
             value = json.loads(value)
             data.append(value)
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.insert")
         def jsoninsert(data: str, index: str, value: str):
@@ -379,7 +379,7 @@ class MacroCog:
             value = json.loads(value)
             index = int(index)
             data.insert(index, value)
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
