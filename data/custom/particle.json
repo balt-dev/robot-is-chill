@@ -6,7 +6,7 @@
             "1",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_snow",
@@ -15,7 +15,7 @@
             "0",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_cloud",
@@ -24,7 +24,7 @@
             "4",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_smoke",
@@ -33,7 +33,7 @@
             "1",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_pollen",
@@ -42,7 +42,7 @@
             "1",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_star",
@@ -51,7 +51,7 @@
             "3",
             "2"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_glitter",
@@ -60,7 +60,7 @@
             "3",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_leaf",
@@ -69,7 +69,7 @@
             "6",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_leaf2",
@@ -78,7 +78,7 @@
             "6",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_rain",
@@ -87,7 +87,7 @@
             "3",
             "2"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "background_blossom",
@@ -96,7 +96,7 @@
             "4",
             "0"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_win",
@@ -105,7 +105,7 @@
             "2",
             "4"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_bling",
@@ -114,7 +114,7 @@
             "0",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_bonus",
@@ -123,7 +123,7 @@
             "4",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_confetti",
@@ -132,7 +132,7 @@
             "2",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_destroy",
@@ -141,7 +141,7 @@
             "0",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_eat",
@@ -150,7 +150,7 @@
             "0",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_electricity",
@@ -159,7 +159,7 @@
             "2",
             "4"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_error",
@@ -168,7 +168,7 @@
             "4",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_glow",
@@ -177,7 +177,7 @@
             "1",
             "4"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_hot",
@@ -186,7 +186,7 @@
             "0",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_infinity",
@@ -195,7 +195,7 @@
             "4",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_music",
@@ -204,7 +204,7 @@
             "0",
             "3"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_pet",
@@ -213,7 +213,7 @@
             "3",
             "1"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_sleep",
@@ -222,7 +222,7 @@
             "3",
             "2"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_smoke",
@@ -231,7 +231,7 @@
             "0",
             "2"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_tear",
@@ -240,7 +240,7 @@
             "3",
             "2"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     },
     {
         "name": "particle_unlock",
@@ -249,6 +249,6 @@
             "2",
             "4"
         ],
-        "tiling": "-2"
+        "tiling": "-1"
     }
 ]
