@@ -421,8 +421,8 @@
             "1"
         ],
         "tiling": "-1"
-	},
-	{
+    },
+    {
         "name": "onethem",
         "sprite": "onethem",
         "color": [
@@ -486,14 +486,14 @@
         "tiling": "2"
     },
     {
-        "name": "text_ba",
+        "name": "text_ba2",
         "sprite": "text_ba",
         "color": [
             "0",
             "3"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_catext_h",
         "sprite": "text_catext_h",
@@ -502,7 +502,7 @@
             "2"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_catile_h",
         "sprite": "text_catile_h",
@@ -511,7 +511,7 @@
             "2"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_gigi",
         "sprite": "text_gigi",
@@ -520,7 +520,7 @@
             "2"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_gk9",
         "sprite": "text_gk9",
@@ -529,7 +529,7 @@
             "4"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_ixor",
         "sprite": "text_ixor",
@@ -538,7 +538,7 @@
             "3"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_jaejae",
         "sprite": "text_jaejae",
@@ -547,7 +547,7 @@
             "2"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_jk8",
         "sprite": "text_jk8",
@@ -556,7 +556,7 @@
             "1"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_justdont",
         "sprite": "text_justdont",
@@ -565,7 +565,7 @@
             "4"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_moli",
         "sprite": "text_moli",
@@ -574,7 +574,7 @@
             "3"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_pixel2",
         "sprite": "text_pixel2",
@@ -583,7 +583,7 @@
             "3"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_ryry",
         "sprite": "text_ryry",
@@ -592,7 +592,7 @@
             "3"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_toshu",
         "sprite": "text_toshu",
@@ -601,7 +601,7 @@
             "4"
         ],
         "tiling": "-1"
-	},
+    },
     {
         "name": "text_tesho",
         "sprite": "text_tesho",
@@ -610,5 +610,5 @@
             "4"
         ],
         "tiling": "-1"
-	}
+    }
 ]
