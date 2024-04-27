@@ -4,6 +4,7 @@ from cmath import log
 from functools import reduce
 from typing import Optional, Callable
 import json
+import time
 
 from .. import constants, errors
 from ..types import Bot, BuiltinMacro
@@ -394,6 +395,11 @@ class MacroCog:
             data = json.loads(data)
             assert isinstance(data, dict), "json must be an object"
             return json.dumps(list(data.keys())).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("unixtime")
+        def unixtime():
+            """Returns the current Unix timestamp, or the number of seconds since midnight on January 1st, 1970 in UTC."""
+            return str(time.time())
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
