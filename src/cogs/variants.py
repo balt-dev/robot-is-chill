@@ -847,10 +847,10 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Sets the sprite to only be in the 24x24 grid space."""
         width = sprite.shape[1]
         height = sprite.shape[0]
-        left = (width - 24) // 2
-        up = (height - 24) // 2
-        right = (width + 24) // 2
-        down = (height + 24) // 2
+        left = (width - ctx.spacing) // 2
+        up = (height - ctx.spacing) // 2
+        right = (width + ctx.spacing) // 2
+        down = (height + ctx.spacing) // 2
         return await crop(sprite, [left,up], [right,down], True)
 
     def slice_image(sprite, color_slice: slice):
