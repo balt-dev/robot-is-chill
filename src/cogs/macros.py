@@ -380,6 +380,15 @@ class MacroCog:
             index = int(index)
             data.insert(index, value)
             return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("json.keys")
+        def jsonkeys(data: str):
+            """Gets the keys of a JSON object as a JSON array."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, dict), "json must be an object"
+            return json.dumps(list(data.keys())).replace("[", "\\[").replace("]", "\\]")
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
