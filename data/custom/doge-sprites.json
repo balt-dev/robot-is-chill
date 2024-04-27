@@ -1,0 +1,11 @@
+[
+    {
+        "name": "quaqua",
+        "sprite": "quaqua",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    }
+]
