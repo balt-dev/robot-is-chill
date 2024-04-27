@@ -151,5 +151,41 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bread",
+        "sprite": "bread",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cellke",
+        "sprite": "cellke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "repulsor",
+        "sprite": "repulsor",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "directional",
+        "sprite": "directional",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
