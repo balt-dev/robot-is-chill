@@ -296,6 +296,11 @@ class MacroCog:
         def is_stored(name):
             """Checks if a variable is stored."""
             return str(name in self.variables).lower()
+        
+        @builtin("variables")
+        def varlist(name):
+            """Returns all variables as a JSON object."""
+            return json.dumps(self.variables).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("concat")
         def concat(*args):
@@ -305,7 +310,7 @@ class MacroCog:
         @builtin("unescape")
         def unescape(string: str):
             """Unescapes a string, replacing \\\\/ with /, \\\\[ with [, and \\\\] with ]."""
-            return string.replace("\\/", "/").replace("\\[", "[", "\\]", "]")
+            return string.replace("\\/", "/").replace("\\[", "[").replace("\\]", "]")
 
         @builtin("json.get")
         def jsonget(data: str, key: str):
