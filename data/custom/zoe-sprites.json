@@ -1,7 +1,7 @@
 [
     {
         "name": "glyph_snomba",
-        "sprite": "snom",
+        "sprite": "glyph_snomba",
         "color": [
             "0",
             "3"
