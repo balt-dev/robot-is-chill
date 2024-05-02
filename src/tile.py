@@ -73,7 +73,7 @@ class TileSkeleton:
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
-        if out.name in ("-", "."):
+        if out.name.lstrip("text_") in ("-", "."):
             return cls()
         raw_variants[0:0] = global_variant.split(":")
         if out.name == "2":
