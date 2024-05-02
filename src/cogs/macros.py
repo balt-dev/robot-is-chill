@@ -4,6 +4,7 @@ from cmath import log
 from functools import reduce
 from typing import Optional, Callable
 import json
+import time
 
 from .. import constants, errors
 from ..types import Bot, BuiltinMacro
@@ -259,6 +260,10 @@ class MacroCog:
             if end is not None:
                 end = int(end)
             return string.count(substring, start, end)
+        
+        @builtin("join")
+        def join(joiner: str, *strings: str):
+            return joiner.join(strings)
 
         @builtin("store")
         def store(name: str, value: str):
@@ -292,6 +297,11 @@ class MacroCog:
         def is_stored(name):
             """Checks if a variable is stored."""
             return str(name in self.variables).lower()
+        
+        @builtin("variables")
+        def varlist(name):
+            """Returns all variables as a JSON object."""
+            return json.dumps(self.variables).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("concat")
         def concat(*args):
@@ -300,8 +310,8 @@ class MacroCog:
 
         @builtin("unescape")
         def unescape(string: str):
-            """Unescapes a string, replacing \\\\/ with /."""
-            return string.replace("\\/", "/")
+            """Unescapes a string, replacing \\\\/ with /, \\\\[ with [, and \\\\] with ]."""
+            return string.replace("\\/", "/").replace("\\[", "[").replace("\\]", "]")
 
         @builtin("json.get")
         def jsonget(data: str, key: str):
@@ -312,7 +322,7 @@ class MacroCog:
             assert isinstance(data, (dict, list)), "json must be an array or an object"
             if isinstance(data, list):
                 key = int(key)
-            return json.dumps(data[key]).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data[key]).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.set")
         def jsonset(data: str, key: str, value: str):
@@ -327,7 +337,7 @@ class MacroCog:
             if isinstance(data, list):
                 key = int(key)
             data[key] = value
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.remove")
         def jsonremove(data: str, key: str):
@@ -339,7 +349,7 @@ class MacroCog:
             if isinstance(data, list):
                 key = int(key)
             del data[key]
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.len")
         def jsonlen(data: str):
@@ -361,7 +371,7 @@ class MacroCog:
             assert isinstance(data, list), "json must be an array"
             value = json.loads(value)
             data.append(value)
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
 
         @builtin("json.insert")
         def jsoninsert(data: str, index: str, value: str):
@@ -375,7 +385,21 @@ class MacroCog:
             value = json.loads(value)
             index = int(index)
             data.insert(index, value)
-            return json.dumps(data).replace("[", "\\[").replace("\\]", "]")
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("json.keys")
+        def jsonkeys(data: str):
+            """Gets the keys of a JSON object as a JSON array."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, dict), "json must be an object"
+            return json.dumps(list(data.keys())).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("unixtime")
+        def unixtime():
+            """Returns the current Unix timestamp, or the number of seconds since midnight on January 1st, 1970 in UTC."""
+            return str(time.time())
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
