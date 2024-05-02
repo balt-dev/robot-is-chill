@@ -71,6 +71,7 @@ class TileSkeleton:
             else:
                 string = "text_" + string
         elif string[0] == "$":
+            explicitly_text = True
             string = "text_" + string[1:]
         out.empty = False
         out.raw_string = string
@@ -79,7 +80,7 @@ class TileSkeleton:
         out.name = raw_variants.pop(0)
         if not explicitly_text and (
                 ((explicitly_tile or not rule) and out.name in (".", "-", "empty")) or
-                (rule and out.name.removeprefix("text_") in (".", "-"))
+                (not explicitly_tile and rule and out.name.removeprefix("text_") in (".", "-"))
         ):
             return cls()
         raw_variants[0:0] = global_variant.split(":")
