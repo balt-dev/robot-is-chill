@@ -59,10 +59,14 @@ class TileSkeleton:
     async def parse(cls, bot, possible_variants, string: str, rule: bool = True, palette: str = "default",
                     global_variant="", possible_variant_names=[], macros={}):
         out = cls()
+        explicitly_text = False
+        explicitly_tile = False
         if rule:
             if string[:5] == "tile_":
+                explicitly_tile = True
                 string = string[5:]
             elif string[0] == "$":
+                explicitly_tile = True
                 string = string[1:]
             else:
                 string = "text_" + string
@@ -73,7 +77,10 @@ class TileSkeleton:
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
-        if out.name.removeprefix("text_") in ("-", ".", "empty"):
+        if not explicitly_text and (
+                ((explicitly_tile or not rule) and out.name in (".", "-", "empty")) or
+                (rule and out.name.removeprefix("text_") in (".", "-"))
+        ):
             return cls()
         raw_variants[0:0] = global_variant.split(":")
         if out.name == "2":
