@@ -1,3 +1,4 @@
+import math
 import re
 from random import random, seed
 from cmath import log
@@ -238,7 +239,7 @@ class MacroCog:
 
         @builtin("slice")
         def slice_(string: str, start: str | None = None, end: str | None = None, step: str | None = None):
-            """Slicese a string."""
+            """Slices a string."""
             start = int(to_float(start)) if start is not None and len(start) != 0 else None
             end = int(to_float(end)) if end is not None and len(end) != 0 else None
             step = int(to_float(step)) if step is not None and len(step) != 0 else None
@@ -247,6 +248,7 @@ class MacroCog:
         
         @builtin("find")
         def find(string: str, substring: str, start: str | None = None, end: str | None = None):
+            """Returns the index of the second argument in the first, optionally between the third and fourth."""
             if start is not None:
                 start = int(start)
             if end is not None:
@@ -255,6 +257,8 @@ class MacroCog:
         
         @builtin("count")
         def count(string: str, substring: str, start: str | None = None, end: str | None = None):
+            """Returns the number of occurences of the second argument in the first, """
+            """optionally between the third and fourth arguments."""
             if start is not None:
                 start = int(start)
             if end is not None:
@@ -263,6 +267,7 @@ class MacroCog:
         
         @builtin("join")
         def join(joiner: str, *strings: str):
+            """Joins all arguments with the first argument."""
             return joiner.join(strings)
 
         @builtin("store")
@@ -299,9 +304,20 @@ class MacroCog:
             return str(name in self.variables).lower()
         
         @builtin("variables")
-        def varlist(name):
+        def varlist():
             """Returns all variables as a JSON object."""
-            return json.dumps(self.variables).replace("[", "\\[").replace("]", "\\]")
+            return json.dumps(self.variables, separators=(",", ":")).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("repeat")
+        def repeat(amount: str, string: str, joiner: str = ""):
+            """Repeats the second argument N times, where N is the first argument, optionally joined by the third."""
+            # Allow floats, rounding up, for historical reasons
+            amount = max(math.ceil(float(amount)), 0)
+            # Precalculate the length
+            length = amount * len(string) + max(amount - 1, 0) * len(joiner)
+            # Reject if too long
+            assert length < 1024, "repeated string is too long (max is 1024 characters)"
+            return joiner.join([string] * amount)
 
         @builtin("concat")
         def concat(*args):
