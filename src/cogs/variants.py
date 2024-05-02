@@ -632,8 +632,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Puts the sprite's bounding box behind it. Useful for debugging."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
-        left, right = np.where(cols)[0][[0, -1]]
-        top, bottom = np.where(rows)[0][[0, -1]]
+        try:
+            left, right = np.where(cols)[0][[0, -1]]
+            top, bottom = np.where(rows)[0][[0, -1]]
+        except IndexError:
+            return sprite
         out = np.zeros_like(sprite).astype(float)
         out[top:bottom,   left:right] = (0xFF, 0xFF, 0xFF, 0x80)
         out[top,          left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
