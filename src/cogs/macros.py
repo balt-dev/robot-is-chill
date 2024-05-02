@@ -316,7 +316,7 @@ class MacroCog:
             # Precalculate the length
             length = amount * len(string) + max(amount - 1, 0) * len(joiner)
             # Reject if too long
-            assert length < 1024, "repeated string is too long (max is 1024 characters)"
+            assert length < 4096, "repeated string is too long (max is 4096 characters)"
             return joiner.join([string] * amount)
 
         @builtin("concat")

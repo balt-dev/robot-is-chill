@@ -59,8 +59,6 @@ class TileSkeleton:
     async def parse(cls, bot, possible_variants, string: str, rule: bool = True, palette: str = "default",
                     global_variant="", possible_variant_names=[], macros={}):
         out = cls()
-        if string in ("-", "."):
-            return out
         if rule:
             if string[:5] == "tile_":
                 string = string[5:]
@@ -75,6 +73,8 @@ class TileSkeleton:
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
+        if out.name in ("-", "."):
+            return cls()
         raw_variants[0:0] = global_variant.split(":")
         if out.name == "2":
             # Easter egg!
@@ -222,5 +222,5 @@ class ProcessedTile:
     keep_alpha: bool = True
 
     def copy(self):
-        return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement,
+        return ProcessedTile(self.empty, self.name, self.wobble_frames, self.frames, self.blending, self.displacement,
                              self.keep_alpha)

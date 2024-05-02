@@ -808,9 +808,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # [abcd-0123]
         if re.match(r"^[A-Za-z\d]{4}-[A-Za-z\d]{4}$", fine_query) and not mobile:
             row = await self.bot.db.conn.fetchone(
-                '''
-				SELECT * FROM custom_levels WHERE code == ?;
-				''',
+                'SELECT * FROM custom_levels WHERE code == ?;',
                 fine_query
             )
             if row is not None:
@@ -840,7 +838,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             except KeyError:
                 return await ctx.error("A level could not be found with that query.")
         else:
-            levels = {}
             level = custom_level
 
         footer = None
@@ -1046,7 +1043,8 @@ Filterimages are formatted as follows:
             assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
             url = url[0]
             await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
-            del self.bot.db.filter_cache[name]
+            if name in self.bot.db.filter_cache:
+                del self.bot.db.filter_cache[name]
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Deleted!",
