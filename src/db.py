@@ -23,7 +23,7 @@ class Database:
     """Everything relating to persistent readable & writable data."""
     conn: asqlite.Connection
     bot: None
-    filter_cache: dict[str, np.ndarray]
+    filter_cache: dict[str, (Image.Image, bool)]
 
     def __init__(self, bot):
         self.filter_cache = {}
@@ -265,7 +265,13 @@ class Database:
                 buffer = requests.get(result, stream=True).raw.read()
                 try:
                     with Image.open(BytesIO(buffer)) as im:
-                        final = np.array(im.convert("RGBA")), absolute
+                        frames = []
+                        frame_count = getattr(im, "n_frames", 1)
+                        assert frame_count <= 3, "Too many frames in the filter (max is 3)!"
+                        for i in range(0, frame_count):
+                            im.seek(i)
+                            frames.append(im.copy().convert("RGBA"))
+                        final = frames, absolute
                         self.filter_cache[url] = final
                         return final
                 except IOError:

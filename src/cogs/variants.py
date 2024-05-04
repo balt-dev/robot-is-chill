@@ -616,27 +616,6 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             base[mask ^ (level < 0), ...] = 0
         return base
 
-        """Applies a meta filter to an image."""
-        if level is None: level = 1
-        assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
-        # Not padding at negative values is intentional
-        padding = max(level, 0)
-        orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
-        check_size(*orig.shape[1::-1])
-        base = orig[..., 3]
-        if level < 0:
-            base = 255 - base
-        kernel = META_KERNELS[kernel]
-        for _ in range(abs(level)):
-            base = cv2.filter2D(src=base, ddepth=-1, kernel=kernel)
-        base = np.dstack((base, base, base, base))
-        mask = orig[..., 3] > 0
-        if not (level % 2) and level > 0:
-            base[mask, ...] = orig[mask, ...]
-        else:
-            base[mask ^ (level < 0), ...] = 0
-        return base
-
     @add_variant()
     async def land(sprite, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
         """Removes all space between the sprite and its bounding box on the specified side."""
@@ -653,8 +632,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Puts the sprite's bounding box behind it. Useful for debugging."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
-        left, right = np.where(cols)[0][[0, -1]]
-        top, bottom = np.where(rows)[0][[0, -1]]
+        try:
+            left, right = np.where(cols)[0][[0, -1]]
+            top, bottom = np.where(rows)[0][[0, -1]]
+        except IndexError:
+            return sprite
         out = np.zeros_like(sprite).astype(float)
         out[top:bottom,   left:right] = (0xFF, 0xFF, 0xFF, 0x80)
         out[top,          left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
@@ -1172,7 +1154,12 @@ If a value is negative, it removes pixels above the threshold instead."""
     @add_variant("filter", "fi!")
     async def filterimage(sprite, filter_url: str, absolute: Optional[bool] = None, *, tile, wobble, renderer):
         """Applies a filter image to a sprite. For information about filter images, look at the filterimage command."""
-        filt, abs_db = await renderer.bot.db.get_filter(filter_url)
+        frames, abs_db = await renderer.bot.db.get_filter(filter_url)
+        try:
+            filter = frames[wobble]
+        except IndexError:
+            filter = frames[0]
+        filt = np.array(filter.convert("RGBA"))
         check_size(*filt.shape[:2])
         absolute = absolute if absolute is not None else \
             abs_db if abs_db is not None else False
