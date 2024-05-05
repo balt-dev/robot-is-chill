@@ -59,22 +59,30 @@ class TileSkeleton:
     async def parse(cls, bot, possible_variants, string: str, rule: bool = True, palette: str = "default",
                     global_variant="", possible_variant_names=[], macros={}):
         out = cls()
-        if string in ("-", "."):
-            return out
+        explicitly_text = False
+        explicitly_tile = False
         if rule:
             if string[:5] == "tile_":
+                explicitly_tile = True
                 string = string[5:]
             elif string[0] == "$":
+                explicitly_tile = True
                 string = string[1:]
             else:
                 string = "text_" + string
         elif string[0] == "$":
+            explicitly_text = True
             string = "text_" + string[1:]
         out.empty = False
         out.raw_string = string
         out.palette = palette
         raw_variants = re.split(r"[;:]", string)
         out.name = raw_variants.pop(0)
+        if not explicitly_text and (
+                ((explicitly_tile or not rule) and out.name in (".", "-", "empty")) or
+                (not explicitly_tile and rule and out.name.removeprefix("text_") in (".", "-"))
+        ):
+            return cls()
         raw_variants[0:0] = global_variant.split(":")
         if out.name == "2":
             # Easter egg!
@@ -222,5 +230,5 @@ class ProcessedTile:
     keep_alpha: bool = True
 
     def copy(self):
-        return ProcessedTile(self.empty, self.name, self.wobble, self.frames, self.blending, self.displacement,
+        return ProcessedTile(self.empty, self.name, self.wobble_frames, self.frames, self.blending, self.displacement,
                              self.keep_alpha)

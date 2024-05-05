@@ -1,0 +1,11 @@
+[
+    {
+        "name": "glyph_snomba",
+        "sprite": "glyph_snomba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]
