@@ -414,7 +414,7 @@ class MacroCog:
 
         # Find each outmost pair of brackets
         found = 0
-        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
+        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*?(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
             found += 1
             if debug_info:
                 if found > constants.MACRO_LIMIT:
