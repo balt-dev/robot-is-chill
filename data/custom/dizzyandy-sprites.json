@@ -1015,5 +1015,50 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "friend",
+        "sprite": "friend",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_friend",
+        "sprite": "text_friend",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glitter",
+        "sprite": "glitter",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "ignsii",
+        "sprite": "ignsii",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ignsii",
+        "sprite": "text_ignsii",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -279,5 +279,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tag",
+        "sprite": "tag",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

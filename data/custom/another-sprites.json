@@ -52,5 +52,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "kuwi",
+        "sprite": "kuwi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kuwi",
+        "sprite": "text_kuwi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -466,5 +466,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "septapod",
+        "sprite": "septapod",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
