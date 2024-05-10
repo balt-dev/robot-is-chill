@@ -501,7 +501,7 @@
             "4",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "text_xx__xx",
@@ -510,7 +510,7 @@
             "2",
             "2"
         ],
-        "tiling": "2"
+        "tiling": "-1"
     },
     {
         "name": "lift2",

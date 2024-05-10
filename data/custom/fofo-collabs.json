@@ -454,7 +454,7 @@
         "sprite": "veev",
         "color": [
             "3",
-            "2"
+            "3"
         ],
         "tiling": "2"
     },
@@ -463,7 +463,7 @@
         "sprite": "text_veev",
         "color": [
             "3",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },

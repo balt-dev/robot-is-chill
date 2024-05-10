@@ -985,7 +985,7 @@
         "sprite": "robaba",
         "color": [
             "0",
-            "2"
+            "1"
         ],
         "tiling": "2"
     },
@@ -994,7 +994,7 @@
         "sprite": "text_robaba",
         "color": [
             "0",
-            "2"
+            "1"
         ],
         "tiling": "-1"
     },
