@@ -288,5 +288,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "game",
+        "sprite": "game",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_game",
+        "sprite": "text_game",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_link",
+        "sprite": "text_link",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

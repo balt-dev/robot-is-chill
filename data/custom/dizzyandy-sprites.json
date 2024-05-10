@@ -984,7 +984,7 @@
         "name": "robaba",
         "sprite": "robaba",
         "color": [
-            "0",
+            "1",
             "1"
         ],
         "tiling": "2"
@@ -1058,6 +1058,15 @@
         "color": [
             "6",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj",
+        "sprite": "obj",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

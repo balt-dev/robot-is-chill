@@ -1833,15 +1833,6 @@
             "1",
             "4"
         ],
-        "tiling": "0"
-    },
-    {
-        "name": "trident",
-        "sprite": "trident",
-        "color": [
-            "1",
-            "4"
-        ],
         "tiling": "-1"
     },
     {

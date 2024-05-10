@@ -2149,5 +2149,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "aaaa",
+        "sprite": "aaaa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_aaaa",
+        "sprite": "text_aaaa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
