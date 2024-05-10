@@ -43,5 +43,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "uknounko",
+        "sprite": "uknounko",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

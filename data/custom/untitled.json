@@ -1,0 +1,38 @@
+[
+    {
+        "name": "lele",
+        "sprite": "lele",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_lele",
+        "sprite": "text_lele",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "velvel",
+        "sprite": "velvel",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_velvel",
+        "sprite": "text_velvel",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

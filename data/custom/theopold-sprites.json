@@ -507,10 +507,10 @@
         "name": "text_xx__xx",
         "sprite": "text_xx--xx",
         "color": [
-            "4",
-            "1"
+            "2",
+            "2"
         ],
-        "tiling": "-1"
+        "tiling": "2"
     },
     {
         "name": "lift2",

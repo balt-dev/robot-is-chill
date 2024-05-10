@@ -782,7 +782,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "num",
         "sprite": "number",
         "color": [
@@ -963,24 +963,6 @@
         "tiling": "-1"
     },
     {
-        "name": "robaba",
-        "sprite": "robaba",
-        "color": [
-            "1",
-            "1"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "text_robaba",
-        "sprite": "text_robaba",
-        "color": [
-            "1",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "lucy",
         "sprite": "lucy",
         "color": [
@@ -995,6 +977,42 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "robaba",
+        "sprite": "robaba",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_robaba",
+        "sprite": "text_robaba",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "biy",
+        "sprite": "baba is you",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "map",
+        "sprite": "map",
+        "color": [
+            "4",
+            "1"
         ],
         "tiling": "-1"
     }
