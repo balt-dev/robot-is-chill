@@ -70,5 +70,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "oshte",
+        "sprite": "oshte",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
