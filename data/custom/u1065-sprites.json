@@ -7,5 +7,14 @@
             "2"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_it'b",
+        "sprite": "text_itb",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
