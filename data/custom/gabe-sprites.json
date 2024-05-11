@@ -421,8 +421,8 @@
             "1"
         ],
         "tiling": "-1"
-	},
-	{
+    },
+    {
         "name": "onethem",
         "sprite": "onethem",
         "color": [
@@ -479,6 +479,150 @@
     {
         "name": "text_whatesho",
         "sprite": "text_whatesho",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gigi",
+        "sprite": "gigi",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jk8",
+        "sprite": "jk8",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ba2",
+        "sprite": "text_ba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_catext_h",
+        "sprite": "text_catext_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_catile_h",
+        "sprite": "text_catile_h",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_gigi",
+        "sprite": "text_gigi",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_gk9",
+        "sprite": "text_gk9",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ixor",
+        "sprite": "text_ixor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jaejae",
+        "sprite": "text_jaejae",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jk8",
+        "sprite": "text_jk8",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_justdont",
+        "sprite": "text_justdont",
+        "color": [
+            "6",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_moli",
+        "sprite": "text_moli",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pixel2",
+        "sprite": "text_pixel2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ryry",
+        "sprite": "text_ryry",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_toshu",
+        "sprite": "text_toshu",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tesho",
+        "sprite": "text_tesho",
         "color": [
             "2",
             "4"
