@@ -468,6 +468,24 @@
         "tiling": "-1"
     },
     {
+        "name": "whatesho",
+        "sprite": "whatesho",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_whatesho",
+        "sprite": "text_whatesho",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "gigi",
         "sprite": "gigi",
         "color": [

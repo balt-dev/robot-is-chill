@@ -501,14 +501,14 @@
             "4",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "text_xx__xx",
         "sprite": "text_xx--xx",
         "color": [
-            "4",
-            "1"
+            "2",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -1915,5 +1915,257 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "widdershins",
+        "sprite": "spiral",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ednac",
+        "sprite": "everydulstukneedsacrendel",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ednac",
+        "sprite": "text_everydulstukneedsacrendel",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "brubrubeta",
+        "sprite": "brubrubeta",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "balonabeta",
+        "sprite": "balonabeta",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_brubrubeta",
+        "sprite": "text_brubrubeta",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_balonabeta",
+        "sprite": "text_balonabeta",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "skeletonkey",
+        "sprite": "skelekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_skeletonkey",
+        "sprite": "text_skelekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_oppose",
+        "sprite": "text_oppose",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ququ",
+        "sprite": "ququ",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ququ",
+        "sprite": "text_ququ",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "deeedeee",
+        "sprite": "deeedeee",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "vme",
+        "sprite": "vme",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "'tis",
+        "sprite": "tis",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cooker",
+        "sprite": "text_cooker",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pot",
+        "sprite": "text_pot",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pot",
+        "sprite": "pot",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "thisthis",
+        "sprite": "thisthis",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "darmok",
+        "sprite": "darmok",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "jalad",
+        "sprite": "jalad",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "defdef",
+        "sprite": "defdef",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_the",
+        "sprite": "text_the",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "the",
+        "sprite": "the",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "keekee",
+        "sprite": "keekee",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_keekee",
+        "sprite": "text_keekee",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "aaaa",
+        "sprite": "aaaa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_aaaa",
+        "sprite": "text_aaaa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

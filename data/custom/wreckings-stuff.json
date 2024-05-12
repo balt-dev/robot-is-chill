@@ -117,7 +117,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_link",
+        "name": "text_link2",
         "sprite": "text_link",
         "color": [
             "5",
@@ -420,6 +420,24 @@
         "color": [
             "0",
             "3"
+        ]
+    },
+	{
+        "name": "the50the50",
+        "sprite": "the50the50",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+	{
+        "name": "text_the50the50",
+        "sprite": "text_the50the50",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
         ]
     }
 ]

@@ -448,5 +448,32 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "veev",
+        "sprite": "veev",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_veev",
+        "sprite": "text_veev",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "septapod",
+        "sprite": "septapod",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

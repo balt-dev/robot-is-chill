@@ -43,5 +43,41 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "uknoukno",
+        "sprite": "uknoukno",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kuwi",
+        "sprite": "kuwi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kuwi",
+        "sprite": "text_kuwi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "oshte",
+        "sprite": "oshte",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
