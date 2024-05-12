@@ -3,7 +3,7 @@
         "name": "text_offline2",
         "sprite": "text_offline2",
         "color": [
-"2",
+			"2",
             "4"
         ],
         "tiling": "-1"
@@ -55,7 +55,7 @@
     },
     {
         "name": "text_channel2",
-"sprite": "text_channel2",
+		"sprite": "text_channel2",
         "color": [
             "2",
             "4"
@@ -99,7 +99,7 @@
     {
         "name": "text_offline1",
         "sprite": "text_offline1",
-"color": [
+		"color": [
             "2",
             "1"
         ],
@@ -120,6 +120,132 @@
         "color": [
             "2",
             "1"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "iwlkey",
+        "sprite": "iwlkey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlmkey",
+        "sprite": "iwlmkey",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlekey",
+        "sprite": "iwlekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlstar",
+        "sprite": "iwlstar",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlunstar",
+        "sprite": "iwlunstar",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "painted",
+        "sprite": "painted",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "eroded",
+        "sprite": "erosion",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwldoor",
+        "sprite": "iwldoor",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlblank",
+        "sprite": "iwlblank",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlblast",
+        "sprite": "iwlblast",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "inputpoint",
+        "sprite": "iwlinput",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "outputpoint",
+        "sprite": "iwloutput",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "omega",
+        "sprite": "omega",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jam",
+        "sprite": "jam",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

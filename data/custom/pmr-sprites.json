@@ -97,5 +97,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "bowl",
+        "sprite": "bowl",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bowl",
+        "sprite": "text_bowl",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
