@@ -5,7 +5,9 @@ import inspect
 import traceback
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Coroutine, Optional, Literal, BinaryIO
+from typing import TYPE_CHECKING, Any, Coroutine, Optional, Literal, BinaryIO, Callable
+
+from attr import define
 
 from . import errors, constants
 from .db import Database
@@ -308,3 +310,16 @@ class RenderContext:
     sprite_cache: dict = field(default_factory=lambda: {})
     tile_cache: dict = field(default_factory=lambda: {})
     letters: bool = False
+
+
+
+
+@define
+class BuiltinMacro:
+    """A built-in macro."""
+
+    description: str
+    """A description of what the macro does."""
+
+    function: Callable
+    """The function to call to run the macro."""

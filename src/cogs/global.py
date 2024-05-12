@@ -27,7 +27,7 @@ from discord.ext import commands, menus
 
 from src.types import SignText, RenderContext
 from src.utils import ButtonPages
-from ..tile import Tile, TileSkeleton, parse_variants, parse_macros
+from ..tile import Tile, TileSkeleton, parse_variants
 
 from .. import constants, errors
 from ..db import CustomLevelData, LevelData
@@ -223,7 +223,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             for w, timestep in enumerate(grid)
         ]
 
-
     async def render_tiles(self, ctx: Context, *, objects: str, rule: bool):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
@@ -258,10 +257,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             spoiler = "||" in tiles
             tiles = tiles.replace("||", "")
 
-            # Check for empty input
-            if not tiles:
-                return await ctx.error("Input cannot have 0 tiles.")
-
             # Check flags
             old_tiles = tiles
 
@@ -294,8 +289,13 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             passes = 0
             while last_tiles != tiles and passes < 50:
                 last_tiles = tiles
-                tiles = parse_macros(tiles, user_macros).strip()
+                tiles, _ = ctx.bot.macro_handler.parse_macros(tiles, False, user_macros)
+                tiles = tiles.strip()
                 passes += 1
+
+            # Check for empty input
+            if not tiles:
+                return await ctx.error("Input cannot have 0 tiles.")
 
             # Split input into lines
             word_rows = tiles.splitlines()
@@ -353,6 +353,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         sign_text = SignText(text=match.group(1), x=x, y=y, time_start=d)
                                         variants = [variant for variant in match.group(2).split(":") if len(variant)]
                                         variants = parse_variants(
+                                            self.bot,
                                             font_variants, variants,
                                             macros=user_macros
                                         ).get("sign", [])
@@ -381,8 +382,8 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                         # This is done to prevent setting everything to one instance of an object.
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
-                                                possible_variants, tile, rule,
-                                                palette=render_ctx.palette, bot=self.bot,
+                                                self.bot, possible_variants, tile, rule,
+                                                palette=render_ctx.palette,
                                                 global_variant=render_ctx.global_variant,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros
@@ -392,11 +393,12 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                                     else:
                                         layer_grid[d:, l, y, x] = [
                                             await TileSkeleton.parse(
+                                                self.bot,
                                                 possible_variants,
                                                 layer_grid[d - 1, l, y, x].raw_string.split(
                                                     ";" if ";" in tile else ":", 1
                                                 )[0] + tile,
-                                                rule, bot=self.bot,
+                                                rule,
                                                 possible_variant_names=possible_variant_names,
                                                 macros=user_macros,
                                                 palette=render_ctx.palette
@@ -806,9 +808,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         # [abcd-0123]
         if re.match(r"^[A-Za-z\d]{4}-[A-Za-z\d]{4}$", fine_query) and not mobile:
             row = await self.bot.db.conn.fetchone(
-                '''
-				SELECT * FROM custom_levels WHERE code == ?;
-				''',
+                'SELECT * FROM custom_levels WHERE code == ?;',
                 fine_query
             )
             if row is not None:
@@ -838,7 +838,6 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             except KeyError:
                 return await ctx.error("A level could not be found with that query.")
         else:
-            levels = {}
             level = custom_level
 
         footer = None
@@ -935,6 +934,7 @@ Filterimages are formatted as follows:
         filter_headers = requests.head(filter_url, timeout=3).headers
         assert int(filter_headers.get("content-length", 0)) < constants.FILTER_MAX_SIZE, f"Filter is too big!"
         with Image.open(requests.get(filter_url, stream=True).raw) as im:
+            assert im.width <= 256 and im.height <= 256, "Can't create a filter greater than 256 pixels on either side!"
             fil = np.array(im.convert("RGBA"), dtype=np.uint8)
         fil[..., :2] += np.indices(fil.shape[1::-1]).astype(np.uint8).T * np.uint8(
             1 if target_mode.startswith("abs") else -1)
@@ -958,6 +958,7 @@ Filterimages are formatted as follows:
                      height: int):
         """Creates a template filter."""
         assert width > 0 and height > 0, "Can't create a filter with a non-positive area!"
+        assert width <= 256 and height <= 256, "Can't create a filter greater than 256 pixels on either side!"
         size = (height, width)
         fil = np.ones((*size, 4), dtype=np.uint8) * 0xFF
         fil[..., :2] -= 0x7F
@@ -986,7 +987,7 @@ Filterimages are formatted as follows:
             url: str
     ):
         """Adds a filter to the database from a URL."""
-        assert not len(ctx.message.attachments), "Images can't be given using attachments anymore."\
+        assert not len(ctx.message.attachments), "Images can't be given using attachments anymore." \
                                                  "I recommend [Catbox](https://catbox.moe) for hosting."
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute("SELECT name FROM filterimages WHERE name like ?", name)
@@ -1042,7 +1043,8 @@ Filterimages are formatted as follows:
             assert url is not None, f"The filter `{name}` doesn't exist, or you don't have permission to remove it!"
             url = url[0]
             await cursor.execute(f"DELETE FROM filterimages WHERE url == ?;", url)
-            del self.bot.db.filter_cache[name]
+            if name in self.bot.db.filter_cache:
+                del self.bot.db.filter_cache[name]
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
                 title="Deleted!",

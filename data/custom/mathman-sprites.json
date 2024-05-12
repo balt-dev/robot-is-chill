@@ -78,6 +78,15 @@
         "tiling": "-1"
     },
     {
+        "name": "fi2",
+        "sprite": "fi2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "welcomeback",
         "sprite": "welcomeback",
         "color": [

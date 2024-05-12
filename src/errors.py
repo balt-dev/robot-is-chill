@@ -69,7 +69,10 @@ class FailedBuiltinMacro(BabaError):
     """Builtin macro failed to compute."""
     raw: str
     message: Exception
+    custom: bool
 
+class CustomMacroError(BabaError):
+    """User-made macro error."""
 
 class BadPaletteIndex(VariantError):
     """Not in the palette."""

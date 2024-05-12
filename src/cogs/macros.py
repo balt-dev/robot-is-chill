@@ -1,205 +1,496 @@
-import io
-import signal
-from datetime import datetime
-from typing import Literal
-
-import discord
-from discord.ext import commands, menus
-
-from .. import constants
-from ..types import Bot, Context, Macro
-from ..utils import ButtonPages
-from ..tile import parse_macros
-
+import math
 import re
+from random import random, seed
+from cmath import log
+from functools import reduce
+from typing import Optional, Callable
+import json
+import time
+
+from .. import constants, errors
+from ..types import Bot, BuiltinMacro
 
 
-async def coro_part(func, *args, **kwargs):
-    async def wrapper():
-        result = func(*args, **kwargs)
-        return await result
+class MacroCog:
 
-    return wrapper
-
-
-async def start_timeout(fn, *args, **kwargs):
-    def handler(_signum, _frame):
-        raise AssertionError("The command took too long and was timed out.")
-
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(int(constants.TIMEOUT_DURATION))
-    fn(*args, **kwargs)
-
-
-class MacroQuerySource(menus.ListPageSource):
-    def __init__(
-            self, data: list[str]):
-        self.count = len(data)
-        super().__init__(data, per_page=45)
-
-    async def format_page(self, menu: menus.Menu, entries: list[str]) -> discord.Embed:
-        embed = discord.Embed(
-            title="Search results",
-            # color=menu.bot.embed_color  I think the theme color suits it better.
-        ).set_footer(
-            text=f"Page {menu.current_page + 1} of {self.get_max_pages()}   ({self.count} entries)",
-        )
-        while len(entries) > 0:
-            field = ""
-            for entry in entries[:15]:
-                field += f"{entry}\n"
-            embed.add_field(
-                name="",
-                value=field,
-            )
-            del entries[:15]
-        return embed
-
-
-class MacroCog(commands.Cog, name='Macros'):
     def __init__(self, bot: Bot):
         self.bot = bot
+        self.variables = {}
+        self.builtins: dict[str, BuiltinMacro] = {}
 
-    @commands.group(aliases=["m", "macros"], pass_context=True, invoke_without_command=True)
-    async def macro(self, ctx: Context):
-        """Front-end for letting users (that means you!) create, edit, and remove variant macros.
-    Macros are simply a way of aliasing one or more variants to one name.
-    For example, if a macro called `face` with the value `csel-1` exists,
-    rendering `baba:m!face` would actually render `baba:csel-1`.
-    Arguments can be specified in macros with $<number>. As an example,
-    `transpose` aliased to `rot$1:scale$2` would mean that
-    rendering `baba:m!transpose/45/2` would give you `baba:rot45:scale2`.
-    Important to note, double negatives are valid inputs to variants, so
-    something like `baba:scale--2` would give the same as `baba:scale2`.
-    $# will be replaced with the amount of arguments given to the macro."""
-        await ctx.invoke(ctx.bot.get_command("cmds"), "macro")
+        def builtin(name: str):
+            def wrapper(func: Callable):
+                self.builtins[name] = BuiltinMacro(func.__doc__, func)
+                return func
 
-    @macro.command(aliases=["r"])
-    @commands.is_owner()
-    async def refresh(self, ctx: Context):
-        """Refreshes the macro database."""
-        self.bot.macros = {}
-        async with self.bot.db.conn.cursor() as cur:
-            await cur.execute("SELECT * from macros")
-            for (name, value, description, author) in await cur.fetchall():
-                self.bot.macros[name] = Macro(value, description, author)
-        return await ctx.reply("Refreshed database.")
+            return wrapper
 
-    @macro.command(aliases=["mk", "make"])
-    async def create(self, ctx: Context, name: str, value: str, *, description: str = None):
-        """Adds a macro to the database."""
-        async with self.bot.db.conn.cursor() as cursor:
-            await cursor.execute("SELECT value FROM macros WHERE name == ?", name)
-            dname = await cursor.fetchone()
-            if dname is not None:
-                return await ctx.error(
-                    f"Macro of name `{name}` already exists in the database!")
-            assert ";" not in value, "Sorry, but macros can't have persistent variants in them."
-            assert "/" not in name, "A macro's name can't have `/` in it, as it'd clash with parsing arguments."
-            # Call the user out on not adding a description, hopefully making them want to add a good one
-            assert description is not None, "A description is _required_. Please describe what your macro does understandably!"
-            command = "INSERT INTO macros VALUES (?, ?, ?, ?);"
-            args = (name, value, description, ctx.author.id)
-            self.bot.macros[name] = Macro(value, description, ctx.author.id)
-            await cursor.execute(command, args)
-            return await ctx.reply(f"Successfully added `{name}` to the database, aliased to `{value}`!")
+        @builtin("to_float")
+        def to_float(v):
+            """Casts a value to a float."""
+            if "j" in v:
+                return complex(v)
+            return float(v)
 
-    @macro.command(aliases=["e"])
-    async def edit(self, ctx: Context, name: str, attribute: Literal["value", "description"], *, new: str):
-        """Edits a macro. You must own said macro to edit it."""
-        assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
-        assert "value" != attribute or ";" not in new, "Sorry, but macros can't have persistent variants in them."
-        async with self.bot.db.conn.cursor() as cursor:
-            if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
-                check = await cursor.fetchone()
-                assert check is not None, "You can't edit a macro you don't own, silly."
-            # NOTE: I know I shouldn't use fstrings with execute, but it won't allow me to specify a row name with ?.
-            await cursor.execute(f"UPDATE macros SET {attribute} = ? WHERE name == ?", new, name)
-        setattr(self.bot.macros[name], attribute, new)
-        return await ctx.reply(f"Edited `{name}`'s {attribute} to be `{new}`.")
+        @builtin("to_boolean")
+        def to_boolean(v: str):
+            """Casts a value to a boolean."""
+            if v in ("true", "1", "True", "1.0", "1.0+0.0j"):
+                return True
+            elif v in ("false", "0", "False", "0.0", "0.0+0.0j"):
+                return False
+            else:
+                raise AssertionError(f"could not convert string to boolean: '{v}'")
 
-    @macro.command(aliases=["rm", "remove", "del"])
-    async def delete(self, ctx: Context, name: str):
-        """Deletes a macro. You must own said macro to delete it."""
-        assert name in self.bot.macros, f"Macro `{name}` already isn't in the database!"
-        async with self.bot.db.conn.cursor() as cursor:
-            if not await ctx.bot.is_owner(ctx.author):
-                await cursor.execute("SELECT name FROM macros WHERE name == ? AND creator == ?", name, ctx.author.id)
-                check = await cursor.fetchone()
-                assert check is not None, "You can't delete a macro you don't own, silly."
-            await cursor.execute(f"DELETE FROM macros WHERE name == ?", name)
-        del self.bot.macros[name]
-        return await ctx.reply(f"Deleted `{name}`.")
+        @builtin("add")
+        def add(*args: str):
+            assert len(args) >= 2, "add macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x + to_float(y), args, 0))
 
-    @macro.command(aliases=["?", "list", "query"])
-    async def search(self, ctx: Context, pattern: str = '.*'):
-        """Searches the database for macros."""
-        async with self.bot.db.conn.cursor() as cursor:
-            await cursor.execute("SELECT name FROM macros WHERE name REGEXP ?", pattern)
-            names = [name for (name,) in await cursor.fetchall()]
-        return await ButtonPages(MacroQuerySource(sorted(names))).start(ctx)
+        @builtin("is_number")
+        def is_number(value: str):
+            """Checks if a value is a number."""
+            try:
+                to_float(value)
+                return "true"
+            except (TypeError, ValueError):
+                return "false"
 
-    @macro.command(aliases=["x", "run"])
-    async def execute(self, ctx: Context, *, macro: str):
-        """Executes some given macroscript and outputs its return value."""
-        try:
-            macros = ctx.bot.macros | {}
-            while match := re.match(r"^\s*--?mc=((?:(?!(?<!\\)\|).)*)\|((?:(?!(?<!\\)\s).)*)", macro):
-                macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)
-                macro = macro[match.end():]
-            last = None
-            passes = 0
+        @builtin("pow")
+        def pow_(a: str, b: str):
+            """Raises a value to another value."""
+            a, b = to_float(a), to_float(b)
+            return str(a ** b)
 
-            def parse():
-                nonlocal macro, last
-                while last != macro and passes < 50:
-                    last = macro
-                    macro = parse_macros(macro.strip(), ctx.bot.macros)
+        @builtin("log")
+        def log_(x: str, base: str | None = None):
+            """Takes the natural log of a value, or with an optional second argument, a specified base."""
+            x = to_float(x)
+            if base is None:
+                return str(log(x))
+            else:
+                base = to_float(base)
+                return str(log(x, base))
 
-            await start_timeout(parse)
+        @builtin("real")
+        def real(value: str):
+            """Gets the real component of a complex value."""
+            value = to_float(value) + 0j
+            return str(value.real)
 
-            if len(macro) > 1900:
-                out = io.BytesIO()
-                out.write(bytes(macro, 'utf-8'))
-                out.seek(0)
-                return await ctx.reply(
-                    'Output:',
-                    file=discord.File(out, filename=f'output-{datetime.now().isoformat()}.txt')
+        @builtin("imag")
+        def imag(value: str):
+            """Gets the imaginary component of a complex value."""
+            value = to_float(value) + 0j
+            return str(value.imag)
+
+        @builtin("rand")
+        def rand(seed_: str | None = None):
+            """Gets a random value, optionally with a seed."""
+            if seed_ is not None:
+                seed_ = to_float(seed_)
+                assert isinstance(seed_, float), "Seed cannot be complex"
+                seed(seed_)
+            return str(random())
+
+        @builtin("subtract")
+        def subtract(a: str, b: str):
+            """Subtracts a value from another."""
+            a, b = to_float(a), to_float(b)
+            return str(a - b)
+
+        @builtin("replace")
+        def replace(value: str, pattern: str, replacement: str):
+            """Uses regex to replace a pattern in a string with another string."""
+            print(value, pattern, replacement)
+            return re.sub(pattern, replacement, value)
+
+        @builtin("multiply")
+        def multiply(*args: str):
+            assert len(args) >= 2, "multiply macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x * to_float(y), args, 1))
+
+        @builtin("divide")
+        def divide(a: str, b: str):
+            """Divides a value by another value."""
+            a, b = to_float(a), to_float(b)
+            try:
+                return str(a / b)
+            except ZeroDivisionError:
+                if type(a) is complex:
+                    return "nan"
+                elif a > 0:
+                    return "inf"
+                elif a < 0:
+                    return "-inf"
+                else:
+                    return "nan"
+
+        @builtin("mod")
+        def mod(a: str, b: str):
+            """Takes the modulus of a value."""
+            a, b = to_float(a), to_float(b)
+            try:
+                return str(a % b)
+            except ZeroDivisionError:
+                if a > 0:
+                    return "inf"
+                elif a < 0:
+                    return "-inf"
+                else:
+                    return "nan"
+
+        @builtin("int")
+        def int_(value: str, base: str = "10"):
+            """Converts a value to an integer, optionally with a base."""
+            try:
+                return str(int(value, base=int(to_float(base))))
+            except (ValueError, TypeError):
+                return str(int(to_float(value)))
+
+        @builtin("hex")
+        def hex_(value: str):
+            """Converts a value to hexadecimal."""
+            return str(hex(int(to_float(value))))
+
+        @builtin("oct")
+        def oct_(value: str):
+            """Converts a value to octal."""
+            return str(oct(int(to_float(value))))
+
+        @builtin("bin")
+        def bin_(value: str):
+            """Converts a value to binary."""
+            return str(bin(int(to_float(value))))
+
+        @builtin("chr")
+        def chr_(value: str):
+            """Gets a character from a unicode codepoint."""
+            return str(chr(int(to_float(value))))
+
+        @builtin("ord")
+        def ord_(value: str):
+            """Gets the unicode codepoint of a character."""
+            return str(ord(value))
+
+        @builtin("len")
+        def len_(value: str):
+            """Gets the length of a string."""
+            return str(len(value))
+
+        @builtin("split")
+        def split(value: str, delim: str, index: str):
+            """Splits a value by a delimiter, then returns an index into the list of splits."""
+            index = int(to_float(index))
+            return value.split(delim)[index]
+
+        @builtin("if")
+        def if_(*args: str):
+            """Decides between arguments to take the form of with preceding conditions, """
+            """with an ending argument that is taken if none else are."""
+
+            assert len(args) >= 3, "must have at least three arguments"
+            assert len(args) % 2 == 1, "must have at an odd number of arguments"
+            conditions = args[::2]
+            replacements = args[1::2]
+            print(conditions, replacements)
+            for (condition, replacement) in zip(conditions, replacements):
+                if to_boolean(condition):
+                    return replacement
+            return conditions[-1]
+
+        @builtin("equal")
+        def equal(a: str, b: str):
+            """Checks if two strings are equal."""
+            return str(a == b).lower()
+
+        @builtin("less")
+        def less(a: str, b: str):
+            """Checks if a value is less than another."""
+            a, b = to_float(a), to_float(b)
+            return str(a < b).lower()
+
+        @builtin("not")
+        def not_(value: str):
+            """Logically negates a boolean."""
+            return str(not to_boolean(value)).lower()
+
+        @builtin("and")
+        def and_(*args: str):
+            assert len(args) >= 2, "and macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x and to_boolean(y), args, True)).lower()
+
+        @builtin("or")
+        def or_(*args: str):
+            assert len(args) >= 2, "or macro must receive 2 or more arguments"
+            return str(reduce(lambda x, y: x or to_boolean(y), args, False)).lower()
+        
+        @builtin("error")
+        def error(_message: str):
+            """Raises an error with a specified message."""
+            raise errors.CustomMacroError(f"custom error: {_message}")
+
+        @builtin("assert")
+        def assert_(value: str, message: str):
+            """If the first argument doesn't evaluate to true, errors with a specified message."""
+            if not to_boolean(value):
+                raise errors.CustomMacroError(f"assertion failed: {message}")
+            return ""
+
+        @builtin("slice")
+        def slice_(string: str, start: str | None = None, end: str | None = None, step: str | None = None):
+            """Slices a string."""
+            start = int(to_float(start)) if start is not None and len(start) != 0 else None
+            end = int(to_float(end)) if end is not None and len(end) != 0 else None
+            step = int(to_float(step)) if step is not None and len(step) != 0 else None
+            slicer = slice(start, end, step)
+            return string[slicer]
+        
+        @builtin("find")
+        def find(string: str, substring: str, start: str | None = None, end: str | None = None):
+            """Returns the index of the second argument in the first, optionally between the third and fourth."""
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return str(string.index(substring, start, end))
+        
+        @builtin("count")
+        def count(string: str, substring: str, start: str | None = None, end: str | None = None):
+            """Returns the number of occurences of the second argument in the first, """
+            """optionally between the third and fourth arguments."""
+            if start is not None:
+                start = int(start)
+            if end is not None:
+                end = int(end)
+            return string.count(substring, start, end)
+        
+        @builtin("join")
+        def join(joiner: str, *strings: str):
+            """Joins all arguments with the first argument."""
+            return joiner.join(strings)
+
+        @builtin("store")
+        def store(name: str, value: str):
+            """Stores a value in a variable."""
+            assert len(self.variables) < 16, "cannot have more than 16 variables at once"
+            assert len(value) <= 256, "values must be at most 256 characters long"
+            self.variables[name] = value
+            return ""
+
+        @builtin("get")
+        def get(name: str, value: str):
+            """Gets the value of a variable, or a default."""
+            try:
+                return self.variables[name]
+            except KeyError:
+                self.variables[name] = value
+                return self.variables[name]
+
+        @builtin("load")
+        def load(name):
+            """Gets the value of a variable, erroring if it doesn't exist."""
+            return self.variables[name]
+
+        @builtin("drop")
+        def drop(name):
+            """Deletes a variable."""
+            del self.variables[name]
+            return ""
+
+        @builtin("is_stored")
+        def is_stored(name):
+            """Checks if a variable is stored."""
+            return str(name in self.variables).lower()
+        
+        @builtin("variables")
+        def varlist():
+            """Returns all variables as a JSON object."""
+            return json.dumps(self.variables, separators=(",", ":")).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("repeat")
+        def repeat(amount: str, string: str, joiner: str = ""):
+            """Repeats the second argument N times, where N is the first argument, optionally joined by the third."""
+            # Allow floats, rounding up, for historical reasons
+            amount = max(math.ceil(float(amount)), 0)
+            # Precalculate the length
+            length = amount * len(string) + max(amount - 1, 0) * len(joiner)
+            # Reject if too long
+            assert length < 4096, "repeated string is too long (max is 4096 characters)"
+            return joiner.join([string] * amount)
+
+        @builtin("concat")
+        def concat(*args):
+            """Concatenates all arguments into one string."""
+            return "".join(args)
+
+        @builtin("unescape")
+        def unescape(string: str):
+            """Unescapes a string, replacing \\\\/ with /, \\\\[ with [, and \\\\] with ]."""
+            return string.replace("\\/", "/").replace("\\[", "[").replace("\\]", "]")
+
+        @builtin("json.get")
+        def jsonget(data: str, key: str):
+            """Gets a value from a JSON object."""
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            if isinstance(data, list):
+                key = int(key)
+            return json.dumps(data[key]).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("json.set")
+        def jsonset(data: str, key: str, value: str):
+            """Sets a value in a JSON object."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            value = json.loads(value)
+            if isinstance(data, list):
+                key = int(key)
+            data[key] = value
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("json.remove")
+        def jsonremove(data: str, key: str):
+            """Removes a value from a JSON object."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            if isinstance(data, list):
+                key = int(key)
+            del data[key]
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("json.len")
+        def jsonlen(data: str):
+            """Gets the length of a JSON object."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, (dict, list)), "json must be an array or an object"
+            return len(data)
+
+        @builtin("json.append")
+        def jsonappend(data: str, value: str):
+            """Appends a value to a JSON array."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, list), "json must be an array"
+            value = json.loads(value)
+            data.append(value)
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+
+        @builtin("json.insert")
+        def jsoninsert(data: str, index: str, value: str):
+            """Inserts a value into a JSON array at an index."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            assert len(value) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            value = value.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, list), "json must be an array"
+            value = json.loads(value)
+            index = int(index)
+            data.insert(index, value)
+            return json.dumps(data).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("json.keys")
+        def jsonkeys(data: str):
+            """Gets the keys of a JSON object as a JSON array."""
+            assert len(data) <= 256, "json data must be at most 256 characters long"
+            data = data.replace("\\[", "[").replace("\\]", "]")
+            data = json.loads(data)
+            assert isinstance(data, dict), "json must be an object"
+            return json.dumps(list(data.keys())).replace("[", "\\[").replace("]", "\\]")
+        
+        @builtin("unixtime")
+        def unixtime():
+            """Returns the current Unix timestamp, or the number of seconds since midnight on January 1st, 1970 in UTC."""
+            return str(time.time())
+
+        self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
+
+    def parse_macros(self, objects: str, debug_info: bool, macros=None) -> tuple[Optional[str], Optional[list[str]]]:
+        self.variables = {}
+        if macros is None:
+            macros = self.bot.macros
+
+        debug = None
+        if debug_info:
+            debug = []
+
+        # Find each outmost pair of brackets
+        found = 0
+        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
+            found += 1
+            if debug_info:
+                if found > constants.MACRO_LIMIT:
+                    debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
+                    return None, debug
+            else:
+                assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {found}."
+            terminal = match.group(1)
+            if debug_info:
+                debug.append(f"[Step {found}] {objects}")
+            try:
+                objects = (
+                        objects[:match.start()] +
+                        self.parse_term_macro(terminal, macros) +
+                        objects[match.end():]
                 )
-            return await ctx.reply(
-                f'Output: ```\n{macro.replace("```", "``ˋ")}\n```',
-            )
-        finally:
-            signal.alarm(0)
+            except errors.FailedBuiltinMacro as err:
+                if debug_info:
+                    debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
+                    return None, debug
+                raise err
+        if debug_info:
+            debug.append(f"[Out] {objects}")
+        return objects, debug
 
-    @macro.command(aliases=["i", "get"])
-    async def info(self, ctx: Context, name: str):
-        """Gets info about a specific macro."""
-        assert name in self.bot.macros, f"Macro `{name}` isn't in the database!"
-        macro = self.bot.macros[name]
-        value = re.sub(
-            r"(\$\d+)", r"\\x1b[36m\1\\x1b[0m",
-            macro.value.replace("$#", r"\\x1b[35m$#\\x1b[0m")
-        ).replace(":", r"\\x1b[30m:\\x1b[0m").replace(r"\x1b", "\x1b")
-        emb = discord.Embed(
-            title=name
-        )
-        emb.add_field(
-            name="",
-            value=macro.description
-        )
-        emb.add_field(
-            name="Value",
-            value=f"```ansi\n{value}```",
-            inline=False
-        )
-        user = await ctx.bot.fetch_user(macro.author)
-        emb.set_footer(text=f"{user.name}#{user.discriminator}",
-                       icon_url=user.avatar.url if user.avatar is not None else
-                       f"https://cdn.discordapp.com/embed/avatars/{int(user.discriminator) % 5}.png")
-        await ctx.reply(embed=emb)
+    def parse_term_macro(self, raw_variant, macros) -> str:
+        raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
+        if raw_macro in self.builtins:
+            try:
+                macro = self.builtins[raw_macro].function(*macro_args)
+            except Exception as err:
+                raise errors.FailedBuiltinMacro(raw_variant, err, isinstance(err, errors.CustomMacroError))
+        elif raw_macro in macros:
+            macro = macros[raw_macro].value
+            macro = macro.replace("$#", str(len(macro_args)))
+            macro_args = ["/".join(macro_args), *macro_args]
+            arg_amount = 0
+            iters = None
+            while iters != 0 and arg_amount <= 100:
+                iters = 0
+                matches = [*re.finditer(r"\$(-?\d+|#)", macro)]
+                for match in reversed(matches):
+                    iters += 1
+                    arg_amount += 1
+                    if arg_amount > 100:
+                        break
+                    argument = match.group(1)
+                    if argument == "#":
+                        infix = str(len(macro_args))
+                    else:
+                        argument = int(argument)
+                        try:
+                            infix = macro_args[argument]
+                        except IndexError:
+                            infix = "\0" + str(argument)
+                    macro = macro[:match.start()] + infix + macro[match.end():]
+        else:
+            raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
+        return str(macro).replace("\0", "$")
 
 
 async def setup(bot: Bot):
-    await bot.add_cog(MacroCog(bot))
+    bot.macro_handler = MacroCog(bot)

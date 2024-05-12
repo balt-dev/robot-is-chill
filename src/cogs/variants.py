@@ -375,13 +375,25 @@ If [0;36minactive[0m is set and the color isn't hexadecimal, the color will sw
     This does not work if a color is specified!"""
         tile.color = constants.INACTIVE_COLORS[tile.color]
 
+    bayer_matrix = np.array([
+        [ 0, 32,  8, 40,  2, 34, 10, 42],
+        [48, 16, 56, 24, 50, 18, 58, 26],
+        [12, 44,  4, 36, 14, 46,  6, 38],
+        [60, 28, 52, 20, 62, 30, 54, 22],
+        [ 3, 35, 11, 43,  1, 33,  9, 41],
+        [51, 19, 59, 27, 49, 17, 57, 25],
+        [15, 47,  7, 39, 13, 45,  5, 37],
+        [63, 31, 55, 23, 61, 29, 53, 21],
+    ]) / 64
+
     @add_variant("grad")
     async def gradient(sprite, color: Color, angle: Optional[float] = 0.0, width: Optional[float] = 1.0,
                        offset: Optional[float] = 0, steps: Optional[int] = 0, raw: Optional[bool] = False,
-                       extrapolate: Optional[bool] = False, *, tile, wobble, renderer):
+                       extrapolate: Optional[bool] = False, dither: Optional[bool] = False, *, tile, wobble, renderer):
         """Applies a gradient to a tile.
 Interpolates color through CIELUV color space by default. This can be toggled with [0;36mraw[0m.
-If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%."""
+If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrapolated, as opposed to clamping from 0% to 100%.
+[0;36Dither[0ming does nothing with [0;36steps[0m set to 0."""
         tile.custom_color = True
         src = Color.parse(tile, renderer.palette_cache)
         dst = Color.parse(tile, renderer.palette_cache, color=color)
@@ -399,7 +411,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         rot_mat = cv2.getRotationMatrix2D(grad_center, angle, scale)
         warped_grad = cv2.warpAffine(grad, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_LINEAR)
         if steps:
-            warped_grad = np.round(warped_grad * steps) / steps
+            if dither:
+                needed_size = np.ceil(np.array(warped_grad.shape) / 8).astype(int)
+                image_matrix = np.tile(bayer_matrix, needed_size[:2])[:warped_grad.shape[0], :warped_grad.shape[1]]
+                mod_warped_grad = warped_grad[:, :, 0]
+                mod_warped_grad *= steps
+                mod_warped_grad %= 1.0
+                mod_warped_grad = (mod_warped_grad > image_matrix).astype(int)
+                warped_grad = (np.floor(warped_grad[:, :, 1] * steps) + mod_warped_grad) / steps
+                warped_grad = np.array((warped_grad.T, warped_grad.T, warped_grad.T, warped_grad.T)).T
+            else:
+                warped_grad = np.round(warped_grad * steps) / steps
         mult_grad = np.clip(((1 - warped_grad) * src + warped_grad * dst), 0, 255)
         if not raw:
             mult_grad[:, :, :3] = cv2.cvtColor(mult_grad[:, :, :3].astype(np.uint8), cv2.COLOR_Luv2RGB).astype(
@@ -594,27 +616,6 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
             base[mask ^ (level < 0), ...] = 0
         return base
 
-        """Applies a meta filter to an image."""
-        if level is None: level = 1
-        assert abs(level) <= constants.MAX_META_DEPTH, f"Meta depth of {level} too large!"
-        # Not padding at negative values is intentional
-        padding = max(level, 0)
-        orig = np.pad(sprite, ((padding, padding), (padding, padding), (0, 0)))
-        check_size(*orig.shape[1::-1])
-        base = orig[..., 3]
-        if level < 0:
-            base = 255 - base
-        kernel = META_KERNELS[kernel]
-        for _ in range(abs(level)):
-            base = cv2.filter2D(src=base, ddepth=-1, kernel=kernel)
-        base = np.dstack((base, base, base, base))
-        mask = orig[..., 3] > 0
-        if not (level % 2) and level > 0:
-            base[mask, ...] = orig[mask, ...]
-        else:
-            base[mask ^ (level < 0), ...] = 0
-        return base
-
     @add_variant()
     async def land(sprite, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
         """Removes all space between the sprite and its bounding box on the specified side."""
@@ -631,8 +632,11 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Puts the sprite's bounding box behind it. Useful for debugging."""
         rows = np.any(sprite[:, :, 3], axis=1)
         cols = np.any(sprite[:, :, 3], axis=0)
-        left, right = np.where(cols)[0][[0, -1]]
-        top, bottom = np.where(rows)[0][[0, -1]]
+        try:
+            left, right = np.where(cols)[0][[0, -1]]
+            top, bottom = np.where(rows)[0][[0, -1]]
+        except IndexError:
+            return sprite
         out = np.zeros_like(sprite).astype(float)
         out[top:bottom,   left:right] = (0xFF, 0xFF, 0xFF, 0x80)
         out[top,          left:right] = (0xFF, 0xFF, 0xFF, 0xc0)
@@ -1139,7 +1143,12 @@ If a value is negative, it removes pixels above the threshold instead."""
     @add_variant("filter", "fi!")
     async def filterimage(sprite, filter_url: str, absolute: Optional[bool] = None, *, tile, wobble, renderer):
         """Applies a filter image to a sprite. For information about filter images, look at the filterimage command."""
-        filt, abs_db = await renderer.bot.db.get_filter(filter_url)
+        frames, abs_db = await renderer.bot.db.get_filter(filter_url)
+        try:
+            filter = frames[wobble]
+        except IndexError:
+            filter = frames[0]
+        filt = np.array(filter.convert("RGBA"))
         check_size(*filt.shape[:2])
         absolute = absolute if absolute is not None else \
             abs_db if abs_db is not None else False

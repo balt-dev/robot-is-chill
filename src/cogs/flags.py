@@ -309,5 +309,4 @@ Note that PNG formats won't animate inside of Discord, you'll have to open them 
                     )
     async def macro(match, ctx):
         """Define macros for variants."""
-        assert ";" not in match.group(2), "Can't have persistent variants in macros!"
         ctx.macros[match.group(1)] = Macro(value=match.group(2), description="<internal>", author=-1)

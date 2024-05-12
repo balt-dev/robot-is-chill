@@ -10,11 +10,20 @@
     },
     {
         "name": "fi",
-        "sprite": "render",
+        "sprite": "fi",
         "color": [
             "0",
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "me2",
+        "sprite": "me2",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
     }
 ]
