@@ -483,12 +483,14 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Makes custom words appear in one line."""
         tile.style = "oneline"
 
-    @add_variant()
-    async def hide(tile):
-        """Hides the tile."""
-        tile.empty = True
 
     # --- FILTERS ---
+
+    @add_variant()
+    async def hide(sprite):
+        """Hides the tile."""
+        sprite[..., 3] = 0
+        return sprite
 
     @add_variant("rot")
     async def rotate(sprite, angle: float, expand: Optional[bool] = False):
