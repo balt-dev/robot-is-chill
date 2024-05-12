@@ -1593,15 +1593,6 @@
         ]
     },
     {
-        "name": "lilo",
-        "sprite": "lilo",
-        "tiling": "3",
-        "color": [
-            "2",
-            "4"
-        ]
-    },
-    {
         "name": "goob2",
         "sprite": "goob",
         "color": [
