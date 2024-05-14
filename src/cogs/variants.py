@@ -826,7 +826,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
 
     @add_variant()
     async def clip(sprite, *, bot, ctx):
-        """Sets the sprite to only be in the 24x24 grid space."""
+        """Crops the sprite to within its grid space."""
         width = sprite.shape[1]
         height = sprite.shape[0]
         left = (width - ctx.spacing) // 2
