@@ -1852,5 +1852,14 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_yrducio",
+        "sprite": "text_yrducio",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
