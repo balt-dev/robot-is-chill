@@ -25,5 +25,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "fofoh",
+        "sprite": "fofoh",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

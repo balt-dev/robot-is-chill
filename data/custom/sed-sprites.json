@@ -45,15 +45,6 @@
         "tiling": "0"
     },
     {
-        "name": "rithere",
-        "sprite": "rithere",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_sed_f",
         "sprite": "text_sed",
         "color": [

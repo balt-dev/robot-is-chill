@@ -483,12 +483,14 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         """Makes custom words appear in one line."""
         tile.style = "oneline"
 
-    @add_variant()
-    async def hide(tile):
-        """Hides the tile."""
-        tile.empty = True
 
     # --- FILTERS ---
+
+    @add_variant()
+    async def hide(sprite):
+        """Hides the tile."""
+        sprite[..., 3] = 0
+        return sprite
 
     @add_variant("rot")
     async def rotate(sprite, angle: float, expand: Optional[bool] = False):
@@ -823,6 +825,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         else:
             sprite[(sprite[:, :, 0] == color[0]) & (sprite[:, :, 1] == color[1]) & (sprite[:, :, 2] == color[2])] = 0
         return sprite
+
+    @add_variant()
+    async def clip(sprite, *, bot, ctx):
+        """Crops the sprite to within its grid space."""
+        width = sprite.shape[1]
+        height = sprite.shape[0]
+        left = (width - ctx.spacing) // 2
+        up = (height - ctx.spacing) // 2
+        right = (width + ctx.spacing) // 2
+        down = (height + ctx.spacing) // 2
+        return await crop(sprite, [left,up], [right,down], True)
 
     def slice_image(sprite, color_slice: slice):
         colors = liquify.get_colors(sprite)

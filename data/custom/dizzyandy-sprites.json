@@ -782,7 +782,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "num",
         "sprite": "number",
         "color": [
@@ -956,6 +956,114 @@
     {
         "name": "text_\u26d0",
         "sprite": "caraccident",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lucy",
+        "sprite": "lucy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_lucy",
+        "sprite": "text_lucy",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "robaba",
+        "sprite": "robaba",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_robaba",
+        "sprite": "text_robaba",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "biy",
+        "sprite": "baba is you",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "map",
+        "sprite": "map",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "friend",
+        "sprite": "friend",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_friend",
+        "sprite": "text_friend",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glitter",
+        "sprite": "glitter",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "ignsii",
+        "sprite": "ignsii",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ignsii",
+        "sprite": "text_ignsii",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj",
+        "sprite": "obj",
         "color": [
             "0",
             "3"
