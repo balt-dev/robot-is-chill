@@ -2167,5 +2167,50 @@
             "3"
         ],
         "tiling": "-1"
+    },
+	{
+        "name": "hog",
+        "sprite": "hog",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "text_hog",
+        "sprite": "text_hog",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hand2",
+        "sprite": "glove",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+	{
+        "name": "flaker",
+        "sprite": "flaker",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "flake",
+        "sprite": "flake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

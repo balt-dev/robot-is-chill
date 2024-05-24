@@ -34,5 +34,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "naba",
+        "sprite": "naba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_naba",
+        "sprite": "text_naba",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
