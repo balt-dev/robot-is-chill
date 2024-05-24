@@ -1069,5 +1069,176 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_:mobile_phone_off:",
+        "sprite": "off",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lattice",
+        "sprite": "lattice",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "construct_1",
+        "sprite": "construct_1",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_2",
+        "sprite": "construct_2",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_3",
+        "sprite": "construct_3",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_4",
+        "sprite": "construct_4",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_5",
+        "sprite": "construct_5",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_6",
+        "sprite": "construct_6",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_7",
+        "sprite": "construct_7",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_8",
+        "sprite": "construct_8",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_9",
+        "sprite": "construct_house",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_10",
+        "sprite": "construct_baba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text",
+        "sprite": "text",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph",
+        "sprite": "glyph",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "inner",
+        "sprite": "inner",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "level2",
+        "sprite": "level",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node",
+        "sprite": "node",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rever",
+        "sprite": "rever",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nothing",
+        "sprite": "nothing",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
