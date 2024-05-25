@@ -25,5 +25,14 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "dtwall",
+        "sprite": "wall",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
     }
 ]
