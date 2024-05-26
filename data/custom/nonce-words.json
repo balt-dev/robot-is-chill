@@ -6,16 +6,16 @@
             "4",
             "1"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n1",
         "sprite": "event_n1",
         "color": [
-            "0"
+            "0",
             "3"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n2",
@@ -24,7 +24,7 @@
             "3",
             "4"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n3",
@@ -33,7 +33,7 @@
             "3",
             "3"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n4",
@@ -42,34 +42,34 @@
             4,
             3
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n5",
         "sprite": "event_n5",
         "color": [
-            "0"
+            "0",
             "3"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n6",
         "sprite": "event_n6",
         "color": [
-            "0"
+            "0",
             "0"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "event_n7",
         "sprite": "event_n7",
         "color": [
-            "0"
+            "0",
             "2"
         ],
-        "tiling":  "-1"
+        "tiling": "-1"
     },
     {
         "name": "glyph_n-1",
@@ -84,7 +84,7 @@
         "name": "glyph_n1",
         "sprite": "glyph_n1",
         "color": [
-            "0"
+            "0",
             "2"
         ],
         "tiling": "-1"
@@ -246,7 +246,7 @@
         "name": "glyph_n19",
         "sprite": "glyph_n19",
         "color": [
-            "0"
+            "0",
             "1"
         ],
         "tiling": "-1"
@@ -363,7 +363,7 @@
         "name": "glyph_n32",
         "sprite": "glyph_n32",
         "color": [
-            "0"
+            "0",
             "3"
         ],
         "tiling": "0"
@@ -408,7 +408,7 @@
         "name": "glyph_n37",
         "sprite": "glyph_n37",
         "color": [
-            "0"
+            "0",
             "3"
         ],
         "tiling": "-1"
@@ -462,7 +462,7 @@
         "name": "glyph_n43",
         "sprite": "glyph_n43",
         "color": [
-            "0"
+            "0",
             "3"
         ],
         "tiling": "-1"
@@ -480,7 +480,7 @@
         "name": "glyph_n45",
         "sprite": "glyph_n45",
         "color": [
-            "0"
+            "0",
             "3"
         ],
         "tiling": "-1"
@@ -489,7 +489,7 @@
         "name": "glyph_n46",
         "sprite": "glyph_n46",
         "color": [
-            "0"
+            "0",
             "0"
         ],
         "tiling": "-1"
@@ -552,7 +552,7 @@
         "name": "glyph_n53",
         "sprite": "glyph_n53",
         "color": [
-            "0"
+            "0",
             "2"
         ],
         "tiling": "-1"
