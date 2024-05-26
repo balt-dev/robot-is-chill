@@ -3,8 +3,8 @@
         "name": "event_n0",
         "sprite": "event_n0",
         "color": [
-            4,
-            1
+            "4",
+            "1"
         ],
         "tiling": "-1",
     },
@@ -12,8 +12,8 @@
         "name": "event_n1",
         "sprite": "event_n1",
         "color": [
-            0,
-            3
+            "0",
+            "3"
         ],
         "tiling": "-1",
     },
@@ -21,8 +21,8 @@
         "name": "event_n2",
         "sprite": "event_n2",
         "color": [
-            3,
-            4
+            "3",
+            "4"
         ],
         "tiling": "-1",
     },
@@ -30,8 +30,8 @@
         "name": "event_n3",
         "sprite": "event_n3",
         "color": [
-            3,
-            3
+            "3",
+            "3"
         ],
         "tiling": "-1",
     },
@@ -48,8 +48,8 @@
         "name": "event_n5",
         "sprite": "event_n5",
         "color": [
-            0,
-            3
+            "0",
+            "3"
         ],
         "tiling": "-1",
     },
@@ -57,8 +57,8 @@
         "name": "event_n6",
         "sprite": "event_n6",
         "color": [
-            0,
-            0
+            "0",
+            "0"
         ],
         "tiling": "-1",
     },
@@ -66,8 +66,8 @@
         "name": "event_n7",
         "sprite": "event_n7",
         "color": [
-            0,
-            2
+            "0",
+            "2"
         ],
         "tiling": "-1",
     },
