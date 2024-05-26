@@ -519,7 +519,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             if hasattr(ctx, "fake"):
                 prefix = ""
             else:
-                prefix = ctx.message.content.split(' ', 1)[0]
+                prefix = ctx.message.content.split(' ', 1)[0] + " "
             description = f"{'||' if spoiler else ''}```\n{prefix}{old_tiles}\n```{'||' if spoiler else ''}"
             if render_ctx.do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)

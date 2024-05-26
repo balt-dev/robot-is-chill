@@ -292,3 +292,4 @@ CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-l
 
 
 MACRO_LIMIT = 5000
+MACRO_ARG_LIMIT = 100

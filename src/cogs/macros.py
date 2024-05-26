@@ -469,13 +469,13 @@ class MacroCog:
             macro_args = ["/".join(macro_args), *macro_args]
             arg_amount = 0
             iters = None
-            while iters != 0 and arg_amount <= 100:
+            while iters != 0 and arg_amount <= constants.MACRO_ARG_LIMIT:
                 iters = 0
                 matches = [*re.finditer(r"\$(-?\d+|#)", macro)]
                 for match in reversed(matches):
                     iters += 1
                     arg_amount += 1
-                    if arg_amount > 100:
+                    if arg_amount > constants.MACRO_ARG_LIMIT:
                         break
                     argument = match.group(1)
                     if argument == "#":
