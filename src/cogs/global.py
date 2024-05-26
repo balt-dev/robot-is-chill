@@ -143,9 +143,6 @@ class FakeMessage:
     flags = FakeFlags()
     ...
 
-
-
-
 class RenderBoxWrapper:
     intr: Interaction
     bot: Bot
