@@ -162,8 +162,9 @@ class RenderBoxWrapper:
     async def reply(self, *args, **kwargs):
         await self.send(*args, **kwargs)
 
-    async def error(self, *args, **kwargs):
-        await self.send(*args, **kwargs)
+    async def error(self, msg: str, **kwargs):
+        msg = f"```\n{self.message.content.replace('`', '')}\n```\n\n:warning: {msg}"
+        await self.send(msg, **kwargs)
 
     async def typing(self):
         pass
