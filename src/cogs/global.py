@@ -23,6 +23,7 @@ from charset_normalizer import from_bytes
 
 import aiohttp
 import discord
+from discord import ui, Interaction, app_commands
 from discord.ext import commands, menus
 
 from src.types import SignText, RenderContext
@@ -105,6 +106,67 @@ class FilterQuerySource(menus.ListPageSource):
             )
             del entries[:15]
         return embed
+
+
+class RenderBox(ui.Modal, title='Render Body'):
+    global_cog: GlobalCog
+    text: bool
+    bot: Bot
+
+    def __init__(self, cog: GlobalCog, text: bool):
+        super().__init__()
+        self.global_cog = cog
+        self.text = text
+        self.bot = cog.bot
+
+    scene = ui.TextInput(label='Scene Contents', style=discord.TextStyle.paragraph,
+                         placeholder="-b\n$baba $is $you\nbaba . flag\n$flag $is $win")
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        wrapper = RenderBoxWrapper(interaction)
+        wrapper.message.content = self.scene.value
+        wrapper.bot = self.bot
+        wrapper.fake = True
+        await self.global_cog.render_tiles(
+            wrapper,
+            objects=self.scene.value,
+            rule=self.text
+        )
+
+
+class FakeFlags:
+    def __getattr__(self, item):
+        return False
+
+class FakeMessage:
+    flags = FakeFlags()
+    ...
+
+
+
+
+class RenderBoxWrapper:
+    intr: Interaction
+    bot: Bot
+    message: FakeMessage
+
+    def __init__(self, intr: Interaction):
+        self.intr = intr
+        self.message = FakeMessage()
+
+    async def send(self, *args, **kwargs):
+        kwargs['ephemeral'] = True
+        await self.intr.followup.send(*args, **kwargs)
+
+    async def reply(self, *args, **kwargs):
+        await self.send(*args, **kwargs)
+
+    async def error(self, *args, **kwargs):
+        await self.send(*args, **kwargs)
+
+    async def typing(self):
+        pass
 
 
 class GlobalCog(commands.Cog, name="Baba Is You"):
@@ -227,7 +289,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
-            ctx.silent = ctx.message.flags.silent
+            ctx.silent = ctx.message is not None and ctx.message.flags.silent
             tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:",
                                                                               "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
@@ -453,7 +515,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             filename = datetime.utcnow().strftime(
                 f"render_%Y-%m-%d_%H.%M.%S.{render_ctx.image_format}")
             image = discord.File(render_ctx.out, filename=filename, spoiler=spoiler)
-            description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
+            if hasattr(ctx, "fake"):
+                prefix = ""
+            else:
+                prefix = ctx.message.content.split(' ', 1)[0]
+            description = f"{'||' if spoiler else ''}```\n{prefix}{old_tiles}\n```{'||' if spoiler else ''}"
             if render_ctx.do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)
 
@@ -489,6 +555,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await ctx.reply(description[:2000], embed=embed, file=image)
         finally:
             signal.alarm(0)
+
+    @app_commands.command()
+    @app_commands.allowed_installs(guilds=False, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    async def render(self, intr: Interaction, render_mode: Literal["tile", "text"] = "tile"):
+        """Renders the tiles provided using a modal."""
+        box = RenderBox(self, render_mode == "text")
+        await intr.response.send_modal(box)
+        await box.wait()
 
     @commands.command(aliases=["t"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)

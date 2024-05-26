@@ -468,6 +468,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
+    async def refreshslash(self, ctx: Context):
+        async with ctx.typing():
+            await self.bot.tree.sync()
+            await ctx.send("Done.")
+
+    @commands.command()
+    @commands.is_owner()
     async def loadcustom(self, ctx: Context):
         self.bot.loading = True
         await self.load_custom_tiles()

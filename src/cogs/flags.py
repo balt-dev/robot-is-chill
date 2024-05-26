@@ -65,6 +65,8 @@ class Flags:
 
 
 async def find_message(ctx):
+    if ctx.message is None:
+        raise AssertionError("Message history flags cannot be used within a modal!")
     msg = None
     do_finally = True
     try:
