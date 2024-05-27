@@ -375,7 +375,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             try:
                 sprite_name, source, colorx, colory, tiling = tuple(await result.fetchone())
             except BaseException:
-                return await ctx.error(f'Tile {name} not found!')
+                return await ctx.error(f'Tile `{name.replace("`", "")[:16]}` not found!')
             files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')
             zipped_files = BytesIO()
             with zipfile.ZipFile(zipped_files, "x") as zip_file:
@@ -418,7 +418,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         img = p_cache.get(palette, None)
         if img is None:
             if "/" not in palette:
-                return await ctx.error(f'The palette {palette} could not be found.')
+                return await ctx.error(f'The palette `{palette.replace("`", "")[:16]}` could not be found.')
             palette, color = "default", palette
         if color is not None:
             r, g, b, _ = Color.parse(Tile(name="<palette command>", palette=palette), p_cache, color)
@@ -460,8 +460,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             buf = BytesIO()
             pal_img.save(buf, format="PNG")
             buf.seek(0)
-            file = discord.File(buf, filename=f"{palette}.png")
-            await ctx.reply(f"Palette `{palette}`:", file=file)
+            file = discord.File(buf, filename=f"{palette[:16]}.png")
+            await ctx.reply(f"Palette `{palette[:16]}`:", file=file)
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])

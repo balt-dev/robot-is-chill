@@ -5,6 +5,7 @@ import os
 import signal
 import time
 import traceback
+import warnings
 from pathlib import Path
 
 import requests
@@ -26,6 +27,8 @@ import discord
 from discord import ui, Interaction, app_commands
 from discord.ext import commands, menus
 
+import config
+import webhooks
 from src.types import SignText, RenderContext
 from src.utils import ButtonPages
 from ..tile import Tile, TileSkeleton, parse_variants
@@ -122,9 +125,24 @@ class RenderBox(ui.Modal, title='Render Body'):
     scene = ui.TextInput(label='Scene Contents', style=discord.TextStyle.paragraph,
                          placeholder="-b\n$baba $is $you\nbaba . flag\n$flag $is $win")
 
-    async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True, thinking=True)
-        wrapper = RenderBoxWrapper(interaction)
+    async def on_submit(self, intr: discord.Interaction):
+        await intr.response.defer(ephemeral=False, thinking=True)
+
+        try:
+            webhook = await self.bot.fetch_webhook(webhooks.logging_id)
+            ctx: Context
+            embed = discord.Embed(
+                description=f"/render {self.scene.value}",
+                color=config.logging_color)
+            embed.set_author(
+                name=f'{intr.user.name}'[:32],
+                icon_url=intr.user.avatar.url if intr.user.avatar else None
+            )
+            await webhook.send(embed=embed)
+        except Exception as e:
+            warnings.warn("\n".join(traceback.format_exception(e)))
+
+        wrapper = RenderBoxWrapper(intr)
         wrapper.message.content = self.scene.value
         wrapper.bot = self.bot
         wrapper.fake = True
@@ -153,7 +171,6 @@ class RenderBoxWrapper:
         self.message = FakeMessage()
 
     async def send(self, *args, **kwargs):
-        kwargs['ephemeral'] = True
         await self.intr.followup.send(*args, **kwargs)
 
     async def reply(self, *args, **kwargs):
