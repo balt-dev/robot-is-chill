@@ -197,4 +197,22 @@
         ],
         "tiling": "-1"
     },
+    {
+        "name": "cellba",
+        "sprite": "cellba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cellfo",
+        "sprite": "cellfo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    }
 ]
