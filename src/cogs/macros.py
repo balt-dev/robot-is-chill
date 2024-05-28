@@ -99,6 +99,11 @@ class MacroCog:
             a, b = to_float(a), to_float(b)
             return str(a - b)
 
+        @builtin("hash")
+        def hash_(value: str):
+            """Gets the hash of a value."""
+            return str(hash(value))
+
         @builtin("replace")
         def replace(value: str, pattern: str, replacement: str):
             """Uses regex to replace a pattern in a string with another string."""
