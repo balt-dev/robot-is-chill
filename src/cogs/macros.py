@@ -449,7 +449,7 @@ class MacroCog:
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros) +
+                        self.parse_term_macro(terminal, macros, found, debug, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
@@ -461,7 +461,7 @@ class MacroCog:
             debug.append(f"[Out] {objects}")
         return objects, debug
 
-    def parse_term_macro(self, raw_variant, macros) -> str:
+    def parse_term_macro(self, raw_variant, macros, step = 0, debug = None, debug_info = False) -> str:
         raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
         if raw_macro in self.builtins:
             try:
@@ -484,13 +484,16 @@ class MacroCog:
                         break
                     argument = match.group(1)
                     if argument == "#":
-                        infix = str(len(macro_args))
+                        debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
+                        infix = str(len(macro_args) - 1)
                     else:
                         argument = int(argument)
                         try:
                             infix = macro_args[argument]
                         except IndexError:
                             infix = "\0" + str(argument)
+                    if debug_info:
+                        debug.append(f"[Step {step}:{arg_amount}] {macro}")
                     macro = macro[:match.start()] + infix + macro[match.end():]
         else:
             raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
