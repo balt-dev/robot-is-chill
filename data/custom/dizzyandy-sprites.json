@@ -1071,7 +1071,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_:mobile_phone_off:",
+        "name": "text_off",
         "sprite": "off",
         "color": [
             "3",
@@ -1240,5 +1240,32 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "swaspa",
+        "sprite": "swaspa",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_bctllt",
+        "sprite": "text_babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bctllt",
+        "sprite": "babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]

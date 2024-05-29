@@ -2168,7 +2168,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "hog",
         "sprite": "hog",
         "color": [
@@ -2177,7 +2177,7 @@
         ],
         "tiling": "2"
     },
-	{
+    {
         "name": "text_hog",
         "sprite": "text_hog",
         "color": [
@@ -2187,7 +2187,7 @@
         "tiling": "-1"
     },
     {
-        "name": "hand2",
+        "name": "handalpha",
         "sprite": "glove",
         "color": [
             "0",
@@ -2195,7 +2195,7 @@
         ],
         "tiling": "0"
     },
-	{
+    {
         "name": "flaker",
         "sprite": "flaker",
         "color": [
@@ -2204,11 +2204,74 @@
         ],
         "tiling": "2"
     },
-	{
+    {
         "name": "flake",
         "sprite": "flake",
         "color": [
             "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babafan24",
+        "sprite": "babafan24",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_babafan24",
+        "sprite": "text_babafan24",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_member",
+        "sprite": "text_member",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_fan2",
+        "sprite": "text_fan",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_24",
+        "sprite": "text_24",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_await",
+        "sprite": "text_await",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sour",
+        "sprite": "text_sour",
+        "color": [
+            "5",
             "3"
         ],
         "tiling": "-1"
