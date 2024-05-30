@@ -120,6 +120,7 @@ class MacroCommandCog(commands.Cog, name='Macros'):
     async def create(self, ctx: Context, name: str, value: str, *, description: str = None):
         """Adds a macro to the database."""
         assert len(name) <= 50, "Macro name cannot be larger than 50 characters!"
+        assert all([c not in name for c in "[]/ :;"]), "Name uses invalid characters (`[]/ :;`)!"
         async with self.bot.db.conn.cursor() as cursor:
             await cursor.execute("SELECT value FROM macros WHERE name == ?", name)
             dname = await cursor.fetchone()
