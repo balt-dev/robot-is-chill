@@ -283,7 +283,7 @@ MAX_SIGN_TEXT_LENGTH = 64
 FONT_MULTIPLIERS = {
     "ui": 4 / 3,
     "icon": 4 / 3,
-    "offset": 32 / 24
+    "offset": 7 / 10
 }
 
 MESSAGE_LIMIT = 10
