@@ -2275,5 +2275,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sesa",
+        "sprite": "sesa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_sesa",
+        "sprite": "text_sesa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

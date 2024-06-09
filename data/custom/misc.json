@@ -153,24 +153,6 @@
         "tiling": "-1"
     },
     {
-        "name": "ant",
-        "sprite": "ant",
-        "tiling": "0",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
-        "name": "text_ant",
-        "sprite": "text_ant",
-        "tiling": "-1",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
         "name": "bulb",
         "sprite": "bulb",
         "tiling": "-1",
@@ -855,6 +837,15 @@
         "tiling": "-1"
     },
     {
+        "name": "he",
+        "sprite": "he",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_he",
         "sprite": "text_he",
         "color": [
@@ -864,7 +855,7 @@
         "tiling": "-1"
     },
     {
-        "name": "dots",
+        "name": "dots2",
         "sprite": "dots",
         "color": [
             "3",
@@ -873,7 +864,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_dots",
+        "name": "text_dots2",
         "sprite": "text_dots",
         "color": [
             "3",
@@ -1611,15 +1602,6 @@
         "tiling": "2"
     },
     {
-        "name": "tar",
-        "sprite": "tar",
-        "color": [
-            "3",
-            "1"
-        ],
-        "tiling": "1"
-    },
-    {
         "name": "izzy",
         "sprite": "izzy",
         "color": [
@@ -1627,15 +1609,6 @@
             "2"
         ],
         "tiling": "2"
-    },
-    {
-        "name": "wave",
-        "sprite": "wave",
-        "color": [
-            "1",
-            "2"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "glitch",
@@ -1663,15 +1636,6 @@
             "2"
         ],
         "tiling": "-1"
-    },
-    {
-        "name": "canopy",
-        "sprite": "canopy",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "1"
     },
     {
         "name": "nest",
@@ -1780,15 +1744,6 @@
             "3"
         ],
         "tiling": "2"
-    },
-    {
-        "name": "carrot2",
-        "sprite": "carrot2",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "trash",

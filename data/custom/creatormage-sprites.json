@@ -115,5 +115,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "carrot2",
+        "sprite": "carrot2",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "canopy",
+        "sprite": "canopy",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]

@@ -1,7 +1,16 @@
 [
     {
-        "name": "isyou",
+        "name": "isyou_old",
         "sprite": "isyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "isyou",
+        "sprite": "isyouremaster",
         "color": [
             "4",
             "1"
