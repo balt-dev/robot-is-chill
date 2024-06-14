@@ -179,12 +179,21 @@
         "tiling": "2"
     },
     {
-        "name": "text_cba",
+        "name": "text_cba2",
         "sprite": "text_cba",
         "color": [
             "4",
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tplate",
+        "sprite": "tplate",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]

@@ -37,7 +37,7 @@ class SearchPageSource(menus.ListPageSource):
             color=menu.bot.embed_color,
             title=f"Search results{target} (Page {menu.current_page + 1}/{self.get_max_pages()})"
         )
-        out.set_footer(text="Note: Some custom levels may not show up here.")
+        out.set_footer(text="Note: To search for things other than tiles, use command flags. See =help search.")
         lines = ["```"]
         for (type, short), long in entries:
             if isinstance(long, TileData):
@@ -149,7 +149,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         This can return tiles, levels, palettes, variants, and sprite mods.
 
-        **Tiles** can be filtered with the flags:
+        **Tiles** can be filtered with the flags, formatted like `--<name>=<value>`:
         * `sprite`: Will return only tiles that use that sprite.
         * `text`: Whether to only return text tiles (either `true` or `false`).
         * `source`: The source of the sprite. This should be a sprite mod.
@@ -173,8 +173,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         `search source:modded sort:color page:4`
         `search text:true color:0,3 reverse:true`
         """
-        # Pattern to match flags in the format (flag):(value)
-        flag_pattern = r"([\d\w_/]+):([\d\w\-_/]+)"
+        # Pattern to match flags in the format (flag)=(value)
+        flag_pattern = r"--([\d\w_/]+)=([\d\w\-_/]+)"
         match = re.search(flag_pattern, query)
         plain_query = query.lower()
 
@@ -185,16 +185,17 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         flags = {}
         if has_flags:
             if match:
-                # Returns "flag":"value" pairs
+                # Returns "flag"="value" pairs
                 flags = dict(re.findall(flag_pattern, query))
             # Nasty regex to match words that are not flags
-            non_flag_pattern = r"(?<![:\w\d,\-/])([\w\d,_/]+)(?![:\d\w,\-/])"
-            plain_match = re.findall(non_flag_pattern, query)
-            plain_query = " ".join(plain_match)
+            plain_query = re.sub(flag_pattern, "", plain_query).strip()
+
+        if "type" not in flags:
+            flags["type"] = "tile"
 
         results: dict[tuple[str, str], Any] = {}
 
-        if flags.get("type") is None or flags.get("type") == "tile":
+        if flags.get("type") == "tile":
             color = flags.get("color")
             f_color_x = f_color_y = None
             if color is not None:
@@ -257,7 +258,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 results["tile", row["name"]] = TileData.from_row(row)
                 results["blank_space", row["name"]] = None
 
-        if flags.get("type") is None or flags.get("type") == "level":
+        if flags.get("type") == "level":
             if flags.get("custom") is None or flags.get("custom") == "true":
                 f_author = flags.get("author")
                 async with self.bot.db.conn.cursor() as cur:
@@ -307,8 +308,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 for (world, id), data in levels.items():
                     results["level", f"{world}/{id}"] = data
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "palette":
+        if flags.get("type") == "palette":
             q = f"*{plain_query}*.png" if plain_query else "*.png"
             out = []
             for path in Path("data/palettes").glob(q):
@@ -318,8 +318,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "mod":
+        if flags.get("type") == "mod":
             q = f"*{plain_query}*.json" if plain_query else "*.json"
             out = []
             for path in Path("data/custom").glob(q):
@@ -328,17 +327,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "world":
+        if flags.get("type") == "world":
             out = []
-            for path in Path("data/levels").glob("*"):
+            for path in Path("data/levels").glob(plain_query if plain_query else "*"):
                 out.append((("world", path.stem), path.stem))
             out.sort()
             for a, b in out:
                 results[a] = b
 
-        if "variant" in query:
-            await ctx.reply("_Looking for variants? They've moved to the `variants` command._", delete_after=10, mention_author=False)
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
