@@ -105,8 +105,8 @@ class MacroCog:
             print(value, pattern, replacement)
             return re.sub(pattern, replacement, value)
         
-        @builtin("replace")
-        def replace(value: str, pattern: str, replacement: str):
+        @builtin("ureplace")
+        def ureplace(value: str, pattern: str, replacement: str):
             """Uses regex to replace a pattern in a string with another string. This version unescapes the pattern sent in."""
             print(value, pattern, replacement)
             return re.sub(unescape(pattern), replacement, value)
