@@ -195,5 +195,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "knife",
+        "sprite": "knife",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "debug",
+        "sprite": "debug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

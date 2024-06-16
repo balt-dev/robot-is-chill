@@ -237,13 +237,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def delete(self, ctx: Context, sprite_name: str):
         """Deletes a specified sprite."""
         async with self.bot.db.conn.cursor() as cur:
-            result = await (
-                await cur.execute('SELECT sprite, source FROM tiles WHERE name = (?)', sprite_name)).fetchall()
-            if not len(result):
-                return await ctx.error(f'The sprite {sprite_name} already doesn\'t exist.')
-            sprite_name, source = [*(result[0])]
+            source, sprite = await (
+                await cur.execute('SELECT source, sprite FROM tiles WHERE name = (?)', sprite_name)).fetchone()
+            if source is None or sprite is None:
+                return await ctx.error(f'The sprite {sprite_name} doesn\'t exist.')
             result = await cur.execute('DELETE FROM tiles WHERE name = (?)', sprite_name)
-        for file in glob(f'data/sprites/{source}/{sprite_name}*.png'):
+        for file in glob(f'data/sprites/{source}/{sprite}*.png'):
             os.remove(file)
         with open(f"data/custom/{source}.json", "r") as f:
             sprite_data = json.load(f)
@@ -254,7 +253,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         with open(f"data/custom/{source}.json", "w") as f:
             json.dump(sprite_data, f, indent=4)
         await self.load_custom_tiles(source)
-        await ctx.send(f"Done. Deleted {sprite_name}.")
+        await ctx.send(f"Done. Deleted `{sprite_name}` (`{sprite}` from `{source}`).")
 
     @sprite.command()
     async def move(self, ctx: Context, sprite_name: str, new_source: str, reload: bool = True):

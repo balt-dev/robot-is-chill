@@ -747,15 +747,6 @@
         "tiling": "0"
     },
     {
-        "name": "knife",
-        "sprite": "knife",
-        "color": [
-            "0",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "mhat",
         "sprite": "mhat",
         "color": [
