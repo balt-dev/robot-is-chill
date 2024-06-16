@@ -783,7 +783,7 @@
         "tiling": "0"
     },
     {
-        "name": "num",
+        "name": "number",
         "sprite": "number",
         "color": [
             "0",
@@ -1072,7 +1072,7 @@
     },
     {
         "name": "text_off",
-        "sprite": "off",
+        "sprite": "text_off",
         "color": [
             "3",
             "4"
@@ -1276,5 +1276,68 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_id",
+        "sprite": "text_id",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_traba",
+        "sprite": "text_traba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "traba",
+        "sprite": "traba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "light",
+        "sprite": "light",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "beltalpha",
+        "sprite": "beltalpha",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "why?",
+        "sprite": "why",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_why?",
+        "sprite": "text_why",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

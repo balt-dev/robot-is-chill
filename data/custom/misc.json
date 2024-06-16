@@ -1807,5 +1807,59 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "text_willnothavebeenfollowing",
+        "sprite": "text_willnothavebeenfollowing",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "toti",
+        "sprite": "toti",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_toti",
+        "sprite": "text_toti",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "decay",
+        "sprite": "decay",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "puff",
+        "sprite": "puff",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_puff",
+        "sprite": "text_puff",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

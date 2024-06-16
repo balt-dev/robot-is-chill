@@ -628,5 +628,50 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ktoken",
+        "sprite": "ktoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jtoken",
+        "sprite": "jtoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mtoken",
+        "sprite": "mtoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ftoken",
+        "sprite": "ftoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wallboard",
+        "sprite": "wallboard",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
     }
 ]

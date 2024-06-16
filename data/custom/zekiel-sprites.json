@@ -61,5 +61,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "splash",
+        "sprite": "splash",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_splash",
+        "sprite": "text_splash",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

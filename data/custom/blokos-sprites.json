@@ -17,7 +17,7 @@
         ],
         "tiling": "2"
     },
-	{
+    {
         "name": "text_\u9c2a",
         "sprite": "text_U09C2A",
         "color": [
@@ -40,6 +40,42 @@
         "sprite": "text_atom",
         "color": [
             "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "aiwfc",
+        "sprite": "all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_aiwfc",
+        "sprite": "text_all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "katsu",
+        "sprite": "katsu",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_katsu",
+        "sprite": "text_katsu",
+        "color": [
+            "2",
             "3"
         ],
         "tiling": "-1"
