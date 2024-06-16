@@ -17,6 +17,7 @@ class MacroCog:
         self.bot = bot
         self.variables = {}
         self.builtins: dict[str, BuiltinMacro] = {}
+        self.found = 0
 
         def builtin(name: str):
             def wrapper(func: Callable):
