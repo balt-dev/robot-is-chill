@@ -79,5 +79,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "seek",
+        "sprite": "seek",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]

@@ -124,5 +124,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "dost",
+        "sprite": "dost",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dist",
+        "sprite": "dist",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
