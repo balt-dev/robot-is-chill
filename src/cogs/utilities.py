@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import re
@@ -402,6 +402,28 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             title="Available overlays",
             colour=self.bot.embed_color,
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
+
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    @commands.command()
+    async def tiles(self, ctx: Context, source: str = None):
+        """Sends a text file containing all tiles in a given source, or all tiles if no source is given."""
+        result = None
+        async with self.bot.db.conn.cursor() as cur:
+            if source is None:
+                result = await cur.execute("select distinct name, sprite, tiling, active_color_x, active_color_y from tiles")
+            else:
+                result = await cur.execute("select distinct name, sprite, tiling, active_color_x, active_color_y from tiles where source = ?", source)
+            data_rows = await result.fetchall()
+        buf = StringIO()
+        seen_names = set()
+        for (name, sprite, tiling, col_x, col_y) in data_rows:
+            if name in seen_names: continue
+            seen_names.add(name)
+            if not re.fullmatch(r"^[A-Za-z0-9_]+$", name):
+                name = f'"{name.replace("\"", "\\\"")}"'
+            buf.write(f"[{name}]\nsprite = \"{sprite}\"\ntiling = {tiling}\ncolor = [{col_x}, {col_y}]\n\n")
+        buf.seek(0)
+        await ctx.send(file=discord.File(buf, filename="tiles.toml"))
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
