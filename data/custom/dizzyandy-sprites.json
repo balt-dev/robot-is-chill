@@ -262,7 +262,7 @@
     },
     {
         "name": "badcat",
-        "sprite": "badcat",
+        "sprite": "badcatold",
         "color": [
             "1",
             "4"
@@ -783,7 +783,7 @@
         "tiling": "0"
     },
     {
-        "name": "num",
+        "name": "number",
         "sprite": "number",
         "color": [
             "0",
@@ -1067,6 +1067,303 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_off",
+        "sprite": "text_off",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "lattice",
+        "sprite": "lattice",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "construct_1",
+        "sprite": "construct_1",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_2",
+        "sprite": "construct_2",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_3",
+        "sprite": "construct_3",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_4",
+        "sprite": "construct_4",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_5",
+        "sprite": "construct_5",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_6",
+        "sprite": "construct_6",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_7",
+        "sprite": "construct_7",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_8",
+        "sprite": "construct_8",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_9",
+        "sprite": "construct_house",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_10",
+        "sprite": "construct_baba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text",
+        "sprite": "text",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph",
+        "sprite": "glyph",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "inner",
+        "sprite": "inner",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "level2",
+        "sprite": "level",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node",
+        "sprite": "node",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "rever",
+        "sprite": "rever",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "nothing",
+        "sprite": "nothing",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "swaspa",
+        "sprite": "swaspa",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_bctllt",
+        "sprite": "text_babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "bctllt",
+        "sprite": "babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "da",
+        "sprite": "badcat",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_id",
+        "sprite": "text_id",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_traba",
+        "sprite": "text_traba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "traba",
+        "sprite": "traba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "light",
+        "sprite": "light",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "beltalpha",
+        "sprite": "beltalpha",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "why?",
+        "sprite": "why",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_why?",
+        "sprite": "text_why",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_pow",
+        "sprite": "text_pow",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text__NONE_",
+        "sprite": "text__NONE_",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metanode",
+        "sprite": "text_metanode",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "-1"
     }

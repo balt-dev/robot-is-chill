@@ -1,0 +1,137 @@
+[
+    {
+        "name": "iwldoor",
+        "sprite": "iwldoor",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlblank",
+        "sprite": "iwlblank",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlblast",
+        "sprite": "iwlblast",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "inputpoint",
+        "sprite": "iwlinput",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "outputpoint",
+        "sprite": "iwloutput",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jam",
+        "sprite": "jam",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "building",
+        "sprite": "building",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+	{
+        "name": "iwlkey",
+        "sprite": "iwlkey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlmkey",
+        "sprite": "iwlmkey",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlekey",
+        "sprite": "iwlekey",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlstar",
+        "sprite": "iwlstar",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlunstar",
+        "sprite": "iwlunstar",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwlvoid",
+        "sprite": "voidkey",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "carrot2",
+        "sprite": "carrot2",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "canopy",
+        "sprite": "canopy",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "1"
+    }
+]

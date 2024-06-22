@@ -79,5 +79,77 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_unknown",
+        "sprite": "text_unknown",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kiwi",
+        "sprite": "kiwi",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kiwi",
+        "sprite": "text_kiwi",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "iwuk",
+        "sprite": "iwuk",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_iwuk",
+        "sprite": "text_iwuk",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dost",
+        "sprite": "dost",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dist",
+        "sprite": "dist",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_here2",
+        "sprite": "text_here2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

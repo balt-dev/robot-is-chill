@@ -1,7 +1,16 @@
 [
     {
-        "name": "isyou",
+        "name": "isyou_old",
         "sprite": "isyou",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "isyou",
+        "sprite": "isyouremaster",
         "color": [
             "4",
             "1"
@@ -31,6 +40,42 @@
         "sprite": "text_xix",
         "color": [
             "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "naba",
+        "sprite": "naba",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_naba",
+        "sprite": "text_naba",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "splash",
+        "sprite": "splash",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_splash",
+        "sprite": "text_splash",
+        "color": [
+            "1",
             "3"
         ],
         "tiling": "-1"
