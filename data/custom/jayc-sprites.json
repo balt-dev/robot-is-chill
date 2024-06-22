@@ -1,0 +1,83 @@
+[
+    {
+        "name": "arrow3",
+        "sprite": "arrow2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "button",
+        "sprite": "button",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_arrow2",
+        "sprite": "text_arrow2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_button",
+        "sprite": "text_button",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "timi",
+        "sprite": "timi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_timi",
+        "sprite": "text_timi",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "piku",
+        "sprite": "piku",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "piku_old",
+        "sprite": "piku_old",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_piku",
+        "sprite": "text_piku",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]

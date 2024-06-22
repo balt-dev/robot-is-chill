@@ -112,7 +112,8 @@
         "sprite": "text_num5",
         "color": [
             "2",
-            "3"],
+            "3"
+        ],
         "tiling": "-1"
     },
     {
@@ -361,6 +362,186 @@
     {
         "name": "text_op_times",
         "sprite": "text_times",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_modulo",
+        "sprite": "percent",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_modulo",
+        "sprite": "text_modulo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "numi",
+        "sprite": "numi",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_numi",
+        "sprite": "text_numi",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "numx",
+        "sprite": "numx",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_numx",
+        "sprite": "text_numx",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_tothe",
+        "sprite": "tothe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_tothe",
+        "sprite": "text_tothe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_equal",
+        "sprite": "equals",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_equal",
+        "sprite": "text_equals",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_booland",
+        "sprite": "booland",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_booland",
+        "sprite": "text_booland",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_boolnot",
+        "sprite": "boolnot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_boolnot",
+        "sprite": "text_boolnot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_greater",
+        "sprite": "greater",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_greater",
+        "sprite": "text_greater",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_boolor",
+        "sprite": "boolor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_boolor",
+        "sprite": "text_boolor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_less",
+        "sprite": "less",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_less",
+        "sprite": "text_less",
         "color": [
             "0",
             "3"

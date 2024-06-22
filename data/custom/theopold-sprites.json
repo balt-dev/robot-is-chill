@@ -1284,7 +1284,7 @@
             "3",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "swu",
@@ -1314,13 +1314,31 @@
         "tiling": "2"
     },
     {
-        "name": "lele2",
-        "sprite": "lele",
+        "name": "kyle",
+        "sprite": "kyle",
         "color": [
             "4",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "lele2",
+        "sprite": "kyle",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kyle",
+        "sprite": "text_kyle",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "sasa",
@@ -1329,7 +1347,16 @@
             "0",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_sasa",
+        "sprite": "text_sasa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "ee",
@@ -2290,6 +2317,105 @@
         "sprite": "text_sesa",
         "color": [
             "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sesa_old",
+        "sprite": "text_sesaold",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "misqmisq",
+        "sprite": "misqmisq",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "randundun",
+        "sprite": "randundun",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ijij",
+        "sprite": "ijij",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ijij",
+        "sprite": "text_ijij",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_popo",
+        "sprite": "text_popo",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tletle",
+        "sprite": "tletle",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ddi",
+        "sprite": "ddi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ulul",
+        "sprite": "ulul",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "blimp",
+        "sprite": "blimp",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_blimp",
+        "sprite": "text_blimp",
+        "color": [
+            "4",
             "1"
         ],
         "tiling": "-1"

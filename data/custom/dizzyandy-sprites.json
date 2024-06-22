@@ -1339,5 +1339,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_pow",
+        "sprite": "text_pow",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

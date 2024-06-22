@@ -72,15 +72,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_katsu",
-        "sprite": "text_katsu",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "seek",
         "sprite": "seek",
         "color": [
@@ -88,5 +79,14 @@
             "1"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "zawzaw",
+        "sprite": "zawzaw",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]

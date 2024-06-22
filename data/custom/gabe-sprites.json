@@ -673,5 +673,23 @@
             "1"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "wk7",
+        "sprite": "wk7",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_wk7",
+        "sprite": "text_wk7",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

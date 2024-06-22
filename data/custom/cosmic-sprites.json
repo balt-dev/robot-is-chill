@@ -74,5 +74,14 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "banbab",
+        "sprite": "banbab",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

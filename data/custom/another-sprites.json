@@ -142,5 +142,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_here2",
+        "sprite": "text_here2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

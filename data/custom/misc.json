@@ -1861,5 +1861,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pig",
+        "sprite": "pig",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_pig",
+        "sprite": "text_pig",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "spikier",
+        "sprite": "spikier",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "yogurt",
+        "sprite": "yogurt",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
