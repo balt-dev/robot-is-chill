@@ -324,6 +324,15 @@
         "tiling": "-1"
     },
     {
+        "name": "op_-",
+        "sprite": "minus",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_op_minus",
         "sprite": "text_minus",
         "color": [

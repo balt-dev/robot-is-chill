@@ -1348,5 +1348,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text__NONE_",
+        "sprite": "text__NONE_",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metanode",
+        "sprite": "text_metanode",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1,0 +1,65 @@
+[
+    {
+        "name": "ect",
+        "sprite": "ect",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ect",
+        "sprite": "text_ect",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_obj",
+        "sprite": "text_obj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_object",
+        "sprite": "text_object",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_becobj",
+        "sprite": "text_becobj",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_de-obj",
+        "sprite": "text_deobj",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text__",
+        "sprite": "text__",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    }
+]

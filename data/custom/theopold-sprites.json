@@ -2419,5 +2419,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_metaletter",
+        "sprite": "text_metaletter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
