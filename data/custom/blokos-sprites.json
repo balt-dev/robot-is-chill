@@ -17,7 +17,7 @@
         ],
         "tiling": "2"
     },
-	{
+    {
         "name": "text_\u9c2a",
         "sprite": "text_U09C2A",
         "color": [
@@ -718,5 +718,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "zawzaw",
+        "sprite": "zawzaw",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
