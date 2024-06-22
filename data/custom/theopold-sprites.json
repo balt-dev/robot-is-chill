@@ -2428,5 +2428,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "protag",
+        "sprite": "protag",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_protag",
+        "sprite": "text_protag",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
