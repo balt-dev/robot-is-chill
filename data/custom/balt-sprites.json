@@ -179,12 +179,99 @@
         "tiling": "2"
     },
     {
-        "name": "text_cba",
+        "name": "text_cba2",
         "sprite": "text_cba",
         "color": [
             "4",
             "1"
         ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tplate",
+        "sprite": "tplate",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "knife",
+        "sprite": "knife",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "debug",
+        "sprite": "debug",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_ascension",
+        "sprite": "ascension",
+        "color": ["2", "4"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_assistance",
+        "sprite": "assistance",
+        "color": ["3", "1"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_friendship",
+        "sprite": "friendship",
+        "color": ["4", "2"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_gluttony",
+        "sprite": "gluttony",
+        "color": ["6", "2"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_lust",
+        "sprite": "lust",
+        "color": ["1", "2"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_monk",
+        "sprite": "monk",
+        "color": ["2", "4"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_survival",
+        "sprite": "survival",
+        "color": ["0", "3"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_travel",
+        "sprite": "travel",
+        "color": ["4", "4"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_violence",
+        "sprite": "violence",
+        "color": ["2", "1"],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_wanderer",
+        "sprite": "wanderer",
+        "color": ["1", "1"],
         "tiling": "-1"
     }
 ]

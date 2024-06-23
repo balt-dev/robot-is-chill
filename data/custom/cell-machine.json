@@ -24,7 +24,7 @@
             "3",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "4"
     },
     {
         "name": "pusher",
@@ -153,8 +153,8 @@
         "tiling": "-1"
     },
     {
-        "name": "bread",
-        "sprite": "bread",
+        "name": "breadcell",
+        "sprite": "breadcell",
         "color": [
             "6",
             "1"
@@ -185,6 +185,33 @@
         "color": [
             "3",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "freezecell",
+        "sprite": "freezecell",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cellba",
+        "sprite": "cellba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cellfo",
+        "sprite": "cellfo",
+        "color": [
+            "5",
+            "2"
         ],
         "tiling": "-1"
     }

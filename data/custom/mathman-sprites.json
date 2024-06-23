@@ -1,5 +1,5 @@
 [
-  {
+    {
         "name": "text_beside",
         "sprite": "text_beside",
         "color": [
@@ -89,6 +89,24 @@
     {
         "name": "welcomeback",
         "sprite": "welcomeback",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_node",
+        "sprite": "text_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cba",
+        "sprite": "text_cba",
         "color": [
             "0",
             "3"

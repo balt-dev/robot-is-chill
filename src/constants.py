@@ -283,7 +283,8 @@ MAX_SIGN_TEXT_LENGTH = 64
 
 FONT_MULTIPLIERS = {
     "ui": 4 / 3,
-    "icon": 4 / 3
+    "icon": 4 / 3,
+    "offset": 7 / 10
 }
 
 MESSAGE_LIMIT = 10
@@ -293,3 +294,4 @@ CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-l
 
 
 MACRO_LIMIT = 5000
+MACRO_ARG_LIMIT = 100
