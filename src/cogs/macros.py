@@ -14,6 +14,7 @@ from ..types import Bot, BuiltinMacro
 class MacroCog:
 
     def __init__(self, bot: Bot):
+        self.debug = []
         self.bot = bot
         self.variables = {}
         self.builtins: dict[str, BuiltinMacro] = {}
@@ -439,8 +440,9 @@ class MacroCog:
                 result, _ = self.parse_macros(unescape(code), False, init = False)
             except errors.FailedBuiltinMacro as e:
                 return f"false/{e.message}"
-            else:
-                return f"true/{result}"
+            except AssertionError as e:
+                return f"false/{e}"
+            return f"true/{result}"
         
         @builtin("lower")
         def lower(text: str):
@@ -457,44 +459,42 @@ class MacroCog:
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
     def parse_macros(self, objects: str, debug_info: bool, macros=None, init=True) -> tuple[Optional[str], Optional[list[str]]]:
-        debug = None
-        if debug_info:
-            debug = []
-
         if init:
+            self.debug = []
             self.variables = {}
-            if macros is None:
-                macros = self.bot.macros
+            self.found = 0
+        if macros is None:
+            macros = self.bot.macros
 
         # Find each outmost pair of brackets
-        self.found = 0
+
         while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*?(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
             self.found += 1
             if debug_info:
                 if self.found > constants.MACRO_LIMIT:
-                    debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
-                    return None, debug
+                    self.debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
+                    return None, self.debug
             else:
                 assert self.found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {self.found}."
             terminal = match.group(1)
             if debug_info:
-                debug.append(f"[Step {self.found}] {objects}")
+                self.debug.append(f"[Step {self.found}] {objects}")
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros, self.found, debug, debug_info) +
+                        self.parse_term_macro(terminal, macros, self.found, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
                 if debug_info:
-                    debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
-                    return None, debug
+                    self.debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
+                    return None, self.debug
                 raise err
         if debug_info:
-            debug.append(f"[Out] {objects}")
-        return objects, debug
+            self.debug.append(f"[Out] {objects}")
+        return objects, self.debug if len(self.debug) else None
 
-    def parse_term_macro(self, raw_variant, macros, step = 0, debug = None, debug_info = False) -> str:
+    def parse_term_macro(self, raw_variant, macros, step = 0, debug_info = False) -> str:
         raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
         if raw_macro in self.builtins:
             try:
@@ -518,7 +518,7 @@ class MacroCog:
                         break
                     argument = match.group(1)
                     if argument == "#":
-                        debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
+                        self.debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
                         infix = str(len(macro_args) - 1)
                     else:
                         argument = int(argument)
@@ -527,7 +527,7 @@ class MacroCog:
                         except IndexError:
                             infix = "\0" + str(argument)
                     if debug_info:
-                        debug.append(f"[Step {step}:{arg_amount}] {macro}")
+                        self.debug.append(f"[Step {step}:{arg_amount}] {macro}")
                     macro = macro[:match.start()] + infix + macro[match.end():]
         else:
             raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")
