@@ -436,7 +436,7 @@ class MacroCog:
             """Runs some escaped MacroScript code. Returns two slash-seperated arguments: if the code errored, and the output/error message (depending on whether it errored.)"""
             self.found += 1
             try:
-                result, _ = self.parse_macros(unescape(code), False)
+                result, _ = self.parse_macros(unescape(code), False, init = False)
             except errors.FailedBuiltinMacro as e:
                 return f"false/{e.message}"
             else:
@@ -456,14 +456,15 @@ class MacroCog:
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
-    def parse_macros(self, objects: str, debug_info: bool, macros=None) -> tuple[Optional[str], Optional[list[str]]]:
-        self.variables = {}
-        if macros is None:
-            macros = self.bot.macros
-
+    def parse_macros(self, objects: str, debug_info: bool, macros=None, init=True) -> tuple[Optional[str], Optional[list[str]]]:
         debug = None
         if debug_info:
             debug = []
+
+        if init:
+            self.variables = {}
+            if macros is None:
+                macros = self.bot.macros
 
         # Find each outmost pair of brackets
         self.found = 0
@@ -481,7 +482,7 @@ class MacroCog:
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros, found, debug, debug_info) +
+                        self.parse_term_macro(terminal, macros, self.found, debug, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
