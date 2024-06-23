@@ -445,7 +445,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
 
     @add_variant("noun", "prop")
     async def property(sprite,
-                       plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn"]] = None, *,
+                       plate: Optional[Literal["blank", "left", "up", "right", "down", "turn", "deturn", "soft"]] = None, *,
                        tile, wobble, renderer):
         """Applies a property plate to a sprite."""
         if plate is None:

@@ -1,0 +1,803 @@
+[
+    {
+        "name": "event_n0",
+        "sprite": "event_n0",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n1",
+        "sprite": "event_n1",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n2",
+        "sprite": "event_n2",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n3",
+        "sprite": "event_n3",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n4",
+        "sprite": "event_n4",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n5",
+        "sprite": "event_n5",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n6",
+        "sprite": "event_n6",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n7",
+        "sprite": "event_n7",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n8",
+        "sprite": "event_n8",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n9",
+        "sprite": "event_n9",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n-1",
+        "sprite": "glyph_n-1",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n1",
+        "sprite": "glyph_n1",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n2",
+        "sprite": "glyph_n2",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n3",
+        "sprite": "glyph_n3",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n4",
+        "sprite": "glyph_n4",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n5",
+        "sprite": "glyph_n5",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n6",
+        "sprite": "glyph_n6",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n7",
+        "sprite": "glyph_n7",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n8",
+        "sprite": "glyph_n8",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n9",
+        "sprite": "glyph_n9",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n10",
+        "sprite": "glyph_n10",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n11",
+        "sprite": "glyph_n11",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n12",
+        "sprite": "glyph_n12",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n13",
+        "sprite": "glyph_n13",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n14",
+        "sprite": "glyph_n14",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n15",
+        "sprite": "glyph_n15",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n16",
+        "sprite": "glyph_n16",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n17",
+        "sprite": "glyph_n17",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n18",
+        "sprite": "glyph_n18",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n19",
+        "sprite": "glyph_n19",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n20",
+        "sprite": "glyph_n20",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n21",
+        "sprite": "glyph_n21",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n22",
+        "sprite": "glyph_n22",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n23",
+        "sprite": "glyph_n23",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n24",
+        "sprite": "glyph_n24",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n25",
+        "sprite": "glyph_n25",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n26",
+        "sprite": "glyph_n26",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n27",
+        "sprite": "glyph_n27",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n28",
+        "sprite": "glyph_n28",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n29",
+        "sprite": "glyph_n29",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n30",
+        "sprite": "glyph_n30",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n31",
+        "sprite": "glyph_n31",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n32",
+        "sprite": "glyph_n32",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_n33",
+        "sprite": "glyph_n33",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n34",
+        "sprite": "glyph_n34",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n35",
+        "sprite": "glyph_n35",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n36",
+        "sprite": "glyph_n36",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n37",
+        "sprite": "glyph_n37",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n38",
+        "sprite": "glyph_n38",
+        "color": [
+            "2",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n39",
+        "sprite": "glyph_n39",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n40",
+        "sprite": "glyph_n40",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n41",
+        "sprite": "glyph_n41",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n42",
+        "sprite": "glyph_n42",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n43",
+        "sprite": "glyph_n43",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n44",
+        "sprite": "glyph_n44",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n45",
+        "sprite": "glyph_n45",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n46",
+        "sprite": "glyph_n46",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n47",
+        "sprite": "glyph_n47",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n48",
+        "sprite": "glyph_n48",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n49",
+        "sprite": "glyph_n49",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n50",
+        "sprite": "glyph_n50",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n51",
+        "sprite": "glyph_n51",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n52",
+        "sprite": "glyph_n52",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n53",
+        "sprite": "glyph_n53",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n54",
+        "sprite": "glyph_n54",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n55",
+        "sprite": "glyph_n55",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n56",
+        "sprite": "glyph_n56",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_n57",
+        "sprite": "glyph_n57",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n58",
+        "sprite": "glyph_n58",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "glyph_n59",
+        "sprite": "glyph_n59",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n60",
+        "sprite": "glyph_n60",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n61",
+        "sprite": "glyph_n61",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n62",
+        "sprite": "glyph_n62",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n1",
+        "sprite": "text_n1",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n2",
+        "sprite": "text_n2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n3",
+        "sprite": "text_n3",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n4",
+        "sprite": "text_n4",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n5",
+        "sprite": "text_n5",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n6",
+        "sprite": "text_n6",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n7",
+        "sprite": "text_n7",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n8",
+        "sprite": "text_n8",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n9",
+        "sprite": "text_n9",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n10",
+        "sprite": "text_n10",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n11",
+        "sprite": "text_n11",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n12",
+        "sprite": "text_n12",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n13",
+        "sprite": "text_n13",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n14",
+        "sprite": "text_n14",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n15",
+        "sprite": "text_n15",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n16",
+        "sprite": "text_n16",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    }
+]
