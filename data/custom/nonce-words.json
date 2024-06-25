@@ -90,6 +90,15 @@
         "tiling": "-1"
     },
     {
+        "name": "event_n10",
+        "sprite": "event_n10",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "glyph_n-1",
         "sprite": "glyph_n-1",
         "color": [
@@ -738,6 +747,15 @@
         "tiling": "0"
     },
     {
+        "name": "text_n9_arrow",
+        "sprite": "text_n9_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_n10",
         "sprite": "text_n10",
         "color": [
@@ -789,7 +807,7 @@
             "2",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "text_n16",
@@ -798,6 +816,51 @@
             "5",
             "4"
         ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n17",
+        "sprite": "text_n17",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n18",
+        "sprite": "text_n18",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n19",
+        "sprite": "text_n19",
+        "color": [
+            "0",
+            "2"
+        ],
         "tiling": "0"
+    },
+    {
+        "name": "text_n19_arrow",
+        "sprite": "text_n19_arrow",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n20",
+        "sprite": "text_n20",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
