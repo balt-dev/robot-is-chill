@@ -1015,5 +1015,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_n37",
+        "sprite": "text_n37",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
