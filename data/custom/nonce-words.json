@@ -1006,5 +1006,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_n36",
+        "sprite": "text_n36",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
