@@ -99,6 +99,15 @@
         "tiling": "-1"
     },
     {
+        "name": "event_n11",
+        "sprite": "event_n11",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "glyph_n-1",
         "sprite": "glyph_n-1",
         "color": [
@@ -857,6 +866,141 @@
     {
         "name": "text_n20",
         "sprite": "text_n20",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n21",
+        "sprite": "text_n21",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n22",
+        "sprite": "text_n22",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n23",
+        "sprite": "text_n23",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n24",
+        "sprite": "text_n24",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n25",
+        "sprite": "text_n25",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n26",
+        "sprite": "text_n26",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n27",
+        "sprite": "text_n27",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n28",
+        "sprite": "text_n28",
+        "color": [
+            "1",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n29",
+        "sprite": "text_n29",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n30",
+        "sprite": "text_n30",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n31",
+        "sprite": "text_n31",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n32",
+        "sprite": "text_n32",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n33",
+        "sprite": "text_n33",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n34",
+        "sprite": "text_n34",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n35",
+        "sprite": "text_n35",
         "color": [
             "0",
             "3"
