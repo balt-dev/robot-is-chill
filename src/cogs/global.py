@@ -211,6 +211,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         except ValueError:
             word, *rest = err.args
             variant = '(Unspecified in error)'
+        # easter egg
+        if variant == "porp":
+            return await ctx.error(":porp", file=discord.File("data/misc/porp.jpg"))
         msg = f"The variant `{variant}` for `{word}` is invalid"
         if isinstance(err, errors.BadTilingVariant):
             tiling = rest[0]

@@ -216,15 +216,6 @@
         "tiling": "-1"
     },
     {
-        "name": "fufu",
-        "sprite": "fufu",
-        "tiling": "2",
-        "color": [
-            "5",
-            "2"
-        ]
-    },
-    {
         "name": "text_fufu",
         "sprite": "text_fufu",
         "color": [
