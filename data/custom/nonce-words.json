@@ -1033,5 +1033,14 @@
             "-4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_n39",
+        "sprite": "text_n39",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
