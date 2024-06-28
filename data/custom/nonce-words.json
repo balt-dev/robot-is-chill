@@ -675,6 +675,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n0",
+        "sprite": "text_n0",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_n1",
         "sprite": "text_n1",
         "color": [
@@ -1040,6 +1049,24 @@
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n40",
+        "sprite": "text_n40",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n41",
+        "sprite": "text_n41",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }
