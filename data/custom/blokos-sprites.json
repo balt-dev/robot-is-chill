@@ -238,7 +238,7 @@
         "sprite": "katsu",
         "color": [
             "2",
-                  "3"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -763,5 +763,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "background_snom",
+        "sprite": "background_snom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -28,15 +28,15 @@ class Context(commands.Context):
     silent: bool = False
     ephemeral: bool = False
 
-    async def error(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+    async def error(self, msg: str, embed: discord.Embed | None = None, **kwargs) -> Coroutine[discord.Message]:
         try:
             await self.message.add_reaction("\u26a0\ufe0f")
         except discord.errors.NotFound:
             pass
         if embed is not None:
-            return await self.reply(msg, embed=embed)
+            return await self.reply(msg, embed=embed, **kwargs)
         else:
-            return await self.reply(msg)
+            return await self.reply(msg, **kwargs)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
