@@ -1155,15 +1155,6 @@
         "name": "text_n50",
         "sprite": "text_n50",
         "color": [
-            "4",
-            "0"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n50",
-        "sprite": "text_n50",
-        "color": [
             "5",
             "4"
         ],
@@ -1220,6 +1211,15 @@
         "color": [
             "2",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n56",
+        "sprite": "text_n56",
+        "color": [
+            "3",
+            "3"
         ],
         "tiling": "-1"
     }
