@@ -1,5 +1,5 @@
 [
-  {
+    {
         "name": "text_beside",
         "sprite": "text_beside",
         "color": [
@@ -101,6 +101,15 @@
         "color": [
             "2",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cba",
+        "sprite": "text_cba",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

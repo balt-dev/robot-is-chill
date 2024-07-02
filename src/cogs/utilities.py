@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import re
@@ -37,7 +37,7 @@ class SearchPageSource(menus.ListPageSource):
             color=menu.bot.embed_color,
             title=f"Search results{target} (Page {menu.current_page + 1}/{self.get_max_pages()})"
         )
-        out.set_footer(text="Note: Some custom levels may not show up here.")
+        out.set_footer(text="Note: To search for things other than tiles, use command flags. See =help search.")
         lines = ["```"]
         for (type, short), long in entries:
             if isinstance(long, TileData):
@@ -149,7 +149,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         This can return tiles, levels, palettes, variants, and sprite mods.
 
-        **Tiles** can be filtered with the flags:
+        **Tiles** can be filtered with the flags, formatted like `--<name>=<value>`:
         * `sprite`: Will return only tiles that use that sprite.
         * `text`: Whether to only return text tiles (either `true` or `false`).
         * `source`: The source of the sprite. This should be a sprite mod.
@@ -173,8 +173,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         `search source:modded sort:color page:4`
         `search text:true color:0,3 reverse:true`
         """
-        # Pattern to match flags in the format (flag):(value)
-        flag_pattern = r"([\d\w_/]+):([\d\w\-_/]+)"
+        # Pattern to match flags in the format (flag)=(value)
+        flag_pattern = r"--([\d\w_/]+)=([\d\w\-_/]+)"
         match = re.search(flag_pattern, query)
         plain_query = query.lower()
 
@@ -185,16 +185,17 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         flags = {}
         if has_flags:
             if match:
-                # Returns "flag":"value" pairs
+                # Returns "flag"="value" pairs
                 flags = dict(re.findall(flag_pattern, query))
             # Nasty regex to match words that are not flags
-            non_flag_pattern = r"(?<![:\w\d,\-/])([\w\d,_/]+)(?![:\d\w,\-/])"
-            plain_match = re.findall(non_flag_pattern, query)
-            plain_query = " ".join(plain_match)
+            plain_query = re.sub(flag_pattern, "", plain_query).strip()
+
+        if "type" not in flags:
+            flags["type"] = "tile"
 
         results: dict[tuple[str, str], Any] = {}
 
-        if flags.get("type") is None or flags.get("type") == "tile":
+        if flags.get("type") == "tile":
             color = flags.get("color")
             f_color_x = f_color_y = None
             if color is not None:
@@ -257,7 +258,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 results["tile", row["name"]] = TileData.from_row(row)
                 results["blank_space", row["name"]] = None
 
-        if flags.get("type") is None or flags.get("type") == "level":
+        if flags.get("type") == "level":
             if flags.get("custom") is None or flags.get("custom") == "true":
                 f_author = flags.get("author")
                 async with self.bot.db.conn.cursor() as cur:
@@ -307,8 +308,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 for (world, id), data in levels.items():
                     results["level", f"{world}/{id}"] = data
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "palette":
+        if flags.get("type") == "palette":
             q = f"*{plain_query}*.png" if plain_query else "*.png"
             out = []
             for path in Path("data/palettes").glob(q):
@@ -318,8 +318,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "mod":
+        if flags.get("type") == "mod":
             q = f"*{plain_query}*.json" if plain_query else "*.json"
             out = []
             for path in Path("data/custom").glob(q):
@@ -328,17 +327,14 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             for a, b in out:
                 results[a] = b
 
-        if flags.get("type") is None and plain_query or flags.get(
-                "type") == "world":
+        if flags.get("type") == "world":
             out = []
-            for path in Path("data/levels").glob("*"):
+            for path in Path("data/levels").glob(plain_query if plain_query else "*"):
                 out.append((("world", path.stem), path.stem))
             out.sort()
             for a, b in out:
                 results[a] = b
 
-        if "variant" in query:
-            await ctx.reply("_Looking for variants? They've moved to the `variants` command._", delete_after=10, mention_author=False)
         await ButtonPages(
             source=SearchPageSource(
                 list(results.items()),
@@ -375,7 +371,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             try:
                 sprite_name, source, colorx, colory, tiling = tuple(await result.fetchone())
             except BaseException:
-                return await ctx.error(f'Tile {name} not found!')
+                return await ctx.error(f'Tile `{name.replace("`", "")[:16]}` not found!')
             files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')
             zipped_files = BytesIO()
             with zipfile.ZipFile(zipped_files, "x") as zip_file:
@@ -408,6 +404,28 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             description="\n".join(f"{overlay[:-4]}" for overlay in listdir('data/overlays/'))))
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
+    @commands.command()
+    async def tiles(self, ctx: Context, source: str = None):
+        """Sends a text file containing all tiles in a given source, or all tiles if no source is given."""
+        result = None
+        async with self.bot.db.conn.cursor() as cur:
+            if source is None:
+                result = await cur.execute("select distinct name, sprite, tiling, active_color_x, active_color_y from tiles")
+            else:
+                result = await cur.execute("select distinct name, sprite, tiling, active_color_x, active_color_y from tiles where source = ?", source)
+            data_rows = await result.fetchall()
+        buf = StringIO()
+        seen_names = set()
+        for (name, sprite, tiling, col_x, col_y) in data_rows:
+            if name in seen_names: continue
+            seen_names.add(name)
+            if not re.fullmatch(r"^[A-Za-z0-9_]+$", name):
+                name = f'"{name.replace("\"", "\\\"")}"'
+            buf.write(f"[{name}]\nsprite = \"{sprite}\"\ntiling = {tiling}\ncolor = [{col_x}, {col_y}]\n\n")
+        buf.seek(0)
+        await ctx.send(file=discord.File(buf, filename="tiles.toml"))
+
+    @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="palette", aliases=['pal'])
     async def show_palette(self, ctx: Context, palette: str = 'default', color: str = None):
         """Displays palette image, or details about a palette index.
@@ -418,7 +436,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         img = p_cache.get(palette, None)
         if img is None:
             if "/" not in palette:
-                return await ctx.error(f'The palette {palette} could not be found.')
+                return await ctx.error(f'The palette `{palette.replace("`", "")[:16]}` could not be found.')
             palette, color = "default", palette
         if color is not None:
             r, g, b, _ = Color.parse(Tile(name="<palette command>", palette=palette), p_cache, color)
@@ -460,8 +478,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             buf = BytesIO()
             pal_img.save(buf, format="PNG")
             buf.seek(0)
-            file = discord.File(buf, filename=f"{palette}.png")
-            await ctx.reply(f"Palette `{palette}`:", file=file)
+            file = discord.File(buf, filename=f"{palette[:16]}.png")
+            await ctx.reply(f"Palette `{palette[:16]}`:", file=file)
 
     @commands.cooldown(5, 8, type=commands.BucketType.channel)
     @commands.command(name="hint", aliases=["hints"])

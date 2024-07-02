@@ -1,4 +1,4 @@
-Flags are a way of altering the _entire_ render. These are much less organized than variants, but there are less of them. They can be specified anywhere in the command, but by convention, it's best to put all flags at the beginning of the command, immediately after the command name. A list of common flags is below:
+Flags are a way of altering the _entire_ render. These are much less organized than variants, but there are less of them. All flags must be put immediately after the command name. A list of common flags is below:
 
 - `-c` - Combines a render with a replied message's render.
 - `-co` - Removes the variation in wobble between tiles.

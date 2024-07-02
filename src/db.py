@@ -246,13 +246,13 @@ class Database:
                 await cur.execute("SELECT url, absolute FROM filterimages WHERE name == ?;", url)
                 result = await cur.fetchone()
                 if result is None:
-                    if "." not in url:
-                        raise AssertionError(f"Filter `{url}` wasn't found in the database!")
+                    assert "catbox.moe/" in url, f"Filter `{url}` wasn't found in the database!"
                     extracted = tldextract.extract(url)
+                    print(extracted)
                     assert extracted.domain == "catbox" \
                            and extracted.suffix == "moe", \
                            "Please only use catbox.moe for filters."
-                    result = f"https://" + url
+                    result = f"https://{url}"
                     absolute = None
                 else:
                     result, absolute = result
