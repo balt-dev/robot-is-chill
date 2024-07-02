@@ -1008,6 +1008,15 @@
         "tiling": "0"
     },
     {
+        "name": "text_n34_arrowbeta",
+        "sprite": "text_n34_arrowbeta",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_n35",
         "sprite": "text_n35",
         "color": [
@@ -1067,6 +1076,150 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n42",
+        "sprite": "text_n42",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n43",
+        "sprite": "text_n43",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n44",
+        "sprite": "text_n44",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n45",
+        "sprite": "text_n45",
+        "color": [
+            "-7",
+            "-2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n46",
+        "sprite": "text_n46",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n47",
+        "sprite": "text_n47",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n48",
+        "sprite": "text_n48",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n49",
+        "sprite": "text_n49",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n50",
+        "sprite": "text_n50",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n50",
+        "sprite": "text_n50",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n51",
+        "sprite": "text_n51",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n51_old",
+        "sprite": "text_n51_old",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n52",
+        "sprite": "text_n52",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n53",
+        "sprite": "text_n53",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n54",
+        "sprite": "text_n54",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n55",
+        "sprite": "text_n55",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "-1"
     }
