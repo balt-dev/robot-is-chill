@@ -1222,5 +1222,104 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "obj_n1",
+        "sprite": "obj_n1",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n2",
+        "sprite": "obj_n2",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n3",
+        "sprite": "obj_n3",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n4",
+        "sprite": "obj_n4",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n5",
+        "sprite": "obj_n5",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n6",
+        "sprite": "obj_n6",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "obj_n7",
+        "sprite": "obj_n7",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "obj_n8",
+        "sprite": "obj_n8",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n9",
+        "sprite": "obj_n9",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n10",
+        "sprite": "obj_n10",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n11",
+        "sprite": "obj_n11",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
