@@ -18,6 +18,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_cactus2",
+        "sprite": "text_cactus",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "bodbod",
         "sprite": "badbadb",
         "color": [
@@ -41,6 +50,114 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_alive",
+        "sprite": "text_alive",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_death",
+        "sprite": "text_death",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_fake",
+        "sprite": "text_fake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_false",
+        "sprite": "text_false",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "strand",
+        "sprite": "grass_strand",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sand2",
+        "sprite": "text_sand",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "siwak",
+        "sprite": "siwak",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_siwak",
+        "sprite": "text_siwak",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wrench",
+        "sprite": "wrench",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_wrench",
+        "sprite": "text_wrench",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_candy",
+        "sprite": "text_candy",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_banner",
+        "sprite": "text_banner",
+        "color": [
+            "2",
+            "2"
         ],
         "tiling": "-1"
     }

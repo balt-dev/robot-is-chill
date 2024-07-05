@@ -802,24 +802,6 @@
         "tiling": "-1"
     },
     {
-        "name": "he",
-        "sprite": "he",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_he",
-        "sprite": "text_he",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "dots2",
         "sprite": "dots",
         "color": [
@@ -1493,15 +1475,6 @@
             "1"
         ],
         "tiling": "0"
-    },
-    {
-        "name": "carrot",
-        "sprite": "carrot",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "text_maroon",

@@ -1,0 +1,29 @@
+[
+    {
+        "name": "threek",
+        "sprite": "threek",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_argh",
+        "sprite": "text_argh",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_omega",
+        "sprite": "text_omega",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

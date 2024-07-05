@@ -1458,6 +1458,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_<defa",
+        "sprite": "text_lessdefa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "generaldata2",
         "sprite": "generaldata2",
         "color": [
@@ -1519,5 +1528,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "zarjo",
+        "sprite": "zarjo",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
