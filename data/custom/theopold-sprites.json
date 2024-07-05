@@ -792,15 +792,6 @@
         "tiling": "2"
     },
     {
-        "name": "liba",
-        "sprite": "weirdfofo",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "scifidoor",
         "sprite": "scifidoor",
         "color": [
@@ -2450,6 +2441,51 @@
     {
         "name": "text_protag",
         "sprite": "text_protag",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "<defa",
+        "sprite": "lessdefa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "sprite": "fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "sprite": "text_fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cufol",
+        "sprite": "cufol",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cufol",
+        "sprite": "text_cufol",
         "color": [
             "0",
             "1"

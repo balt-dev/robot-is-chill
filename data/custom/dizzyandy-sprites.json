@@ -1366,5 +1366,23 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_<defa",
+        "sprite": "text_lessdefa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zarjo",
+        "sprite": "zarjo",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
