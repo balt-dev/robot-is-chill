@@ -1053,8 +1053,17 @@
         "tiling": "-1"
     },
     {
-        "name": "text_link4",
+        "name": "text_n39",
         "sprite": "text_n39",
+        "color": [
+            "-4",
+            "-4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_link4",
+        "sprite": "text_link4",
         "color": [
             "2",
             "2"
@@ -1263,8 +1272,8 @@
         "name": "obj_n4",
         "sprite": "obj_n4",
         "color": [
-            "6",
-            "2"
+            "5",
+            "0"
         ],
         "tiling": "-1"
     },
@@ -1272,8 +1281,8 @@
         "name": "obj_n5",
         "sprite": "obj_n5",
         "color": [
-            "2",
-            "1"
+            "6",
+            "2"
         ],
         "tiling": "-1"
     },
