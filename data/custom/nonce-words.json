@@ -1242,6 +1242,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n58",
+        "sprite": "text_n58",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n1",
         "sprite": "obj_n1",
         "color": [
@@ -1336,6 +1345,132 @@
         "sprite": "obj_n11",
         "color": [
             "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n1",
+        "sprite": "orb_n1",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n2",
+        "sprite": "orb_n2",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n3",
+        "sprite": "orb_n3",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n4",
+        "sprite": "orb_n4",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n5",
+        "sprite": "orb_n5",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n6",
+        "sprite": "orb_n6",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n7",
+        "sprite": "orb_n7",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n8",
+        "sprite": "orb_n8",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n9",
+        "sprite": "orb_n9",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n10",
+        "sprite": "orb_n10",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n11",
+        "sprite": "orb_n11",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n12",
+        "sprite": "orb_n12",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n13",
+        "sprite": "orb_n13",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "orb_n14",
+        "sprite": "orb_n14",
+        "color": [
+            "4",
             "1"
         ],
         "tiling": "-1"
