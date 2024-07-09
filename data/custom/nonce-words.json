@@ -1251,6 +1251,33 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n59",
+        "sprite": "text_n59",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n60",
+        "sprite": "text_n60",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n61",
+        "sprite": "text_n61",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n1",
         "sprite": "obj_n1",
         "color": [
