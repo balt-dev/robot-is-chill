@@ -387,7 +387,7 @@
         ]
     },
 	{
-        "name": "text_sauosolewbiye",
+        "name": "text_simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
         "sprite": "text_simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
         "tiling": "-1",
         "color": [
@@ -396,7 +396,25 @@
         ]
     },
 	{
-        "name": "sauosolewbiye",
+        "name": "simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
+        "sprite": "simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+	{
+        "name": "text_sauoswlewbiye",
+        "sprite": "text_simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+	{
+        "name": "sauoswlewbiye",
         "sprite": "simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents",
         "tiling": "0",
         "color": [

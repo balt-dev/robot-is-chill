@@ -693,6 +693,24 @@
         "tiling": "-1"
     },
     {
+        "name": "two words",
+        "sprite": "two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_two words",
+        "sprite": "text_two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "tw",
         "sprite": "two words",
         "color": [
@@ -1246,6 +1264,24 @@
         "sprite": "swaspa",
         "color": [
             "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_babacharacterthatlookslikethis",
+        "sprite": "text_babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babacharacterthatlookslikethis",
+        "sprite": "babacharacterthatlookslikethis",
+        "color": [
+            "5",
             "1"
         ],
         "tiling": "0"

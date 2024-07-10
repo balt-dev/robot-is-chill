@@ -54,6 +54,24 @@
         "tiling": "0"
     },
     {
+        "name": "text_all i want for christmas",
+        "sprite": "text_all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "all i want for christmas",
+        "sprite": "all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_aiwfc",
         "sprite": "text_all i want for christmas",
         "color": [
