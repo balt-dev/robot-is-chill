@@ -117,13 +117,13 @@
         "tiling": "0"
     },
     {
-        "name": "text_oc",
+        "name": "text_-oc",
         "sprite": "text_oc",
         "color": [
             "3",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "shiftoc",

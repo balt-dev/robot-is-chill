@@ -456,7 +456,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "we",
@@ -2022,7 +2022,7 @@
             "2",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "-1"
     },
     {
         "name": "text_skeletonkey",
@@ -2409,7 +2409,7 @@
             "4",
             "4"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "blimp",

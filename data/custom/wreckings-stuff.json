@@ -164,7 +164,7 @@
     {
         "name": "text_switch",
         "sprite": "text_switch",
-        "tiling": "0",
+        "tiling": "-1",
         "color": [
             "0",
             "3"

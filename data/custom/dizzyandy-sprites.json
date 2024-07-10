@@ -483,7 +483,7 @@
             "1",
             "1"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_ixix",
@@ -825,7 +825,7 @@
             "0",
             "3"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_del",
@@ -843,7 +843,7 @@
             "5",
             "3"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_new",
@@ -861,7 +861,7 @@
             "1",
             "4"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_letter",
