@@ -8,7 +8,7 @@
         ],
         "tiling": "4"
     },
-	{
+    {
         "name": "buffer_old",
         "sprite": "buffer",
         "color": [
@@ -170,7 +170,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "bsod",
         "sprite": "bsod",
         "color": [
@@ -179,7 +179,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_bsod",
         "sprite": "text_bsod",
         "color": [
@@ -188,7 +188,7 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "bye?",
         "sprite": "bye",
         "color": [
@@ -197,9 +197,18 @@
         ],
         "tiling": "-1"
     },
-	{
+    {
         "name": "text_bye?",
         "sprite": "text_bye",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tree4",
+        "sprite": "mangrovetree",
         "color": [
             "4",
             "0"

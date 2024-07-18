@@ -736,5 +736,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "floog",
+        "sprite": "floog",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

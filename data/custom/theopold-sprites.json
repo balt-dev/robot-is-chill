@@ -78,7 +78,16 @@
             "5",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_soli",
+        "sprite": "text_soli",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "swi",
@@ -321,7 +330,16 @@
             "0",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_oish",
+        "sprite": "text_oish",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "seat",
@@ -402,7 +420,16 @@
             "2",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_bavo",
+        "sprite": "text_bavo",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "bebe",
@@ -555,7 +582,16 @@
             "5",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_dag",
+        "sprite": "text_dag",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "shrub",
@@ -1230,7 +1266,7 @@
             "5",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "kuku",
@@ -2488,6 +2524,33 @@
         "sprite": "text_cufol",
         "color": [
             "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_teltel",
+        "sprite": "text_teltel",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "empty2",
+        "sprite": "empty2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "edge2",
+        "sprite": "edge2",
+        "color": [
+            "1",
             "1"
         ],
         "tiling": "-1"
