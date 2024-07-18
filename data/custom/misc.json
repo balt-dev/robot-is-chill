@@ -703,6 +703,15 @@
         "tiling": "0"
     },
     {
+        "name": "knife",
+        "sprite": "knife",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "mhat",
         "sprite": "mhat",
         "color": [
@@ -1796,6 +1805,24 @@
         "sprite": "yogurt",
         "color": [
             "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dice",
+        "sprite": "dice",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dice",
+        "sprite": "text_dice",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"

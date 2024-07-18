@@ -1224,6 +1224,15 @@
         "tiling": "-1"
     },
     {
+        "name": "construct_11",
+        "sprite": "construct_9",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text",
         "sprite": "text",
         "color": [
@@ -1537,5 +1546,32 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "dreamwall",
+        "sprite": "dreamwall",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_thase",
+        "sprite": "text_thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_thes",
+        "sprite": "text_thes",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

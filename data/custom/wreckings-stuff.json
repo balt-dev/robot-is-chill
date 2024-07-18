@@ -566,4 +566,22 @@
             "3"
         ]
     },
+	{
+        "name": "screwdriver",
+        "sprite": "screwdriver",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "4"
+        ]
+    },
+	{
+        "name": "text_driver",
+        "sprite": "text_screwdriver",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "4"
+        ]
+    }
 ]
