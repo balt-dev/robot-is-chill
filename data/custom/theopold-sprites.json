@@ -364,7 +364,7 @@
         "sprite": "these",
         "color": [
             "0",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -382,7 +382,7 @@
         "sprite": "those",
         "color": [
             "0",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },

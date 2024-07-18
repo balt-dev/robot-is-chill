@@ -1,0 +1,11 @@
+[
+    {
+        "name": "text_tnt",
+        "sprite": "tnt",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]

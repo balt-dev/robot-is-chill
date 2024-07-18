@@ -1420,5 +1420,59 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "thase",
+        "sprite": "thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_thes_arrow",
+        "sprite": "text_thes_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_thase_arrow",
+        "sprite": "text_thase_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_th",
+        "sprite": "text_th",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_th_arrow",
+        "sprite": "text_th_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u00a3",
+        "sprite": "text_\u00a3",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
