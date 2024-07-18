@@ -198,5 +198,32 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_\u304b\u3064",
+        "sprite": "text_304b3064",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u52dd\u3064",
+        "sprite": "text_52dd3064",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_exist",
+        "sprite": "text_exist",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1810,24 +1810,6 @@
         "tiling": "-1"
     },
     {
-        "name": "dice",
-        "sprite": "dice",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_dice",
-        "sprite": "text_dice",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_yrducio",
         "sprite": "text_yrducio",
         "color": [

@@ -79,5 +79,23 @@
             "3"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "super",
+        "sprite": "super",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "data",
+        "sprite": "data",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
