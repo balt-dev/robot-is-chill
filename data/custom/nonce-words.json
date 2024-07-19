@@ -108,6 +108,15 @@
         "tiling": "-1"
     },
     {
+        "name": "event_n12",
+        "sprite": "event_n12",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "glyph_n-1",
         "sprite": "glyph_n-1",
         "color": [
