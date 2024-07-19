@@ -1281,7 +1281,16 @@
         "name": "text_n61",
         "sprite": "text_n61",
         "color": [
-            "4",
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n62",
+        "sprite": "text_n62",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"
