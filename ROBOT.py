@@ -12,6 +12,7 @@ from typing import Coroutine
 
 import discord
 from PIL import Image
+from discord import app_commands
 from discord.ext import commands
 
 import auth
@@ -25,31 +26,22 @@ from numpy import set_printoptions as numpy_set_printoptions
 
 class Context(commands.Context):
     silent: bool = False
+    ephemeral: bool = False
 
-    async def error(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
+    async def error(self, msg: str, embed: discord.Embed | None = None, **kwargs) -> Coroutine[discord.Message]:
         try:
-            self.silent
-        except KeyError:
-            self.silent = False
-        await self.message.add_reaction("\u26a0\ufe0f")
+            await self.message.add_reaction("\u26a0\ufe0f")
+        except discord.errors.NotFound:
+            pass
         if embed is not None:
-            return await self.reply(msg, embed=embed, silent=self.silent)
+            return await self.reply(msg, embed=embed, **kwargs)
         else:
-            return await self.reply(msg, silent=self.silent)
-
-    async def warn(self, msg: str, embed: discord.Embed | None = None) -> Coroutine[discord.Message]:
-        try:
-            self.silent
-        except KeyError:
-            self.silent = False
-        await self.message.add_reaction("\u2755")
-        if embed is not None:
-            return await self.reply(msg, embed=embed, silent=self.silent, mention_author=False)
-        else:
-            return await self.reply(msg, silent=self.silent, mention_author=False)
+            return await self.reply(msg, **kwargs)
 
     async def send(self, content: str = "", embed: discord.Embed | None = None, **kwargs):
         content = str(content)
+        kwargs['ephemeral'] = self.ephemeral
+        kwargs['silent'] = self.silent
         if len(content) > 2000:
             msg = " [...] \n\n (Character limit reached!)"
             content = content[:2000 - len(msg)] + msg
@@ -64,6 +56,7 @@ class Context(commands.Context):
     async def reply(self, *args, mention_author: bool = False, **kwargs):
         kwargs['mention_author'] = mention_author
         kwargs['reference'] = self.message
+        kwargs['ephemeral'] = self.ephemeral
         return await self.send(*args, **kwargs)
 
 
@@ -182,13 +175,14 @@ async def on_command(ctx):
         embed = discord.Embed(
             description=ctx.message.content,
             color=config.logging_color)
-        embed.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}'[:32],
+        embed.set_author(name=f'{ctx.author.name}'[:32],
                          icon_url=ctx.author.avatar.url if ctx.author.avatar else None)
         if not isinstance(ctx.channel, discord.DMChannel):
             embed.set_footer(text=f"{ctx.message.guild.name} ({ctx.message.guild.id})", icon_url=ctx.message.guild.icon.url)
         await webhook.send(embed=embed)
     except Exception as e:
         warnings.warn("\n".join(traceback.format_exception(e)))
+
 
 bot.run(auth.token, log_handler=None)
 sys.exit(bot.exit_code)

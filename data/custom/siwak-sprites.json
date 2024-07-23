@@ -34,5 +34,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_sigma",
+        "sprite": "text_sigma",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1,0 +1,20 @@
+[
+    {
+        "name": "text_link3",
+        "sprite": "text_link3",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_post",
+        "sprite": "text_post",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

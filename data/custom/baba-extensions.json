@@ -315,5 +315,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "piece",
+        "sprite": "piece",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]

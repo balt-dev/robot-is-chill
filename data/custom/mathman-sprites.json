@@ -1,5 +1,5 @@
 [
-  {
+    {
         "name": "text_beside",
         "sprite": "text_beside",
         "color": [
@@ -13,21 +13,17 @@
         "tiling": "-1"
     },
     {
-        "name": "text_de",
-        "sprite": "text_de",
+        "name": "text_cba",
+        "sprite": "text_cba",
         "color": [
-            "0",
-            "1"
-        ],
-        "active": [
             "0",
             "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_ed",
-        "sprite": "text_ed",
+        "name": "text_de",
+        "sprite": "text_de",
         "color": [
             "0",
             "1"
@@ -48,6 +44,19 @@
         "active": [
             "4",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ed",
+        "sprite": "text_ed",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
@@ -78,6 +87,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_node",
+        "sprite": "text_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "fi2",
         "sprite": "fi2",
         "color": [
@@ -85,6 +103,24 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fianim",
+        "sprite": "fianim",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "fidir",
+        "sprite": "fidir",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     },
     {
         "name": "welcomeback",

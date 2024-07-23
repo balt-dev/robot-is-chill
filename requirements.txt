@@ -4,17 +4,17 @@ requests>=2.25.1
 emoji==2.2.0
 jishaku
 git+https://github.com/Rapptz/asqlite
-discord.py
+git+https://github.com/Rapptz/discord.py
 git+https://github.com/Rapptz/discord-ext-menus
 git+https://github.com/oliver-ni/discord-ext-menus-views
 charset-normalizer
 colour-science
-numpy~=1.23.3
-aiohttp~=3.8.1
-setuptools~=58.1.0
+numpy
+aiohttp
+setuptools
 visual-center
 more_itertools
 tldextract~=3.4.0
 
 attrs~=22.2.0
-cpmpy~=0.9.12
+cpmpy

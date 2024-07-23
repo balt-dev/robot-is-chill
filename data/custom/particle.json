@@ -1,5 +1,5 @@
 [
-	{
+     {
         "name": "background_bubble",
         "sprite": "background_bubble",
         "color": [
@@ -99,65 +99,155 @@
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_win",
+        "sprite": "particle_win",
         "color": [
-            "1",
-            "0"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_bling",
+        "sprite": "particle_bling",
         "color": [
-            "1",
-            "0"
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_bonus",
+        "sprite": "particle_bonus",
         "color": [
-            "1",
-            "0"
+            "4",
+            "1"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_confetti",
+        "sprite": "particle_confetti",
         "color": [
-            "1",
-            "0"
+            "2",
+            "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_destroy",
+        "sprite": "particle_destroy",
         "color": [
-            "1",
-            "0"
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_eat",
+        "sprite": "particle_eat",
         "color": [
-            "1",
-            "0"
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "background_bubble",
-        "sprite": "background_bubble",
+        "name": "particle_electricity",
+        "sprite": "particle_electricity",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_error",
+        "sprite": "particle_error",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_glow",
+        "sprite": "particle_glow",
         "color": [
             "1",
-            "0"
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_hot",
+        "sprite": "particle_hot",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_infinity",
+        "sprite": "particle_infinity",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_music",
+        "sprite": "particle_music",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_pet",
+        "sprite": "particle_pet",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_sleep",
+        "sprite": "particle_sleep",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_smoke",
+        "sprite": "particle_smoke",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_tear",
+        "sprite": "particle_tear",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "particle_unlock",
+        "sprite": "particle_unlock",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "-1"
     }

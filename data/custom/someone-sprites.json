@@ -25,5 +25,23 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "dtwall",
+        "sprite": "wall",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "gtfo",
+        "sprite": "greaterthanfofo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

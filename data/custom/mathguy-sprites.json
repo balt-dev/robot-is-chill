@@ -123,48 +123,12 @@
         ],
         "tiling": "-1"
     },
-	{
-        "name": "iwlkey",
-        "sprite": "iwlkey",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
     {
-        "name": "iwlmkey",
-        "sprite": "iwlmkey",
+        "name": "omega",
+        "sprite": "omega",
         "color": [
             "0",
             "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwlekey",
-        "sprite": "iwlekey",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwlstar",
-        "sprite": "iwlstar",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwlunstar",
-        "sprite": "iwlunstar",
-        "color": [
-            "2",
-            "4"
         ],
         "tiling": "-1"
     },
@@ -183,69 +147,6 @@
         "color": [
             "2",
             "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwldoor",
-        "sprite": "iwldoor",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwlblank",
-        "sprite": "iwlblank",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "iwlblast",
-        "sprite": "iwlblast",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "inputpoint",
-        "sprite": "iwlinput",
-        "color": [
-            "4",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "outputpoint",
-        "sprite": "iwloutput",
-        "color": [
-            "1",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "omega",
-        "sprite": "omega",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "jam",
-        "sprite": "jam",
-        "color": [
-            "0",
-            "3"
         ],
         "tiling": "-1"
     }
