@@ -14,6 +14,7 @@ from ..types import Bot, BuiltinMacro
 class MacroCog:
 
     def __init__(self, bot: Bot):
+        self.debug = []
         self.bot = bot
         self.variables = {}
         self.builtins: dict[str, BuiltinMacro] = {}
@@ -99,6 +100,11 @@ class MacroCog:
             """Subtracts a value from another."""
             a, b = to_float(a), to_float(b)
             return str(a - b)
+
+        @builtin("hash")
+        def hash_(value: str):
+            """Gets the hash of a value."""
+            return str(hash(value))
 
         @builtin("replace")
         def replace(value: str, pattern: str, replacement: str):
@@ -431,11 +437,12 @@ class MacroCog:
             """Runs some escaped MacroScript code. Returns two slash-seperated arguments: if the code errored, and the output/error message (depending on whether it errored.)"""
             self.found += 1
             try:
-                result, _ = self.parse_macros(unescape(code), False)
+                result, _ = self.parse_macros(unescape(code), False, init = False)
             except errors.FailedBuiltinMacro as e:
                 return f"false/{e.message}"
-            else:
-                return f"true/{result}"
+            except AssertionError as e:
+                return f"false/{e}"
+            return f"true/{result}"
         
         @builtin("lower")
         def lower(text: str):
@@ -451,44 +458,43 @@ class MacroCog:
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
-    def parse_macros(self, objects: str, debug_info: bool, macros=None) -> tuple[Optional[str], Optional[list[str]]]:
-        self.variables = {}
+    def parse_macros(self, objects: str, debug_info: bool, macros=None, init=True) -> tuple[Optional[str], Optional[list[str]]]:
+        if init:
+            self.debug = []
+            self.variables = {}
+            self.found = 0
         if macros is None:
             macros = self.bot.macros
 
-        debug = None
-        if debug_info:
-            debug = []
-
         # Find each outmost pair of brackets
-        self.found = 0
+
         while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*?(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
             self.found += 1
             if debug_info:
                 if self.found > constants.MACRO_LIMIT:
-                    debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
-                    return None, debug
+                    self.debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
+                    return None, self.debug
             else:
                 assert self.found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {self.found}."
             terminal = match.group(1)
             if debug_info:
-                debug.append(f"[Step {self.found}] {objects}")
+                self.debug.append(f"[Step {self.found}] {objects}")
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros) +
+                        self.parse_term_macro(terminal, macros, self.found, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
                 if debug_info:
-                    debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
-                    return None, debug
+                    self.debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
+                    return None, self.debug
                 raise err
         if debug_info:
-            debug.append(f"[Out] {objects}")
-        return objects, debug
+            self.debug.append(f"[Out] {objects}")
+        return objects, self.debug if len(self.debug) else None
 
-    def parse_term_macro(self, raw_variant, macros) -> str:
+    def parse_term_macro(self, raw_variant, macros, step = 0, debug_info = False) -> str:
         raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
         if raw_macro in self.builtins:
             try:
@@ -502,23 +508,26 @@ class MacroCog:
             macro_args = ["/".join(macro_args), *macro_args]
             arg_amount = 0
             iters = None
-            while iters != 0 and arg_amount <= 100:
+            while iters != 0 and arg_amount <= constants.MACRO_ARG_LIMIT:
                 iters = 0
                 matches = [*re.finditer(r"\$(-?\d+|#)", macro)]
                 for match in reversed(matches):
                     iters += 1
                     arg_amount += 1
-                    if arg_amount > 100:
+                    if arg_amount > constants.MACRO_ARG_LIMIT:
                         break
                     argument = match.group(1)
                     if argument == "#":
-                        infix = str(len(macro_args))
+                        self.debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
+                        infix = str(len(macro_args) - 1)
                     else:
                         argument = int(argument)
                         try:
                             infix = macro_args[argument]
                         except IndexError:
                             infix = "\0" + str(argument)
+                    if debug_info:
+                        self.debug.append(f"[Step {step}:{arg_amount}] {macro}")
                     macro = macro[:match.start()] + infix + macro[match.end():]
         else:
             raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")

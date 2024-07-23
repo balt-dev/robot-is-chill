@@ -628,5 +628,113 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "ktoken",
+        "sprite": "ktoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jtoken",
+        "sprite": "jtoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mtoken",
+        "sprite": "mtoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "ftoken",
+        "sprite": "ftoken",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wallboard",
+        "sprite": "wallboard",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "wk7",
+        "sprite": "wk7",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_wk7",
+        "sprite": "text_wk7",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u27d0\u26e2\u26ec\u26d2",
+        "sprite": "text_27d0_26e2_26ec_26d2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u27d0",
+        "sprite": "text_27d0",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u26e2",
+        "sprite": "text_26e2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u26ec",
+        "sprite": "text_26ec",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u26d2",
+        "sprite": "text_26d2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

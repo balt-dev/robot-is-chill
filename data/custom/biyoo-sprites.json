@@ -1,0 +1,11 @@
+[
+    {
+        "name": "torchlight",
+        "sprite": "torchlight",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    }
+]

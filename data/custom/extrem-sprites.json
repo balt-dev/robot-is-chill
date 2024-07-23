@@ -133,5 +133,32 @@
             "4"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "hi!",
+        "sprite": "hi",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_hi!",
+        "sprite": "text_hi",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_refers",
+        "sprite": "text_refers",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

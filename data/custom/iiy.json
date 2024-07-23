@@ -214,5 +214,23 @@
             "1"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "nearoc",
+        "sprite": "near-oc",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_nearoc",
+        "sprite": "text_near-oc",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
     }
 ]

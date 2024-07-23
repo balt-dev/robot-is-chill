@@ -52,5 +52,41 @@
             "2"
         ],
         "tiling": "-1"
+    },
+	{
+        "name": "text_strock",
+        "sprite": "text_strock",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "text_scale",
+        "sprite": "text_scale",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+	{
+        "name": "libby",
+        "sprite": "libby",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+	{
+        "name": "tuwih",
+        "sprite": "tuwih",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

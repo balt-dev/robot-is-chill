@@ -5,6 +5,7 @@ import os
 import signal
 import time
 import traceback
+import warnings
 from pathlib import Path
 
 import requests
@@ -23,8 +24,11 @@ from charset_normalizer import from_bytes
 
 import aiohttp
 import discord
+from discord import ui, Interaction, app_commands
 from discord.ext import commands, menus
 
+import config
+import webhooks
 from src.types import SignText, RenderContext
 from src.utils import ButtonPages
 from ..tile import Tile, TileSkeleton, parse_variants
@@ -107,6 +111,79 @@ class FilterQuerySource(menus.ListPageSource):
         return embed
 
 
+class RenderBox(ui.Modal, title='Render Body'):
+    global_cog: GlobalCog
+    text: bool
+    bot: Bot
+
+    def __init__(self, cog: GlobalCog, text: bool):
+        super().__init__()
+        self.global_cog = cog
+        self.text = text
+        self.bot = cog.bot
+
+    scene = ui.TextInput(label='Scene Contents', style=discord.TextStyle.paragraph,
+                         placeholder="-b\n$baba $is $you\nbaba . flag\n$flag $is $win")
+
+    async def on_submit(self, intr: discord.Interaction):
+        await intr.response.defer(ephemeral=False, thinking=True)
+
+        try:
+            webhook = await self.bot.fetch_webhook(webhooks.logging_id)
+            ctx: Context
+            embed = discord.Embed(
+                description=f"/render {self.scene.value}",
+                color=config.logging_color)
+            embed.set_author(
+                name=f'{intr.user.name}'[:32],
+                icon_url=intr.user.avatar.url if intr.user.avatar else None
+            )
+            await webhook.send(embed=embed)
+        except Exception as e:
+            warnings.warn("\n".join(traceback.format_exception(e)))
+
+        wrapper = RenderBoxWrapper(intr)
+        wrapper.message.content = self.scene.value
+        wrapper.bot = self.bot
+        wrapper.fake = True
+        await self.global_cog.render_tiles(
+            wrapper,
+            objects=self.scene.value,
+            rule=self.text
+        )
+
+
+class FakeFlags:
+    def __getattr__(self, item):
+        return False
+
+class FakeMessage:
+    flags = FakeFlags()
+    ...
+
+class RenderBoxWrapper:
+    intr: Interaction
+    bot: Bot
+    message: FakeMessage
+
+    def __init__(self, intr: Interaction):
+        self.intr = intr
+        self.message = FakeMessage()
+
+    async def send(self, *args, **kwargs):
+        await self.intr.followup.send(*args, **kwargs)
+
+    async def reply(self, *args, **kwargs):
+        await self.send(*args, **kwargs)
+
+    async def error(self, msg: str, **kwargs):
+        msg = f"```\n{self.message.content.replace('`', '')}\n```\n\n:warning: {msg}"
+        await self.send(msg, **kwargs)
+
+    async def typing(self):
+        pass
+
+
 class GlobalCog(commands.Cog, name="Baba Is You"):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -134,6 +211,9 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         except ValueError:
             word, *rest = err.args
             variant = '(Unspecified in error)'
+        # easter egg
+        if variant == "porp":
+            return await ctx.error(":porp", file=discord.File("data/misc/porp.jpg"))
         msg = f"The variant `{variant}` for `{word}` is invalid"
         if isinstance(err, errors.BadTilingVariant):
             tiling = rest[0]
@@ -227,7 +307,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
         """Performs the bulk work for both `tile` and `rule` commands."""
         try:
             await ctx.typing()
-            ctx.silent = ctx.message.flags.silent
+            ctx.silent = ctx.message is not None and ctx.message.flags.silent
             tiles = emoji.demojize(objects.strip(), language='alias').replace(":hearts:",
                                                                               "♥")  # keep the heart, for the people
             tiles = re.sub(r'<a?(:.+?:)\d+?>', r'\1', tiles)
@@ -453,7 +533,11 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             filename = datetime.utcnow().strftime(
                 f"render_%Y-%m-%d_%H.%M.%S.{render_ctx.image_format}")
             image = discord.File(render_ctx.out, filename=filename, spoiler=spoiler)
-            description = f"{'||' if spoiler else ''}`{ctx.message.content.split(' ', 1)[0]} {old_tiles}`{'||' if spoiler else ''}"
+            if hasattr(ctx, "fake"):
+                prefix = ""
+            else:
+                prefix = ctx.message.content.split(' ', 1)[0] + " "
+            description = f"{'||' if spoiler else ''}```\n{prefix}{old_tiles}\n```{'||' if spoiler else ''}"
             if render_ctx.do_embed:
                 embed = discord.Embed(color=self.bot.embed_color)
 
@@ -489,6 +573,15 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
                 await ctx.reply(description[:2000], embed=embed, file=image)
         finally:
             signal.alarm(0)
+
+    @app_commands.command()
+    @app_commands.allowed_installs(guilds=False, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    async def render(self, intr: Interaction, render_mode: Literal["tile", "text"] = "tile"):
+        """Renders the tiles provided using a modal."""
+        box = RenderBox(self, render_mode == "text")
+        await intr.response.send_modal(box)
+        await box.wait()
 
     @commands.command(aliases=["t"])
     @commands.cooldown(5, 8, type=commands.BucketType.channel)

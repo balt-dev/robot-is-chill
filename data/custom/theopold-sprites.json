@@ -792,6 +792,15 @@
         "tiling": "2"
     },
     {
+        "name": "liba",
+        "sprite": "weirdfofo",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "scifidoor",
         "sprite": "scifidoor",
         "color": [
@@ -1284,7 +1293,7 @@
             "3",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "swu",
@@ -1314,13 +1323,31 @@
         "tiling": "2"
     },
     {
-        "name": "lele2",
-        "sprite": "lele",
+        "name": "kyle",
+        "sprite": "kyle",
         "color": [
             "4",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "lele2",
+        "sprite": "kyle",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kyle",
+        "sprite": "text_kyle",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "sasa",
@@ -1329,7 +1356,16 @@
             "0",
             "1"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_sasa",
+        "sprite": "text_sasa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "ee",
@@ -2165,6 +2201,258 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "hog",
+        "sprite": "hog",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_hog",
+        "sprite": "text_hog",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "handalpha",
+        "sprite": "glove",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "flaker",
+        "sprite": "flaker",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "flake",
+        "sprite": "flake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babafan24",
+        "sprite": "babafan24",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "text_babafan24",
+        "sprite": "text_babafan24",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_member",
+        "sprite": "text_member",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_fan2",
+        "sprite": "text_fan",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_24",
+        "sprite": "text_24",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_await",
+        "sprite": "text_await",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sour",
+        "sprite": "text_sour",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sesa",
+        "sprite": "sesa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_sesa",
+        "sprite": "text_sesa",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sesa_old",
+        "sprite": "text_sesaold",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "misqmisq",
+        "sprite": "misqmisq",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "randundun",
+        "sprite": "randundun",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ijij",
+        "sprite": "ijij",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ijij",
+        "sprite": "text_ijij",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_popo",
+        "sprite": "text_popo",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tletle",
+        "sprite": "tletle",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ddi",
+        "sprite": "ddi",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ulul",
+        "sprite": "ulul",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "blimp",
+        "sprite": "blimp",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_blimp",
+        "sprite": "text_blimp",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metaletter",
+        "sprite": "text_metaletter",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "protag",
+        "sprite": "protag",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_protag",
+        "sprite": "text_protag",
+        "color": [
+            "0",
+            "1"
         ],
         "tiling": "-1"
     }

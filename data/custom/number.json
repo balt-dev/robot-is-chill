@@ -112,7 +112,8 @@
         "sprite": "text_num5",
         "color": [
             "2",
-            "3"],
+            "3"
+        ],
         "tiling": "-1"
     },
     {
@@ -219,6 +220,339 @@
         "sprite": "text_num6",
         "color": [
             "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "numunknown",
+        "sprite": "unknown",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_numunknown",
+        "sprite": "text_unknown",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "num-0",
+        "sprite": "num-0",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_num-0",
+        "sprite": "text_num-0",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "num-1",
+        "sprite": "num-1",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_num-1",
+        "sprite": "text_num-1",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "num-2",
+        "sprite": "num-2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_num-2",
+        "sprite": "text_num-2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_plus",
+        "sprite": "plus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_plus",
+        "sprite": "text_plus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_minus",
+        "sprite": "minus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_-",
+        "sprite": "minus",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_minus",
+        "sprite": "text_minus",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_divide",
+        "sprite": "divide",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_-",
+        "sprite": "text_-",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_times",
+        "sprite": "times",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_times",
+        "sprite": "text_times",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_modulo",
+        "sprite": "percent",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_modulo",
+        "sprite": "text_modulo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "numi",
+        "sprite": "numi",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_numi",
+        "sprite": "text_numi",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "numx",
+        "sprite": "numx",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_numx",
+        "sprite": "text_numx",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_tothe",
+        "sprite": "tothe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_tothe",
+        "sprite": "text_tothe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_equal",
+        "sprite": "equals",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_equal",
+        "sprite": "text_equals",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_booland",
+        "sprite": "booland",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_booland",
+        "sprite": "text_booland",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_boolnot",
+        "sprite": "boolnot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_boolnot",
+        "sprite": "text_boolnot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_greater",
+        "sprite": "greater",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_greater",
+        "sprite": "text_greater",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_boolor",
+        "sprite": "boolor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_boolor",
+        "sprite": "text_boolor",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "op_less",
+        "sprite": "less",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_op_less",
+        "sprite": "text_less",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "-1"

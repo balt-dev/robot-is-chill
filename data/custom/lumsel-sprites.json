@@ -1,0 +1,146 @@
+[
+    {
+        "name": "wave",
+        "sprite": "wave",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tar",
+        "sprite": "tar",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "ant",
+        "sprite": "ant",
+        "tiling": "0",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "oni",
+        "sprite": "oni",
+        "tiling": "4",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_ant",
+        "sprite": "text_ant",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_tar",
+        "sprite": "text_tar",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "1"
+        ]
+    },
+    {
+        "name": "text_oni",
+        "sprite": "text_oni",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_wave",
+        "sprite": "text_wave",
+        "tiling": "-1",
+        "color": [
+            "1",
+            "3"
+        ]
+    },
+    {
+        "name": "coco",
+        "sprite": "coco",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "text_coco",
+        "sprite": "text_coco",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "dots",
+        "sprite": "dots",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "text_dots",
+        "sprite": "text_dots",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "palm",
+        "sprite": "palm",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "3"
+        ]
+    },
+    {
+        "name": "text_palm",
+        "sprite": "text_palm",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "3"
+        ]
+    },
+    {
+        "name": "coral",
+        "sprite": "coral",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "3"
+        ]
+    },
+    {
+        "name": "text_coral",
+        "sprite": "text_coral",
+        "tiling": "-1",
+        "color": [
+            "5",
+            "3"
+        ]
+    }
+]

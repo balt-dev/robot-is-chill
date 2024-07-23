@@ -162,7 +162,8 @@ DIRECTIONS = {
     16: "left",
     24: "down",
     -1: "turn",
-    -2: "deturn"
+    -2: "deturn",
+    -3: "soft"
 }
 
 # for n in [[0,1],[-1,0],[0,-1],[1,0],[-1,1],[-1,-1],[1,-1],[]]
@@ -277,12 +278,13 @@ BLENDING_MODES = (
 
 FILTER_MAX_SIZE = 524288
 
-MAX_SIGN_TEXTS = 32
-MAX_SIGN_TEXT_LENGTH = 64
+MAX_SIGN_TEXTS = 128
+MAX_SIGN_TEXT_LENGTH = 256
 
 FONT_MULTIPLIERS = {
     "ui": 4 / 3,
-    "icon": 4 / 3
+    "icon": 4 / 3,
+    "offset": 7 / 10
 }
 
 MESSAGE_LIMIT = 10
@@ -292,3 +294,4 @@ CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-l
 
 
 MACRO_LIMIT = 5000
+MACRO_ARG_LIMIT = 100
