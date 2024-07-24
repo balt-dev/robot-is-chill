@@ -134,5 +134,14 @@
             3
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "node_obj",
+        "sprite": "node_obj",
+        "color": [
+            0,
+            2
+        ],
+        "tiling": "-1"
     }
 ]
