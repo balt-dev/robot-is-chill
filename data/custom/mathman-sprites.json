@@ -130,5 +130,18 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "node_event",
+        "sprite": "node_event",
+        "color": [
+            5,
+            2
+        ],
+        "active": [
+            5,
+            3
+        ],
+        "tiling": "-1"
     }
 ]

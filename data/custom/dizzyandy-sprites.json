@@ -1366,5 +1366,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "node_glyph",
+        "sprite": "node_glyph",
+        "color": [
+            3,
+            2
+        ],
+        "tiling": "-1"
     }
 ]
