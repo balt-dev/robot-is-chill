@@ -87,15 +87,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_node",
-        "sprite": "text_node",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "fi2",
         "sprite": "fi2",
         "color": [
