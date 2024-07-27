@@ -36,6 +36,15 @@
         "tiling": "1"
     },
     {
+        "name": "dtfort",
+        "sprite": "fort",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
         "name": "gtfo",
         "sprite": "greaterthanfofo",
         "color": [
