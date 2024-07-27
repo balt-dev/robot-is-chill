@@ -45,6 +45,15 @@
         "tiling": "1"
     },
     {
+        "sprite": "tileedge",
+        "tiling": "1",
+        "color": [
+            "0",
+            "3"
+        ],
+        "name": "tileedge2"
+    },
+    {
         "name": "gtfo",
         "sprite": "greaterthanfofo",
         "color": [
