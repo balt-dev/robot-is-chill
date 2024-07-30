@@ -738,6 +738,24 @@
         "tiling": "0"
     },
     {
+        "name": "snombalt2",
+        "sprite": "snombalt2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "snombalt3",
+        "sprite": "snombalt3",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "kobad",
         "sprite": "kobad",
         "color": [
