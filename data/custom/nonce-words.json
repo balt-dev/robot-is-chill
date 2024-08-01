@@ -1065,8 +1065,8 @@
         "name": "text_n39",
         "sprite": "text_n39",
         "color": [
-            "-4",
-            "-4"
+            "-5",
+            "-3"
         ],
         "tiling": "-1"
     },
@@ -1292,6 +1292,33 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n63",
+        "sprite": "text_n63",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n64",
+        "sprite": "text_n64",
+        "color": [
+            "-5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n65",
+        "sprite": "text_n65",
+        "color": [
+            "0",
+            "4"
         ],
         "tiling": "-1"
     },
