@@ -693,6 +693,24 @@
         "tiling": "-1"
     },
     {
+        "name": "glyph_n63",
+        "sprite": "glyph_n63",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n64",
+        "sprite": "glyph_n64",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_n0",
         "sprite": "text_n0",
         "color": [
