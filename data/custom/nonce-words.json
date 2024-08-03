@@ -1350,6 +1350,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n66",
+        "sprite": "text_n66",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n1",
         "sprite": "obj_n1",
         "color": [
