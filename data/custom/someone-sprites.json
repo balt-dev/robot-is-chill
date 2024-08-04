@@ -61,5 +61,14 @@
             "2"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "catsnake",
+        "sprite": "catsnake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
