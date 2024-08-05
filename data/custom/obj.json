@@ -217,7 +217,7 @@
     },
     {
         "name": "obj_water",
-        "sprite": "obj_bog",
+        "sprite": "obj_water",
         "color": [
             "1",
             "2"
@@ -263,15 +263,6 @@
     {
         "name": "obj_tree",
         "sprite": "obj_tree",
-        "color": [
-            "5",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "obj_tree2",
-        "sprite": "obj_tree2",
         "color": [
             "5",
             "1"
@@ -331,6 +322,141 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "obj_start",
+        "sprite": "obj_start",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_open",
+        "sprite": "obj_open",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_obj_obj_obj_obj_obj_baba",
+        "sprite": "obj_obj_obj_obj_obj_obj_baba",
+        "color": [
+            "0",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "obj_metaobj",
+        "sprite": "obj_metaobj",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_what",
+        "sprite": "obj_what",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "obj_hedge",
+        "sprite": "obj_hedge",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_cups",
+        "sprite": "obj_cups",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_icon_island",
+        "sprite": "obj_icon_island",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_mblock",
+        "sprite": "obj_mblock",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "obj_win",
+        "sprite": "obj_win",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "obj_monitor",
+        "sprite": "obj_monitor",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "obj_fofo",
+        "sprite": "obj_fofo",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_cursor",
+        "sprite": "obj_cursor",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_text_besideright",
+        "sprite": "obj_text_besideright",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_tree2",
+        "sprite": "obj_tree2",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "obj_error",
