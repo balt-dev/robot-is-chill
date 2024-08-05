@@ -1,5 +1,14 @@
 [
     {
+        "name": "dahdah",
+        "sprite": "dahdah",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "glyph_kelt",
         "sprite": "glyph_kelt",
         "color": [
