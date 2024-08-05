@@ -63,6 +63,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_class",
+        "sprite": "text_class",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_baba",
         "sprite": "obj_baba",
         "color": [
