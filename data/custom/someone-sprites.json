@@ -70,5 +70,14 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "dtplaceholder",
+        "sprite": "placeholder",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
