@@ -458,7 +458,7 @@ class MacroCog:
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
-    def parse_macros(self, objects: str, debug_info: bool, macros=None, init=True) -> tuple[Optional[str], Optional[list[str]]]:
+    def parse_macros(self, objects: str, debug_info: bool, macros=None, cmd="x", init=True) -> tuple[Optional[str], Optional[list[str]]]:
         if init:
             self.debug = []
             self.variables = {}
@@ -482,7 +482,7 @@ class MacroCog:
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros, self.found, debug_info) +
+                        self.parse_term_macro(terminal, macros, self.found, cmd, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
@@ -494,7 +494,7 @@ class MacroCog:
             self.debug.append(f"[Out] {objects}")
         return objects, self.debug if len(self.debug) else None
 
-    def parse_term_macro(self, raw_variant, macros, step = 0, debug_info = False) -> str:
+    def parse_term_macro(self, raw_variant, macros, step = 0, cmd = "x", debug_info = False) -> str:
         raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
         if raw_macro in self.builtins:
             try:
@@ -505,12 +505,13 @@ class MacroCog:
         elif raw_macro in macros:
             macro = macros[raw_macro].value
             macro = macro.replace("$#", str(len(macro_args)))
+            macro = macro.replace("$!", cmd)
             macro_args = ["/".join(macro_args), *macro_args]
             arg_amount = 0
             iters = None
-            while iters != 0 and arg_amount <= constants.MACRO_ARG_LIMIT:
+            while iters != 0 and arg_amount <= 100:
                 iters = 0
-                matches = [*re.finditer(r"\$(-?\d+|#)", macro)]
+                matches = [*re.finditer(r"\$(-?\d+|#|!)", macro)]
                 for match in reversed(matches):
                     iters += 1
                     arg_amount += 1
