@@ -868,6 +868,17 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         else:
             sprite[(sprite[:, :, 0] == color[0]) & (sprite[:, :, 1] == color[1]) & (sprite[:, :, 2] == color[2])] = 0
         return sprite
+    
+    @add_variant("rp")
+    async def replace(sprite, color1: Color, color2: Color, invert: Optional[bool] = False, *, tile, wobble, renderer):
+        """Replaces a certain color with a different color. If [36minvert[0m is on, then it replaces all but that color."""
+        color1 = Color.parse(tile, renderer.palette_cache, color1)
+        color2 = Color.parse(tile, renderer.palette_cache, color2)
+        if invert:
+            sprite[(sprite[:, :, 0] != color1[0]) | (sprite[:, :, 1] != color1[1]) | (sprite[:, :, 2] != color1[2])] = color2
+        else:
+            sprite[(sprite[:, :, 0] == color1[0]) & (sprite[:, :, 1] == color1[1]) & (sprite[:, :, 2] == color1[2])] = color2
+        return sprite
 
     @add_variant()
     async def clip(sprite, *, tile, wobble, renderer):
