@@ -214,5 +214,68 @@
             "0"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "music",
+        "sprite": "music",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_music",
+        "sprite": "text_music",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "the.",
+        "sprite": "the",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_the.",
+        "sprite": "text_the",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "blabla",
+        "sprite": "blabla",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_blabla",
+        "sprite": "text_blabla",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_puzzle",
+        "sprite": "text_puzzle",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

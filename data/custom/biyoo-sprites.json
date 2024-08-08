@@ -124,5 +124,23 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "hammer",
+        "sprite": "hammer",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_hammer",
+        "sprite": "text_hammer",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

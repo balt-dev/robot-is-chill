@@ -25,5 +25,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "usp",
+        "sprite": "usp",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_usp",
+        "sprite": "text_usp",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

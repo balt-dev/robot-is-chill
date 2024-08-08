@@ -1,5 +1,68 @@
 [
     {
+        "name": "tripod",
+        "sprite": "camera",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_camera",
+        "sprite": "text_camera",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "city",
+        "sprite": "city",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_city",
+        "sprite": "text_city",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "deny_indicator",
+        "sprite": "indicator_deny",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "kimchi",
+        "sprite": "kimchi",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_kimchi",
+        "sprite": "text_kimchi",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "quaqua",
         "sprite": "quaqua",
         "color": [
@@ -7,5 +70,131 @@
             "4"
         ],
         "tiling": "2"
+    },
+    {
+        "name": "text_quaqua",
+        "sprite": "text_quaqua",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bill",
+        "sprite": "text_bill",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_brought",
+        "sprite": "text_brought",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_stored",
+        "sprite": "text_stored",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_collect",
+        "sprite": "text_collect",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_deny",
+        "sprite": "text_deny",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_invalid",
+        "sprite": "text_invalid",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_inventory",
+        "sprite": "text_inventory",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_item",
+        "sprite": "text_item",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_placed",
+        "sprite": "text_placed",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_placer",
+        "sprite": "text_placer",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_solid",
+        "sprite": "text_solid",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_default",
+        "sprite": "text_default",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_glass",
+        "sprite": "text_glass",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

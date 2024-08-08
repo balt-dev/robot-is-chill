@@ -799,5 +799,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "flaglitch",
+        "sprite": "flaglitch",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

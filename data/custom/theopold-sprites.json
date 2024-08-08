@@ -2554,5 +2554,95 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "zat2",
+        "sprite": "zat2",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hooh",
+        "sprite": "hooh",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_hooh",
+        "sprite": "text_hooh",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "extraextra",
+        "sprite": "extraextra",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ojiz",
+        "sprite": "ojiz",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "fyfy",
+        "sprite": "fyfy",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "slime",
+        "sprite": "slime",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_slime",
+        "sprite": "text_slime",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "x-x",
+        "sprite": "smallx",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_x-x",
+        "sprite": "text_smallx",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -96,7 +96,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
         "name": "build_win",
@@ -140,6 +140,60 @@
         "color": [
             "4",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "build_one",
+        "sprite": "build_one",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "build_moat",
+        "sprite": "build_moat",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "build_scenic",
+        "sprite": "build_scenic",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "build_cargo",
+        "sprite": "build_cargo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "build_collapse",
+        "sprite": "build_collapse",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "build_arrow",
+        "sprite": "build_arrow",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }
