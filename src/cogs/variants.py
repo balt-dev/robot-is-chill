@@ -816,6 +816,29 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         sprite[(sprite[:, :] == [0, 0, 0, 255]).all(2)] = color
         return sprite
     
+    @add_variant("pf")
+    async def pointfill(sprite, color: Color, x: int, y: int, *, tile, wobble, renderer):
+        """Floodfills a sprite starting at a given point."""
+        color = Color.parse(tile, renderer.palette_cache, color)
+        assert x >= 0 and y >= 0 and y < sprite.shape[0] and x < sprite.shape[1], f"Target point `{x},{y}` must be inside the sprite!"
+        target_color = sprite[y,x]
+        sprite[sprite[:, :, 3] == 0] = 0  # Optimal
+        sprite_alpha = sprite[:, :, :].copy()  # Stores the alpha channel separately
+        not_color_mask = (sprite[:, :, 0] != target_color[0]) | (sprite[:, :, 1] != target_color[1]) | (sprite[:, :, 2] != target_color[2])
+        color_mask = (sprite[:, :, 0] == target_color[0]) & (sprite[:, :, 1] == target_color[1]) & (sprite[:, :, 2] == target_color[2])
+        sprite_alpha[not_color_mask] = 255
+        sprite_alpha[color_mask] = 0 # and now to override it
+        sprite_alpha = sprite_alpha[:, :, 3].copy() #???
+        sprite_flooded = cv2.floodFill(
+            image=sprite_alpha,
+            mask=None,
+            seedPoint=(x, y),
+            newVal=100
+        )[1]
+        mask = sprite_flooded == 100
+        sprite[mask] = color
+        return sprite
+
     @add_variant("rm")
     async def remove(sprite, color: Color, invert: Optional[bool] = False, *, tile, wobble, renderer):
         """Removes a certain color from the sprite. If [36minvert[0m is on, then it removes all but that color."""
@@ -1063,18 +1086,18 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     @add_variant()
     async def croppoly(sprite, *x_y: list[int, int]):
         """Crops the sprite to the specified polygon."""
-        assert len(x_y) > 3, "Must have at least 3 points to define a polygon!"
+        assert len(x_y) > 5, "Must have at least 3 points to define a polygon!"
         pts = np.array([x_y], dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
-        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
+        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[1::-1], dtype=np.float32), pts, 1)
         clip_poly = np.tile(clip_poly, (4, 1, 1)).T
         return np.multiply(sprite, clip_poly, casting="unsafe").astype(np.uint8)
 
     @add_variant()
     async def snippoly(sprite, *x_y: list[int, int]):
         """Like croppoly, but also like snip. Snips the specified polygon out of the sprite."""
-        assert len(x_y) > 3, "Must have at least 3 points to define a polygon!"
+        assert len(x_y) > 5, "Must have at least 3 points to define a polygon!"
         pts = np.array([x_y], dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
-        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[:2], dtype=np.float32), pts, 1)
+        clip_poly = cv2.fillPoly(np.zeros(sprite.shape[1::-1], dtype=np.float32), pts, 1)
         clip_poly = np.tile(clip_poly, (4, 1, 1)).T
         return np.multiply(sprite, 1 - clip_poly, casting="unsafe").astype(np.uint8)
 
