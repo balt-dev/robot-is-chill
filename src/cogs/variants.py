@@ -504,7 +504,7 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
                             (padding,
                              padding,
                              (0, 0)))
-        image_center = tuple(np.array(sprite.shape[1::-1]) / 2)
+        image_center = tuple(np.array(sprite.shape[1::-1]) / 2 - 0.5)
         rot_mat = cv2.getRotationMatrix2D(image_center, -angle, 1.0)
         return cv2.warpAffine(sprite, rot_mat, sprite.shape[1::-1], flags=cv2.INTER_NEAREST)
 
