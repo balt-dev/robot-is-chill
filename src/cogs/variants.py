@@ -617,6 +617,26 @@ If [0;36mextrapolate[0m is on, then colors outside the gradient will be extrap
         else:
             base[mask ^ (level < 0), ...] = 0
         return base
+    
+    @add_variant(no_function_name=True)
+    async def omni(sprite, type: Optional[Literal["pivot", "branching"]] = "branching", *, tile, wobble, renderer):
+        """Gives the tile an overlay, like the omni text."""
+        opvalue = [0xcb, 0xab, 0x8b][wobble]
+        num = 3
+        if type == "pivot":
+            num = 1
+        nsprite = await meta(sprite, num)
+        sprite = await pad(sprite, num, num, num, num)
+        for i in range(nsprite.shape[0]):
+            for j in range(nsprite.shape[1]):
+                if nsprite[i, j, 3] == 0:
+                    try:
+                        nsprite[i, j] = sprite[i, j]
+                    except:
+                        pass
+                else:
+                    nsprite[i, j, 3] = opvalue
+        return nsprite
 
     @add_variant()
     async def land(sprite, direction: Optional[Literal["left", "top", "right", "bottom"]] = "bottom"):
