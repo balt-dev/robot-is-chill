@@ -1627,5 +1627,32 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_dollar",
+        "sprite": "text_$",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sword_new",
+        "sprite": "sword",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_sword_new",
+        "sprite": "text_sword",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
