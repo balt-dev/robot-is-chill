@@ -36,12 +36,48 @@
         "tiling": "1"
     },
     {
-        "name": "gtfo",
-        "sprite": "greaterthanfofo",
+        "name": "dtfort",
+        "sprite": "fort",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
+        "sprite": "tileedge",
+        "tiling": "1",
         "color": [
             "0",
             "3"
         ],
+        "name": "tileedge2"
+    },
+    {
+        "name": "gtfo",
+        "sprite": "greaterthanfofo",
+        "color": [
+            "5",
+            "2"
+        ],
         "tiling": "2"
+    },
+    {
+        "name": "catsnake",
+        "sprite": "catsnake",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "dtplaceholder",
+        "sprite": "placeholder",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
