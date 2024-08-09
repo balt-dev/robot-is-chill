@@ -369,7 +369,7 @@ class GlobalCog(commands.Cog, name="Baba Is You"):
             passes = 0
             while last_tiles != tiles and passes < 50:
                 last_tiles = tiles
-                tiles, _ = ctx.bot.macro_handler.parse_macros(tiles, False, user_macros)
+                tiles, _ = ctx.bot.macro_handler.parse_macros(tiles, False, user_macros, "r" if rule else "t")
                 tiles = tiles.strip()
                 passes += 1
 
