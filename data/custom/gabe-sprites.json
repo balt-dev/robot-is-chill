@@ -736,5 +736,41 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fo_tl",
+        "sprite": "fe",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_bl",
+        "sprite": "fi",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_tr",
+        "sprite": "fo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_br",
+        "sprite": "fum",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
     }
 ]
