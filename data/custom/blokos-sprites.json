@@ -808,5 +808,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "loss",
+        "sprite": "loss",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

@@ -1836,7 +1836,7 @@
         "tiling": "-1"
     },
     {
-        "name": "pft",
+        "name": "pft_old",
         "sprite": "pft",
         "color": [
             "0",
