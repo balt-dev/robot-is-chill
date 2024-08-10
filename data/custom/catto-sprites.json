@@ -1,5 +1,32 @@
 [
     {
+        "name": "dahdah",
+        "sprite": "dahdah",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "glyph_kelt",
+        "sprite": "glyph_kelt",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_jilt",
+        "sprite": "glyph_jilt",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_\u79d8",
         "sprite": "secret",
         "color": [
