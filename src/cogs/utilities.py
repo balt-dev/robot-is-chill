@@ -420,7 +420,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
             if name in seen_names: continue
             seen_names.add(name)
             if not re.fullmatch(r"^[A-Za-z0-9_]+$", name):
-                name = f'"{name.replace("\"", "\\\"")}"'
+                escaped_name = name.replace("\"", "\\\"")
+                name = f'"{escaped_name}"'
             buf.write(f"[{name}]\nsprite = \"{sprite}\"\ntiling = {tiling}\ncolor = [{col_x}, {col_y}]\n\n")
         buf.seek(0)
         await ctx.send(file=discord.File(buf, filename="tiles.toml"))
