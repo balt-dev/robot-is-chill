@@ -368,4 +368,67 @@
         ],
         "tiling": "-1"
     }, 
+    {
+        "name": "logic_true",
+        "sprite": "logic_true",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    }, 
+    {
+        "name": "logic_omnitrue",
+        "sprite": "logic_omnitrue",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_false",
+        "sprite": "logic_false",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    }, 
+    {
+        "name": "logic_omnifalse",
+        "sprite": "logic_omnifalse",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_not",
+        "sprite": "logic_not",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_halt",
+        "sprite": "logic_halt",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "logic_omnihalt",
+        "sprite": "logic_omnihalt",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
 ]
