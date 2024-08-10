@@ -14,9 +14,11 @@ from ..types import Bot, BuiltinMacro
 class MacroCog:
 
     def __init__(self, bot: Bot):
+        self.debug = []
         self.bot = bot
         self.variables = {}
         self.builtins: dict[str, BuiltinMacro] = {}
+        self.found = 0
 
         def builtin(name: str):
             def wrapper(func: Callable):
@@ -109,6 +111,12 @@ class MacroCog:
             """Uses regex to replace a pattern in a string with another string."""
             print(value, pattern, replacement)
             return re.sub(pattern, replacement, value)
+        
+        @builtin("ureplace")
+        def ureplace(value: str, pattern: str, replacement: str):
+            """Uses regex to replace a pattern in a string with another string. This version unescapes the pattern sent in."""
+            print(value, pattern, replacement)
+            return re.sub(unescape(pattern), replacement, value)
 
         @builtin("multiply")
         def multiply(*args: str):
@@ -171,6 +179,7 @@ class MacroCog:
         @builtin("chr")
         def chr_(value: str):
             """Gets a character from a unicode codepoint."""
+            self.found += 1
             return str(chr(int(to_float(value))))
 
         @builtin("ord")
@@ -332,6 +341,7 @@ class MacroCog:
         @builtin("unescape")
         def unescape(string: str):
             """Unescapes a string, replacing \\\\/ with /, \\\\[ with [, and \\\\] with ]."""
+            self.found += 1
             return string.replace("\\/", "/").replace("\\[", "[").replace("\\]", "]")
 
         @builtin("json.get")
@@ -421,51 +431,75 @@ class MacroCog:
         def unixtime():
             """Returns the current Unix timestamp, or the number of seconds since midnight on January 1st, 1970 in UTC."""
             return str(time.time())
+        
+        @builtin("try")
+        def try_(code: str):
+            """Runs some escaped MacroScript code. Returns two slash-seperated arguments: if the code errored, and the output/error message (depending on whether it errored.)"""
+            self.found += 1
+            try:
+                result, _ = self.parse_macros(unescape(code), False, init = False)
+            except errors.FailedBuiltinMacro as e:
+                return f"false/{e.message}"
+            except AssertionError as e:
+                return f"false/{e}"
+            return f"true/{result}"
+        
+        @builtin("lower")
+        def lower(text: str):
+            return text.lower()
+        
+        @builtin("upper")
+        def upper(text: str):
+            return text.upper()
+        
+        @builtin("title")
+        def title(text: str):
+            return text.title()
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
-    def parse_macros(self, objects: str, debug_info: bool, macros=None) -> tuple[Optional[str], Optional[list[str]]]:
-        self.variables = {}
+    def parse_macros(self, objects: str, debug_info: bool, macros=None, init=True) -> tuple[Optional[str], Optional[list[str]]]:
+        if init:
+            self.debug = []
+            self.variables = {}
+            self.found = 0
         if macros is None:
             macros = self.bot.macros
 
-        debug = None
-        if debug_info:
-            debug = []
-
         # Find each outmost pair of brackets
-        found = 0
-        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
-            found += 1
+
+        while match := re.search(r"(?<!(?<!\\)\\)\[((?:\\[\[\]])?(?:[^\[\]]|(?:[^\\]\\[\[\]]))*?(?<!(?<!\\)\\))]", objects, re.RegexFlag.M): # there's probably a much better way to do this regex but i haven't found it
+            self.found += 1
             if debug_info:
-                if found > constants.MACRO_LIMIT:
-                    debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
-                    return None, debug
+                if self.found > constants.MACRO_LIMIT:
+                    self.debug.append(f"[Error] Reached step limit of {constants.MACRO_LIMIT}.")
+                    return None, self.debug
             else:
-                assert found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {found}."
+                assert self.found <= constants.MACRO_LIMIT, f"Too many macros in one render! The limit is {constants.MACRO_LIMIT}, while you reached {self.found}."
             terminal = match.group(1)
             if debug_info:
-                debug.append(f"[Step {found}] {objects}")
+                self.debug.append(f"[Step {self.found}] {objects}")
             try:
                 objects = (
                         objects[:match.start()] +
-                        self.parse_term_macro(terminal, macros, found, debug, debug_info) +
+                        self.parse_term_macro(terminal, macros, self.found, debug_info) +
                         objects[match.end():]
                 )
             except errors.FailedBuiltinMacro as err:
                 if debug_info:
-                    debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
-                    return None, debug
+                    self.debug.append(f"[Error] Error in \"{err.raw}\": {err.message}")
+                    return None, self.debug
                 raise err
         if debug_info:
-            debug.append(f"[Out] {objects}")
-        return objects, debug
+            self.debug.append(f"[Out] {objects}")
+        return objects, self.debug if len(self.debug) else None
 
-    def parse_term_macro(self, raw_variant, macros, step = 0, debug = None, debug_info = False) -> str:
+    def parse_term_macro(self, raw_variant, macros, step = 0, debug_info = False) -> str:
         raw_macro, *macro_args = re.split(r"(?<!(?<!\\)\\)/", raw_variant)
         if raw_macro in self.builtins:
             try:
                 macro = self.builtins[raw_macro].function(*macro_args)
+                self.found -= 1
             except Exception as err:
                 raise errors.FailedBuiltinMacro(raw_variant, err, isinstance(err, errors.CustomMacroError))
         elif raw_macro in macros:
@@ -484,7 +518,7 @@ class MacroCog:
                         break
                     argument = match.group(1)
                     if argument == "#":
-                        debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
+                        self.debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
                         infix = str(len(macro_args) - 1)
                     else:
                         argument = int(argument)
@@ -493,7 +527,7 @@ class MacroCog:
                         except IndexError:
                             infix = "\0" + str(argument)
                     if debug_info:
-                        debug.append(f"[Step {step}:{arg_amount}] {macro}")
+                        self.debug.append(f"[Step {step}:{arg_amount}] {macro}")
                     macro = macro[:match.start()] + infix + macro[match.end():]
         else:
             raise AssertionError(f"Macro `{raw_macro}` of `{raw_variant}` not found in the database!")

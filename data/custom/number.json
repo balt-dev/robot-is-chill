@@ -225,7 +225,7 @@
         "tiling": "-1"
     },
     {
-        "name": "numunknown",
+        "name": "unknown",
         "sprite": "unknown",
         "color": [
             "0",
@@ -234,7 +234,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_numunknown",
+        "name": "text_unknown",
         "sprite": "text_unknown",
         "color": [
             "0",

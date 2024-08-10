@@ -34,5 +34,14 @@
             "1"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "gtfo",
+        "sprite": "greaterthanfofo",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]

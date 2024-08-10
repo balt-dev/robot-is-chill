@@ -483,7 +483,7 @@
             "1",
             "1"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_ixix",
@@ -693,6 +693,42 @@
         "tiling": "-1"
     },
     {
+        "name": "two words",
+        "sprite": "two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_two words",
+        "sprite": "text_two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "two~words",
+        "sprite": "two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_two~words",
+        "sprite": "text_two words",
+        "color": [
+            "6",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "tw",
         "sprite": "two words",
         "color": [
@@ -807,7 +843,7 @@
             "0",
             "3"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_del",
@@ -825,7 +861,7 @@
             "5",
             "3"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_new",
@@ -843,7 +879,7 @@
             "1",
             "4"
         ],
-        "tiling": "2"
+        "tiling": "0"
     },
     {
         "name": "text_letter",
@@ -1260,6 +1296,24 @@
         "tiling": "0"
     },
     {
+        "name": "text_babacharacterthatlookslikethis",
+        "sprite": "text_babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "babacharacterthatlookslikethis",
+        "sprite": "babacharacterthatlookslikethis",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_bctllt",
         "sprite": "text_babacharacterthatlookslikethis",
         "color": [
@@ -1499,6 +1553,15 @@
         "color": [
             "0",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_glyph",
+        "sprite": "node_glyph",
+        "color": [
+            3,
+            2
         ],
         "tiling": "-1"
     }

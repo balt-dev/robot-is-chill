@@ -42,7 +42,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "point",
@@ -50,7 +51,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "comma",
@@ -58,7 +60,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "text_'",
@@ -66,7 +69,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "text_asterisk",
@@ -74,7 +78,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "slash",
@@ -82,7 +87,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "minus",
@@ -90,7 +96,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "equals",
@@ -98,7 +105,8 @@
         "color": [
             "0",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "no",
@@ -106,7 +114,8 @@
         "color": [
             "2",
             "2"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "yes",
@@ -114,7 +123,8 @@
         "color": [
             "5",
             "3"
-        ]
+        ],
+        "tiling": "-1"
     },
     {
         "name": "hempuli",
@@ -513,7 +523,7 @@
         "tiling": "2"
     },
     {
-        "name": "page",
+        "name": "paige",
         "sprite": "page",
         "color": [
             "0",
@@ -1656,42 +1666,6 @@
         "tiling": "-1"
     },
     {
-        "name": "sed_h",
-        "sprite": "sed_h",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_sed_h",
-        "sprite": "text_sed",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "sed_s",
-        "sprite": "sed_s",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_sed_s",
-        "sprite": "text_sed",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "support",
         "sprite": "support",
         "color": [
@@ -1877,6 +1851,15 @@
         "color": [
             "3",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_link5",
+        "sprite": "text_link",
+        "color": [
+            "1",
+            "4"
         ],
         "tiling": "-1"
     }

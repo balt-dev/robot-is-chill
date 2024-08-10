@@ -13,21 +13,17 @@
         "tiling": "-1"
     },
     {
-        "name": "text_de",
-        "sprite": "text_de",
+        "name": "text_cba",
+        "sprite": "text_cba",
         "color": [
-            "0",
-            "1"
-        ],
-        "active": [
             "0",
             "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_ed",
-        "sprite": "text_ed",
+        "name": "text_de2",
+        "sprite": "text_de",
         "color": [
             "0",
             "1"
@@ -48,6 +44,19 @@
         "active": [
             "4",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_ed",
+        "sprite": "text_ed",
+        "color": [
+            "0",
+            "1"
+        ],
+        "active": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
@@ -87,6 +96,24 @@
         "tiling": "-1"
     },
     {
+        "name": "fianim",
+        "sprite": "fianim",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "fidir",
+        "sprite": "fidir",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "welcomeback",
         "sprite": "welcomeback",
         "color": [
@@ -96,11 +123,15 @@
         "tiling": "-1"
     },
     {
-        "name": "text_node",
-        "sprite": "text_node",
+        "name": "node_event",
+        "sprite": "node_event",
         "color": [
-            "2",
-            "4"
+            5,
+            2
+        ],
+        "active": [
+            5,
+            3
         ],
         "tiling": "-1"
     },
@@ -117,8 +148,17 @@
         "name": "text_cba",
         "sprite": "text_cba",
         "color": [
-            "0",
-            "3"
+            0,
+            2
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_obj",
+        "sprite": "node_obj",
+        "color": [
+            0,
+            2
         ],
         "tiling": "-1"
     },

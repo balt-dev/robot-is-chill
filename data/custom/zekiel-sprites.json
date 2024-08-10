@@ -88,5 +88,15 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "fufu",
+        "sprite": "fufu",
+        "tiling": "2",
+        "color": [
+            "5",
+            "2"
+        ]
+        "tiling": "-1"
     }
 ]

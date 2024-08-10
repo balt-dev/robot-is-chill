@@ -54,6 +54,42 @@
         "tiling": "0"
     },
     {
+        "name": "text_all i want for christmas",
+        "sprite": "text_all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "all i want for christmas",
+        "sprite": "all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_all~i~want~for~christmas",
+        "sprite": "text_all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "all~i~want~for~christmas",
+        "sprite": "all i want for christmas",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "text_aiwfc",
         "sprite": "text_all i want for christmas",
         "color": [
@@ -67,6 +103,15 @@
         "sprite": "katsu",
         "color": [
             "2",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_\u3068",
+        "sprite": "text_\u3068",
+        "color": [
+            "0",
             "3"
         ],
         "tiling": "2"
@@ -158,6 +203,24 @@
         "color": [
             "4",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zawzaw",
+        "sprite": "zawzaw",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "background_snom",
+        "sprite": "background_snom",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }
