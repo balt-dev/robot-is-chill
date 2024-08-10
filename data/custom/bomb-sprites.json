@@ -1,0 +1,11 @@
+[
+    {
+        "name": "bob",
+        "sprite": "bob",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

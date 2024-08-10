@@ -1,0 +1,20 @@
+[
+    {
+        "name": "ofof",
+        "sprite": "ofof",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_ofof",
+        "sprite": "text_ofof",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    }
+]

@@ -78,7 +78,16 @@
             "5",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_soli",
+        "sprite": "text_soli",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "swi",
@@ -321,7 +330,16 @@
             "0",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_oish",
+        "sprite": "text_oish",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "seat",
@@ -346,7 +364,7 @@
         "sprite": "these",
         "color": [
             "0",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -364,7 +382,7 @@
         "sprite": "those",
         "color": [
             "0",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -402,7 +420,16 @@
             "2",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_bavo",
+        "sprite": "text_bavo",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "bebe",
@@ -555,7 +582,16 @@
             "5",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_dag",
+        "sprite": "text_dag",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "shrub",
@@ -784,15 +820,6 @@
     },
     {
         "name": "fofo2",
-        "sprite": "weirdfofo",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "liba",
         "sprite": "weirdfofo",
         "color": [
             "5",
@@ -1239,7 +1266,7 @@
             "5",
             "4"
         ],
-        "tiling": "0"
+        "tiling": "2"
     },
     {
         "name": "kuku",
@@ -2453,6 +2480,168 @@
         "color": [
             "0",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "<defa",
+        "sprite": "lessdefa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "sprite": "fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "sprite": "text_fhnjuasfhnuisafhuifbgbffbbbsmnmkkllll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cufol",
+        "sprite": "cufol",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_cufol",
+        "sprite": "text_cufol",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_teltel",
+        "sprite": "text_teltel",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "empty2",
+        "sprite": "empty2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "edge2",
+        "sprite": "edge2",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zat2",
+        "sprite": "zat2",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "hooh",
+        "sprite": "hooh",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_hooh",
+        "sprite": "text_hooh",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "extraextra",
+        "sprite": "extraextra",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "ojiz",
+        "sprite": "ojiz",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "fyfy",
+        "sprite": "fyfy",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "slime",
+        "sprite": "slime",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_slime",
+        "sprite": "text_slime",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "x-x",
+        "sprite": "smallx",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_x-x",
+        "sprite": "text_smallx",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "-1"
     }

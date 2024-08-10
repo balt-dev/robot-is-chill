@@ -81,12 +81,22 @@
         "tiling": "-1"
     },
     {
+        "name": "text_seastar",
+        "sprite": "text_seastar",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "fufu",
         "sprite": "fufu",
         "tiling": "2",
         "color": [
             "5",
             "2"
-        ]
+        ],
+        "tiling": "-1"
     }
 ]
