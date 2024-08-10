@@ -1,0 +1,9 @@
+{
+    "name": "lulu",
+    "sprite": "lulu",
+    "color": [
+        "1",
+        "2"
+    ],
+    "tiling": "2"
+}

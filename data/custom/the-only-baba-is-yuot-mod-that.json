@@ -135,6 +135,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_is~definitely",
+        "sprite": "text_is definitely",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_veryactivetext",
         "sprite": "text_veryactivetext",
         "color": [
@@ -271,6 +280,15 @@
     },
     {
         "name": "text_es definitely",
+        "sprite": "text_es definitely",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_es~definitely",
         "sprite": "text_es definitely",
         "color": [
             "0",
@@ -464,6 +482,15 @@
         "color": [
             "4",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "Sprite-00-2.gif",
+        "sprite": "Sprite-00-2.gif",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

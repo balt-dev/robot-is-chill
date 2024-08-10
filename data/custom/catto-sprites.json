@@ -25,5 +25,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_\u79d8",
+        "sprite": "secret",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

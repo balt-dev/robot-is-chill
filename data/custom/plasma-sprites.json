@@ -178,5 +178,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_stable",
+        "sprite": "text_stable",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

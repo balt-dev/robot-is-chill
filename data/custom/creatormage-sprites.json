@@ -62,7 +62,7 @@
         ],
         "tiling": "1"
     },
-	{
+    {
         "name": "iwlkey",
         "sprite": "iwlkey",
         "color": [
@@ -133,5 +133,14 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "fondue",
+        "sprite": "fondue",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]

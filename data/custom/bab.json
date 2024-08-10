@@ -162,7 +162,7 @@
         "tiling": "-1"
     },
     {
-        "name": "text_got",
+        "name": "text_babgot",
         "sprite": "text_got",
         "color": [
             "0",
@@ -271,7 +271,7 @@
     },
     {
         "name": "text_n\u2019t",
-        "sprite": "text_n\u2019t",
+        "sprite": "text_n't",
         "color": [
             "2",
             "2"
@@ -586,7 +586,7 @@
     },
     {
         "name": "n\u2019tsuf",
-        "sprite": "n\u2019tsuf",
+        "sprite": "n'tsuf",
         "color": [
             "2",
             "2"

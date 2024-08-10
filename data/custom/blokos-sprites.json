@@ -54,7 +54,7 @@
         "tiling": "0"
     },
     {
-        "name": "text_aiwfc",
+        "name": "text_all i want for christmas",
         "sprite": "text_all i want for christmas",
         "color": [
             "5",
@@ -63,173 +63,38 @@
         "tiling": "-1"
     },
     {
-        "name": "text_\u3042",
-        "sprite": "text_\u3042",
+        "name": "all i want for christmas",
+        "sprite": "all i want for christmas",
         "color": [
-            "0",
-            "3"
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_all~i~want~for~christmas",
+        "sprite": "text_all i want for christmas",
+        "color": [
+            "5",
+            "2"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_\u3048",
-        "sprite": "text_\u3048",
+        "name": "all~i~want~for~christmas",
+        "sprite": "all i want for christmas",
         "color": [
-            "0",
-            "3"
+            "5",
+            "2"
         ],
-        "tiling": "-1"
+        "tiling": "0"
     },
     {
-        "name": "text_\u3044",
-        "sprite": "text_\u3044",
+        "name": "text_aiwfc",
+        "sprite": "text_all i want for christmas",
         "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304a",
-        "sprite": "text_\u304a",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3046",
-        "sprite": "text_\u3046",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304b",
-        "sprite": "text_\u304b",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3051",
-        "sprite": "text_\u3051",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304d",
-        "sprite": "text_\u304d",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3053",
-        "sprite": "text_\u3053",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304f",
-        "sprite": "text_\u304f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3055",
-        "sprite": "text_\u3055",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3057",
-        "sprite": "text_\u3057",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3059",
-        "sprite": "text_\u3059",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305b",
-        "sprite": "text_\u305b",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305d",
-        "sprite": "text_\u305d",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305f",
-        "sprite": "text_\u305f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3061",
-        "sprite": "text_\u3061",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3064",
-        "sprite": "text_\u3064",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3066",
-        "sprite": "text_\u3066",
-        "color": [
-            "0",
-            "3"
+            "5",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -240,7 +105,7 @@
             "2",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "2"
     },
     {
         "name": "text_\u3068",
@@ -249,7 +114,7 @@
             "0",
             "3"
         ],
-        "tiling": "-1"
+        "tiling": "2"
     },
     {
         "name": "seek",
@@ -261,8 +126,17 @@
         "tiling": "0"
     },
     {
-        "name": "text_\u306a",
-        "sprite": "text_\u306a",
+        "name": "zawzaw",
+        "sprite": "zawzaw",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_offset",
+        "sprite": "text_offset",
         "color": [
             "0",
             "3"
@@ -270,488 +144,65 @@
         "tiling": "-1"
     },
     {
-        "name": "text_\u306b",
-        "sprite": "text_\u306b",
+        "name": "text_yelly",
+        "sprite": "text_yelly",
         "color": [
-            "0",
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_katsu",
+        "sprite": "text_katsu",
+        "color": [
+            "2",
             "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_\u306c",
-        "sprite": "text_\u306c",
+        "name": "text_seek",
+        "sprite": "text_seek",
         "color": [
-            "0",
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_zawzaw",
+        "sprite": "text_zawzaw",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u304b\u3064",
+        "sprite": "text_304b3064",
+        "color": [
+            "2",
             "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_\u306d",
-        "sprite": "text_\u306d",
+        "name": "text_\u52dd\u3064",
+        "sprite": "text_52dd3064",
         "color": [
-            "0",
+            "2",
             "3"
         ],
         "tiling": "-1"
     },
     {
-        "name": "text_\u306e",
-        "sprite": "text_\u306e",
+        "name": "text_exist",
+        "sprite": "text_exist",
         "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u306f",
-        "sprite": "text_\u306f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3072",
-        "sprite": "text_\u3072",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3075",
-        "sprite": "text_\u3075",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3078",
-        "sprite": "text_\u3078",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307b",
-        "sprite": "text_\u307b",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307e",
-        "sprite": "text_\u307e",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307f",
-        "sprite": "text_\u307f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3080",
-        "sprite": "text_\u3080",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3081",
-        "sprite": "text_\u3081",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3082",
-        "sprite": "text_\u3082",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3084",
-        "sprite": "text_\u3084",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3086",
-        "sprite": "text_\u3086",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3088",
-        "sprite": "text_\u3088",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3089",
-        "sprite": "text_\u3089",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u308a",
-        "sprite": "text_\u308a",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u308b",
-        "sprite": "text_\u308b",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u308c",
-        "sprite": "text_\u308c",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u308d",
-        "sprite": "text_\u308d",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u308f",
-        "sprite": "text_\u308f",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3092",
-        "sprite": "text_\u3092",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304c",
-        "sprite": "text_\u304c",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u304e",
-        "sprite": "text_\u304e",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3050",
-        "sprite": "text_\u3050",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3052",
-        "sprite": "text_\u3052",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3054",
-        "sprite": "text_\u3054",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3056",
-        "sprite": "text_\u3056",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3058",
-        "sprite": "text_\u3058",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305a",
-        "sprite": "text_\u305a",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305c",
-        "sprite": "text_\u305c",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u305e",
-        "sprite": "text_\u305e",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3060",
-        "sprite": "text_\u3060",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3062",
-        "sprite": "text_\u3062",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3065",
-        "sprite": "text_\u3065",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3067",
-        "sprite": "text_\u3067",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3069",
-        "sprite": "text_\u3069",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3070",
-        "sprite": "text_\u3070",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3073",
-        "sprite": "text_\u3073",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3076",
-        "sprite": "text_\u3076",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3079",
-        "sprite": "text_\u3079",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307c",
-        "sprite": "text_\u307c",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3071",
-        "sprite": "text_\u3071",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3074",
-        "sprite": "text_\u3074",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3077",
-        "sprite": "text_\u3077",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307a",
-        "sprite": "text_\u307a",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u307d",
-        "sprite": "text_\u307d",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3083",
-        "sprite": "text_\u3083",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3085",
-        "sprite": "text_\u3085",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3087",
-        "sprite": "text_\u3087",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3093",
-        "sprite": "text_\u3093",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_\u3063",
-        "sprite": "text_\u3063",
-        "color": [
-            "0",
-            "3"
+            "4",
+            "1"
         ],
         "tiling": "-1"
     },
@@ -770,6 +221,15 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "loss",
+        "sprite": "loss",
+        "color": [
+            "4",
+            "1"
         ],
         "tiling": "-1"
     }

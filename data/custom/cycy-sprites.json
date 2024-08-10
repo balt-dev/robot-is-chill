@@ -6,7 +6,34 @@
             "2",
             "3"
         ],
-        "tiling": "0"
+        "tiling": "2"
+    },
+    {
+        "name": "text_he",
+        "sprite": "text_he",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "carrot",
+        "sprite": "carrot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_carrot",
+        "sprite": "text_carrot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "flag2",
@@ -21,8 +48,8 @@
         "name": "coin2",
         "sprite": "coin",
         "color": [
-            "6",
-            "2"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },
@@ -30,8 +57,8 @@
         "name": "text_coin2",
         "sprite": "text_coin",
         "color": [
-            "6",
-            "2"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     }
