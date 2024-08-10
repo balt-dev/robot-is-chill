@@ -153,6 +153,33 @@
         "tiling": "2"
     },
     {
+        "name": "au",
+        "sprite": "au",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_au",
+        "sprite": "text_au",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pft",
+        "sprite": "pft",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "text_thip",
         "sprite": "text_thip",
         "color": [
