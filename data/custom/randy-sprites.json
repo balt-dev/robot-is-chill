@@ -1,0 +1,48 @@
+[
+    {
+        "name": "feller",
+        "sprite": "feller",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "options",
+        "sprite": "options",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "catplanet",
+        "sprite": "catplanet",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "midspin",
+        "sprite": "midspin",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "clue",
+        "sprite": "clue",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+{"name": "aries", "sprite": "aries", "tiling": "-1", "color": [2, 2]}, {"name": "taurus", "sprite": "taurus", "tiling": "-1", "color": [2, 3]}, {"name": "gemini", "sprite": "gemini", "tiling": "-1", "color": [2, 4]}, {"name": "cancer", "sprite": "cancer", "tiling": "-1", "color": [0, 1]}, {"name": "leo", "sprite": "leo", "tiling": "-1", "color": [5, 2]}, {"name": "virgo", "sprite": "virgo", "tiling": "-1", "color": [5, 3]}, {"name": "libra", "sprite": "libra", "tiling": "-1", "color": [1, 4]}, {"name": "scorpio", "sprite": "scorpio", "tiling": "-1", "color": [1, 2]}, {"name": "sagittarius", "sprite": "sagittarius", "tiling": "-1", "color": [3, 3]}, {"name": "capricorn", "sprite": "capricorn", "tiling": "-1", "color": [3, 0]}, {"name": "aquarius", "sprite": "aquarius", "tiling": "-1", "color": [3, 1]}, {"name": "pisces", "sprite": "pisces", "tiling": "-1", "color": [4, 1]}, {"name": "ophiuchus", "sprite": "ophiuchus", "tiling": "-1", "color": [4, 2]}
+]

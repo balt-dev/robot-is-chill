@@ -1215,6 +1215,15 @@
         "tiling": "-1"
     },
     {
+        "name": "construct_11",
+        "sprite": "construct_9",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text",
         "sprite": "text",
         "color": [
@@ -1418,6 +1427,132 @@
         "color": [
             "2",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_<defa",
+        "sprite": "text_lessdefa",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "zarjo",
+        "sprite": "zarjo",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "dreamwall",
+        "sprite": "dreamwall",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "text_thase",
+        "sprite": "text_thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_thes",
+        "sprite": "text_thes",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "thase",
+        "sprite": "thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_thes_arrow",
+        "sprite": "text_thes_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_thase_arrow",
+        "sprite": "text_thase_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_th",
+        "sprite": "text_th",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_th_arrow",
+        "sprite": "text_th_arrow",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_\u00a3",
+        "sprite": "text_\u00a3",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dollar",
+        "sprite": "text_$",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "sword_new",
+        "sprite": "sword",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_sword_new",
+        "sprite": "text_sword",
+        "color": [
+            "0",
+            "2"
         ],
         "tiling": "-1"
     },
