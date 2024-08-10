@@ -962,4 +962,328 @@
         ],
         "tiling": "-1"
     },
+    {
+        "name": "logic_move",
+        "sprite": "logic_move",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_shift",
+        "sprite": "logic_shift",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_float",
+        "sprite": "logic_float",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_tele",
+        "sprite": "logic_tele",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_pull",
+        "sprite": "logic_pull",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_weak",
+        "sprite": "logic_weak",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_boom",
+        "sprite": "logic_boom",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_safe",
+        "sprite": "logic_safe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_phantom",
+        "sprite": "logic_phantom",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_swap",
+        "sprite": "logic_swap",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_right",
+        "sprite": "logic_right",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_up",
+        "sprite": "logic_up",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_left",
+        "sprite": "logic_left",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_down",
+        "sprite": "logic_down",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_bonus",
+        "sprite": "logic_bonus",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_red",
+        "sprite": "logic_red",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_blue",
+        "sprite": "logic_blue",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fall",
+        "sprite": "logic_fall",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallright",
+        "sprite": "logic_fallright",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallup",
+        "sprite": "logic_fallup",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallleft",
+        "sprite": "logic_fallleft",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgedown",
+        "sprite": "logic_nudgedown",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeright",
+        "sprite": "logic_nudgeright",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeup",
+        "sprite": "logic_nudgeup",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeleft",
+        "sprite": "logic_nudgeleft",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockeddown",
+        "sprite": "logic_lockeddown",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedright",
+        "sprite": "logic_lockedright",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedup",
+        "sprite": "logic_lockedup",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedleft",
+        "sprite": "logic_lockedleft",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_turn",
+        "sprite": "logic_turn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_deturn",
+        "sprite": "logic_deturn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power",
+        "sprite": "logic_power",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power2",
+        "sprite": "logic_power2",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power3",
+        "sprite": "logic_power3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_done",
+        "sprite": "logic_done",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_word",
+        "sprite": "logic_word",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
 ]
