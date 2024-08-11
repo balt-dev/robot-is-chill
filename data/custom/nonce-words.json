@@ -1135,19 +1135,19 @@
     },
     {
         "name": "text_n39",
-        "sprite": "text_n39",
-        "color": [
-            "-5",
-            "-3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_link4",
         "sprite": "text_link4",
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n39.5",
+        "sprite": "text_n39.5",
+        "color": [
+            "-5",
+            "-3"
         ],
         "tiling": "-1"
     },
@@ -1464,7 +1464,7 @@
             "1",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "3"
     },
     {
         "name": "text_n74",
@@ -1473,7 +1473,34 @@
             "5",
             "2"
         ],
-        "tiling": "0"
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n75",
+        "sprite": "text_n75",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n76",
+        "sprite": "text_n76",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n0",
+        "sprite": "obj_n0",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "obj_n1",
