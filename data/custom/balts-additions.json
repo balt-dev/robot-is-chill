@@ -315,69 +315,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_alone",
-        "sprite": "text_alone",
-        "color": [
-            "2",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_hold",
-        "sprite": "text_hold",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_kill",
-        "sprite": "text_kill",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_poof",
-        "sprite": "text_poof",
-        "color": [
-            "2",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_metal",
-        "sprite": "text_metal",
-        "color": [
-            "0",
-            "0"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_isin",
-        "sprite": "text_isin",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_spark",
-        "sprite": "text_spark",
-        "color": [
-            "6",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_gt",
         "sprite": "text_greaterthan",
         "color": [
@@ -540,7 +477,7 @@
         "tiling": "2"
     },
     {
-        "name": "nope",
+        "name": "nope2",
         "sprite": "nope",
         "color": [
             "2",
