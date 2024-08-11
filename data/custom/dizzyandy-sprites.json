@@ -1474,5 +1474,32 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "mod",
+        "sprite": "mod",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_mod",
+        "sprite": "obj_mod",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
     }
+    {
+        "name": "logic_mod",
+        "sprite": "logic_mod",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
 ]
