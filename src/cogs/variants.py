@@ -1118,7 +1118,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     async def croppoly(sprite, *x_y: list[int]):
         """Crops the sprite to the specified polygon."""
         assert len(x_y) > 5, "Must have at least 3 points to define a polygon!"
-        pts = np.array(x_y, dtype=np.int32).reshape((1, -1, 2))[:, ::-1]
+        pts = np.array(x_y, dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
         clip_poly = cv2.fillPoly(np.zeros(sprite.shape[1::-1], dtype=np.float32), pts, 1)
         clip_poly = np.tile(clip_poly, (4, 1, 1)).T
         return np.multiply(sprite, clip_poly, casting="unsafe").astype(np.uint8)
@@ -1127,7 +1127,7 @@ Slices are notated as [30m([36mstart[30m/[36mstop[30m/[36mstep[30m)[0m, 
     async def snippoly(sprite, *x_y: list[int]):
         """Like croppoly, but also like snip. Snips the specified polygon out of the sprite."""
         assert len(x_y) > 5, "Must have at least 3 points to define a polygon!"
-        pts = np.array(x_y, dtype=np.int32).reshape((1, -1, 2))[:, ::-1]
+        pts = np.array(x_y, dtype=np.int32).reshape((1, -1, 2))[:, :, ::-1]
         clip_poly = cv2.fillPoly(np.zeros(sprite.shape[1::-1], dtype=np.float32), pts, 1)
         clip_poly = np.tile(clip_poly, (4, 1, 1)).T
         return np.multiply(sprite, 1 - clip_poly, casting="unsafe").astype(np.uint8)
