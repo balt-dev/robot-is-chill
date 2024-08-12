@@ -1539,7 +1539,7 @@
         "tiling": "-1"
     },
     {
-        "name": "sword_new",
+        "name": "swo/rd",
         "sprite": "sword",
         "color": [
             "0",
@@ -1548,7 +1548,7 @@
         "tiling": "0"
     },
     {
-        "name": "text_sword_new",
+        "name": "text_swo/rd",
         "sprite": "text_sword",
         "color": [
             "0",
@@ -1562,6 +1562,87 @@
         "color": [
             3,
             2
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "stamp",
+        "sprite": "stamp",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "generaldata",
+        "sprite": "generaldata",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "generaldata2",
+        "sprite": "generaldata2",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "generaldata3",
+        "sprite": "generaldata3",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "generaldata4",
+        "sprite": "generaldata4",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "generaldata5",
+        "sprite": "generaldata5",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mod",
+        "sprite": "mod",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_mod",
+        "sprite": "obj_mod",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_mod",
+        "sprite": "logic_mod",
+        "color": [
+            "3",
+            "1"
         ],
         "tiling": "-1"
     }

@@ -182,7 +182,7 @@
     {
         "name": "jsdhguos",
         "sprite": "jsdhguos",
-        "tiling": "-1",
+        "tiling": "2",
         "color": [
             "2",
             "3"
@@ -422,16 +422,16 @@
             "3"
         ]
     },
-	{
+    {
         "name": "g'vao",
         "sprite": "g'vao",
-        "tiling": "0",
+        "tiling": "2",
         "color": [
             "0",
             "3"
         ]
     },
-	{
+    {
         "name": "text_g'vao",
         "sprite": "text_g'vao",
         "tiling": "-1",
@@ -456,6 +456,114 @@
         "color": [
             "2",
             "4"
+        ]
+    },
+    {
+        "name": "buyno",
+        "sprite": "buyno",
+        "tiling": "2",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "text_buyno",
+        "sprite": "text_buyno",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "4"
+        ]
+    },
+    {
+        "name": "dlidre",
+        "sprite": "dlidre",
+        "tiling": "2",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "text_dlidre",
+        "sprite": "text_dlidre",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "yarg",
+        "sprite": "yarg",
+        "tiling": "2",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "text_yarg",
+        "sprite": "text_yarg",
+        "tiling": "-1",
+        "color": [
+            "2",
+            "2"
+        ]
+    },
+    {
+        "name": "m2",
+        "sprite": "m2",
+        "tiling": "2",
+        "color": [
+            "3",
+            "1"
+        ]
+    },
+    {
+        "name": "text_m2",
+        "sprite": "text_m2",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "1"
+        ]
+    },
+    {
+        "name": "poivo",
+        "sprite": "poivo",
+        "tiling": "2",
+        "color": [
+            "3",
+            "4"
+        ]
+    },
+    {
+        "name": "text_poivo",
+        "sprite": "text_poivo",
+        "tiling": "-1",
+        "color": [
+            "3",
+            "4"
+        ]
+    },
+    {
+        "name": "sorba",
+        "sprite": "sorba",
+        "tiling": "2",
+        "color": [
+            "0",
+            "3"
+        ]
+    },
+    {
+        "name": "text_sorba",
+        "sprite": "text_sorba",
+        "tiling": "-1",
+        "color": [
+            "0",
+            "3"
         ]
     },
 	{

@@ -135,6 +135,15 @@
         "tiling": "-1"
     },
     {
+        "name": "event_n15",
+        "sprite": "event_n15",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "glyph_n-1",
         "sprite": "glyph_n-1",
         "color": [
@@ -729,6 +738,24 @@
         "tiling": "-1"
     },
     {
+        "name": "glyph_n66",
+        "sprite": "glyph_n66",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n67",
+        "sprite": "glyph_n67",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_n0",
         "sprite": "text_n0",
         "color": [
@@ -1108,19 +1135,19 @@
     },
     {
         "name": "text_n39",
-        "sprite": "text_n39",
-        "color": [
-            "-5",
-            "-3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_link4",
         "sprite": "text_link4",
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n39.5",
+        "sprite": "text_n39",
+        "color": [
+            "-5",
+            "-3"
         ],
         "tiling": "-1"
     },
@@ -1395,6 +1422,87 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n69",
+        "sprite": "text_n69",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n70",
+        "sprite": "text_n70",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n71",
+        "sprite": "text_n71",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n72",
+        "sprite": "text_n72",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_n73",
+        "sprite": "text_n73",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "3"
+    },
+    {
+        "name": "text_n74",
+        "sprite": "text_n74",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n75",
+        "sprite": "text_n75",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n76",
+        "sprite": "text_n76",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n0",
+        "sprite": "obj_n0",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n1",
         "sprite": "obj_n1",
         "color": [
@@ -1492,6 +1600,33 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "obj_n12",
+        "sprite": "obj_n12",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "4"
+    },
+    {
+        "name": "obj_n13",
+        "sprite": "obj_n13",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "obj_n14",
+        "sprite": "obj_n14",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
     },
     {
         "name": "orb_n1",
@@ -1715,6 +1850,51 @@
         "color": [
             "1",
             "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_n11",
+        "sprite": "node_n11",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_n12",
+        "sprite": "node_n12",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_n13",
+        "sprite": "node_n13",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_n14",
+        "sprite": "node_n14",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_n15",
+        "sprite": "node_n15",
+        "color": [
+            "0",
+            "0"
         ],
         "tiling": "0"
     },
