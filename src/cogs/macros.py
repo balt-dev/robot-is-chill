@@ -521,6 +521,8 @@ class MacroCog:
                     if argument == "#":
                         self.debug.append(f"[Step {step}:{arg_amount}:#] {len(macro_args) - 1} arguments")
                         infix = str(len(macro_args) - 1)
+                    elif argument == "!":
+                        infix = cmd
                     else:
                         argument = int(argument)
                         try:
