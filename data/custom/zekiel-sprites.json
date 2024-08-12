@@ -96,6 +96,14 @@
         "color": [
             "5",
             "2"
+        ]
+    },
+    {
+        "name": "text_seastar",
+        "sprite": "text_seastar",
+        "color": [
+            "2",
+            "3"
         ],
         "tiling": "-1"
     }

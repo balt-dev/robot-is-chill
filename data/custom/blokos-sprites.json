@@ -135,6 +135,15 @@
         "tiling": "2"
     },
     {
+        "name": "background_snom",
+        "sprite": "background_snom",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_offset",
         "sprite": "text_offset",
         "color": [
@@ -144,6 +153,17 @@
         "tiling": "-1"
     },
     {
+        "name": "loss",
+        "sprite": "loss",
+        "name": "text_yelly",
+        "sprite": "text_yelly",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+	{
         "name": "text_yelly",
         "sprite": "text_yelly",
         "color": [
@@ -200,33 +220,6 @@
     {
         "name": "text_exist",
         "sprite": "text_exist",
-        "color": [
-            "4",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "zawzaw",
-        "sprite": "zawzaw",
-        "color": [
-            "5",
-            "2"
-        ],
-        "tiling": "2"
-    },
-    {
-        "name": "background_snom",
-        "sprite": "background_snom",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "loss",
-        "sprite": "loss",
         "color": [
             "4",
             "1"

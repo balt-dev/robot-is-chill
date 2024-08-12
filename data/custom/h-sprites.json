@@ -1,0 +1,20 @@
+[
+    {
+        "name": "naun",
+        "sprite": "naun",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_naun",
+        "sprite": "text_naun",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    }
+]

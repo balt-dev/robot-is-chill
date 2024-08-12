@@ -781,8 +781,8 @@
             "1"
         ],
         "tiling": "0"
-    },
-    {
+	},
+	{
         "name": "floog",
         "sprite": "floog",
         "color": [

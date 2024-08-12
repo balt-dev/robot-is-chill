@@ -151,5 +151,104 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "rufu",
+        "sprite": "rufu",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_rufu",
+        "sprite": "text_rufu",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "mutsuki",
+        "sprite": "mutsuki",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_mutsuki",
+        "sprite": "text_mutsuki",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "irmo",
+        "sprite": "irmo",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_irmo",
+        "sprite": "text_irmo",
+        "color": [
+            "0",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "wing",
+        "sprite": "wing",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_wing",
+        "sprite": "text_wing",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "roidoll",
+        "sprite": "roidoll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_roidoll",
+        "sprite": "text_roidoll",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "grass2",
+        "sprite": "grass2",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
     }
 ]

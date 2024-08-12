@@ -163,6 +163,24 @@
         "tiling": "-1"
     },
     {
+        "name": "dice",
+        "sprite": "dice",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cba",
+        "sprite": "text_cba",
+        "color": [
+            0,
+            2
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_dice",
         "sprite": "text_dice",
         "color": [

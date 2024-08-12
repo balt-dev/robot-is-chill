@@ -171,15 +171,6 @@
         "tiling": "-1"
     },
     {
-        "name": "pft",
-        "sprite": "pft",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "2"
-    },
-    {
         "name": "text_thip",
         "sprite": "text_thip",
         "color": [
@@ -205,5 +196,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "pft",
+        "sprite": "pft",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
     }
 ]
