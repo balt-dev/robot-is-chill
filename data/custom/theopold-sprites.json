@@ -828,6 +828,15 @@
         "tiling": "2"
     },
     {
+        "name": "liba",
+        "sprite": "weirdfofo",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
         "name": "scifidoor",
         "sprite": "scifidoor",
         "color": [
