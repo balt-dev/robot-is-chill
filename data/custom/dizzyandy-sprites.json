@@ -792,7 +792,7 @@
         "tiling": "-1"
     },
     {
-        "name": "cove",
+        "name": "covebox",
         "sprite": "cmbox",
         "color": [
             "0",
@@ -801,7 +801,16 @@
         "tiling": "-1"
     },
     {
-        "name": "mount",
+        "name": "covewall",
+        "sprite": "cmwall",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "covemonty",
         "sprite": "cmplayer",
         "color": [
             "0",
