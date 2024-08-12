@@ -1620,6 +1620,15 @@
         "tiling": "0"
     },
     {
+        "name": "obj_n14",
+        "sprite": "obj_n14",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "orb_n1",
         "sprite": "orb_n1",
         "color": [
