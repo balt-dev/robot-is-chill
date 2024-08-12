@@ -703,6 +703,15 @@
         "tiling": "0"
     },
     {
+        "name": "knife",
+        "sprite": "knife",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "mhat",
         "sprite": "mhat",
         "color": [
@@ -798,24 +807,6 @@
         "color": [
             "4",
             "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "he",
-        "sprite": "he",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "text_he",
-        "sprite": "text_he",
-        "color": [
-            "2",
-            "3"
         ],
         "tiling": "-1"
     },
@@ -1493,15 +1484,6 @@
             "1"
         ],
         "tiling": "0"
-    },
-    {
-        "name": "carrot",
-        "sprite": "carrot",
-        "color": [
-            "2",
-            "3"
-        ],
-        "tiling": "-1"
     },
     {
         "name": "text_maroon",

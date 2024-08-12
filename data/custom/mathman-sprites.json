@@ -87,15 +87,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_node",
-        "sprite": "text_node",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "fi2",
         "sprite": "fi2",
         "color": [
@@ -125,6 +116,55 @@
     {
         "name": "welcomeback",
         "sprite": "welcomeback",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_event",
+        "sprite": "node_event",
+        "color": [
+            5,
+            2
+        ],
+        "active": [
+            5,
+            3
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "dice",
+        "sprite": "dice",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_cba",
+        "sprite": "text_cba",
+        "color": [
+            0,
+            2
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_obj",
+        "sprite": "node_obj",
+        "color": [
+            0,
+            2
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dice",
+        "sprite": "text_dice",
         "color": [
             "0",
             "3"

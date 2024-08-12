@@ -1,0 +1,1289 @@
+[
+    {
+        "name": "text_logic",
+        "sprite": "text_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_log",
+        "sprite": "text_log",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_start",
+        "sprite": "logic_start",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "logic_omnistart",
+        "sprite": "logic_omnistart",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_connect",
+        "sprite": "logic_connect",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "logic_omniconnect",
+        "sprite": "logic_omniconnect",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },   
+    {
+        "name": "logic_longconnect",
+        "sprite": "logic_longconnect",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "logic_omnilongconnect",
+        "sprite": "logic_omnilongconnect",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_send",
+        "sprite": "logic_send",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_recieve",
+        "sprite": "logic_recieve",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_send2",
+        "sprite": "logic_send2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_recieve2",
+        "sprite": "logic_recieve2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_send3",
+        "sprite": "logic_send3",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_recieve3",
+        "sprite": "logic_recieve3",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_is",
+        "sprite": "logic_is",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_has",
+        "sprite": "logic_has",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_eat",
+        "sprite": "logic_eat",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fear",
+        "sprite": "logic_fear",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_follow",
+        "sprite": "logic_follow",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_make",
+        "sprite": "logic_make",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_mimic",
+        "sprite": "logic_mimic",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_write",
+        "sprite": "logic_write",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_log",
+        "sprite": "logic_log",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_idle",
+        "sprite": "logic_idle",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lonely",
+        "sprite": "logic_lonely",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },  
+    {
+        "name": "logic_often",
+        "sprite": "logic_often",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },  
+    {
+        "name": "logic_seldom",
+        "sprite": "logic_seldom",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_powered",
+        "sprite": "logic_powered",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_powered2",
+        "sprite": "logic_powered2",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_powered3",
+        "sprite": "logic_powered3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_on",
+        "sprite": "logic_on",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_near",
+        "sprite": "logic_near",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_nextto",
+        "sprite": "logic_nextto",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_facing",
+        "sprite": "logic_facing",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_seeing",
+        "sprite": "logic_seeing",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_without",
+        "sprite": "logic_without",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_feeling",
+        "sprite": "logic_feeling",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_above",
+        "sprite": "logic_above",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_below",
+        "sprite": "logic_below",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_besideleft",
+        "sprite": "logic_besideleft",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_besideright",
+        "sprite": "logic_besideright",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_true",
+        "sprite": "logic_true",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    }, 
+    {
+        "name": "logic_omnitrue",
+        "sprite": "logic_omnitrue",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    }, 
+    {
+        "name": "logic_false",
+        "sprite": "logic_false",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    }, 
+    {
+        "name": "logic_omnifalse",
+        "sprite": "logic_omnifalse",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_not",
+        "sprite": "logic_not",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_halt",
+        "sprite": "logic_halt",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "logic_omnihalt",
+        "sprite": "logic_omnihalt",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_logic",
+        "sprite": "logic_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_text",
+        "sprite": "logic_text",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_all",
+        "sprite": "logic_all",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_level",
+        "sprite": "logic_level",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_group",
+        "sprite": "logic_group",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_group2",
+        "sprite": "logic_group2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_group3",
+        "sprite": "logic_group3",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_empty",
+        "sprite": "logic_empty",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_cursor",
+        "sprite": "logic_cursor",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_baba",
+        "sprite": "logic_baba",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_flag",
+        "sprite": "logic_flag",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_wall",
+        "sprite": "logic_wall",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_rock",
+        "sprite": "logic_rock",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_brick",
+        "sprite": "logic_brick",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_tile",
+        "sprite": "logic_tile",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_grass",
+        "sprite": "logic_grass",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_hedge",
+        "sprite": "logic_hedge",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_water",
+        "sprite": "logic_water",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lava",
+        "sprite": "logic_lava",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_bog",
+        "sprite": "logic_bog",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_belt",
+        "sprite": "logic_belt",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_cog",
+        "sprite": "logic_cog",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fire",
+        "sprite": "logic_fire",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_ice",
+        "sprite": "logic_ice",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_skull",
+        "sprite": "logic_skull",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_pipe",
+        "sprite": "logic_pipe",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_keke",
+        "sprite": "logic_keke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_me",
+        "sprite": "logic_me",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fofo",
+        "sprite": "logic_fofo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_it",
+        "sprite": "logic_it",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_box",
+        "sprite": "logic_box",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_door",
+        "sprite": "logic_door",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_key",
+        "sprite": "logic_key",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_square",
+        "sprite": "logic_square",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_circle",
+        "sprite": "logic_circle",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fruit",
+        "sprite": "logic_fruit",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_tree",
+        "sprite": "logic_tree",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_trees",
+        "sprite": "logic_trees",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_husk",
+        "sprite": "logic_husk",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_husks",
+        "sprite": "logic_husks",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_crab",
+        "sprite": "logic_crab",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_bubble",
+        "sprite": "logic_bubble",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_algae",
+        "sprite": "logic_algae",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_jelly",
+        "sprite": "logic_jelly",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_cliff",
+        "sprite": "logic_cliff",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_star",
+        "sprite": "logic_star",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_moon",
+        "sprite": "logic_moon",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_dust",
+        "sprite": "logic_dust",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_you",
+        "sprite": "logic_you",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_you2",
+        "sprite": "logic_you2",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_win",
+        "sprite": "logic_win",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_stop",
+        "sprite": "logic_stop",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_push",
+        "sprite": "logic_push",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_sink",
+        "sprite": "logic_sink",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_defeat",
+        "sprite": "logic_defeat",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_hot",
+        "sprite": "logic_hot",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_melt",
+        "sprite": "logic_melt",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_open",
+        "sprite": "logic_open",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_shut",
+        "sprite": "logic_shut",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_move",
+        "sprite": "logic_move",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_shift",
+        "sprite": "logic_shift",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_float",
+        "sprite": "logic_float",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_tele",
+        "sprite": "logic_tele",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_pull",
+        "sprite": "logic_pull",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_weak",
+        "sprite": "logic_weak",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_boom",
+        "sprite": "logic_boom",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_safe",
+        "sprite": "logic_safe",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_phantom",
+        "sprite": "logic_phantom",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_swap",
+        "sprite": "logic_swap",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_right",
+        "sprite": "logic_right",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_up",
+        "sprite": "logic_up",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_left",
+        "sprite": "logic_left",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_down",
+        "sprite": "logic_down",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_bonus",
+        "sprite": "logic_bonus",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_red",
+        "sprite": "logic_red",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_blue",
+        "sprite": "logic_blue",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fall",
+        "sprite": "logic_fall",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallright",
+        "sprite": "logic_fallright",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallup",
+        "sprite": "logic_fallup",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_fallleft",
+        "sprite": "logic_fallleft",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgedown",
+        "sprite": "logic_nudgedown",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeright",
+        "sprite": "logic_nudgeright",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeup",
+        "sprite": "logic_nudgeup",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_nudgeleft",
+        "sprite": "logic_nudgeleft",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockeddown",
+        "sprite": "logic_lockeddown",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedright",
+        "sprite": "logic_lockedright",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedup",
+        "sprite": "logic_lockedup",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_lockedleft",
+        "sprite": "logic_lockedleft",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_turn",
+        "sprite": "logic_turn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_deturn",
+        "sprite": "logic_deturn",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power",
+        "sprite": "logic_power",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power2",
+        "sprite": "logic_power2",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_power3",
+        "sprite": "logic_power3",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_done",
+        "sprite": "logic_done",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_word",
+        "sprite": "logic_word",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    }
+]

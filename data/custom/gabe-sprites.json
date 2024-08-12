@@ -63,6 +63,15 @@
         "tiling": "-1"
     },
     {
+        "name": "glyph_moli",
+        "sprite": "glyph_moli",
+        "color": [
+            "1",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "toshu",
         "sprite": "toshu",
         "color": [
@@ -731,6 +740,105 @@
     {
         "name": "text_\u26d2",
         "sprite": "text_26d2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "fo_tl",
+        "sprite": "fe",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_bl",
+        "sprite": "fi",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_tr",
+        "sprite": "fo",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "fo_br",
+        "sprite": "fum",
+        "color": [
+            "5",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "floog",
+        "sprite": "floog",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "thes",
+        "sprite": "thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jsykutjryj",
+        "sprite": "jsykutjryj",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_jsykutjryj",
+        "sprite": "text_jsykutjryj",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_i2",
+        "sprite": "glyph_i2",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_traitrai",
+        "sprite": "glyph_traitrai",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "flaglitch",
+        "sprite": "flaglitch",
         "color": [
             "0",
             "3"
