@@ -81,15 +81,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_false",
-        "sprite": "text_false",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "strand",
         "sprite": "grass_strand",
         "color": [
