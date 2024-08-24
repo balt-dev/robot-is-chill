@@ -1627,5 +1627,14 @@
             "1"
         ],
         "tiling": "-1"
-    }
+    },
+    {
+        "name": "thase",
+        "sprite": "thase",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
 ]
