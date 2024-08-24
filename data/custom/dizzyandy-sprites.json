@@ -1636,5 +1636,23 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "swo/rd",
+        "sprite": "sword",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_swo/rd",
+        "sprite": "text_sword",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
