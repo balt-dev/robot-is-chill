@@ -1,7 +1,7 @@
 [
     {
         "name": "node_nil_n1",
-        "sprite": "node_n12",
+        "sprite": "node_n11",
         "color": [
             "2",
             "4"
@@ -10,7 +10,7 @@
     },
     {
         "name": "node_nil_n2",
-        "sprite": "node_n13",
+        "sprite": "node_n12",
         "color": [
             "2",
             "4"
@@ -225,8 +225,8 @@
         "tiling": "-1"
     },
     {
-        "name": "event_n15",
-        "sprite": "event_n15",
+        "name": "event_n16",
+        "sprite": "event_n16",
         "color": [
             "4",
             "1"
@@ -1629,6 +1629,69 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n80",
+        "sprite": "text_n80",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n81",
+        "sprite": "text_n81",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n82",
+        "sprite": "text_n82",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n83",
+        "sprite": "text_n83",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n84",
+        "sprite": "text_n84",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n85",
+        "sprite": "text_n85",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n86",
+        "sprite": "text_n86",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n0",
         "sprite": "obj_n0",
         "color": [
@@ -2250,8 +2313,8 @@
         "tiling": "-1"
     },
     {
-        "name": "construct_npreperation",
-        "sprite": "construct_npreperation",
+        "name": "construct_npreparation",
+        "sprite": "construct_npreparation",
         "color": [
             "0",
             "2"
@@ -2281,6 +2344,15 @@
         "sprite": "construct_nbaba",
         "color": [
             "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nswitcheroo",
+        "sprite": "construct_nswitcheroo",
+        "color": [
+            "3",
             "2"
         ],
         "tiling": "-1"

@@ -475,5 +475,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "obj_thatswhereyoufailedialreadyhaveeverybabaisyoumodinexistenceonmycomp",
+        "sprite": "obj_thatswhereyoufailedialreadyhaveeverybabaisyoumodinexistenceonmycomp",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
