@@ -909,6 +909,15 @@
         "tiling": "-1"
     },
     {
+        "name": "text_sofa",
+        "sprite": "text_sofa",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "sofa",
         "sprite": "sofa",
         "color": [
@@ -1652,6 +1661,78 @@
         "color": [
             "0",
             "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "tada",
+        "sprite": "tada",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_folium",
+        "sprite": "text_folium",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "folium",
+        "sprite": "folium",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_gust",
+        "sprite": "text_gust",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "gust",
+        "sprite": "gust",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "advert",
+        "sprite": "advert",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jird",
+        "sprite": "text_jird",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jird",
+        "sprite": "jird",
+        "color": [
+            "2",
+            "3"
         ],
         "tiling": "-1"
     }

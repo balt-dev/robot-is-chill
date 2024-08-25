@@ -70,5 +70,32 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_allofit",
+        "sprite": "text_allofit",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_notallofit",
+        "sprite": "text_notallofit",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_allofnothing",
+        "sprite": "text_allofnothing",
+        "color": [
+            "4",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
