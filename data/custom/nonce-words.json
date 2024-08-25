@@ -1,5 +1,86 @@
 [
     {
+        "name": "node_nil_n1",
+        "sprite": "node_n12",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_n2",
+        "sprite": "node_n13",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_rw_n1",
+        "sprite": "text_n80",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n2",
+        "sprite": "text_n81",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n3",
+        "sprite": "text_n82",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n4",
+        "sprite": "text_n83",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n5",
+        "sprite": "text_n84",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n6",
+        "sprite": "text_n85",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n7",
+        "sprite": "text_n86",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "event_n0",
         "sprite": "event_n0",
         "color": [
@@ -1548,69 +1629,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_n80",
-        "sprite": "text_n80",
-        "color": [
-            "5",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n81",
-        "sprite": "text_n81",
-        "color": [
-            "4",
-            "1"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n82",
-        "sprite": "text_n82",
-        "color": [
-            "3",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n83",
-        "sprite": "text_n83",
-        "color": [
-            "3",
-            "0"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n84",
-        "sprite": "text_n84",
-        "color": [
-            "2",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n85",
-        "sprite": "text_n85",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_n86",
-        "sprite": "text_n86",
-        "color": [
-            "0",
-            "2"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "obj_n0",
         "sprite": "obj_n0",
         "color": [
@@ -2209,6 +2227,60 @@
         "sprite": "construct_nbubbly",
         "color": [
             "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nhallmonitor",
+        "sprite": "construct_nhallmonitor",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nmoney",
+        "sprite": "construct_nmoney",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_npreperation",
+        "sprite": "construct_npreperation",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nopener",
+        "sprite": "construct_nopener",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nholder",
+        "sprite": "construct_nholder",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nbaba",
+        "sprite": "construct_nbaba",
+        "color": [
+            "0",
             "2"
         ],
         "tiling": "-1"
