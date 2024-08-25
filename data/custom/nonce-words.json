@@ -1,7 +1,7 @@
 [
     {
         "name": "node_nil_n1",
-        "sprite": "node_n12",
+        "sprite": "node_n11",
         "color": [
             "2",
             "4"
@@ -10,7 +10,7 @@
     },
     {
         "name": "node_nil_n2",
-        "sprite": "node_n13",
+        "sprite": "node_n12",
         "color": [
             "2",
             "4"
