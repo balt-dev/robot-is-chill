@@ -79,5 +79,23 @@
             "3"
         ],
         "tiling": "1"
+    },
+    {
+        "name": "fitiled",
+        "sprite": "fitiled",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
+    },
+    {
+        "name": "fidtiled",
+        "sprite": "fidtiled",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "1"
     }
 ]
