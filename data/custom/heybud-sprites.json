@@ -9,6 +9,15 @@
         "tiling": "0"
     },
     {
+        "name": "ghka",
+        "sprite": "ghka",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "4"
+    },
+    {
         "name": "ofof",
         "sprite": "ofof",
         "color": [
