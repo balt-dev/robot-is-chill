@@ -1,5 +1,86 @@
 [
     {
+        "name": "node_nil_n1",
+        "sprite": "node_n12",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_n2",
+        "sprite": "node_n13",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_rw_n1",
+        "sprite": "text_n80",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n2",
+        "sprite": "text_n81",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n3",
+        "sprite": "text_n82",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n4",
+        "sprite": "text_n83",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n5",
+        "sprite": "text_n84",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n6",
+        "sprite": "text_n85",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rw_n7",
+        "sprite": "text_n86",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "event_n0",
         "sprite": "event_n0",
         "color": [
@@ -140,6 +221,15 @@
         "color": [
             "0",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_n15",
+        "sprite": "event_n15",
+        "color": [
+            "4",
+            "1"
         ],
         "tiling": "-1"
     },
@@ -752,6 +842,24 @@
         "color": [
             "6",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n68",
+        "sprite": "glyph_n68",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_n69",
+        "sprite": "glyph_n69",
+        "color": [
+            "6",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -1494,6 +1602,33 @@
         "tiling": "-1"
     },
     {
+        "name": "text_n77",
+        "sprite": "text_n77",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n78",
+        "sprite": "text_n78",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_n79",
+        "sprite": "text_n79",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_n0",
         "sprite": "obj_n0",
         "color": [
@@ -1627,6 +1762,42 @@
             "0"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "obj_n15",
+        "sprite": "obj_n15",
+        "color": [
+            "4",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n16",
+        "sprite": "obj_n16",
+        "color": [
+            "5",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n17",
+        "sprite": "obj_n17",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_n18",
+        "sprite": "obj_n18",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     },
     {
         "name": "orb_n1",
@@ -1764,6 +1935,15 @@
         "tiling": "-1"
     },
     {
+        "name": "node_n-2",
+        "sprite": "node_n-2",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "node_n1",
         "sprite": "node_n1",
         "color": [
@@ -1884,8 +2064,8 @@
         "name": "node_n14",
         "sprite": "node_n14",
         "color": [
-            "1",
-            "4"
+            "4",
+            "1"
         ],
         "tiling": "0"
     },
@@ -1906,5 +2086,203 @@
             "3"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "logic_n0",
+        "sprite": "logic_n0",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_n1",
+        "sprite": "logic_n1",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nawesome",
+        "sprite": "construct_nawesome",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_ngrassy",
+        "sprite": "construct_ngrassy",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nfun",
+        "sprite": "construct_nfun",
+        "color": [
+            "5",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nlesser",
+        "sprite": "construct_nlesser",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_ndynamiclighting",
+        "sprite": "construct_ndynamiclighting",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nevil",
+        "sprite": "construct_nevil",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nevil",
+        "sprite": "construct_nevil",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_notouch",
+        "sprite": "construct_notouch",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_ntrove",
+        "sprite": "construct_ntrove",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nouch",
+        "sprite": "construct_nouch",
+        "color": [
+            "1",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nart",
+        "sprite": "construct_nart",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nsfx",
+        "sprite": "construct_nsfx",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nbubbly",
+        "sprite": "construct_nbubbly",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nbubbly",
+        "sprite": "construct_nbubbly",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nhallmonitor",
+        "sprite": "construct_nhallmonitor",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nmoney",
+        "sprite": "construct_nmoney",
+        "color": [
+            "6",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_npreperation",
+        "sprite": "construct_npreperation",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nopener",
+        "sprite": "construct_nopener",
+        "color": [
+            "6",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nholder",
+        "sprite": "construct_nholder",
+        "color": [
+            "6",
+            "0"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "construct_nbaba",
+        "sprite": "construct_nbaba",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
