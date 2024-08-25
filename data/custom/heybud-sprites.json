@@ -1,5 +1,14 @@
 [
     {
+        "name": "figal",
+        "sprite": "figal",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "ofof",
         "sprite": "ofof",
         "color": [
