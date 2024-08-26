@@ -759,8 +759,8 @@
         "name": "koke",
         "sprite": "koke",
         "color": [
-            "0",
-            "3"
+            "4",
+            "2"
         ],
         "tiling": "2"
     },
@@ -768,8 +768,8 @@
         "name": "text_koke",
         "sprite": "text_koke",
         "color": [
-            "0",
-            "3"
+            "4",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -1732,6 +1732,186 @@
         "sprite": "jird",
         "color": [
             "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_alone3",
+        "sprite": "text_alone3",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_alone4",
+        "sprite": "text_alone4",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_render",
+        "sprite": "text_render",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_evoke",
+        "sprite": "text_evoke",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_self",
+        "sprite": "text_self",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_noise",
+        "sprite": "text_noise",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hasnot",
+        "sprite": "text_has not",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_restart",
+        "sprite": "text_restart",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_rule",
+        "sprite": "text_rule",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_add",
+        "sprite": "text_add",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sub",
+        "sprite": "text_sub",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_signal2",
+        "sprite": "text_signal2",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_receive2",
+        "sprite": "text_receive2",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_that's",
+        "sprite": "text_that's",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_bounce",
+        "sprite": "text_bounce",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_wander",
+        "sprite": "text_wander",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flipdown",
+        "sprite": "text_flipdown",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flipright",
+        "sprite": "text_flipright",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flipup",
+        "sprite": "text_flipup",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_flipleft",
+        "sprite": "text_flipleft",
+        "color": [
+            "5",
             "3"
         ],
         "tiling": "-1"

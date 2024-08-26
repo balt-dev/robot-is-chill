@@ -792,7 +792,7 @@
         "tiling": "-1"
     },
     {
-        "name": "jail",
+        "name": "babjail",
         "sprite": "jail",
         "color": [
             "0",
