@@ -484,5 +484,14 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "obj_somethingelse",
+        "sprite": "obj_somethingelse",
+        "color": [
+            "3",
+            "0"
+        ],
+        "tiling": "-1"
     }
 ]
