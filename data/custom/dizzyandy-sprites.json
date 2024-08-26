@@ -567,6 +567,15 @@
         "tiling": "1"
     },
     {
+        "name": "will_anyone_notice_this_n1",
+        "sprite": "will_anyone_notice_this_n1",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
+    },
+    {
         "name": "traitrai",
         "sprite": "traitrai",
         "color": [
