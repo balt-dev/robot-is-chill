@@ -34,5 +34,32 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "tonk",
+        "sprite": "tonk",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_tonk",
+        "sprite": "text_tonk",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_dahdah",
+        "sprite": "text_dahdah",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
