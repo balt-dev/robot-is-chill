@@ -1808,5 +1808,23 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "goomy",
+        "sprite": "goomy",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_goomy",
+        "sprite": "text_goomy",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]
