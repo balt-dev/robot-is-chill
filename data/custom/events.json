@@ -856,14 +856,5 @@
             3
         ],
         "sprite": "event_9"
-    },
-    {
-        "name": "text_metaevent",
-        "sprite": "text_metaevent",
-        "color": [
-            "5",
-            "3"
-        ],
-        "tiling": "-1"
     }
 ]

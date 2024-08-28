@@ -188,5 +188,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "node_refers",
+        "sprite": "node_refers",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
     }
 ]

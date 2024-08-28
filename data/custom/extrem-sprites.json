@@ -619,5 +619,104 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "glyph_refers",
+        "sprite": "glyph_refers",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_logic",
+        "sprite": "event_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_logic",
+        "sprite": "glyph_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metalogic",
+        "sprite": "glyph_metalogic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metalogic2",
+        "sprite": "glyph_metalogic2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_event",
+        "sprite": "logic_event",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_node",
+        "sprite": "logic_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_glyph",
+        "sprite": "logic_glyph",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_obj",
+        "sprite": "logic_obj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_logic",
+        "sprite": "node_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_metalogic",
+        "sprite": "text_metalogic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
     }
 ]

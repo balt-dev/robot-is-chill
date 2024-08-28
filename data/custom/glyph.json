@@ -846,11 +846,11 @@
         "tiling": "-1"
     },
     {
-        "name": "glyph_color",
+        "name": "glyph_red",
         "sprite": "glyph_red",
         "color": [
-            "4",
-            "3"
+            "2",
+            "2"
         ],
         "tiling": "-1"
     },

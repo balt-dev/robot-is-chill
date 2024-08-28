@@ -1449,15 +1449,6 @@
         "tiling": "-1"
     },
     {
-        "name": "text_metanode",
-        "sprite": "text_metanode",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "text_<defa",
         "sprite": "text_lessdefa",
         "color": [
@@ -1669,6 +1660,15 @@
         "sprite": "text_sword",
         "color": [
             "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_tada",
+        "sprite": "text_tada",
+        "color": [
+            "2",
             "2"
         ],
         "tiling": "-1"
@@ -1922,6 +1922,96 @@
         "color": [
             "5",
             "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metaevent2",
+        "sprite": "glyph_metaevent2",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_node",
+        "sprite": "glyph_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metanode",
+        "sprite": "glyph_metanode",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metanode2",
+        "sprite": "glyph_metanode2",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metanode",
+        "sprite": "text_metanode",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_node",
+        "sprite": "event_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_obj",
+        "sprite": "glyph_obj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metaobj",
+        "sprite": "glyph_metaobj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metaobj2",
+        "sprite": "glyph_metaobj2",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metaobj",
+        "sprite": "text_metaobj",
+        "color": [
+            "0",
+            "2"
         ],
         "tiling": "-1"
     }
