@@ -250,5 +250,14 @@
             "4"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "particle_wonder",
+        "sprite": "particle_wonder",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

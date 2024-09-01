@@ -1,23 +1,5 @@
 [
     {
-        "name": "node_nil_n1",
-        "sprite": "node_n11",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "0"
-    },
-    {
-        "name": "node_nil_n2",
-        "sprite": "node_n12",
-        "color": [
-            "2",
-            "4"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "text_rw_n1",
         "sprite": "text_n80",
         "color": [
