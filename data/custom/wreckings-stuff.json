@@ -583,5 +583,50 @@
             "1",
             "4"
         ]
+    },
+    {
+        "name": "glyph_event",
+        "sprite": "glyph_event",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metaevent",
+        "sprite": "glyph_metaevent",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_metaevent",
+        "sprite": "text_metaevent",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_obj",
+        "sprite": "event_obj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_refers",
+        "sprite": "event_refers",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]

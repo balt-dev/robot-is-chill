@@ -117,11 +117,29 @@
         "tiling": "-1"
     },
     {
+        "name": "text_watched",
+        "sprite": "text_watched",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_watch2",
         "sprite": "text_watch2",
         "color": [
             "2",
-            "2"
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_watched2",
+        "sprite": "text_watched2",
+        "color": [
+            "2",
+            "3"
         ],
         "tiling": "-1"
     },
@@ -130,7 +148,16 @@
         "sprite": "text_watch3",
         "color": [
             "2",
-            "2"
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_watched3",
+        "sprite": "text_watched3",
+        "color": [
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },
@@ -165,8 +192,8 @@
         "name": "text_refers",
         "sprite": "text_refers",
         "color": [
-            "1",
-            "4"
+            "0",
+            "3"
         ],
         "tiling": "-1"
     },
@@ -273,8 +300,422 @@
         "name": "text_puzzle",
         "sprite": "text_puzzle",
         "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "puzzle",
+        "sprite": "puzzle",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_eternal",
+        "sprite": "text_eternal",
+        "color": [
             "1",
             "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_you+",
+        "sprite": "text_youplus",
+        "color": [
+            "4",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_hidden",
+        "sprite": "text_hidden",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_petted",
+        "sprite": "text_petted",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_static",
+        "sprite": "text_static",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_sleepy",
+        "sprite": "text_sleepy",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_shiny",
+        "sprite": "text_shiny",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_as",
+        "sprite": "text_as",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_spindown",
+        "sprite": "text_spindown",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_spinright",
+        "sprite": "text_spinright",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_spinup",
+        "sprite": "text_spinup",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_spinleft",
+        "sprite": "text_spinleft",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_despindown",
+        "sprite": "text_despindown",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_despinright",
+        "sprite": "text_despinright",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_despinup",
+        "sprite": "text_despinup",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_despinleft",
+        "sprite": "text_despinleft",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_act",
+        "sprite": "text_act",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_perform",
+        "sprite": "text_perform",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_infect",
+        "sprite": "text_infect",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_virus2",
+        "sprite": "text_virus",
+        "color": [
+            "4",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_puppet",
+        "sprite": "text_puppet",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_volt",
+        "sprite": "text_volt",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_one",
+        "sprite": "text_one",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_two",
+        "sprite": "text_two",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_three",
+        "sprite": "text_three",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_four",
+        "sprite": "text_four",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_five",
+        "sprite": "text_five",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_equal",
+        "sprite": "text_equal",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_lessthan",
+        "sprite": "text_lessthan",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_greaterthan",
+        "sprite": "text_greaterthan",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_secure",
+        "sprite": "text_secure",
+        "color": [
+            "1",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_draw",
+        "sprite": "text_draw",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jot",
+        "sprite": "text_jot",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_type",
+        "sprite": "text_type",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_refers",
+        "sprite": "glyph_refers",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "event_logic",
+        "sprite": "event_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_logic",
+        "sprite": "glyph_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metalogic",
+        "sprite": "glyph_metalogic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "glyph_metalogic2",
+        "sprite": "glyph_metalogic2",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_event",
+        "sprite": "logic_event",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_node",
+        "sprite": "logic_node",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_glyph",
+        "sprite": "logic_glyph",
+        "color": [
+            "3",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "logic_obj",
+        "sprite": "logic_obj",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "node_logic",
+        "sprite": "node_logic",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_metalogic",
+        "sprite": "text_metalogic",
+        "color": [
+            "3",
+            "1"
         ],
         "tiling": "-1"
     }

@@ -621,5 +621,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "edge_old",
+        "sprite": "edge_old",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "1"
     }
 ]

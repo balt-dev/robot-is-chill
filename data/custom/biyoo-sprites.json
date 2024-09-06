@@ -31,7 +31,7 @@
         "sprite": "text_chef",
         "color": [
             "2",
-            "3"
+            "2"
         ],
         "tiling": "-1"
     },
@@ -112,7 +112,7 @@
         "sprite": "text_food",
         "color": [
             "2",
-            "2"
+            "3"
         ],
         "tiling": "-1"
     },
@@ -140,6 +140,78 @@
         "color": [
             "0",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jail",
+        "sprite": "jail",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jail",
+        "sprite": "text_jail",
+        "color": [
+            "0",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "cursor2",
+        "sprite": "cursor2",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "eggplant",
+        "sprite": "eggplant",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_eggplant",
+        "sprite": "text_eggplant",
+        "color": [
+            "3",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "raspberry",
+        "sprite": "raspberry",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_raspberry",
+        "sprite": "text_raspberry",
+        "color": [
+            "4",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "egg2",
+        "sprite": "egg2",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "-1"
     }

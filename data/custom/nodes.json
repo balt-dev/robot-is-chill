@@ -234,15 +234,6 @@
         "tiling": "0"
     },
     {
-        "name": "node_is",
-        "sprite": "node_is",
-        "color": [
-            "0",
-            "3"
-        ],
-        "tiling": "0"
-    },
-    {
         "name": "node_has",
         "sprite": "node_has",
         "color": [
@@ -266,6 +257,15 @@
         "color": [
             "2",
             "2"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_and",
+        "sprite": "node_and",
+        "color": [
+            "0",
+            "3"
         ],
         "tiling": "0"
     },
@@ -317,6 +317,24 @@
     {
         "name": "node_nil_spread",
         "sprite": "node_nil_spread",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_rt",
+        "sprite": "node_nil_rt",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_lt",
+        "sprite": "node_nil_lt",
         "color": [
             "2",
             "4"

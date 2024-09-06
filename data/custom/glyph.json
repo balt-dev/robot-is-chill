@@ -706,7 +706,7 @@
         "sprite": "glyph_robot",
         "color": [
             "0",
-            "2"
+            "1"
         ],
         "tiling": "-1"
     },
@@ -846,11 +846,11 @@
         "tiling": "-1"
     },
     {
-        "name": "glyph_color",
+        "name": "glyph_red",
         "sprite": "glyph_red",
         "color": [
-            "4",
-            "3"
+            "2",
+            "2"
         ],
         "tiling": "-1"
     },
@@ -894,8 +894,8 @@
         "name": "glyph_eat",
         "sprite": "glyph_eat",
         "color": [
-            "2",
-            "2"
+            "0",
+            "1"
         ],
         "tiling": "0"
     },

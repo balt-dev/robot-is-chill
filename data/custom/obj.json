@@ -342,6 +342,15 @@
         "tiling": "-1"
     },
     {
+        "name": "obj_seastart",
+        "sprite": "obj_seastart",
+        "color": [
+            "2",
+            "1"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "obj_open",
         "sprite": "obj_open",
         "color": [
@@ -482,6 +491,15 @@
         "color": [
             "0",
             "1"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "obj_somethingelse",
+        "sprite": "obj_somethingelse",
+        "color": [
+            "3",
+            "0"
         ],
         "tiling": "-1"
     }

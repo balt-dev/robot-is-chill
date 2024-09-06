@@ -369,15 +369,6 @@
         ]
     },
     {
-        "name": "text_detilt",
-        "sprite": "text_detilt",
-        "tiling": "-1",
-        "color": [
-            "1",
-            "4"
-        ]
-    },
-    {
         "name": "text_flof",
         "sprite": "text_flof",
         "tiling": "-1",
@@ -792,7 +783,7 @@
         "tiling": "-1"
     },
     {
-        "name": "jail",
+        "name": "babjail",
         "sprite": "jail",
         "color": [
             "0",
@@ -1096,24 +1087,6 @@
             "4"
         ],
         "tiling": "-1"
-    },
-    {
-        "name": "baaba",
-        "sprite": "baaba",
-        "tiling": "2",
-        "color": [
-            "0",
-            "3"
-        ]
-    },
-    {
-        "name": "text_baaba",
-        "sprite": "text_baaba",
-        "tiling": "-1",
-        "color": [
-            "0",
-            "3"
-        ]
     },
     {
         "name": "text_slogkat",

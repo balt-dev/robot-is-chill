@@ -97,5 +97,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_ending",
+        "sprite": "text_ending",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
