@@ -2014,5 +2014,14 @@
             "2"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_it'll",
+        "sprite": "text_it'll",
+        "color": [
+            "5",
+            "3"
+        ],
+        "tiling": "-1"
     }
 ]
