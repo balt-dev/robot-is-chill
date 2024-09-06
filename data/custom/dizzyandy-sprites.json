@@ -1864,7 +1864,7 @@
     },
     {
         "name": "text_that's",
-        "sprite": "text_that's",
+        "sprite": "text_thats",
         "color": [
             "1",
             "4"
@@ -1947,8 +1947,8 @@
         "name": "glyph_metanode",
         "sprite": "glyph_metanode",
         "color": [
-            "0",
-            "3"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },
@@ -1956,8 +1956,8 @@
         "name": "glyph_metanode2",
         "sprite": "glyph_metanode2",
         "color": [
-            "0",
-            "3"
+            "2",
+            "4"
         ],
         "tiling": "-1"
     },
