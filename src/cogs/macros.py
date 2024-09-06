@@ -6,6 +6,8 @@ from functools import reduce
 from typing import Optional, Callable
 import json
 import time
+import base64
+import zlib
 
 from .. import constants, errors
 from ..types import Bot, BuiltinMacro
@@ -455,6 +457,32 @@ class MacroCog:
         @builtin("title")
         def title(text: str):
             return text.title()
+
+        @builtin("base64.encode")
+        def base64encode(string: str):
+            text_bytes = string.encode('utf-8')
+            base64_bytes = base64.b64encode(text_bytes)
+            return base64_bytes.decode('utf-8')
+        
+        @builtin("base64.decode")
+        def base64decode(string: str):
+            base64_bytes = string.encode('utf-8')
+            text_bytes = base64.b64decode(base64_bytes)
+            return text_bytes.decode('utf-8')
+
+        @builtin("zlib.compress")
+        def zlibcompress(data: str):
+            text_bytes = data.encode('utf-8')
+            compressed_bytes = zlib.compress(text_bytes)
+            base64_compressed = base64.b64encode(compressed_bytes)
+            return base64_compressed.decode('utf-8')
+        
+        @builtin("zlib.decompress")
+        def zlibdecompress(data: str):
+            base64_compressed = data.encode('utf-8')
+            compressed_bytes = base64.b64decode(base64_compressed)
+            text_bytes = zlib.decompress(compressed_bytes)
+            return text_bytes.decode('utf-8')
 
         self.builtins = dict(sorted(self.builtins.items(), key=lambda tup: tup[0]))
 
