@@ -54,6 +54,15 @@
         "tiling": "-1"
     },
     {
+        "name": "deadke",
+        "sprite": "deadke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
         "name": "text_jehjeh",
         "sprite": "text_jehjeh",
         "color": [
