@@ -340,5 +340,68 @@
             "4"
         ],
         "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump",
+        "sprite": "node_nil_bump",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_branch",
+        "sprite": "node_nil_bump_branch",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_debranch",
+        "sprite": "node_nil_bump_debranch",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_lt",
+        "sprite": "node_nil_bump_lt",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_rt",
+        "sprite": "node_nil_bump_rt",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_perp",
+        "sprite": "node_nil_bump_perp",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "node_nil_bump_spread",
+        "sprite": "node_nil_bump_spread",
+        "color": [
+            "2",
+            "4"
+        ],
+        "tiling": "0"
     }
 ]
