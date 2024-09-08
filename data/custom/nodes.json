@@ -279,6 +279,15 @@
         "tiling": "0"
     },
     {
+        "name": "node_is",
+        "sprite": "node_is",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
         "name": "node_nil",
         "sprite": "node_nil",
         "color": [
