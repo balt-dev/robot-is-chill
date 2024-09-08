@@ -226,7 +226,7 @@
     },
     {
         "name": "obj_water",
-        "sprite": "obj_water",
+        "sprite": "obj_bog",
         "color": [
             "1",
             "2"
