@@ -1802,7 +1802,7 @@
     },
     {
         "name": "text_aloneprop",
-        "sprite": "text_aloneprop",
+        "sprite": "text_alone",
         "color": [
             "2",
             "2"

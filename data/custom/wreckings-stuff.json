@@ -628,5 +628,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "event_glyph",
+        "sprite": "event_glyph",
+        "color": [
+            "3",
+            "2"
+        ],
+        "tiling": "-1"
     }
 ]
