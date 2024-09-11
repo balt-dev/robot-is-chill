@@ -61,5 +61,41 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "catto",
+        "sprite": "catto",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "0"
+    },
+    {
+        "name": "text_catto",
+        "sprite": "text_catto",
+        "color": [
+            "0",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "pulpul",
+        "sprite": "pulpul",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "2"
+    },
+    {
+        "name": "text_pulpul",
+        "sprite": "text_pulpul",
+        "color": [
+            "1",
+            "2"
+        ],
+        "tiling": "2"
     }
 ]
