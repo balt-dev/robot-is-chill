@@ -470,7 +470,6 @@ class MacroCog:
         def base64decode(*args: str):
             assert len(args) >= 1, "base64.decode macro must receive 1 or more arguments"
             string = reduce(lambda x, y: str(x) + "/" + str(y), args)
-            print(string)
             base64_bytes = string.encode('utf-8')
             text_bytes = base64.b64decode(base64_bytes)
             return text_bytes.decode('utf-8')
