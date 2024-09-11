@@ -196,5 +196,14 @@
             "3"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "text_glarg",
+        "sprite": "text_glarg",
+        "color": [
+            "5",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
