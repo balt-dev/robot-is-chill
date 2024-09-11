@@ -414,24 +414,6 @@
         "tiling": "-1"
     },
     {
-        "name": "numx",
-        "sprite": "numx",
-        "color": [
-            "4",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
-        "name": "text_numx",
-        "sprite": "text_numx",
-        "color": [
-            "4",
-            "3"
-        ],
-        "tiling": "-1"
-    },
-    {
         "name": "op_tothe",
         "sprite": "tothe",
         "color": [
