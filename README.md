@@ -18,6 +18,7 @@ https://github.com/RocketRace/robot-is-you#readme
 ---
 
 ### Setup
+- If on Windows, set up WSL
 - Clone the repository
 - `pip install -r requirements.txt`
 - Set up files
