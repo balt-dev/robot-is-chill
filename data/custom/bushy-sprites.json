@@ -25,5 +25,50 @@
             "1"
         ],
         "tiling": "-1"
+    },
+    {
+        "name": "sarah",
+        "sprite": "sarah",
+        "color": [
+            "0",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_stronkske",
+        "sprite": "text_stronkske",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "jehjeh",
+        "sprite": "jehjeh",
+        "color": [
+            "2",
+            "3"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "deadke",
+        "sprite": "deadke",
+        "color": [
+            "2",
+            "2"
+        ],
+        "tiling": "-1"
+    },
+    {
+        "name": "text_jehjeh",
+        "sprite": "text_jehjeh",
+        "color": [
+            "3",
+            "4"
+        ],
+        "tiling": "-1"
     }
 ]
