@@ -7,7 +7,7 @@ import json
 import zipfile
 import pathlib
 import re
-from json import JSONDecodeError
+import tomlkit
 
 import requests
 import itertools
@@ -508,9 +508,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             data = fp.read()
 
         start = data.find("tileslist =\n")
-        end = data.find("\n}\n", start)
+        end = data.find("\n}", start)
 
-        assert start > 0 and end > 0
+        assert start > 0 and end > 0, "Failed to load values.lua!"
         spanned = data[start:end]
 
         def prepare(d: dict[str, Any]) -> dict[str, Any]:
@@ -912,10 +912,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         for i, row in enumerate(fetch):
             data = TileData.from_row(row)
             if data.sprite not in ignored:
-                await self.load_letter(
-                    data.sprite,
-                    data.text_type  # type: ignore
-                )
+                try:
+                    await self.load_letter(
+                        data.sprite,
+                        data.text_type  # type: ignore
+                    )
+                except FileNotFoundError:
+                    pass
 
         await self.load_ready_letters()
 

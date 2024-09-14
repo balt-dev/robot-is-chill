@@ -492,9 +492,9 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
             data = fp.read()
 
         start = data.find("tileslist =\n")
-        end = data.find("\n}\n", start)
+        end = data.find("\n}", start)
 
-        assert start > 0 and end > 0
+        assert start > 0 and end > 0, "Failed to parse values.lua!"
         spanned = data[start:end]
 
         object_pattern = re.compile(
@@ -594,9 +594,12 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
         cursor_x = config.getint("general", "selectorX", fallback=-1)
         cursor_y = config.getint("general", "selectorY", fallback=-1)
         if cursor_y != -1 and cursor_x != -1:
-            cursor = self.defaults_by_name["cursor"]
-            pos = flatten(cursor_x, cursor_y, grid.width)
-            grid.cells[pos].append(cursor)
+            try:
+                cursor = self.defaults_by_name["cursor"]
+                pos = flatten(cursor_x, cursor_y, grid.width)
+                grid.cells[pos].append(cursor)
+            except KeyError:
+                pass
 
         # Add path objects to the grid (they're not in the normal objects)
         path_count = config.getint("general", "paths", fallback=0)

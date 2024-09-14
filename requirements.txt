@@ -18,3 +18,5 @@ tldextract~=3.4.0
 
 attrs~=22.2.0
 cpmpy
+
+tomlkit

@@ -1,8 +1,8 @@
 import discord
 
 activity = "Booting..."
-description = "*An entertainment bot for rendering levels and custom scenes based on the indie game Baba Is You.*"
-prefixes = ["=", "robot is ", "ROBOT IS "]
+description = "*Beta branch. May be unstable.*"
+prefixes = ["=="]
 trigger_on_mention = True
 embed_color = discord.Color(12877055)
 logging_color = 0xffffff
