@@ -883,7 +883,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def loadletters(self, ctx: Context):
         """Scrapes individual letters from vanilla sprites."""
         await self.bot.db.conn.execute("DELETE FROM letters")
-        ignored = json.load(open("config/letterignore.json"))
+        ignored = constants.LETTER_IGNORE
         fetch = await self.bot.db.conn.fetchall(
             f'''
             SELECT * FROM tiles

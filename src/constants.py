@@ -295,3 +295,24 @@ CHARACTER_VARIANTS = "smooth", "fluffy", "fuzzy", "polygonal", "skinny", "belt-l
 
 MACRO_LIMIT = 5000
 MACRO_ARG_LIMIT = 100
+
+LETTER_IGNORE = [
+    "text_you2",
+    "text_nudgeright",
+    "text_nudgeup",
+    "text_nudgeleft",
+    "text_nudgedown",
+    "text_fallright",
+    "text_fallup",
+    "text_fallleft",
+    "text_falldown",
+    "text_cash",
+    "text_p1",
+    "text_p2",
+    "text_ab",
+    "text_ba",
+    "text_besideleft",
+    "text_besideright",
+    "text_enter",
+    "text_3d"
+]
