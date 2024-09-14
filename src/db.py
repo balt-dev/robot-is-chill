@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
 import string
-import traceback
 from dataclasses import dataclass
 from io import BytesIO
 from sqlite3.dbapi2 import Row
@@ -16,7 +14,7 @@ import tldextract as tldextract
 from PIL import Image
 
 from . import constants
-from .constants import BABA_WORLD, DIRECTIONS
+from .constants import DIRECTIONS
 
 
 class Database:

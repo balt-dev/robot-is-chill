@@ -8,8 +8,6 @@ from os import listdir
 import os.path
 from typing import Any, Sequence, Optional
 
-import json
-
 from src.db import CustomLevelData, LevelData, TileData
 import zipfile
 
@@ -319,7 +317,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 results[a] = b
 
         if flags.get("type") == "mod":
-            q = f"*{plain_query}*.json" if plain_query else "*.json"
+            q = f"*{plain_query}*.toml" if plain_query else "*.toml"
             out = []
             for path in Path("data/custom").glob(q):
                 out.append((("mod", path.parts[-1][:-5]), path.parts[-1][:-5]))
@@ -366,10 +364,11 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         async with self.bot.db.conn.cursor() as cur:
             await ctx.typing()
             result = await cur.execute(
-                'SELECT DISTINCT sprite, source, active_color_x, active_color_y, tiling FROM tiles WHERE name = (?)',
-                name)
+                'SELECT DISTINCT sprite, source FROM tiles WHERE name = (?)',
+                name
+            )
             try:
-                sprite_name, source, colorx, colory, tiling = tuple(await result.fetchone())
+                sprite_name, source = tuple(await result.fetchone())
             except BaseException:
                 return await ctx.error(f'Tile `{name.replace("`", "")[:16]}` not found!')
             files = glob.glob(f'data/sprites/{source}/{sprite_name}_*.png')
@@ -381,15 +380,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                             os.path.basename(
                                 os.path.normpath(data_filename)),
                             data_file.read())
-                attributes = {
-                    'name': name,
-                    'sprite': sprite_name,
-                    'color': (str(colorx), str(colory)),
-                    'tiling': str(tiling)
-                }
-                zip_file.writestr(
-                    f'{sprite_name}.json', json.dumps(
-                        attributes, indent=4))
             zipped_files.seek(0)
             return await ctx.send(f'Files for sprite `{name}` from `{source}`:',
                                   files=[discord.File(zipped_files, filename=f'{source}-{name}.zip')])

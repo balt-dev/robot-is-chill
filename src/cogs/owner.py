@@ -3,11 +3,13 @@ from __future__ import annotations
 import shutil
 from glob import glob
 from io import BytesIO
-import json
+import time
 import zipfile
 import pathlib
 import re
-from json import JSONDecodeError
+import json
+import tomlkit
+import urllib
 
 import requests
 import itertools
@@ -103,20 +105,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     break
         if file_name is None:
             raise AssertionError('Couldn\'t find any valid sprites!')
-        with open(f"data/custom/{pack_name}.json", "r") as f:
-            sprite_data = json.load(f)
-        found = False
-        # make sure this doesn't delete anything on accident
-        old_sprite_name = "ALSDFHASDFHSADLFBCASDPFHINsaDLKJFFBSADLFBLSADKASDFNLSADKF"
-        for i in range(len(sprite_data)):
-            if sprite_data[i]['name'] == sprite_name:  # this is dumb
-                old_sprite_name = sprite_data[i]['sprite']
-                sprite_data[i]['sprite'] = file_name
-                found = True
-                break
-        assert found, f"Sprite `{sprite_name}` not found!"
-        with open(f"data/custom/{pack_name}.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
+        with open(f"data/custom/{pack_name}.toml", "r") as f:
+            sprite_data = tomlkit.load(f)
+        assert sprite_name in sprite_data, f"Sprite `{sprite_name}` not found!"
+        data = sprite_data[sprite_name]
+        old_sprite_name = data['sprite']
+        data['sprite'] = file_name
+        with open(f"data/custom/{pack_name}.toml", "w") as f:
+            tomlkit.dump(data, f)
         for file in glob(f'data/sprites/{pack_name}/{old_sprite_name}*.png'):
             os.remove(file)
         for name in zip.namelist():
@@ -130,7 +126,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @sprite.command()
     async def edit(self, ctx: Context, sprite_name: str, attribute: str, *value: str):
-        value = ' '.join(value)
         async with self.bot.db.conn.cursor() as cur:
             pack_name = \
                 (await (await cur.execute('SELECT source FROM tiles WHERE name = (?)', sprite_name)).fetchone())[0]
@@ -139,21 +134,23 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         if attribute not in ['sprite', 'tiling', 'color', 'name', 'tags']:
             return await ctx.error('You specified an invalid attribute.')
         if attribute == 'color':
-            value = value.split(' ')
-            assert len(value) == 2, 'Invalid color format!'
-        elif attribute == 'tags':
-            value = value.replace(' ', '\t')
-        with open(f"data/custom/{pack_name}.json", "r") as f:
-            sprite_data = json.load(f)
-        found = False
-        for i in range(len(sprite_data)):
-            if sprite_data[i]['name'] == sprite_name:  # this is dumb
-                sprite_data[i][attribute] = value
-                found = True
-                break
-        assert found, f"Sprite `{sprite_name}` not found!"
-        with open(f"data/custom/{pack_name}.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
+            value = [int(val) for val in value]
+        else:
+            value = value[0]
+        if attribute == 'tiling':
+            value = int(value)
+        with open(f"data/custom/{pack_name}.toml", "r") as f:
+            sprite_data = tomlkit.load(f)
+        assert sprite_name in sprite_data, f"Sprite `{sprite_name}` not found!"
+        if attribute == "name":
+            data = sprite_data[sprite_name]
+            sprite_data.remove(sprite_name)
+            sprite_data[value] = data
+        else:
+            sprite_data[sprite_name][attribute] = data
+
+        with open(f"data/custom/{pack_name}.toml", "w") as f:
+            tomlkit.dump(sprite_data, f)
         await self.load_custom_tiles(pack_name)
         return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
 
@@ -176,18 +173,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
         except IndexError:
             return await ctx.error('You forgot to attach a zip.')
-        check = [
-            os.path.basename(name)[
-            :5] == 'text_' for name in zip.namelist()]
-        withtext = any(check) and not all(check)
         file_name = None
         for name in zip.namelist():
             name = os.path.basename(name)
-            if name[:5] != 'text_' or all(check):
-                file_name = re.match(r"(.+?)_\d+?_\d\.png", name)
-                if file_name is not None:
-                    file_name = file_name.groups()[0]
-                    break
+            file_name = re.match(r"(.+?)_\d+?_\d\.png", name)
+            if file_name is not None:
+                file_name = file_name.groups()[0]
+                break
         if file_name is None:
             raise AssertionError('Couldn\'t find any valid sprites!')
         if sprite_name == '.':
@@ -201,35 +193,22 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         f.write(sprite)
                 except FileNotFoundError:
                     return await ctx.error('That isn\'t a valid sprite directory.')
-        with open(f"data/custom/{pack_name}.json", "r") as f:
-            sprite_data = json.load(f)
+        with open(f"data/custom/{pack_name}.toml", "r") as f:
+            sprite_data = tomlkit.load(f)
         data = {
-            "name": sprite_name,
             "sprite": file_name,
-            "color": [
-                str(color_x),
-                str(color_y)
-            ],
-            "tiling": str(tiling)
+            "color": [ color_x, color_y ],
+            "tiling": tiling
         }
         if len(tags):
             data['tags'] = tags
-        sprite_data.append(data)
-        if withtext:
-            text_data = {
-                "name": f'text_{sprite_name}',
-                "sprite": f'text_{file_name}',
-                "color": [
-                    str(color_x),
-                    str(color_y)
-                ],
-                "tiling": "-1"
-            }
-            if len(tags):
-                text_data['tags'] = tags.join('\t')
-            sprite_data.append(text_data)
-        with open(f"data/custom/{pack_name}.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
+        
+        table = tomlkit.inline_table()
+        table.update(data)
+        sprite_data.add(tomlkit.nl())
+        sprite_data.add(sprite_name, table)
+        with open(f"data/custom/{pack_name}.toml", "w") as f:
+            tomlkit.dump(sprite_data, f)
         await self.load_custom_tiles(pack_name)
         await ctx.send(f"Done. Added {sprite_name}.")
 
@@ -240,55 +219,21 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             source, sprite = await (
                 await cur.execute('SELECT source, sprite FROM tiles WHERE name = (?)', sprite_name)).fetchone()
             if source is None or sprite is None:
-                return await ctx.error(f'The sprite {sprite_name} doesn\'t exist.')
-            result = await cur.execute('DELETE FROM tiles WHERE name = (?)', sprite_name)
-        for file in glob(f'data/sprites/{source}/{sprite}*.png'):
-            os.remove(file)
-        with open(f"data/custom/{source}.json", "r") as f:
-            sprite_data = json.load(f)
-        for i in range(len(sprite_data)):
-            if sprite_data[i]['name'] == sprite_name:  # this is dumb
-                del sprite_data[i]
-                break
-        with open(f"data/custom/{source}.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
+                return await ctx.error(f'The sprite `{sprite_name}` doesn\'t exist.')
+            await cur.execute('DELETE FROM tiles WHERE name = (?)', sprite_name)
+        for file in glob(f'data/sprites/{source}/*.png'):
+            # Extra check
+            path = pathlib.Path(file)
+            if re.match(rf"^{re.escape(sprite)}_\d+_\d+$", path.stem) is not None:
+                os.remove(file)
+        with open(f"data/custom/{source}.toml", "r") as f:
+            sprite_data = tomlkit.load(f)
+        if sprite_name in sprite_data:
+            sprite_data.remove(sprite_name)
+            with open(f"data/custom/{source}.toml", "w") as f:
+                tomlkit.dump(sprite_data, f)
         await self.load_custom_tiles(source)
         await ctx.send(f"Done. Deleted `{sprite_name}` (`{sprite}` from `{source}`).")
-
-    @sprite.command()
-    async def move(self, ctx: Context, sprite_name: str, new_source: str, reload: bool = True):
-        """Moves a specified sprite to a different source."""
-        data = None
-        assert pathlib.Path(
-            f'data/sprites/{new_source}').exists(), f'The source {new_source} doesn\'t exist.'
-        async with self.bot.db.conn.cursor() as cur:
-            source, sprite = await (
-                await cur.execute('SELECT source, sprite FROM tiles WHERE name = (?)', sprite_name)).fetchone()
-            if source is None or sprite is None:
-                return await ctx.error(f'The sprite {sprite_name} doesn\'t exist.')
-            await cur.execute('UPDATE tiles SET source = (?) WHERE name = (?)', (new_source, sprite_name))
-        for file in glob(f'data/sprites/{source}/{sprite}*.png'):
-            os.rename(
-                file,
-                f'data{os.sep}sprites{os.sep}{new_source}{os.sep}{pathlib.Path(file).stem}.png')
-        with open(f"data/custom/{source}.json", "r") as f:
-            sprite_data = json.load(f)
-        for i in range(len(sprite_data)):
-            if sprite_data[i]['name'] == sprite_name:  # this is dumb
-                data = sprite_data.pop(i)
-                break
-        with open(f"data/custom/{source}.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
-        with open(f"data/custom/{new_source}.json", "r") as f:
-            new_data = json.load(f)
-        new_data.append(data)
-        with open(f"data/custom/{new_source}.json", "w") as f:
-            json.dump(new_data, f, indent=4)
-        if reload:
-            await self.load_custom_tiles(source)
-            await self.load_custom_tiles(new_source)
-        await ctx.send(
-            f"Done. Moved {sprite_name} to {new_source}.{' (Remember to reload custom tiles!)' if not reload else ''}")
 
     @commands.command(name="blacklist")
     @commands.is_owner()
@@ -309,14 +254,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 await cur.execute(f'''DELETE FROM blacklistedusers
                                 WHERE id={user_id}''')
                 return await ctx.reply(f'Removed user `{user.name}#{user.discriminator}` from the blacklist.')
+            
 
     @commands.command()
     @commands.is_owner()
-    async def importbab(self, ctx: Context, name: str, color_x: int = None, color_y: int = None,
-                        transform_txt_text: bool = True):
-        """Auto-import a bab sprite."""
-        await ctx.send(f"Hold on, robobot be scan bab...")
-        assert name.find(':') == -1, 'Name has colon in it, so it won\'t work.'
+    async def loadbab(self, ctx: Context):
+        """Import all sprites from BAB BE U."""
+        msg = await ctx.reply("Importing...")
+
+        bab_palette = np.array(Image.open("data/misc/bab_palette.png").convert("RGBA"))
         color_table = {
             (3, 3): (3, 1),
             (3, 2): (3, 0),
@@ -326,28 +272,42 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             (3, 5): (3, 3)
         }
 
-        def scanforname(name):
-            for directory, filenames in (  # i wish this could be a dict
-                    ('objects', ("characters", "devs",
-                                 "special", "thingify", "ui", "unsorted")),
-                    ('text', ("conditions", "letters",
-                              "properties", "tutorial", "unsorted", "verbs"))
-            ):
-                for filename in filenames:
-                    for babdata in requests.get(
-                            f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/{directory}/{filename}.json").json():
-                        if babdata["name"] == name:
-                            return babdata
+        data = {}
 
-        babdata = scanforname(name)
-        try:
-            sprite = requests.get(
-                f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{babdata['sprite'][0]}.png").content
-        except TypeError:
-            raise AssertionError(f'Bab til `{name}` not found!')
-        if isinstance(color_x, type(None)) or isinstance(color_y, type(None)):
-            if len(babdata['color'][0]) == 2:
-                color_x, color_y = babdata['color'][0]
+        for file in glob("data/sprites/bab/*"):
+            os.remove(file)
+
+        for directory, filenames in (  # i wish this could be a dict
+                ('objects', ("characters", "devs",
+                                "special", "thingify", "ui", "unsorted")),
+                ('text', ("conditions", "letters",
+                            "properties", "tutorial", "unsorted", "verbs"))
+        ):
+            for filename in filenames:
+                for babdata in requests.get(
+                        f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/tiles/{directory}/{filename}.json").json():
+                    data[babdata.pop("name")] = babdata
+                    
+        tiles = tomlkit.document()
+        tiles.add(tomlkit.comment("Automatically generated by loadbab. Probably don't edit this."))
+        tiles.add(tomlkit.nl())
+        tiles.add(tomlkit.nl())
+        tiles.add(tomlkit.nl())
+        
+        last_update = time.perf_counter()
+        count = 0
+        for name, tile in data.items():
+            if name.startswith("txt_"):
+                tilename = "text_bab_" + name[4:]
+            else:
+                tilename = "bab_" + name
+            tilename = tilename.replace(":",  "colon").replace(";",  "semicolon").replace("/", "slash").replace(" ", "space")
+            multicolor = False
+            if len(tile['sprite']) > 1:
+                color_x, color_y = 0, 3
+                multicolor = True
+            elif len(tile['color'][0]) == 2:
+                color_x, color_y = tile['color'][0]
                 if (color_x, color_y) in color_table:
                     color_x, color_y = color_table[(color_x, color_y)]
             else:
@@ -355,40 +315,64 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     default_palette = np.array(
                         l.convert('RGB'), dtype=np.uint8)
                 closest_color = np.argmin(np.sum(abs(
-                    default_palette - np.full(default_palette.shape, babdata['color'][0])), axis=2))
+                    default_palette - np.full(default_palette.shape, tile['color'][0])), axis=2))
                 color_x, color_y = (closest_color %
                                     default_palette.shape[1], closest_color //
                                     default_palette.shape[1])
-        # if not os.path.isdir(f"data/sprites/{pack_name}") or not os.path.isfile(f"data/custom/{pack_name}.json"):
-        # return await ctx.error(f"Pack {pack_name} doesn't exist.") #fuck off,
-        # the bab pack exists.
-        pilsprite = Image.open(BytesIO(sprite))
-        pilsprite = pilsprite.resize(
-            ((pilsprite.width * 3) // 4,
-             (pilsprite.height * 3) // 4),
-            Image.NEAREST)
-        if transform_txt_text:
-            if name.startswith("txt_"):
-                name = "text_" + name[4:]
-        for i in range(3):
-            # with open(f"data/sprites/{pack_name}/{name}_0_{i+1}.png", "wb") as f:
-            #     f.write(sprite)
-            pilsprite.save(f"data/sprites/bab/{name}_0_{i + 1}.png")
-        with open(f"data/custom/bab.json", "r") as f:
-            sprite_data = json.load(f)
-        sprite_data.append({
-            "name": name,
-            "sprite": name,
-            "color": [
-                str(color_x),
-                str(color_y)
-            ],
-            "tiling": "-1"
-        })
-        with open(f"data/custom/bab.json", "w") as f:
-            json.dump(sprite_data, f, indent=4)
-        await self.load_custom_tiles()
-        await ctx.send(f"Added {name} from bab.")
+                color_x, color_y = int(color_x), int(color_y)
+            
+            if len(tile['sprite']) > 1:
+                print(f"Bab tile {name} has more than one sprite")
+            
+            sprite_name = name.replace("/", "_").replace("'", "_").replace(" ", "_")
+
+            sprites: list[Image.Image] = []
+            broken = False
+            for sprite in tile['sprite']:
+                sprite = requests.get(
+                    f"https://raw.githubusercontent.com/lilybeevee/bab-be-u/master/assets/sprites/{urllib.parse.quote(sprite)}.png"
+                ).content
+                try:
+                    sprite = Image.open(BytesIO(sprite)).convert("RGBA")
+                except:
+                    broken = True
+                    break
+                sprites.append(sprite)
+            if broken:
+                continue
+            if not multicolor:
+                sprite = sprites[0]
+            else:
+                width = max(im.width for im in sprites)
+                height = max(im.height for im in sprites)
+                image = Image.new("RGBA", (width, height))
+                for col, sprite in zip(tile['color'], sprites):
+                    color = bab_palette[*col[::-1]] if len(col) < 3 else np.array([*col, 255]) # fuck it
+                    sprite = np.array(sprite)
+                    sprite = np.multiply(sprite, color.astype(float) / 255, casting="unsafe").astype(np.uint8)
+                    sprite = Image.fromarray(sprite)
+                    image.paste(sprite, mask=sprite)
+                sprite = image
+
+            for i in range(3):
+                sprite.save(f"data/sprites/bab/{sprite_name}_0_{i + 1}.png")
+            
+            table = tomlkit.inline_table()
+            table.update({"sprite": sprite_name, "color": [color_x, color_y], "tiling": -1})
+            tiles.add(tomlkit.nl())
+            tiles.add(tilename, table)
+            
+            count += 1
+            if time.perf_counter() - last_update > 3:
+                await msg.edit(content=f"Imported {count}/{len(data.keys())} tiles...")
+                last_update = time.perf_counter()
+        
+        with open(f"data/custom/bab.toml", "w+") as f:
+            tomlkit.dump(tiles, f)
+
+        await self.load_custom_tiles("bab")
+        await msg.edit(content="Done. Imported all tiles from bab.")
+
 
     @commands.command(aliases=["reboot", "rs"])
     @commands.is_owner()
@@ -508,9 +492,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             data = fp.read()
 
         start = data.find("tileslist =\n")
-        end = data.find("\n}\n", start)
+        end = data.find("\n}", start)
 
-        assert start > 0 and end > 0
+        assert start > 0 and end > 0, "Failed to load values.lua!"
         spanned = data[start:end]
 
         def prepare(d: dict[str, Any]) -> dict[str, Any]:
@@ -729,102 +713,101 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         )
 
     async def load_custom_tiles(self, file='*'):
-        """Loads custom tile data from `data/custom/*.json`"""
+        """Loads custom tile data from `data/custom/*.toml`"""
 
-        def prepare(source: str, d: dict[str, Any]) -> dict[str, Any]:
+        def prepare(source: str, name: str, d: dict[str, Any]) -> dict[str, Any]:
             """From config format to db format."""
+            db_dict = {key: value for key, value in d.items()}
+            db_dict["name"] = name
             inactive = d.pop("color")
             if d.get("active") is not None:
-                d["inactive_color_x"] = inactive[0]
-                d["inactive_color_y"] = inactive[1]
-                d["active_color_x"] = d["active"][0]
-                d["active_color_y"] = d["active"][1]
+                db_dict["inactive_color_x"] = inactive[0]
+                db_dict["inactive_color_y"] = inactive[1]
+                db_dict["active_color_x"] = d["active"][0]
+                db_dict["active_color_y"] = d["active"][1]
             else:
-                d["inactive_color_x"] = d["active_color_x"] = inactive[0]
-                d["inactive_color_y"] = d["active_color_y"] = inactive[1]
-            d["source"] = d.get("source", source)
-            d["tiling"] = d.get("tiling", -1)
-            d["text_type"] = d.get("text_type", 0)
-            d["text_direction"] = d.get("text_direction")
-            d["tags"] = d.get("tags", "")
-            return d
+                db_dict["inactive_color_x"] = db_dict["active_color_x"] = inactive[0]
+                db_dict["inactive_color_y"] = db_dict["active_color_y"] = inactive[1]
+            db_dict["source"] = d.get("source", source)
+            db_dict["tiling"] = d.get("tiling", -1)
+            db_dict["text_type"] = d.get("text_type", 0)
+            db_dict["text_direction"] = d.get("text_direction")
+            db_dict["tags"] = "\t".join(d.get("tags", []))
+            return db_dict
 
         async with self.bot.db.conn.cursor() as cur:
-            try:
-                for path in pathlib.Path("data/custom").glob(f"{file}.json"):
-                    source = path.parts[-1].split(".")[0]
-                    with open(path) as fp:
-                        objects = [prepare(source, obj) for obj in json.load(fp)]
-                    await cur.executemany(
-                        '''
-                        INSERT INTO tiles
-                        VALUES (
-                            :name,
-                            :sprite,
-                            :source,
-                            2,
-                            :inactive_color_x,
-                            :inactive_color_y,
-                            :active_color_x,
-                            :active_color_y,
-                            :tiling,
-                            :text_type,
-                            :text_direction,
-                            :tags
-                        )
-                        ON CONFLICT(name, version)
-                        DO UPDATE SET
-                            sprite=excluded.sprite,
-                            source=excluded.source,
-                            inactive_color_x=excluded.inactive_color_x,
-                            inactive_color_y=excluded.inactive_color_y,
-                            active_color_x=excluded.active_color_x,
-                            active_color_y=excluded.active_color_y,
-                            tiling=excluded.tiling,
-                            text_type=excluded.text_type,
-                            text_direction=excluded.text_direction,
-                            tags=excluded.tags;
-                        ''',
-                        objects
+            for path in pathlib.Path("data/custom").glob(f"{file}.toml"):
+                source = path.parts[-1].split(".")[0]
+                with open(path) as fp:
+                    objects = [prepare(source, name, obj) for name, obj in tomlkit.load(fp).items()]
+                await cur.executemany(
+                    '''
+                    INSERT INTO tiles
+                    VALUES (
+                        :name,
+                        :sprite,
+                        :source,
+                        2,
+                        :inactive_color_x,
+                        :inactive_color_y,
+                        :active_color_x,
+                        :active_color_y,
+                        :tiling,
+                        :text_type,
+                        :text_direction,
+                        :tags
                     )
-                    # this is a mega HACK, but I'm keeping it because the
-                    # alternative is a headache
-                    hacks = [
-                        x for x in objects if "baba_special" in x["tags"].split("\t")]
-                    await cur.executemany(
-                        '''
-                        INSERT INTO tiles
-                        VALUES (
-                            :name,
-                            :sprite,
-                            :source,
-                            0,
-                            :inactive_color_x,
-                            :inactive_color_y,
-                            :active_color_x,
-                            :active_color_y,
-                            :tiling,
-                            :text_type,
-                            :text_direction,
-                            :tags
-                        )
-                        ON CONFLICT(name, version)
-                        DO UPDATE SET
-                            sprite=excluded.sprite,
-                            source=excluded.source,
-                            inactive_color_x=excluded.inactive_color_x,
-                            inactive_color_y=excluded.inactive_color_y,
-                            active_color_x=excluded.active_color_x,
-                            active_color_y=excluded.active_color_y,
-                            tiling=excluded.tiling,
-                            text_type=excluded.text_type,
-                            text_direction=excluded.text_direction,
-                            tags=excluded.tags;
-                        ''',
-                        hacks
+                    ON CONFLICT(name, version)
+                    DO UPDATE SET
+                        sprite=excluded.sprite,
+                        source=excluded.source,
+                        inactive_color_x=excluded.inactive_color_x,
+                        inactive_color_y=excluded.inactive_color_y,
+                        active_color_x=excluded.active_color_x,
+                        active_color_y=excluded.active_color_y,
+                        tiling=excluded.tiling,
+                        text_type=excluded.text_type,
+                        text_direction=excluded.text_direction,
+                        tags=excluded.tags;
+                    ''',
+                    objects
+                )
+                # this is a mega HACK, but I'm keeping it because the
+                # alternative is a headache
+                hacks = [
+                    x for x in objects if "baba_special" in x["tags"].split("\t")]
+                await cur.executemany(
+                    '''
+                    INSERT INTO tiles
+                    VALUES (
+                        :name,
+                        :sprite,
+                        :source,
+                        0,
+                        :inactive_color_x,
+                        :inactive_color_y,
+                        :active_color_x,
+                        :active_color_y,
+                        :tiling,
+                        :text_type,
+                        :text_direction,
+                        :tags
                     )
-            except JSONDecodeError as e:
-                raise AssertionError(f"Failed to parse `{path}`!\n{e.msg}")
+                    ON CONFLICT(name, version)
+                    DO UPDATE SET
+                        sprite=excluded.sprite,
+                        source=excluded.source,
+                        inactive_color_x=excluded.inactive_color_x,
+                        inactive_color_y=excluded.inactive_color_y,
+                        active_color_x=excluded.active_color_x,
+                        active_color_y=excluded.active_color_y,
+                        tiling=excluded.tiling,
+                        text_type=excluded.text_type,
+                        text_direction=excluded.text_direction,
+                        tags=excluded.tags;
+                    ''',
+                    hacks
+                )
 
     @commands.command()
     @commands.is_owner()
@@ -900,7 +883,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def loadletters(self, ctx: Context):
         """Scrapes individual letters from vanilla sprites."""
         await self.bot.db.conn.execute("DELETE FROM letters")
-        ignored = json.load(open("config/letterignore.json"))
+        ignored = constants.LETTER_IGNORE
         fetch = await self.bot.db.conn.fetchall(
             f'''
             SELECT * FROM tiles
@@ -912,10 +895,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         for i, row in enumerate(fetch):
             data = TileData.from_row(row)
             if data.sprite not in ignored:
-                await self.load_letter(
-                    data.sprite,
-                    data.text_type  # type: ignore
-                )
+                try:
+                    await self.load_letter(
+                        data.sprite,
+                        data.text_type  # type: ignore
+                    )
+                except FileNotFoundError:
+                    pass
 
         await self.load_ready_letters()
 
@@ -932,8 +918,22 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def makedir(self, ctx: Context, name: str):
         """Makes a directory for sprites to go in."""
         os.mkdir(f'data/sprites/{name}')
-        with open(f'data/custom/{name}.json', mode='x') as f:
-            f.write('[]')
+        with open(f'data/custom/{name}.toml', mode='x') as f:
+            f.write("""# ----------------------------------------------------------------------------
+# 
+# 
+#     Tile format:
+#         baba = { sprite = "baba", color = [ 0, 3 ], tiling = 2 } 
+#     Please do not use multiline tables, as it will cause merge conflicts with Git. 
+# 
+#     Note: If your tile has tiling type 1,
+#           you must add the "diagonal = true/false" attribute to the tile
+#           in order for it to pass CI.
+#           For example, "line" = { ..., diagonal = false }. 
+# 
+# 
+# ----------------------------------------------------------------------------            
+""")
         await ctx.send(f"Made directory `{name}`.")
 
     async def load_letter(self, word: str, tile_type: int):

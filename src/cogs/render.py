@@ -750,10 +750,6 @@ class Renderer:
                     colors = np.unique(im.reshape(-1, 4), axis=0)
                     palette_colors = [0, 0, 0]
                     formatted_colors = colors[colors[:, 3] != 0][..., :3]
-                    if formatted_colors.shape[0] > 255:
-                        # Should be a UserWarning, but I can't figure out how to catch those AND keep going
-                        raise AssertionError(
-                            "Number of colors in image is above the supported amount for the GIF codec!\nTry using `-f=png`.")
                     formatted_colors = formatted_colors[:255].flatten()
                     palette_colors.extend(formatted_colors)
                     dummy = Image.new('P', (16, 16))

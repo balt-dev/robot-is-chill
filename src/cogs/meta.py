@@ -187,7 +187,7 @@ Tiles: {tile_amount}""",
             value="""_@baltdev_ - Current lead
 _@centdemeern1_ - Co-lead
 _@rocketrace_ - Original lead
-_@theopold_ - Major help with upkeep and sprite management
+_@theopold, @dizzyandy, and many others_ - Major and minor contributions to the bot
 """,
             inline=True
         )

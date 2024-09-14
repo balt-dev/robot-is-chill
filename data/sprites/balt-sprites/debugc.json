@@ -1,0 +1,9 @@
+{
+    "name": "debugc",
+    "sprite": "debugc",
+    "color": [
+        "0",
+        "3"
+    ],
+    "tiling": "2"
+}

@@ -152,6 +152,8 @@ class CommandErrorHandler(commands.Cog):
 
             elif isinstance(error, AssertionError) or isinstance(error, NotImplementedError):
                 await self.logger.send(embed=emb)
+                if len(error.args) == 0:
+                    raise error
                 return await ctx.error(error.args[0])
 
             elif isinstance(error, ZeroDivisionError):
