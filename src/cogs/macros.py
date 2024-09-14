@@ -459,26 +459,34 @@ class MacroCog:
             return text.title()
 
         @builtin("base64.encode")
-        def base64encode(string: str):
+        def base64encode(*args: str):
+            assert len(args) >= 1, "base64.encode macro must receive 1 or more arguments"
+            string = reduce(lambda x, y: str(x) + "/" + str(y), args)
             text_bytes = string.encode('utf-8')
             base64_bytes = base64.b64encode(text_bytes)
             return base64_bytes.decode('utf-8')
         
         @builtin("base64.decode")
-        def base64decode(string: str):
+        def base64decode(*args: str):
+            assert len(args) >= 1, "base64.decode macro must receive 1 or more arguments"
+            string = reduce(lambda x, y: str(x) + "/" + str(y), args)
             base64_bytes = string.encode('utf-8')
             text_bytes = base64.b64decode(base64_bytes)
             return text_bytes.decode('utf-8')
 
         @builtin("zlib.compress")
-        def zlibcompress(data: str):
+        def zlibcompress(*args: str):
+            assert len(args) >= 1, "zlib.compress macro must receive 1 or more arguments"
+            data = reduce(lambda x, y: str(x) + "/" + str(y), args)
             text_bytes = data.encode('utf-8')
             compressed_bytes = zlib.compress(text_bytes)
             base64_compressed = base64.b64encode(compressed_bytes)
             return base64_compressed.decode('utf-8')
         
         @builtin("zlib.decompress")
-        def zlibdecompress(data: str):
+        def zlibdecompress(*args: str):
+            assert len(args) >= 1, "zlib.decompress macro must receive 1 or more arguments"
+            data = reduce(lambda x, y: str(x) + "/" + str(y), args)
             base64_compressed = data.encode('utf-8')
             compressed_bytes = base64.b64decode(base64_compressed)
             text_bytes = zlib.decompress(compressed_bytes)
