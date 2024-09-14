@@ -35,8 +35,6 @@ metronome = {sprite = "metronome", tiling = 4, color = [0, 3]}
 
 babalpha = {sprite = "babalpha", color = [0, 3], tiling = 0}
 
-debugc = {sprite = "debugc", color = [0, 3], tiling = 2}
-
 goob = {sprite = "goob", color = [4, 2], tiling = 2}
 
 feather = {sprite = "feather", color = [3, 4], tiling = -1}
@@ -61,8 +59,6 @@ tplate = {sprite = "tplate", color = [0, 3], tiling = 1, diagonal = false}
 
 knife = {sprite = "knife", color = [0, 2], tiling = -1}
 
-debug = {sprite = "debug", color = [0, 3], tiling = -1}
-
 text_rw_ascension = {sprite = "ascension", color = [2, 4], tiling = -1}
 
 text_rw_assistance = {sprite = "assistance", color = [3, 1], tiling = -1}
@@ -83,3 +79,6 @@ text_rw_violence = {sprite = "violence", color = [2, 1], tiling = -1}
 
 text_rw_wanderer = {sprite = "wanderer", color = [1, 1], tiling = -1}
 
+debugc = {sprite = "debugc", color = [0, 3], tiling = 2}
+
+debug = {sprite = "debug", color = [0, 3], tiling = -1}
