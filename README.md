@@ -30,20 +30,22 @@ Step by step:
    token: str = "<TOKEN>"
    ```
 4. Set up webhooks.py:
-  ```py
-  logging_id: int = <command logging id>
-  error_id: int = <error logging id>
-  ```
+   ```py
+   logging_id: int = <command logging id>
+   error_id: int = <error logging id>
+   ```
 5. Make directory `target/renders/`
 6. Configure `config.py`
 7. Run the bot
 8. Run setup commands (in order)
-  | Command | What it does |
-  | :------ | :----------- |
-  | `loadbaba <path>`| Loads required assets from the game from the path. Must have a copy of the game to do this. |
-  | `loaddata`| Loads tile metadata from the files. |
-  | `loadworld *`| Loads all maps. |
-  | `loadletters`| Slices letters from text objects for custom text. |
+
+   | Command | What it does |
+   | :------ | :----------- |
+   | `loadbaba <path>`| Loads required assets from the game from the path. Must have a copy of the game to do this. |
+   | `loaddata`| Loads tile metadata from the files. |
+   | `loadworld *`| Loads all maps. |
+   | `loadletters`| Slices letters from text objects for custom text. |
+
 9. Restart the bot
 
 Everything should be working fine!
