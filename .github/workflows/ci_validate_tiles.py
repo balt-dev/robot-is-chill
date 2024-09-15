@@ -1,13 +1,68 @@
-# HACK: This makes us able to import types from the bot
-import sys
-sys.path.append('.')
+
 
 import re
 from pathlib import Path
 import typing
 import tomlkit
 import tomlkit.items
-from src.types import TilingMode
+
+# Copied from src.types, as importing it in a CI script simply does not work
+from enum import IntEnum
+
+class TilingMode(IntEnum):
+    CUSTOM = -2
+    NONE = -1
+    DIRECTIONAL = 0
+    TILING = 1
+    CHARACTER = 2
+    ANIMATED_DIRECTIONAL = 3
+    ANIMATED = 4
+    STATIC_CHARACTER = 5
+    DIAGONAL_TILING = 6
+
+    def __str__(self) -> str:
+        if self == TilingMode.CUSTOM: return "custom"
+        if self == TilingMode.NONE: return "none"
+        if self == TilingMode.DIRECTIONAL: return "directional"
+        if self == TilingMode.TILING: return "tiling"
+        if self == TilingMode.CHARACTER: return "character"
+        if self == TilingMode.ANIMATED_DIRECTIONAL: return "animated_directional"
+        if self == TilingMode.ANIMATED: return "animated"
+        if self == TilingMode.STATIC_CHARACTER: return "static_character"
+        if self == TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
+
+    def parse(string: str) -> typing.Self | None:
+        return {
+            "custom": TilingMode.CUSTOM,
+            "none": TilingMode.NONE,
+            "directional": TilingMode.DIRECTIONAL,
+            "tiling": TilingMode.TILING, # lol
+            "character": TilingMode.CHARACTER,
+            "animated_directional": TilingMode.ANIMATED_DIRECTIONAL,
+            "animated": TilingMode.ANIMATED,
+            "static_character": TilingMode.STATIC_CHARACTER,
+            "diagonal_tiling": TilingMode.DIAGONAL_TILING
+        }.get(string, None)
+
+    def expected(self) -> set[int]:
+        if self == TilingMode.CUSTOM:
+            return set()
+        if self == TilingMode.DIAGONAL_TILING:
+            return set(range(47))
+        if self == TilingMode.NONE:
+            return {0}
+        if self == TilingMode.DIRECTIONAL:
+            return {0, 8, 16, 24}
+        if self == TilingMode.TILING:
+            return set(range(16))
+        if self == TilingMode.CHARACTER:
+            return {0, 1, 2, 3, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 31}
+        if self == TilingMode.ANIMATED_DIRECTIONAL:
+            return {0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 24, 25, 26, 27}
+        if self == TilingMode.ANIMATED:
+            return {0, 1, 2, 3}
+        if self == TilingMode.STATIC_CHARACTER:
+            return {0, 1, 2, 3, 31}
 
 VALID_FRAMES = range(1, 3)
 
