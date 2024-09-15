@@ -5,7 +5,7 @@ import typing
 import tomlkit
 import tomlkit.items
 
-# Copied from src.types, as importing it in a CI script simply does not work
+# Equivalent to the TilingMode enum in src.types
 from enum import IntEnum
 
 class TilingMode(IntEnum):
