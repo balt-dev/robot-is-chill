@@ -37,3 +37,4 @@ data/levels/new_adv_m/
 data/images/**/*
 target/renders/
 *.gif
+.DS_Store
