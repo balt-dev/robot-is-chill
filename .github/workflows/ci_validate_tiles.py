@@ -37,7 +37,7 @@ class TilingMode(IntEnum):
             "custom": TilingMode.CUSTOM,
             "none": TilingMode.NONE,
             "directional": TilingMode.DIRECTIONAL,
-            "tiling": TilingMode.TILING, # lol
+            "tiling": TilingMode.TILING,
             "character": TilingMode.CHARACTER,
             "animated_directional": TilingMode.ANIMATED_DIRECTIONAL,
             "animated": TilingMode.ANIMATED,
