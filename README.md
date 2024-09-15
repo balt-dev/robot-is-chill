@@ -10,13 +10,6 @@ https://github.com/RocketRace/robot-is-you#readme
 
 ---
 
-## Differences:
-* More sprites!
-* More filters!
-* More commands!
-
----
-
 ### Setup
 If on Windows, set up WSL for this, or it may get a bit messy.
 
