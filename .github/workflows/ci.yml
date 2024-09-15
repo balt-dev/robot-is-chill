@@ -20,5 +20,8 @@ jobs:
         with:
           python-version: "3.11"
       
+      - name: Install dependency
+        run: python3 -m pip install tomlkit
+      
       - name: Run validate script
         run: python3 .github/workflows/ci_validate_tiles.py
