@@ -32,7 +32,7 @@ class TilingMode(IntEnum):
             case TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
             case _: raise ValueError # Illegal state
 
-    def parse(string: str) -> typing.Self | None:
+    def parse(string: str) -> "TilingMode" | None:
         return {
             "custom": TilingMode.CUSTOM,
             "none": TilingMode.NONE,
@@ -46,24 +46,25 @@ class TilingMode(IntEnum):
         }.get(string, None)
 
     def expected(self) -> set[int]:
-        if self == TilingMode.CUSTOM:
-            return set()
-        if self == TilingMode.DIAGONAL_TILING:
-            return set(range(47))
-        if self == TilingMode.NONE:
-            return {0}
-        if self == TilingMode.DIRECTIONAL:
-            return {0, 8, 16, 24}
-        if self == TilingMode.TILING:
-            return set(range(16))
-        if self == TilingMode.CHARACTER:
-            return {0, 1, 2, 3, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 31}
-        if self == TilingMode.ANIMATED_DIRECTIONAL:
-            return {0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 24, 25, 26, 27}
-        if self == TilingMode.ANIMATED:
-            return {0, 1, 2, 3}
-        if self == TilingMode.STATIC_CHARACTER:
-            return {0, 1, 2, 3, 31}
+        match self:
+            case TilingMode.CUSTOM:
+                return set()
+            case TilingMode.DIAGONAL_TILING:
+                return set(range(47))
+            case TilingMode.NONE:
+                return {0}
+            case TilingMode.DIRECTIONAL:
+                return set(range(0, 32, 8))
+            case TilingMode.TILING:
+                return set(range(16))
+            case TilingMode.CHARACTER:
+                return {0, 1, 2, 3, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 31}
+            case TilingMode.ANIMATED_DIRECTIONAL:
+                return {0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 24, 25, 26, 27}
+            case TilingMode.ANIMATED:
+                return set(range(4)) # Right-facing movement frames
+            case TilingMode.STATIC_CHARACTER:
+                return set(range(4)).union({31}) # Right-facing movement frames + right facing sleep frame
 
 VALID_FRAMES = range(1, 3)
 
