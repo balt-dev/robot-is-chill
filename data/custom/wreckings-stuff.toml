@@ -96,7 +96,7 @@ text_sauoswlewbiye = {sprite = "text_simplyavoidusageofsequencesoflexiconelement
 
 sauoswlewbiye = {sprite = "simplyavoidusageofsequencesoflexiconelementswithbabaisyouequivalents", tiling = "directional", color = [0, 3]}
 
-"g'vao" = {sprite = "g'vao", tiling = "character", color = [0, 3]}
+"g'vao" = {sprite = "g'vao", tiling = "character", color = [0, 3], extra_frames = [787]}
 
 "text_g'vao" = {sprite = "text_g'vao", tiling = "none", color = [0, 3]}
 
@@ -128,7 +128,7 @@ sorba = {sprite = "sorba", tiling = "character", color = [0, 3]}
 
 text_sorba = {sprite = "text_sorba", tiling = "none", color = [0, 3]}
 
-screwdriver = {sprite = "screwdriver", tiling = "none", color = [1, 4]}
+screwdriver = {sprite = "screwdriver", tiling = "directional", color = [1, 4]}
 
 text_driver = {sprite = "text_screwdriver", tiling = "none", color = [1, 4]}
 

@@ -52,7 +52,7 @@ wing = {sprite = "wing", color = [0, 2], tiling = "directional"}
 
 text_wing = {sprite = "text_wing", color = [0, 2], tiling = "none"}
 
-roidoll = {sprite = "roidoll", color = [4, 2], tiling = "directional"}
+roidoll = {sprite = "roidoll", color = [4, 2], tiling = "character"}
 
 text_roidoll = {sprite = "text_roidoll", color = [4, 2], tiling = "none"}
 

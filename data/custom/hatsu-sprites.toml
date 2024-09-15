@@ -2,7 +2,7 @@
 
 
 
-nobaba = {sprite = "nobaba", color = [0, 3], tiling = "character"}
+nobaba = {sprite = "nobaba", color = [0, 3], tiling = "character", extra_frames = [4, 5, 6, 12, 13, 14, 20, 21, 22, 28, 29, 30]}
 
 bilt = {sprite = "bilt", color = [0, 1], tiling = "character"}
 

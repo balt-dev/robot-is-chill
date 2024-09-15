@@ -52,7 +52,7 @@ obj_jiji = {sprite = "obj_jiji", color = [2, 2], tiling = "directional"}
 
 obj_bog = {sprite = "obj_bog", color = [5, 0], tiling = "tiling"}
 
-obj_water = {sprite = "obj_bog", color = [1, 2], tiling = "none"}
+obj_water = {sprite = "obj_bog", color = [1, 2], tiling = "tiling"}
 
 obj_empty = {sprite = "obj_empty", color = [2, 0], tiling = "none"}
 

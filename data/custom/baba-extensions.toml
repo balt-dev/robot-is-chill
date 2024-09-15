@@ -6,7 +6,7 @@ plus = {sprite = "plus", color = [0, 3], tiling = "none"}
 
 goose = {sprite = "goose", color = [0, 3], tiling = "animated_directional"}
 
-level = {sprite = "level", color = [0, 3], tiling = "none", tags = ["baba_special"]}
+level = {sprite = "level", color = [0, 3], tiling = "none", tags = ["baba_special"], extra_frames = [1]}
 
 sale = {sprite = "sale", color = [4, 2], tiling = "none"}
 

@@ -44,5 +44,5 @@ build_cargo = {sprite = "build_cargo", color = [0, 3], tiling = "directional"}
 
 build_collapse = {sprite = "build_collapse", color = [0, 3], tiling = "none"}
 
-build_arrow = {sprite = "build_arrow", color = [0, 3], tiling = "none"}
+build_arrow = {sprite = "build_arrow", color = [0, 3], tiling = "directional"}
 

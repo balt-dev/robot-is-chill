@@ -15,8 +15,10 @@ import urllib
 import requests
 import itertools
 import collections
+
+import tomlkit.exceptions
 from src import constants
-from src.constants import TilingMode
+from src.types import TilingMode
 from typing import Any, Optional
 import os
 import numpy as np
@@ -645,7 +647,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :tiling,
                 :text_type,
                 NULL,
-                ""
+                '',
+                ''
             )
             ON CONFLICT(name, version) DO NOTHING;
             ''',
@@ -725,7 +728,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :tiling,
                 :text_type,
                 NULL,
-                :tags
+                :tags,
+                ''
             )
             ON CONFLICT(name, version)
             DO UPDATE SET
@@ -770,7 +774,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             for path in pathlib.Path("data/custom").glob(f"{file}.toml"):
                 source = path.parts[-1].split(".")[0]
                 with open(path) as fp:
-                    objects = [prepare(source, name, obj) for name, obj in tomlkit.load(fp).items()]
+                    try:
+                        objects = [prepare(source, name, obj) for name, obj in tomlkit.load(fp).items()]
+                    except Exception as err:
+                        raise AssertionError(f"Failed to load `{path}`!\n```\n{err}\n```")
                 await cur.executemany(
                     '''
                     INSERT INTO tiles
@@ -807,8 +814,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 )
                 # this is a mega HACK, but I'm keeping it because the
                 # alternative is a headache
-                hacks = [
-                    x for x in objects if "baba_special" in x["tags"].split("\t")]
+                hacks = [x for x in objects if "baba_special" in x["tags"].split("\t")]
                 await cur.executemany(
                     '''
                     INSERT INTO tiles
@@ -824,7 +830,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         :tiling,
                         :text_type,
                         :text_direction,
-                        :tags
+                        :tags,
+                        :extra_frames
                     )
                     ON CONFLICT(name, version)
                     DO UPDATE SET
@@ -837,7 +844,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         tiling=excluded.tiling,
                         text_type=excluded.text_type,
                         text_direction=excluded.text_direction,
-                        tags=excluded.tags;
+                        tags=excluded.tags,
+                        extra_frames=excluded.extra_frames;
                     ''',
                     hacks
                 )
@@ -847,7 +855,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def hidden(self, ctx: Context):
         """Lists all hidden commands."""
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
-        await ctx.send(f"All hidden commands:\n{cmds}")
+        await ctx.author.send(f"All hidden commands:\n{cmds}")
 
     @commands.command(aliases=['clear', 'cls'])
     @commands.is_owner()

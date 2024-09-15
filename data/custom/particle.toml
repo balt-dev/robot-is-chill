@@ -2,61 +2,61 @@
 
 
 
-background_bubble = {sprite = "background_bubble", color = [1, 0], tiling = "none"}
+background_bubble = {sprite = "background_bubble", color = [1, 0], tiling = "custom", extra_frames = [0]}
 
-background_snow = {sprite = "background_snow", color = [0, 3], tiling = "none"}
+background_snow = {sprite = "background_snow", color = [0, 3], tiling = "custom", extra_frames = [0]}
 
-background_cloud = {sprite = "background_cloud", color = [4, 3], tiling = "none"}
+background_cloud = {sprite = "background_cloud", color = [4, 3], tiling = "custom", extra_frames = [0, 1, 2]}
 
-background_smoke = {sprite = "background_smoke", color = [1, 0], tiling = "none"}
+background_smoke = {sprite = "background_smoke", color = [1, 0], tiling = "custom", extra_frames = [0]}
 
-background_pollen = {sprite = "background_pollen", color = [1, 0], tiling = "none"}
+background_pollen = {sprite = "background_pollen", color = [1, 0], tiling = "custom", extra_frames = [0]}
 
-background_star = {sprite = "background_star", color = [3, 2], tiling = "none"}
+background_star = {sprite = "background_star", color = [3, 2], tiling = "custom", extra_frames = [0]}
 
-background_glitter = {sprite = "background_glitter", color = [3, 1], tiling = "none"}
+background_glitter = {sprite = "background_glitter", color = [3, 1], tiling = "custom", extra_frames = [0, 1]}
 
-background_leaf = {sprite = "background_leaf", color = [6, 0], tiling = "none"}
+background_leaf = {sprite = "background_leaf", color = [6, 0], tiling = "custom", extra_frames = [0, 1, 2]}
 
-background_leaf2 = {sprite = "background_leaf2", color = [6, 0], tiling = "none"}
+background_leaf2 = {sprite = "background_leaf2", color = [6, 0], tiling = "custom", extra_frames = [0, 1, 2, 3]}
 
-background_rain = {sprite = "background_rain", color = [3, 2], tiling = "none"}
+background_rain = {sprite = "background_rain", color = [3, 2], tiling = "custom", extra_frames = [0, 1]}
 
-background_blossom = {sprite = "background_blossom", color = [4, 0], tiling = "none"}
+background_blossom = {sprite = "background_blossom", color = [4, 0], tiling = "custom", extra_frames = [0, 1]}
 
-particle_win = {sprite = "particle_win", color = [2, 4], tiling = "none"}
+particle_win = {sprite = "particle_win", color = [2, 4], tiling = "custom", extra_frames = [0]}
 
-particle_bling = {sprite = "particle_bling", color = [0, 3], tiling = "none"}
+particle_bling = {sprite = "particle_bling", color = [0, 3], tiling = "custom", extra_frames = [0, 1]}
 
-particle_bonus = {sprite = "particle_bonus", color = [4, 1], tiling = "none"}
+particle_bonus = {sprite = "particle_bonus", color = [4, 1], tiling = "custom", extra_frames = [0, 1]}
 
-particle_confetti = {sprite = "particle_confetti", color = [2, 3], tiling = "none"}
+particle_confetti = {sprite = "particle_confetti", color = [2, 3], tiling = "custom", extra_frames = [0, 1]}
 
-particle_destroy = {sprite = "particle_destroy", color = [0, 3], tiling = "none"}
+particle_destroy = {sprite = "particle_destroy", color = [0, 3], tiling = "custom", extra_frames = [0, 1]}
 
-particle_eat = {sprite = "particle_eat", color = [0, 3], tiling = "none"}
+particle_eat = {sprite = "particle_eat", color = [0, 3], tiling = "custom", extra_frames = [0, 1]}
 
-particle_electricity = {sprite = "particle_electricity", color = [2, 4], tiling = "none"}
+particle_electricity = {sprite = "particle_electricity", color = [2, 4], tiling = "custom", extra_frames = [0, 1, 2]}
 
-particle_error = {sprite = "particle_error", color = [4, 1], tiling = "none"}
+particle_error = {sprite = "particle_error", color = [4, 1], tiling = "custom", extra_frames = [0, 1]}
 
-particle_glow = {sprite = "particle_glow", color = [1, 4], tiling = "none"}
+particle_glow = {sprite = "particle_glow", color = [1, 4], tiling = "custom", extra_frames = [0, 1]}
 
-particle_hot = {sprite = "particle_hot", color = [0, 1], tiling = "none"}
+particle_hot = {sprite = "particle_hot", color = [0, 1], tiling = "custom", extra_frames = [0, 1, 2]}
 
-particle_infinity = {sprite = "particle_infinity", color = [4, 1], tiling = "none"}
+particle_infinity = {sprite = "particle_infinity", color = [4, 1], tiling = "custom", extra_frames = [0, 1, 2]}
 
-particle_music = {sprite = "particle_music", color = [0, 3], tiling = "none"}
+particle_music = {sprite = "particle_music", color = [0, 3], tiling = "custom", extra_frames = [0, 1, 2]}
 
-particle_pet = {sprite = "particle_pet", color = [3, 1], tiling = "none"}
+particle_pet = {sprite = "particle_pet", color = [3, 1], tiling = "custom", extra_frames = [0, 1, 2, 3]}
 
-particle_sleep = {sprite = "particle_sleep", color = [3, 2], tiling = "none"}
+particle_sleep = {sprite = "particle_sleep", color = [3, 2], tiling = "custom", extra_frames = [0, 1]}
 
-particle_smoke = {sprite = "particle_smoke", color = [0, 2], tiling = "none"}
+particle_smoke = {sprite = "particle_smoke", color = [0, 2], tiling = "custom", extra_frames = [0, 1, 2, 3, 4, 5]}
 
-particle_tear = {sprite = "particle_tear", color = [3, 2], tiling = "none"}
+particle_tear = {sprite = "particle_tear", color = [3, 2], tiling = "custom", extra_frames = [0, 1]}
 
-particle_unlock = {sprite = "particle_unlock", color = [2, 4], tiling = "none"}
+particle_unlock = {sprite = "particle_unlock", color = [2, 4], tiling = "custom", extra_frames = [0, 1]}
 
-particle_wonder = {sprite = "particle_wonder", color = [0, 3], tiling = "none"}
+particle_wonder = {sprite = "particle_wonder", color = [0, 3], tiling = "custom", extra_frames = [0, 1, 2]}
 

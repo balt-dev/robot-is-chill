@@ -372,7 +372,7 @@ class Renderer:
     async def render_full_frame(self,
                                 tile: Tile,
                                 frame: int,
-                                raw_sprite_cache: dict[str, Image],
+                                raw_sprite_cache: dict[str, Image.Image],
                                 x: int,
                                 y: int,
                                 ctx: RenderContext
@@ -401,10 +401,6 @@ class Renderer:
             else:
                 source, sprite_name = tile.sprite
                 path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
-                try:
-                    path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
-                except BaseException:
-                    path_fallback = None
             try:
                 sprite = cached_open(
                     path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")

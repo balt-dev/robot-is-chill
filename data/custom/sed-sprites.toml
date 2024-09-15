@@ -10,23 +10,23 @@ text_sed = {sprite = "text_sed", color = [2, 3], tiling = "none"}
 
 scheme = {sprite = "scheme", tiling = "none", color = [0, 3]}
 
-sed_h = {sprite = "sed_h", color = [0, 3], tiling = "directional"}
+sed_h = {sprite = "sed_h", color = [0, 3], tiling = "character"}
 
 text_sed_h = {sprite = "text_sed", color = [2, 1], tiling = "none"}
 
-sed_s = {sprite = "sed_s", color = [0, 3], tiling = "directional"}
+sed_s = {sprite = "sed_s", color = [0, 3], tiling = "character"}
 
 text_sed_s = {sprite = "text_sed", color = [2, 4], tiling = "none"}
 
-sed_f = {sprite = "sed_f", color = [0, 3], tiling = "directional"}
+sed_f = {sprite = "sed_f", color = [0, 3], tiling = "character"}
 
 text_sed_f = {sprite = "text_sed", color = [3, 1], tiling = "none"}
 
-sed_c = {sprite = "sed_c", color = [0, 3], tiling = "directional"}
+sed_c = {sprite = "sed_c", color = [0, 3], tiling = "character"}
 
 text_sed_c = {sprite = "text_sed", color = [5, 4], tiling = "none"}
 
-sed_w = {sprite = "sed_w", color = [0, 3], tiling = "directional"}
+sed_w = {sprite = "sed_w", color = [0, 3], tiling = "character"}
 
 text_sed_w = {sprite = "text_sed", color = [4, 3], tiling = "none"}
 

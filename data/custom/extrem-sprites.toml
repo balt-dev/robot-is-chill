@@ -40,7 +40,7 @@ text_watched3 = {sprite = "text_watched3", color = [2, 4], tiling = "none"}
 
 elec = {sprite = "elec", color = [2, 4], tiling = "tiling"}
 
-"hi!" = {sprite = "hi", color = [6, 2], tiling = "character"}
+"hi!" = {sprite = "hi", color = [6, 2], tiling = "directional"}
 
 "text_hi!" = {sprite = "text_hi", color = [6, 2], tiling = "none"}
 
@@ -50,7 +50,7 @@ bsod = {sprite = "bsod", color = [1, 3], tiling = "none"}
 
 text_bsod = {sprite = "text_bsod", color = [1, 3], tiling = "none"}
 
-"bye?" = {sprite = "bye", color = [4, 0], tiling = "none"}
+"bye?" = {sprite = "bye", color = [4, 0], tiling = "directional"}
 
 "text_bye?" = {sprite = "text_bye", color = [4, 0], tiling = "none"}
 

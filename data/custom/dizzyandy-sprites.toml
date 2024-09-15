@@ -90,7 +90,7 @@ ohno = {sprite = "ohno", color = [0, 3], tiling = "none"}
 
 cycat = {sprite = "cycat", color = [3, 0], tiling = "none"}
 
-gavel = {sprite = "gavel", color = [3, 4], tiling = "none"}
+gavel = {sprite = "gavel", color = [3, 4], tiling = "directional"}
 
 ele = {sprite = "elephant", color = [3, 3], tiling = "directional"}
 
@@ -128,7 +128,7 @@ glyph_scug = {sprite = "glyph_scug", color = [0, 3], tiling = "none"}
 
 banner = {sprite = "banner", color = [5, 3], tiling = "diagonal_tiling"}
 
-will_anyone_notice_this_n1 = {sprite = "will_anyone_notice_this_n1", color = [0, 1], tiling = "tiling"}
+will_anyone_notice_this_n1 = {sprite = "will_anyone_notice_this_n1", color = [0, 1], tiling = "none"}
 
 traitrai = {sprite = "traitrai", color = [4, 4], tiling = "character"}
 
@@ -212,7 +212,7 @@ sofa = {sprite = "sofa", color = [2, 2], tiling = "none"}
 
 "it've" = {sprite = "it've", color = [1, 2], tiling = "character"}
 
-nama = {sprite = "nama", color = [5, 3], tiling = "character"}
+nama = {sprite = "nama", color = [5, 3], tiling = "directional"}
 
 text_metanot = {sprite = "text_metanot", color = [2, 2], tiling = "none"}
 
@@ -310,7 +310,7 @@ text_id = {sprite = "text_id", color = [3, 1], tiling = "none"}
 
 text_traba = {sprite = "text_traba", color = [0, 3], tiling = "none"}
 
-traba = {sprite = "traba", color = [0, 3], tiling = "character"}
+traba = {sprite = "traba", color = [0, 3], tiling = "character", extra_frames = [-16, -15, -14, -13, -8, -7, -6, -5]}
 
 light = {sprite = "light", color = [0, 3], tiling = "tiling"}
 
@@ -346,7 +346,7 @@ text_th_arrow = {sprite = "text_th_arrow", color = [0, 3], tiling = "none"}
 
 text_dollar = {sprite = "text_$", color = [5, 3], tiling = "none"}
 
-node_glyph = {sprite = "node_glyph", color = [3, 2], tiling = "none"}
+node_glyph = {sprite = "node_glyph", color = [3, 2], tiling = "directional"}
 
 stamp = {sprite = "stamp", color = [1, 4], tiling = "none"}
 
@@ -382,13 +382,13 @@ folium = {sprite = "folium", color = [6, 0], tiling = "none"}
 
 text_gust = {sprite = "text_gust", color = [1, 4], tiling = "none"}
 
-gust = {sprite = "gust", color = [1, 4], tiling = "none"}
+gust = {sprite = "gust", color = [1, 4], tiling = "directional"}
 
 advert = {sprite = "advert", color = [3, 4], tiling = "none"}
 
 text_jird = {sprite = "text_jird", color = [2, 3], tiling = "none"}
 
-jird = {sprite = "jird", color = [2, 3], tiling = "none"}
+jird = {sprite = "jird", color = [2, 3], tiling = "character"}
 
 text_alone3 = {sprite = "text_alone3", color = [2, 2], tiling = "none"}
 

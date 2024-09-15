@@ -4,7 +4,7 @@
 
 ibib = {sprite = "ibib", color = [0, 3], tiling = "character"}
 
-fi = {sprite = "fi", color = [0, 3], tiling = "none"}
+fi = {sprite = "fi", color = [0, 3], tiling = "custom", extra_frames = [0, 1, 2]}
 
 me2 = {sprite = "me2", color = [4, 1], tiling = "character"}
 
@@ -14,7 +14,7 @@ dtfort = {sprite = "fort", color = [1, 1], tiling = "diagonal_tiling"}
 
 tileedge2 = {sprite = "tileedge", tiling = "tiling", color = [0, 3]}
 
-gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = "character"}
+gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = "directional"}
 
 catsnake = {sprite = "catsnake", color = [0, 3], tiling = "tiling"}
 
@@ -22,5 +22,5 @@ dtplaceholder = {sprite = "placeholder", color = [0, 3], tiling = "diagonal_tili
 
 fitiled = {sprite = "fitiled", color = [0, 3], tiling = "tiling"}
 
-fidtiled = {sprite = "fidtiled", color = [0, 3], tiling = "diagonal_tiling"}
+fidtiled = {sprite = "fidtiled", color = [0, 3], tiling = "diagonal_tiling", extra_frames = [-1]}
 

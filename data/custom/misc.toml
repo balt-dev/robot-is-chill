@@ -164,7 +164,7 @@ mhat = {sprite = "mhat", color = [0, 3], tiling = "directional"}
 
 unoskip = {sprite = "unoskip", color = [3, 3], tiling = "directional"}
 
-text_unoskip = {sprite = "text_unoskip", color = [3, 3], tiling = "directional"}
+text_unoskip = {sprite = "text_unoskip", color = [3, 3], tiling = "none"}
 
 abomination = {sprite = "project", color = [0, 3], tiling = "none"}
 
@@ -358,7 +358,7 @@ trash = {sprite = "trash", color = [5, 1], tiling = "none"}
 
 tray = {sprite = "tray", color = [0, 1], tiling = "none"}
 
-trident = {sprite = "trident", color = [1, 4], tiling = "none"}
+trident = {sprite = "trident", color = [1, 4], tiling = "directional"}
 
 needle = {sprite = "needle", color = [0, 2], tiling = "directional"}
 

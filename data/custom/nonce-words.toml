@@ -408,7 +408,7 @@ obj_n15 = {sprite = "obj_n15", color = [4, 0], tiling = "none"}
 
 obj_n16 = {sprite = "obj_n16", color = [5, 0], tiling = "none"}
 
-obj_n17 = {sprite = "obj_n17", color = [1, 1], tiling = "none"}
+obj_n17 = {sprite = "obj_n17", color = [1, 1], tiling = "animated"}
 
 obj_n18 = {sprite = "obj_n18", color = [5, 3], tiling = "none"}
 

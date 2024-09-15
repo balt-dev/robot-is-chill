@@ -4,7 +4,7 @@
 
 aaxia = {sprite = "aaxia", color = [0, 3], tiling = "directional"}
 
-aaxia_old = {sprite = "aaxia_old", color = [0, 3], tiling = "directional"}
+aaxia_old = {sprite = "aaxia_old", color = [0, 3], tiling = "directional", extra_frames = [23]}
 
 aaxia_half = {sprite = "halfaaxia", color = [0, 3], tiling = "directional"}
 

@@ -6,7 +6,7 @@ annibeta = {sprite = "annibeta", tiling = "animated_directional", color = [6, 0]
 
 bababeta = {sprite = "bababeta", tiling = "animated_directional", color = [0, 3]}
 
-beltbeta = {sprite = "beltbeta", tiling = "directional", color = [1, 3]}
+beltbeta = {sprite = "beltbeta", tiling = "directional", color = [1, 3], extra_frames = [1, 9, 17, 25]}
 
 boxbeta = {sprite = "boxbeta", tiling = "none", color = [6, 0]}
 

@@ -98,13 +98,13 @@ text_aiwfc = {sprite = "text_all i want for christmas", color = [5, 2], tiling =
 
 katsu = {sprite = "katsu", color = [2, 3], tiling = "character"}
 
-"text_と" = {sprite = "text_と", color = [0, 3], tiling = "character"}
+"text_と" = {sprite = "text_と", color = [0, 3], tiling = "none"}
 
 seek = {sprite = "seek", color = [4, 1], tiling = "directional"}
 
 zawzaw = {sprite = "zawzaw", color = [5, 2], tiling = "character"}
 
-background_snom = {sprite = "background_snom", color = [0, 3], tiling = "none"}
+background_snom = {sprite = "background_snom", color = [0, 3], tiling = "custom", extra_frames = [0, 1, 2, 3]}
 
 text_offset = {sprite = "text_offset", color = [0, 3], tiling = "none"}
 

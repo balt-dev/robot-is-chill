@@ -108,7 +108,7 @@ open = {sprite = "unlock", color = [2, 4], tiling = "none"}
 
 sbaba = {sprite = "sbaba", color = [0, 3], tiling = "character"}
 
-sombrero = {sprite = "sombrero", color = [0, 3], tiling = "none"}
+sombrero = {sprite = "sombrero", color = [0, 3], tiling = "directional"}
 
 we = {sprite = "we", color = [4, 3], tiling = "directional"}
 
@@ -452,7 +452,7 @@ text_brubrubeta = {sprite = "text_brubrubeta", color = [1, 3], tiling = "none"}
 
 text_balonabeta = {sprite = "text_balonabeta", color = [2, 1], tiling = "none"}
 
-skeletonkey = {sprite = "skelekey", color = [2, 4], tiling = "directional"}
+skeletonkey = {sprite = "skelekey", color = [2, 4], tiling = "none"}
 
 text_skeletonkey = {sprite = "text_skelekey", color = [2, 4], tiling = "none"}
 
@@ -486,7 +486,7 @@ text_the = {sprite = "text_the", color = [0, 3], tiling = "none"}
 
 the = {sprite = "the", color = [0, 3], tiling = "directional"}
 
-keekee = {sprite = "keekee", color = [1, 4], tiling = "character"}
+keekee = {sprite = "keekee", color = [1, 4], tiling = "character", extra_frames = [-8, -7, -6, -5]}
 
 text_keekee = {sprite = "text_keekee", color = [3, 1], tiling = "none"}
 
@@ -504,7 +504,7 @@ flaker = {sprite = "flaker", color = [1, 4], tiling = "character"}
 
 flake = {sprite = "flake", color = [0, 3], tiling = "none"}
 
-babafan24 = {sprite = "babafan24", color = [6, 2], tiling = "animated"}
+babafan24 = {sprite = "babafan24", color = [6, 2], tiling = "static_character"}
 
 text_babafan24 = {sprite = "text_babafan24", color = [6, 2], tiling = "none"}
 
@@ -538,7 +538,7 @@ tletle = {sprite = "tletle", color = [1, 4], tiling = "character"}
 
 ddi = {sprite = "ddi", color = [4, 2], tiling = "character"}
 
-ulul = {sprite = "ulul", color = [4, 4], tiling = "none"}
+ulul = {sprite = "ulul", color = [4, 4], tiling = "directional"}
 
 blimp = {sprite = "blimp", color = [4, 1], tiling = "none"}
 

@@ -2,7 +2,7 @@ import tomlkit
 import glob
 from pathlib import Path
 
-from src.constants import TilingMode
+from src.types import TilingMode
 
 def main():
     for path in glob.glob("data/custom/*.toml"):
@@ -18,6 +18,8 @@ def main():
         doc.add(tomlkit.nl())
 
         for name, data in tiles.items():
+            if data["tiling"] == +TilingMode.TILING and data.pop("diagonal"):
+                data["tiling"] = +TilingMode.DIAGONAL_TILING
             data["tiling"] = str(TilingMode(data["tiling"]))
 
             table = tomlkit.inline_table()

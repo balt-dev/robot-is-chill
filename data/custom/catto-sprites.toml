@@ -22,5 +22,5 @@ text_catto = {sprite = "text_catto", color = [0, 2], tiling = "none"}
 
 pulpul = {sprite = "pulpul", color = [0, 3], tiling = "character"}
 
-text_pulpul = {sprite = "text_pulpul", color = [1, 2], tiling = "character"}
+text_pulpul = {sprite = "text_pulpul", color = [1, 2], tiling = "none"}
 
