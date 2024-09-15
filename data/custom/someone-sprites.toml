@@ -38,6 +38,7 @@ gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = 2}
 ibib = {sprite = "ibib", color = [0, 3], tiling = 2}
 
 me2 = {sprite = "me2", color = [4, 1], tiling = 2}
+# me2's alternate name is skis
 
 tileedge2 = {sprite = "tileedge", tiling = 1, color = [0, 3], diagonal = false}
 
