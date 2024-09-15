@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.11"
       
-      - name: Install dependency
+      - name: Install tomlkit dependency
         run: python3 -m pip install tomlkit
       
       - name: Run validate script
