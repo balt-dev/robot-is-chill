@@ -18,30 +18,32 @@ https://github.com/RocketRace/robot-is-you#readme
 ---
 
 ### Setup
-- If on Windows, set up WSL
-- Clone the repository
-- `pip install -r requirements.txt`
-- Set up files
-  - auth.py: 
-  ```py
-  token: str = "<TOKEN>"
-  ```
-  - webhooks.py:
+If on Windows, set up WSL for this, or it may get a bit messy.
+
+Windows _is_ kind of supported, but here be dragons if you do that!
+
+Step by step:
+1. Clone the repository
+2. `pip install -r requirements.txt`
+3. Set up auth.py: 
+   ```py
+   token: str = "<TOKEN>"
+   ```
+4. Set up webhooks.py:
   ```py
   logging_id: int = <command logging id>
   error_id: int = <error logging id>
     ```
-  - Make directory `target/renders/`
-  - Configure `config.py`
-- Run the bot
-- Run setup commands (in order)
-
+5. Make directory `target/renders/`
+6. Configure `config.py`
+7. Run the bot
+8. Run setup commands (in order)
   | Command | What it does |
   | :------ | :----------- |
   | `loadbaba <path>`| Loads required assets from the game from the path. Must have a copy of the game to do this. |
   | `loaddata`| Loads tile metadata from the files. |
   | `loadworld *`| Loads all maps. |
   | `loadletters`| Slices letters from text objects for custom text. |
+9. Restart the bot
 
-- Restart the bot
-Everything should be working.
+Everything should be working fine!
