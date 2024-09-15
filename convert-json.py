@@ -18,8 +18,7 @@ def main():
         doc.add(tomlkit.nl())
 
         for name, data in tiles.items():
-            if data["tiling"] == TilingMode.TILING and data["diagonal"]:
-                data["tiling"] = +TilingMode.DIAGONAL_TILING
+            data["tiling"] = str(TilingMode(data["tiling"]))
 
             table = tomlkit.inline_table()
             table.update(data)
@@ -28,7 +27,7 @@ def main():
 
         toml_path = path.with_suffix(".toml")
         with open(toml_path, "w+") as file:
-            tomlkit.dump(tiles, file)
+            tomlkit.dump(doc, file)
 
     print("Done.")
 

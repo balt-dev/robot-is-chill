@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
-from typing import Literal
+from enum import IntEnum
 
 # limits
 MAX_STACK = 2584
@@ -319,7 +318,7 @@ LETTER_IGNORE = [
 ]
 
 
-class TilingMode(Enum):
+class TilingMode(IntEnum):
     CUSTOM = -2
     NONE = -1
     DIRECTIONAL = 0
