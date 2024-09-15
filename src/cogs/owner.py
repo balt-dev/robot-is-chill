@@ -276,9 +276,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         data = {}
 
-        for file in glob("data/sprites/bab/*"):
-            os.remove(file)
-
         for directory, filenames in (  # i wish this could be a dict
                 ('objects', ("characters", "devs",
                                 "special", "thingify", "ui", "unsorted")),
@@ -317,7 +314,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                     .replace(">", "gt")
                     .replace(":", "colon")
                     .replace("&", "amp")
-                    .replace("/", "sol")
             )
             multicolor = False
             if len(tile['sprite']) > 1:

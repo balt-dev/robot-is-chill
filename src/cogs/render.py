@@ -740,7 +740,9 @@ class Renderer:
                 save_images = []
                 for i, im in enumerate(images):
                     # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
-                    colors = np.unique(im.reshape(-1, 4), axis=0)
+                    colors, counts = np.unique(im.reshape(-1, 4), axis=0, return_counts=True)
+                    sort_indices = np.argsort(counts)
+                    colors = colors[sort_indices[::-1]] # Sort in descending order
                     palette_colors = [0, 0, 0]
                     formatted_colors = colors[colors[:, 3] != 0][..., :3]
                     formatted_colors = formatted_colors[:255].flatten()

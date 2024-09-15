@@ -511,7 +511,7 @@ bab_ui_m = {sprite = "ui_m", color = [0, 3], tiling = "none"}
 
 "bab_ui_." = {sprite = "ui_.", color = [0, 3], tiling = "none"}
 
-bab_ui_sol = {sprite = "ui_sol", color = [0, 3], tiling = "none"}
+"bab_ui_/" = {sprite = "ui_sol", color = [0, 3], tiling = "none"}
 
 bab_ui_- = {sprite = "ui_-", color = [0, 3], tiling = "none"}
 
@@ -731,9 +731,9 @@ bab_lie = {sprite = "lie", color = [4, 1], tiling = "none"}
 
 text_bab_lie = {sprite = "txt_lie", color = [4, 1], tiling = "none"}
 
-bab_liesol8 = {sprite = "liesol8", color = [4, 2], tiling = "none"}
+"bab_lie/8" = {sprite = "liesol8", color = [4, 2], tiling = "none"}
 
-text_bab_liesol8 = {sprite = "txt_liesol8", color = [4, 2], tiling = "none"}
+"text_bab_lie/8" = {sprite = "txt_liesol8", color = [4, 2], tiling = "none"}
 
 bab_sine = {sprite = "sine", color = [6, 2], tiling = "none"}
 
@@ -1165,7 +1165,7 @@ text_bab_tronk = {sprite = "txt_tronk", color = [1, 4], tiling = "none"}
 
 bab_aaaaaa = {sprite = "aaaaaa", color = [0, 3], tiling = "none"}
 
-bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = "none"}
+bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = "none", extra_frames = [1]}
 
 text_bab_therealbabdictator = {sprite = "txt_therealbabdictator", color = [0, 3], tiling = "none"}
 
@@ -1259,7 +1259,7 @@ bab_cheez = {sprite = "cheez", color = [2, 4], tiling = "none"}
 
 text_bab_cheez = {sprite = "txt_cheez", color = [2, 4], tiling = "none"}
 
-text_bab_wsolfren = {sprite = "txt_wsolfren", color = [0, 3], tiling = "none"}
+"text_bab_w/fren" = {sprite = "txt_wsolfren", color = [0, 3], tiling = "none"}
 
 text_bab_lookat = {sprite = "txt_lookat", color = [0, 3], tiling = "none"}
 
@@ -1419,7 +1419,7 @@ bab_letter_9 = {sprite = "letter_9", color = [0, 3], tiling = "none"}
 
 "bab_letter_;" = {sprite = "letter_;", color = [0, 3], tiling = "none"}
 
-bab_letter_sol = {sprite = "letter_sol", color = [0, 3], tiling = "none"}
+"bab_letter_/" = {sprite = "letter_sol", color = [0, 3], tiling = "none"}
 
 bab_letter_gt = {sprite = "letter_gt", color = [0, 3], tiling = "none"}
 
