@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Literal
 
 # limits
@@ -316,3 +317,40 @@ LETTER_IGNORE = [
     "text_enter",
     "text_3d"
 ]
+
+
+class TilingMode(Enum):
+    CUSTOM = -2
+    NONE = -1
+    DIRECTIONAL = 0
+    TILING = 1
+    CHARACTER = 2
+    ANIMATED_DIRECTIONAL = 3
+    ANIMATED = 4
+    STATIC_CHARACTER = 5
+    DIAGONAL_TILING = 6
+
+    def __str__(self) -> str:
+        if self == TilingMode.CUSTOM: return "custom"
+        if self == TilingMode.NONE: return "none"
+        if self == TilingMode.DIRECTIONAL: return "directional"
+        if self == TilingMode.TILING: return "tiling"
+        if self == TilingMode.CHARACTER: return "character"
+        if self == TilingMode.ANIMATED_DIRECTIONAL: return "animated_directional"
+        if self == TilingMode.ANIMATED: return "animated"
+        if self == TilingMode.STATIC_CHARACTER: return "static_character"
+        if self == TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
+
+    def parse(string: str) -> TilingMode | None:
+        return {
+            "custom": TilingMode.CUSTOM,
+            "none": TilingMode.NONE,
+            "directional": TilingMode.DIRECTIONAL,
+            "tiling": TilingMode.TILING, # lol
+            "character": TilingMode.CHARACTER,
+            "animated_directional": TilingMode.ANIMATED_DIRECTIONAL,
+            "animated": TilingMode.ANIMATED,
+            "static_character": TilingMode.STATIC_CHARACTER,
+            "diagonal_tiling": TilingMode.DIAGONAL_TILING
+        }.get(string, None)
+    

@@ -400,10 +400,7 @@ class Renderer:
                 path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
             else:
                 source, sprite_name = tile.sprite
-                if tile.frame == -1:
-                    path = f"data/sprites/{constants.BABA_WORLD}/error_0_{frame + 1}.png"
-                else:
-                    path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
+                path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
                 try:
                     path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
                 except BaseException:
