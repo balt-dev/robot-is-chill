@@ -1,9 +1,9 @@
-# Robot Is Chill
-
+# ROBOT IS CHILL
 ---
 
-This is a self-sustained fork of "Robot is you" project of RocketRace,
-if you want to see the original project, go here:
+This is a self-sustained fork of the "Robot Is You" project by RocketRace.
+
+If you want to see the original project, go here:
 https://github.com/RocketRace/robot-is-you#readme
 
 [Support Server](https://discord.gg/ktk8XkAfGD)
