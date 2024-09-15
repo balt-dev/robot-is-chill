@@ -17,25 +17,27 @@
 
 
 
-ibib = {sprite = "ibib", color = [0, 3], tiling = 2}
-
-fi = {sprite = "fi", color = [0, 3], tiling = -1}
-
-me2 = {sprite = "me2", color = [4, 1], tiling = 2}
-
-dtwall = {sprite = "wall", color = [1, 1], tiling = 1, diagonal = true}
+catsnake = {sprite = "catsnake", color = [0, 3], tiling = 1, diagonal = false}
 
 dtfort = {sprite = "fort", color = [1, 1], tiling = 1, diagonal = true}
 
-tileedge2 = {sprite = "tileedge", tiling = 1, color = [0, 3], diagonal = false}
-
-gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = 2}
-
-catsnake = {sprite = "catsnake", color = [0, 3], tiling = 1, diagonal = false}
-
 dtplaceholder = {sprite = "placeholder", color = [0, 3], tiling = 1, diagonal = true}
+
+dtwall = {sprite = "wall", color = [1, 1], tiling = 1, diagonal = true}
+
+fi = {sprite = "fi", color = [0, 3], tiling = -1}
+
+fichar = {sprite = "fichar", color = [0, 3], tiling = 2}
+
+fidtiled = {sprite = "fidtiled", color = [0, 3], tiling = 1, diagonal = true}
 
 fitiled = {sprite = "fitiled", color = [0, 3], tiling = 1, diagonal = false}
 
-fidtiled = {sprite = "fidtiled", color = [0, 3], tiling = 1, diagonal = true}
+gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = 2}
+
+ibib = {sprite = "ibib", color = [0, 3], tiling = 2}
+
+me2 = {sprite = "me2", color = [4, 1], tiling = 2}
+
+tileedge2 = {sprite = "tileedge", tiling = 1, color = [0, 3], diagonal = false}
 
