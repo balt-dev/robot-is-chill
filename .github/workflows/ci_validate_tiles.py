@@ -1,131 +1,180 @@
-import os
-import json
+# HACK: This makes us able to import types from the bot
 import sys
+sys.path.append('.')
+
 import re
+from pathlib import Path
 import typing
+import tomlkit
+import tomlkit.items
+from src.types import TilingMode
 
-failed_test = False
+VALID_FRAMES = range(1, 3)
 
-tiling_mode_names: dict[str, str] = {
-    "-1": "None",
-    "0": "Directions",
-    "1": "Tile",
-    "2": "Character",
-    "3": "Animated Directions",
-    "4": "Animated",
-}
+CUSTOM_PATH = Path("data/custom")
+SPRITES_PATH = Path("data/sprites")
 
-tiling_modes: dict[str, set[int]] = {
-    "-1": set([0]), # None
-    "0": set([0, 8, 16, 24]), # Directions
-    "1": set(range(16)), # Tile
-    "2": set([ # Character
-        31,  0,  1,  2,  3,
-         7,  8,  9, 10, 11,
-        15, 16, 17, 18, 19,
-        23, 24, 25, 26, 27,
-    ]),
-    "3": set([ # Animated Directions
-         0,  1,  2,  3,
-         8,  9, 10, 11,
-        16, 17, 18, 19,
-        24, 25, 26, 27,
-    ]),
-    "4": set([0, 1, 2, 3]), # Animated
-}
+# Keys that are allowed or needed in a tile
+REQUIRED_KEYS = {"sprite", "tiling", "color"}
+# Some of these are used by basegame tiles
+OPTIONAL_KEYS = {"author", "extra_frames", "type", "tags", "active", "text_direction", "source"}
 
-valid_frames = set([1, 2, 3])
+# Blacklist of allowed characters in tilenames
+# TODO: This should probably be larger
+TILE_NAME_BLACKLIST = ("&", ":", ";", ">")
+# Blacklist of allowed characters in sprite filenames
+# This should be fine, it encompasses all disallowed chars on both Unix and Windows
+SPRITE_NAME_BLACKLIST = ("<", ">", ":", "\"", "/", "\\", "|", "?", "*")
 
-def check_lowercase(string: str):
-    return string.islower() or string.isnumeric()
+def is_valid_name(tile_name: str) -> bool:
+    return all(char not in tile_name for char in TILE_NAME_BLACKLIST)
 
-def assert_fn(boolean: bool, message: str):
-    global failed_test
-    if not boolean:
-        print("TEST FAILED:", message)#, file=sys.stderr)
-        failed_test = True
+def main():
+    failure = False
 
-def assert_index(list_: list, index: typing.Any, message: str) -> typing.Any:
-    if index in list_:
-        return list_[index]
-    assert_fn(False, message)
+    # Check that everything in data/custom is a toml
+    custom_tomls = set()
+    for path in CUSTOM_PATH.glob("*"):
+        if path.is_dir() or path.suffix != ".toml":
+            print(f"Non-TOML file found at {path}")
+            failure = True
+        else:
+            custom_tomls.add(path)
+    
+    # Check that everything in data/sprites is a directory
+    sprite_dirs = set()
+    for path in SPRITES_PATH.glob("*"):
+        if not path.is_dir():
+            print(f"Non-directory found at {path}")
+            failure = True
+        else:
+            sprite_dirs.add(path)
+    
+    # Check that each directory has a corresponding toml and vice versa
+    sprites_as_tomls = {(CUSTOM_PATH / path.stem).with_suffix(".toml") for path in sprite_dirs}
 
-def check_blacklist(path: str, root: str, blacklist: list[str]):
-    for blacklist_item in blacklist:
-        if root.startswith(os.path.join(path, blacklist_item)):
-            return True
-    return False
-
-def check_json(path: str, sprite_root: str, blacklisted: bool):
-    with open(path) as json_file:
-        json_data = json.load(json_file)
-    if type(json_data) != list:
-        assert_fn(False, f"Invalid JSON file at {path}; not an array")
-        return
-    assert_fn(len(json_data) > 0, f"Empty JSON file at {path}")
-    for tilen, tile in enumerate(json_data):
-        tile_name: str = assert_index(tile, "name", f"Item `{tilen}` in `{path}` is missing a name")
-        if tile_name == None: continue
-        tile_sprite: str = assert_index(tile, "sprite", f"Tile `{tile_name}` in `{path}` is missing a sprite name")
-        if tile_sprite == None: continue
-        assert_fn(check_lowercase(tile_name), f"The tile name of the tile `{tile_name}` in `{path}` should be lowercase.")
-        if not blacklisted:
-            tile_mode: str = assert_index(tile, "tiling", f"Tiling mode for tile `{tile_name}` in `{path}` is missing.")
-            if tile_mode == None: continue
-            if type(tile_mode) != str:
-                tile_mode = str(tile_mode)
-                assert_fn(False, f"Tiling mode for tile `{tile_name}` in `{path}` is not a string.")
-            if not tile_mode in tiling_mode_names:
-                assert_fn(False, f"Tiling mode for tile `{tile_name}` in `{path}` does not exist (`{repr(tile_mode)}` is not a real tiling mode).")
-                return
-            regex = re.compile(rf"{re.escape(tile_sprite.lower())}_(\d+)_(\d)\.png")
-            found_tiles: set[int] = set()
-            found_frames: dict[int, set[int]] = {}
-            for file in os.listdir(os.path.join(sprite_root)):
-                matched = regex.match(file.lower())
-                if not matched: continue
-                assert_fn(file.startswith(tile_sprite), f"Sprite name (`{tile_sprite}`, found in `{path}`) casing is mismatched with file name (`{file}`, found in `{sprite_root}`)")
-                found_tile, found_frame = matched.groups()
-                found_tile, found_frame = int(found_tile), int(found_frame)
-                found_tiles.add(found_tile)
-                if found_tile not in found_frames:
-                    found_frames[found_tile] = set()
-                found_frames[found_tile].add(found_frame)
-            missing_tiles = tiling_modes[tile_mode].difference(found_tiles)
-            assert_fn(len(missing_tiles) == 0, f"Sprite `{tile_sprite}` is missing tiles for its specified tiling mode ({tiling_mode_names[tile_mode]}): {missing_tiles}")
-            excess_tiles = found_tiles.difference(tiling_modes[tile_mode])
-            assert_fn(len(excess_tiles) == 0, f"Sprite `{tile_sprite}` has tiles not appropriate for its specified tiling mode ({tiling_mode_names[tile_mode]}): {excess_tiles}")
-            for found_tile in found_frames:
-                found_frames_for_tile = found_frames[found_tile]
-                missing_frames = valid_frames.difference(found_frames_for_tile)
-                assert_fn(len(missing_frames) == 0, f"Sprite `{tile_sprite}` is missing frames: {missing_frames}")
-                excess_frames = found_frames_for_tile.difference(valid_frames)
-                assert_fn(len(excess_frames) == 0, f"Sprite `{tile_sprite}` has excess frames: {excess_frames}")
-
-def check_folder(path: str, sprite_path: str, blacklist: list[str], sprite_blacklist: list[str]):
-    for root, _, files in os.walk(path):
-        if check_blacklist(path, root, blacklist):
+    for extra_toml in custom_tomls - sprites_as_tomls:
+        print(f"TOML file {extra_toml.stem} has no corresponding directory")
+        failure = True
+    
+    for extra_dir in sprites_as_tomls - custom_tomls:
+        print(f"Directory at {extra_dir.stem} has no corresponding TOML file")
+        failure = True
+    
+    # Only check directories that passed the first step
+    correct_pairs = ((toml, SPRITES_PATH / toml.stem) for toml in sprites_as_tomls & custom_tomls)
+    for toml, directory in correct_pairs:
+        toml: Path
+        directory: Path
+        # Read the TOML file
+        try:
+            with open(toml, "r") as f:
+                doc = tomlkit.load(f)
+        except Exception as e:
+            print(f"Failed to read TOML at {toml}: {e}")
+            failure = True
             continue
-        for file in files:
-            full_path = os.path.join(root, file)
-            if file.endswith(".json"):
-                if full_path.startswith(sprite_path):
-                    assert_fn(False, f"Stray JSON file in sprite directory at {full_path}")
+        
+        # We could treat it like a dict with Python's builtin toml library,
+        # but iterating over syntactical items gives us finer control over style
+        processed_paths = set()
+
+        for index, (name, item) in enumerate(doc.body):
+            this_failed = False
+            def fail(reason: str):
+                nonlocal this_failed
+                if not this_failed:
+                    print(f"Failures in {toml}:")
+                    this_failed = True
+                print(f"    Failure at item {index}: {reason}")
+                failure = True
+
+            if isinstance(item, (tomlkit.items.Comment, tomlkit.items.Whitespace)):
+                # Skip comments and whitespace
+                continue
+
+            if not item.is_table() and not item.is_inline_table():
+                fail(f"Item is not a table: {item.as_string()}")
+                continue
+
+            if not item.is_inline_table():
+                fail(f"Item is not an inline table: {item.as_string()}")
+
+            data: dict[str, typing.Any] = item.value
+            name: str = name.key # Extract the key from the escaped string
+
+            if not is_valid_name(name):
+                fail(f"Tile has an invalid name: {name}")
+            
+            # Check for missing/extraneous keys
+            keys = set(data.keys())
+            missing_keys = REQUIRED_KEYS - (keys - OPTIONAL_KEYS)
+            extraneous_keys = (keys - OPTIONAL_KEYS) - REQUIRED_KEYS
+            if len(extraneous_keys):
+                fail(f"Tile {name} has extraneous key(s): {extraneous_keys}")
+            if len(missing_keys):
+                fail(f"Tile {name} is missing required key(s): {missing_keys}")
+                continue # This could cause errors
+
+            sprite = data["sprite"]
+            tiling = data["tiling"]
+            if not isinstance(sprite, str):
+                fail(f"Tile {name} has a non-string sprite: {sprite}")
+            if not isinstance(tiling, str):
+                fail(f"Tile {name} has a non-string tiling mode: {tiling}")
+
+            sprite = str(sprite)
+            tiling_mode: TilingMode | None = TilingMode.parse(str(tiling))
+
+            if tiling_mode is None:
+                fail(f"Tile {name} has an invalid tiling mode: {tiling}")
+                continue
+
+            if "author" in data:
+                if not isinstance(data["author"], str):
+                    fail(f"Tile {name} has a non-string author: {data['author']}")
+            
+            extra_frames = data.get("extra_frames")
+            if extra_frames is None:
+                extra_frames = set()
+            elif not isinstance(extra_frames, tomlkit.items.Array):
+                fail(f"Tile {name} has a non-array extra_frames field: {extra_frames}")
+                extra_frames = set()
+            else:
+                extra_frames = set(extra_frames)
+            
+            expected_frames = tiling_mode.expected() | extra_frames
+            found_frames = set()
+            
+            for sprite_path in directory.glob(f"{sprite}_*_*.png"):
+                # Make sure this is *actually* the sprite we want, as
+                # glob confuses things like "bird_0_1" and "bird_old_0_1"
+                match = re.match(rf"^{re.escape(sprite)}_(-?\d+)_(\d+).png$", sprite_path.name)
+                if match is None:
                     continue
-                assert_fn(check_lowercase(file), f"File name `{file}` at `{full_path}` should be lowercase.")
-                sprite_root = os.path.join(sprite_path, os.path.splitext(file)[0])
-                check_json(
-                    full_path,
-                    sprite_root,
-                    check_blacklist(
-                        sprite_path,
-                        sprite_root,
-                        sprite_blacklist
-                    )
-                )
-            assert_fn(not file.endswith(".zip"), f"Stray zip file at {full_path}")
+                processed_paths.add(sprite_path)
+                frame, wobble = int(match.groups(1)[0]), int(match.groups(1)[1])
+                if wobble not in range(1, 4):
+                    fail(f"Tile {name} has an out-of-bounds wobble frame of {wobble} on animation frame {frame}")
+                found_frames.add(frame)
+            
+            extraneous_frames = found_frames - expected_frames
+            if len(extraneous_frames):
+                fail(f"Tile {name} has extraneous frames: {extraneous_frames}")
+            missing_frames = expected_frames - found_frames
+            if len(missing_frames):
+                fail(f"Tile {name} has missing frames: {missing_frames}")
+            
+        paths = set(directory.glob("*"))
+        extraneous_files = processed_paths - paths
+        if len(extraneous_files):
+            fail("Directory {directory} has extra files: {extraneous_files}")
+    
+    if failure:
+        sys.exit(1)
+
 
 if __name__ == "__main__":
-    check_folder("data", "data/sprites", ["generator"], ["baba", "new_adv"])
-    if failed_test:
-        sys.exit(1)
+    main()
+else:
+    raise Exception("Tried to load CI script as a module")
