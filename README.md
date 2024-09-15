@@ -33,7 +33,7 @@ Step by step:
   ```py
   logging_id: int = <command logging id>
   error_id: int = <error logging id>
-    ```
+  ```
 5. Make directory `target/renders/`
 6. Configure `config.py`
 7. Run the bot
