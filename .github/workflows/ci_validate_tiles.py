@@ -20,15 +20,17 @@ class TilingMode(IntEnum):
     DIAGONAL_TILING = 6
 
     def __str__(self) -> str:
-        if self == TilingMode.CUSTOM: return "custom"
-        if self == TilingMode.NONE: return "none"
-        if self == TilingMode.DIRECTIONAL: return "directional"
-        if self == TilingMode.TILING: return "tiling"
-        if self == TilingMode.CHARACTER: return "character"
-        if self == TilingMode.ANIMATED_DIRECTIONAL: return "animated_directional"
-        if self == TilingMode.ANIMATED: return "animated"
-        if self == TilingMode.STATIC_CHARACTER: return "static_character"
-        if self == TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
+        match self:
+            case TilingMode.CUSTOM: return "custom"
+            case TilingMode.NONE: return "none"
+            case TilingMode.DIRECTIONAL: return "directional"
+            case TilingMode.TILING: return "tiling"
+            case TilingMode.CHARACTER: return "character"
+            case TilingMode.ANIMATED_DIRECTIONAL: return "animated_directional"
+            case TilingMode.ANIMATED: return "animated"
+            case TilingMode.STATIC_CHARACTER: return "static_character"
+            case TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
+            case _: raise ValueError # Illegal state
 
     def parse(string: str) -> typing.Self | None:
         return {
