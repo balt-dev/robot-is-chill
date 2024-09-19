@@ -1,4 +1,0 @@
-[levels]
-rolling_levelid=6
-levelid=6
-

@@ -372,7 +372,7 @@ class Renderer:
     async def render_full_frame(self,
                                 tile: Tile,
                                 frame: int,
-                                raw_sprite_cache: dict[str, Image],
+                                raw_sprite_cache: dict[str, Image.Image],
                                 x: int,
                                 y: int,
                                 ctx: RenderContext
@@ -391,20 +391,15 @@ class Renderer:
             elif isinstance(tile.sprite, np.ndarray):
                 sprite = tile.sprite[(tile.frame * 3) + frame]
         else:
-            path_fallback = None
-            if tile.name == "icon":
-                path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}.png"
-            elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
-                path = f"data/sprites/{constants.BABA_WORLD}/{tile.name}_1.png"
-            elif tile.name == "default":
-                path = f"data/sprites/{constants.BABA_WORLD}/default_{frame + 1}.png"
-            else:
-                source, sprite_name = tile.sprite
-                path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
-                try:
-                    path_fallback = f"data/sprites/{source}/{sprite_name}_{tile.fallback_frame}_{frame + 1}.png"
-                except BaseException:
-                    path_fallback = None
+            source, sprite_name = tile.sprite
+            path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
+            if source == constants.BABA_WORLD:
+                if tile.name == "icon":
+                    path = f"data/sprites/{source}/{sprite_name}.png"
+                elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):
+                    path = f"data/sprites/{source}/{sprite_name}_1.png"
+                elif tile.name == "default":
+                    path = f"data/sprites/{source}/default_{frame + 1}.png"
             try:
                 sprite = cached_open(
                     path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
@@ -744,7 +739,9 @@ class Renderer:
                 save_images = []
                 for i, im in enumerate(images):
                     # TODO: THIS IS EXTREMELY SLOW. BETTER WAY IS NEEDED.
-                    colors = np.unique(im.reshape(-1, 4), axis=0)
+                    colors, counts = np.unique(im.reshape(-1, 4), axis=0, return_counts=True)
+                    sort_indices = np.argsort(counts)
+                    colors = colors[sort_indices[::-1]] # Sort in descending order
                     palette_colors = [0, 0, 0]
                     formatted_colors = colors[colors[:, 3] != 0][..., :3]
                     formatted_colors = formatted_colors[:255].flatten()

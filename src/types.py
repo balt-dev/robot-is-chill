@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+from enum import IntEnum
 import inspect
 import traceback
 from concurrent.futures import ProcessPoolExecutor
@@ -10,7 +11,6 @@ from typing import TYPE_CHECKING, Any, Coroutine, Optional, Literal, BinaryIO, C
 from attr import define
 
 from . import errors, constants
-from .db import Database
 import re
 
 import discord
@@ -33,6 +33,9 @@ class Context(commands.Context):
     async def warn(self, msg: str, **kwargs) -> discord.Message: ...
 
 
+class Database:
+    ...
+
 class Bot(commands.Bot):
     db: Database
     cogs: list[str]
@@ -54,10 +57,7 @@ class Bot(commands.Bot):
             prefixes: list[str],
             exit_code: int = 0,
             **kwargs):
-        super().__init__(*args, **kwargs)
-        self.baba_loaded: bool = False
-        self.macros: dict = None
-        self.flags = None
+        ...
 
     async def get_context(self,
                           message: discord.Message,
@@ -323,3 +323,59 @@ class BuiltinMacro:
 
     function: Callable
     """The function to call to run the macro."""
+
+
+class TilingMode(IntEnum):
+    CUSTOM = -2
+    NONE = -1
+    DIRECTIONAL = 0
+    TILING = 1
+    CHARACTER = 2
+    ANIMATED_DIRECTIONAL = 3
+    ANIMATED = 4
+    STATIC_CHARACTER = 5
+    DIAGONAL_TILING = 6
+
+    def __str__(self) -> str:
+        if self == TilingMode.CUSTOM: return "custom"
+        if self == TilingMode.NONE: return "none"
+        if self == TilingMode.DIRECTIONAL: return "directional"
+        if self == TilingMode.TILING: return "tiling"
+        if self == TilingMode.CHARACTER: return "character"
+        if self == TilingMode.ANIMATED_DIRECTIONAL: return "animated_directional"
+        if self == TilingMode.ANIMATED: return "animated"
+        if self == TilingMode.STATIC_CHARACTER: return "static_character"
+        if self == TilingMode.DIAGONAL_TILING: return "diagonal_tiling"
+
+    def parse(string: str) -> TilingMode | None:
+        return {
+            "custom": TilingMode.CUSTOM,
+            "none": TilingMode.NONE,
+            "directional": TilingMode.DIRECTIONAL,
+            "tiling": TilingMode.TILING, # lol
+            "character": TilingMode.CHARACTER,
+            "animated_directional": TilingMode.ANIMATED_DIRECTIONAL,
+            "animated": TilingMode.ANIMATED,
+            "static_character": TilingMode.STATIC_CHARACTER,
+            "diagonal_tiling": TilingMode.DIAGONAL_TILING
+        }.get(string, None)
+
+    def expected(self) -> set[int]:
+        if self == TilingMode.CUSTOM:
+            return set()
+        if self == TilingMode.DIAGONAL_TILING:
+            return set(range(47))
+        if self == TilingMode.NONE:
+            return {0}
+        if self == TilingMode.DIRECTIONAL:
+            return {0, 8, 16, 24}
+        if self == TilingMode.TILING:
+            return set(range(16))
+        if self == TilingMode.CHARACTER:
+            return {0, 1, 2, 3, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 23, 24, 25, 26, 27, 31}
+        if self == TilingMode.ANIMATED_DIRECTIONAL:
+            return {0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 24, 25, 26, 27}
+        if self == TilingMode.ANIMATED:
+            return {0, 1, 2, 3}
+        if self == TilingMode.STATIC_CHARACTER:
+            return {0, 1, 2, 3, 31}
