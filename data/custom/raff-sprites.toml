@@ -27,3 +27,4 @@ usp = {sprite = "usp", color = [4, 1], tiling = 2}
 
 text_usp = {sprite = "text_usp", color = [4, 1], tiling = -1}
 
+xexe = {sprite = "xexe", color = [3, 2], tiling = 2}
