@@ -23,6 +23,12 @@ text_argh = {sprite = "text_argh", color = [0, 3], tiling = -1}
 
 text_omega = {sprite = "text_omega", color = [0, 3], tiling = -1}
 
+text_female = {sprite = "text_female", color = [4, 2], tiling = -1}
+
+text_male = {sprite = "text_male", color = [1, 2], tiling = -1}
+
+text_transgender = {sprite = "text_transgender", color = [3, 1], tiling = -1}
+
 usp = {sprite = "usp", color = [4, 1], tiling = 2}
 
 text_usp = {sprite = "text_usp", color = [4, 1], tiling = -1}
