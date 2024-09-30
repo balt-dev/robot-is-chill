@@ -18,6 +18,5 @@
 
 
 
-rere2 = {sprite = "rere2", color = [2, 2], tiling = 2}
-
-text_rere2 = {sprite = "text_rere2", color = [2, 2], tiling = -1}
+rеrе2 = {sprite = "rеrе2", color = [0, 3], tiling = -1}
+#     The above line is not a real sprite and is to be removed if another sprite is added.
