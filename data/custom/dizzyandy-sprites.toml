@@ -143,7 +143,7 @@ glyph_scug = {sprite = "glyph_scug", color = [0, 3], tiling = -1}
 
 banner = {sprite = "banner", color = [5, 3], tiling = 1, diagonal = true}
 
-will_anyone_notice_this_n1 = {sprite = "will_anyone_notice_this_n1", color = [0, 1], tiling = 1, diagonal = false}
+will_anyone_notice_this_n1 = {sprite = "will_anyone_notice_this_n1", color = [0, 1], tiling = -1, diagonal = false}
 
 traitrai = {sprite = "traitrai", color = [4, 4], tiling = 2}
 

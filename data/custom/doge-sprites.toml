@@ -63,3 +63,9 @@ text_glass = {sprite = "text_glass", color = [0, 3], tiling = -1}
 
 text_glarg = {sprite = "text_glarg", color = [5, 4], tiling = -1}
 
+furfur = {sprite = "furfur", color = [6, 2], tiling = 2}
+
+text_furfur = {sprite = "text_furfur", color = [6, 2], tiling = -1}
+
+text_fur = {sprite = "text_fur", color = [6, 2], tiling = -1}
+
