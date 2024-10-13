@@ -21,6 +21,16 @@ naun = {sprite = "naun", color = [2, 2], tiling = 2}
 
 text_naun = {sprite = "text_naun", color = [2, 2], tiling = -1}
 
+glyph_naun = {sprite = "glyph_naun", color = [2, 2], tiling = -1}
+
+event_naun = {sprite = "event_naun", color = [2, 2], tiling = -1}
+
+node_naun = {sprite = "node_naun", color = [2, 2], tiling = 0}
+
+logic_naun = {sprite = "logic_naun", color = [2, 2], tiling = -1}
+
+obj_naun = {sprite = "obj_naun", color = [2, 1], tiling = 0}
+
 gaub = {sprite = "gaub", color = [1, 2], tiling = -1}
 
 text_gaub = {sprite = "text_gaub", color = [1, 2], tiling = -1}

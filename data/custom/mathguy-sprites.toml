@@ -17,33 +17,43 @@
 
 
 
-text_offline2 = {sprite = "text_offline2", color = [2, 4], tiling = -1}
+text_banned = {sprite = "text_banned", color = [2, 1], tiling = -1}
 
 text_channel1 = {sprite = "text_channel1", color = [2, 1], tiling = -1}
 
-text_offline3 = {sprite = "text_offline3", color = [4, 4], tiling = -1}
+text_channel2 = {sprite = "text_channel2", color = [2, 4], tiling = -1}
 
 text_channel3 = {sprite = "text_channel3", color = [4, 4], tiling = -1}
 
-text_offline = {sprite = "text_offline", color = [2, 3], tiling = -1}
+text_define = {sprite = "text_define", color = [0, 1], active = [0, 3], tiling = -1}
 
-text_router = {sprite = "text_router", color = [1, 3], tiling = -1}
+text_final = {sprite = "text_final", color = [5, 4], tiling = -1}
 
-text_channel2 = {sprite = "text_channel2", color = [2, 4], tiling = -1}
+text_finish = {sprite = "text_finish", color = [2, 4], tiling = -1}
+
+text_go = {sprite = "text_go", color = [5, 0], active = [5, 2], tiling = -1}
+
+text_imply = {sprite = "text_imply", color = [0, 1], active = [0, 3], tiling = -1}
+
+text_input = {sprite = "text_input", color = [4, 1], tiling = -1}
+
+text_local = {sprite = "text_local", color = [1, 3], tiling = -1}
+
+text_local1 = {sprite = "text_local1", color = [2, 1], tiling = -1}
 
 text_local2 = {sprite = "text_local2", color = [2, 4], tiling = -1}
 
 text_local3 = {sprite = "text_local3", color = [4, 4], tiling = -1}
 
-text_local1 = {sprite = "text_local1", color = [2, 1], tiling = -1}
-
-text_local = {sprite = "text_local", color = [1, 3], tiling = -1}
+text_offline = {sprite = "text_offline", color = [2, 3], tiling = -1}
 
 text_offline1 = {sprite = "text_offline1", color = [2, 1], tiling = -1}
 
-text_final = {sprite = "text_final", color = [5, 4], tiling = -1}
+text_offline2 = {sprite = "text_offline2", color = [2, 4], tiling = -1}
 
-text_banned = {sprite = "text_banned", color = [2, 1], tiling = -1}
+text_offline3 = {sprite = "text_offline3", color = [4, 4], tiling = -1}
+
+text_router = {sprite = "text_router", color = [1, 3], tiling = -1}
 
 omega = {sprite = "omega", color = [0, 3], tiling = -1}
 
