@@ -21,7 +21,7 @@ offset = {sprite = "offsetguy", color = [0, 3], tiling = 0}
 
 yelly = {sprite = "yelly", color = [3, 1], tiling = 2}
 
-"text_鰪" = {sprite = "text_U09C2A", color = [0, 3], tiling = -1}
+text_zizan = {sprite = "zizan", color = [0, 3], tiling = -1}
 
 hira_a = {sprite = "hira_a", color = [0, 3], tiling = -1}
 
@@ -57,13 +57,61 @@ hira_ta = {sprite = "hira_ta", color = [0, 3], tiling = -1}
 
 hira_chi = {sprite = "hira_chi", color = [0, 3], tiling = -1}
 
+hira_tsu = {sprite = "hira_tsu", color = [0, 3], tiling = -1}
+
 hira_te = {sprite = "hira_te", color = [0, 3], tiling = -1}
 
 hira_to = {sprite = "hira_to", color = [0, 3], tiling = -1}
 
-hira_tsu = {sprite = "hira_tsu", color = [0, 3], tiling = -1}
+hira_na = {sprite = "hira_na", color = [0, 3], tiling = -1}
 
-hira_- = {sprite = "hira_-", color = [0, 3], tiling = -1}
+hira_ni = {sprite = "hira_ni", color = [0, 3], tiling = -1}
+
+hira_ne = {sprite = "hira_ne", color = [0, 3], tiling = -1}
+
+hira_no = {sprite = "hira_no", color = [0, 3], tiling = -1}
+
+hira_nu = {sprite = "hira_nu", color = [0, 3], tiling = -1}
+
+hira_ha = {sprite = "hira_ha", color = [0, 3], tiling = -1}
+
+hira_hi = {sprite = "hira_hi", color = [0, 3], tiling = -1}
+
+hira_he = {sprite = "hira_he", color = [0, 3], tiling = -1}
+
+hira_ho = {sprite = "hira_ho", color = [0, 3], tiling = -1}
+
+hira_hu = {sprite = "hira_hu", color = [0, 3], tiling = -1}
+
+hira_ya = {sprite = "hira_ya", color = [0, 3], tiling = -1}
+
+hira_yo = {sprite = "hira_yo", color = [0, 3], tiling = -1}
+
+hira_yu = {sprite = "hira_yu", color = [0, 3], tiling = -1}
+
+hira_ra = {sprite = "hira_ra", color = [0, 3], tiling = -1}
+
+hira_ri = {sprite = "hira_ri", color = [0, 3], tiling = -1}
+
+hira_re = {sprite = "hira_re", color = [0, 3], tiling = -1}
+
+hira_ro = {sprite = "hira_ro", color = [0, 3], tiling = -1}
+
+hira_ru = {sprite = "hira_ru", color = [0, 3], tiling = -1}
+
+hira_wa = {sprite = "hira_wa", color = [0, 3], tiling = -1}
+
+hira_wo = {sprite = "hira_wo", color = [0, 3], tiling = -1}
+
+hira_n = {sprite = "hira_n", color = [0, 3], tiling = -1}
+
+furi_ya = {sprite = "furi_ya", color = [0, 3], tiling = -1}
+
+furi_yo = {sprite = "furi_yo", color = [0, 3], tiling = -1}
+
+furi_yu = {sprite = "furi_yu", color = [0, 3], tiling = -1}
+
+chiisai = {sprite = "chiisai", color = [0, 3], tiling = -1}
 
 hira_ga = {sprite = "hira_ga", color = [0, 3], tiling = -1}
 
@@ -94,6 +142,26 @@ hira_de = {sprite = "hira_de", color = [0, 3], tiling = -1}
 hira_do = {sprite = "hira_do", color = [0, 3], tiling = -1}
 
 hira_du = {sprite = "hira_du", color = [0, 3], tiling = -1}
+
+hira_ba = {sprite = "hira_ba", color = [0, 3], tiling = -1}
+
+hira_bi = {sprite = "hira_bi", color = [0, 3], tiling = -1}
+
+hira_be = {sprite = "hira_be", color = [0, 3], tiling = -1}
+
+hira_bo = {sprite = "hira_bo", color = [0, 3], tiling = -1}
+
+hira_bu = {sprite = "hira_bu", color = [0, 3], tiling = -1}
+
+hira_pa = {sprite = "hira_pa", color = [0, 3], tiling = -1}
+
+hira_pi = {sprite = "hira_pi", color = [0, 3], tiling = -1}
+
+hira_pe = {sprite = "hira_pe", color = [0, 3], tiling = -1}
+
+hira_po = {sprite = "hira_po", color = [0, 3], tiling = -1}
+
+hira_pu = {sprite = "hira_pu", color = [0, 3], tiling = -1}
 
 atom = {sprite = "atom", color = [0, 3], tiling = -1}
 
