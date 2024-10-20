@@ -37,5 +37,28 @@ text_catto = {sprite = "text_catto", color = [0, 2], tiling = -1}
 
 pulpul = {sprite = "pulpul", color = [0, 3], tiling = 2}
 
-text_pulpul = {sprite = "text_pulpul", color = [1, 2], tiling = 2}
+text_pulpul = {sprite = "text_pulpul", color = [1, 2], tiling = -1}
 
+pulpul = {sprite = "pulpul", color = [0, 3], tiling = 2}
+
+text_pulpul = {sprite = "text_pulpul", color = [1, 2], tiling = -1}
+
+glyph_pulpul = {sprite = "glyph_pulpul", color = [1, 2], tiling = -1}
+
+glyph_tonk = {sprite = "glyph_tonk", color = [0, 1], tiling = -1}
+
+glyph_levlev = {sprite = "glyph_levlev", color = [4, 1], tiling = -1}
+
+glyph_gogo = {sprite = "glyph_gogo", color = [5, 2], tiling = -1}
+
+glyph_cucu = {sprite = "glyph_cucu", color = [0, 2], tiling = -1}
+
+juju = {sprite = "juju", color = [2, 2], tiling = 0}
+
+text_juju = {sprite = "text_juju", color = [2, 2], tiling = -1}
+
+jux = {sprite = "jux", color = [0, 3], tiling = 0}
+
+text_jux = {sprite = "text_jux", color = [0, 3], tiling = -1}
+
+bolt3 = {sprite = "bolt3", color = [0, 1], tiling = 0}
