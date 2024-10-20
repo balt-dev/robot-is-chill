@@ -60,3 +60,5 @@ text_juju = {sprite = "text_catto", color = [2, 2], tiling = -1}
 jux = {sprite = "jux", color = [0, 3], tiling = 0}
 
 text_jux = {sprite = "text_jux", color = [0, 3], tiling = -1}
+
+bolt3 = {sprite = "bolt3", color = [0, 1], tiling = 0}
