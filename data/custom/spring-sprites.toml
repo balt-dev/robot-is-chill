@@ -21,19 +21,19 @@ barrier = {sprite = "barrier", color = [0, 3], tiling = -1}
 
 text_barrier = {sprite = "text_barrier", color = [0, 3], tiling = -1}
 
-stisti = {sprite = "stisti", color = [1, 3], tiling = -1}
+stisti = {sprite = "stisti", color = [1, 3], tiling = 0}
 
 text_stisti = {sprite = "text_stisti", color = [1, 3], tiling = -1}
 
-sulsul = {sprite = "sulsul", color = [0, 1], tiling = -1}
+sulsul = {sprite = "sulsul", color = [0, 1], tiling = 2}
 
 text_sulsul = {sprite = "text_sulsul", color = [0, 1], tiling = -1}
 
-helichoper = {sprite = "helichoper", color = [2, 2], tiling = -1}
+helichoper = {sprite = "helichoper", color = [2, 2], tiling = 2}
 
 text_helichoper = {sprite = "text_helichoper", color = [2, 2], tiling = -1}
 
-onon = {sprite = "onon", color = [3, 0], tiling = -1}
+onon = {sprite = "onon", color = [3, 0], tiling = 2}
 
 text_onon = {sprite = "text_onon", color = [3, 0], tiling = -1}
 
@@ -41,11 +41,11 @@ glue = {sprite = "glue", color = [0, 3], tiling = -1}
 
 text_glue = {sprite = "text_glue", color = [0, 3], tiling = -1}
 
-beepy = {sprite = "beepy", color = [0, 3], tiling = -1}
+beepy = {sprite = "beepy", color = [0, 3], tiling = 0}
 
 text_beepy = {sprite = "text_beepy", color = [5, 0], tiling = -1}
 
-shifty = {sprite = "shifty", color = [3, 4], tiling = -1}
+shifty = {sprite = "shifty", color = [3, 4], tiling = 2}
 
 text_shifty = {sprite = "text_shifty", color = [3, 4], tiling = -1}
 
