@@ -53,9 +53,9 @@ glyph_gogo = {sprite = "glyph_gogo", color = [5, 2], tiling = -1}
 
 glyph_cucu = {sprite = "glyph_cucu", color = [0, 2], tiling = -1}
 
-juju = {sprite = "catto", color = [2, 2], tiling = 0}
+juju = {sprite = "juju", color = [2, 2], tiling = 0}
 
-text_juju = {sprite = "text_catto", color = [2, 2], tiling = -1}
+text_juju = {sprite = "text_juju", color = [2, 2], tiling = -1}
 
 jux = {sprite = "jux", color = [0, 3], tiling = 0}
 
