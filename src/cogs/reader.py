@@ -429,7 +429,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="loadworld")
     @commands.is_owner()
-    async def load_world(self, ctx: Context, world: str, also_mobile: bool = True):
+    async def load_world(self, ctx: Context, world: str):
         """Loads and renders levels in a world and its mobile variant.
 
         Initializes the level tree unless otherwise specified. Cuts off

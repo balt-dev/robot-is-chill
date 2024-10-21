@@ -542,6 +542,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         initial_objects: dict[str, dict[str, Any]] = {}
         for match in re.finditer(object_pattern, spanned):
             obj, name, sprite, tiling, type, c_x, c_y, a_x, a_y = match.groups()
+            print(f"Loading {name}")
             if a_x is None or a_y is None:
                 inactive_x = active_x = int(c_x)
                 inactive_y = active_y = int(c_y)
@@ -673,6 +674,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         objects = []
         for match in re.finditer(object_pattern, spanned):
             name, sprite, raw_tags, tiling, text_type, c_x, c_y, a_x, a_y = match.groups()
+            print(f"Loading {name}")
             sprite = name if sprite is None else sprite
             a_x = c_x if a_x is None else a_x
             a_y = c_y if a_y is None else a_y
@@ -742,6 +744,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         def prepare(source: str, name: str, d: dict[str, Any]) -> dict[str, Any]:
             """From config format to db format."""
+            print(f"Loading {name}")
             db_dict = {key: value for key, value in d.items()}
             db_dict["name"] = name
             inactive = d.pop("color")
