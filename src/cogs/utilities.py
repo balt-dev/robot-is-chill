@@ -48,7 +48,7 @@ class SearchPageSource(menus.ListPageSource):
                 if len(long.tags) > 0:
                     lines.append(f"\n    tags: {', '.join(long.tags)}")
                 if len(long.extra_frames) > 0:
-                    lines.append(f"\n    extra_frames: {', '.join(long.extra_frames)}")
+                    lines.append(f"\n    extra_frames: {', '.join(str(n) for n in long.extra_frames)}")
             elif isinstance(long, LevelData):
                 lines.append(f"({type}) {short} {long.display()}")
             elif isinstance(long, CustomLevelData):

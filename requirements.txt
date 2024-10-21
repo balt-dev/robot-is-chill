@@ -9,7 +9,7 @@ git+https://github.com/Rapptz/discord-ext-menus
 git+https://github.com/oliver-ni/discord-ext-menus-views
 charset-normalizer
 colour-science
-numpy
+numpy<2
 aiohttp
 setuptools
 visual-center

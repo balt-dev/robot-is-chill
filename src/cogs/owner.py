@@ -337,9 +337,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             sprite_name = ""
             for char in name:
                 if char.isalnum() or char == '_':
-                    sprite_name.push(char)
+                    sprite_name += char
                     continue
-                sprite_name.push(hex(ord(char))[2:])
+                sprite_name += hex(ord(char))[2:]
 
             sprites: list[Image.Image] = []
             broken = False

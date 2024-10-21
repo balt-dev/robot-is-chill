@@ -7,7 +7,7 @@ bab_bab = {sprite = "bab", color = [0, 3], tiling = "none"}
 
 text_bab_bab = {sprite = "txt_bab", color = [4, 1], tiling = "none"}
 
-"text_bab_babn't" = {sprite = "txt_babn't", color = [0, 3], tiling = "none"}
+"text_bab_babn't" = {sprite = "txt_babn27t", color = [0, 3], tiling = "none"}
 
 bab_skul = {sprite = "skul", color = [2, 1], tiling = "none"}
 
@@ -289,9 +289,9 @@ bab_niko = {sprite = "niko", color = [0, 3], tiling = "none"}
 
 text_bab_niko = {sprite = "txt_niko", color = [0, 3], tiling = "none"}
 
-"bab_humuhumunukunukuapua'a" = {sprite = "humuhumunukunukuapua'a", color = [0, 3], tiling = "none"}
+"bab_humuhumunukunukuapua'a" = {sprite = "humuhumunukunukuapua27a", color = [0, 3], tiling = "none"}
 
-"text_bab_humuhumunukunukuapua'a" = {sprite = "txt_humuhumunukunukuapua'a", color = [2, 3], tiling = "none"}
+"text_bab_humuhumunukunukuapua'a" = {sprite = "txt_humuhumunukunukuapua27a", color = [2, 3], tiling = "none"}
 
 bab_miku = {sprite = "miku", color = [0, 3], tiling = "none"}
 
@@ -301,9 +301,9 @@ bab_slogkat = {sprite = "slogkat", color = [0, 3], tiling = "none"}
 
 text_bab_slogkat = {sprite = "txt_slogkat", color = [4, 1], tiling = "none"}
 
-"bab_b..er" = {sprite = "b..er", color = [6, 1], tiling = "none"}
+"bab_b..er" = {sprite = "b2e2eer", color = [6, 1], tiling = "none"}
 
-"text_bab_b..er" = {sprite = "txt_b..er", color = [6, 1], tiling = "none"}
+"text_bab_b..er" = {sprite = "txt_b2e2eer", color = [6, 1], tiling = "none"}
 
 bab_slog = {sprite = "slog", color = [3, 1], tiling = "none"}
 
@@ -401,9 +401,9 @@ bab_copkat = {sprite = "copkat", color = [0, 3], tiling = "none"}
 
 bab_zawarudo = {sprite = "zawarudo", color = [2, 4], tiling = "none"}
 
-bab_amp = {sprite = "&", color = [0, 3], tiling = "none"}
+bab_amp = {sprite = "26", color = [0, 3], tiling = "none"}
 
-"bab_ampn't" = {sprite = "&n't", color = [0, 3], tiling = "none"}
+"bab_ampn't" = {sprite = "26n27t", color = [0, 3], tiling = "none"}
 
 bab_therealqt = {sprite = "therealqt", color = [4, 2], tiling = "none"}
 
@@ -489,9 +489,9 @@ bab_ui_g = {sprite = "ui_g", color = [0, 3], tiling = "none"}
 
 bab_ui_h = {sprite = "ui_h", color = [0, 3], tiling = "none"}
 
-"bab_ui_;" = {sprite = "ui_;", color = [0, 3], tiling = "none"}
+"bab_ui_;" = {sprite = "ui_3b", color = [0, 3], tiling = "none"}
 
-"bab_ui_'" = {sprite = "ui_'", color = [0, 3], tiling = "none"}
+"bab_ui_'" = {sprite = "ui_27", color = [0, 3], tiling = "none"}
 
 bab_ui_return = {sprite = "ui_return", color = [0, 3], tiling = "none"}
 
@@ -507,17 +507,17 @@ bab_ui_n = {sprite = "ui_n", color = [0, 3], tiling = "none"}
 
 bab_ui_m = {sprite = "ui_m", color = [0, 3], tiling = "none"}
 
-"bab_ui_," = {sprite = "ui_,", color = [0, 3], tiling = "none"}
+"bab_ui_," = {sprite = "ui_2c", color = [0, 3], tiling = "none"}
 
-"bab_ui_." = {sprite = "ui_.", color = [0, 3], tiling = "none"}
+"bab_ui_." = {sprite = "ui_2e", color = [0, 3], tiling = "none"}
 
-"bab_ui_/" = {sprite = "ui_sol", color = [0, 3], tiling = "none"}
+"bab_ui_/" = {sprite = "ui_2f", color = [0, 3], tiling = "none"}
 
-bab_ui_- = {sprite = "ui_-", color = [0, 3], tiling = "none"}
+bab_ui_- = {sprite = "ui_2d", color = [0, 3], tiling = "none"}
 
-"bab_ui_=" = {sprite = "ui_=", color = [0, 3], tiling = "none"}
+"bab_ui_=" = {sprite = "ui_3d", color = [0, 3], tiling = "none"}
 
-"bab_ui_`" = {sprite = "ui_`", color = [0, 3], tiling = "none"}
+"bab_ui_`" = {sprite = "ui_60", color = [0, 3], tiling = "none"}
 
 bab_ui_ctrl = {sprite = "ui_ctrl", color = [0, 3], tiling = "none"}
 
@@ -527,7 +527,7 @@ bab_ui_shift = {sprite = "ui_shift", color = [0, 3], tiling = "none"}
 
 bab_ui_del = {sprite = "ui_del", color = [0, 3], tiling = "none"}
 
-"bab_ui_[" = {sprite = "ui_[", color = [0, 3], tiling = "none"}
+"bab_ui_[" = {sprite = "ui_5b", color = [0, 3], tiling = "none"}
 
 bab_ui_gui = {sprite = "ui_gui", color = [0, 3], tiling = "none"}
 
@@ -541,13 +541,13 @@ bab_wal = {sprite = "wal", color = [1, 1], tiling = "none"}
 
 text_bab_wal = {sprite = "txt_wal", color = [0, 1], tiling = "none"}
 
-"text_bab_waln't" = {sprite = "txt_waln't", color = [0, 3], tiling = "none"}
+"text_bab_waln't" = {sprite = "txt_waln27t", color = [0, 3], tiling = "none"}
 
 bab_roc = {sprite = "roc", color = [6, 2], tiling = "none"}
 
 text_bab_roc = {sprite = "txt_roc", color = [6, 1], tiling = "none"}
 
-"text_bab_rocn't" = {sprite = "txt_rocn't", color = [0, 3], tiling = "none"}
+"text_bab_rocn't" = {sprite = "txt_rocn27t", color = [0, 3], tiling = "none"}
 
 bab_dor = {sprite = "dor", color = [2, 2], tiling = "none"}
 
@@ -577,9 +577,9 @@ bab_laav = {sprite = "laav", color = [2, 3], tiling = "none"}
 
 text_bab_til = {sprite = "txt_til", color = [0, 1], tiling = "none"}
 
-"bab_l..uv" = {sprite = "l..uv", color = [4, 2], tiling = "none"}
+"bab_l..uv" = {sprite = "l2e2euv", color = [4, 2], tiling = "none"}
 
-"text_bab_l..uv" = {sprite = "txt_l..uv", color = [4, 2], tiling = "none"}
+"text_bab_l..uv" = {sprite = "txt_l2e2euv", color = [4, 2], tiling = "none"}
 
 bab_frut = {sprite = "frut", color = [2, 2], tiling = "none"}
 
@@ -731,9 +731,9 @@ bab_lie = {sprite = "lie", color = [4, 1], tiling = "none"}
 
 text_bab_lie = {sprite = "txt_lie", color = [4, 1], tiling = "none"}
 
-"bab_lie/8" = {sprite = "liesol8", color = [4, 2], tiling = "none"}
+"bab_lie/8" = {sprite = "lie2f8", color = [4, 2], tiling = "none"}
 
-"text_bab_lie/8" = {sprite = "txt_liesol8", color = [4, 2], tiling = "none"}
+"text_bab_lie/8" = {sprite = "txt_lie2f8", color = [4, 2], tiling = "none"}
 
 bab_sine = {sprite = "sine", color = [6, 2], tiling = "none"}
 
@@ -1023,9 +1023,9 @@ bab_forbeeee = {sprite = "forbeeee", color = [6, 2], tiling = "none"}
 
 text_bab_forbeeee = {sprite = "txt_forbeeee", color = [6, 2], tiling = "none"}
 
-"bab_do$h" = {sprite = "do$h", color = [5, 2], tiling = "none"}
+"bab_do$h" = {sprite = "do24h", color = [5, 2], tiling = "none"}
 
-"text_bab_do$h" = {sprite = "txt_do$h", color = [5, 2], tiling = "none"}
+"text_bab_do$h" = {sprite = "txt_do24h", color = [5, 2], tiling = "none"}
 
 bab_dling = {sprite = "dling", color = [2, 4], tiling = "none"}
 
@@ -1165,7 +1165,7 @@ text_bab_tronk = {sprite = "txt_tronk", color = [1, 4], tiling = "none"}
 
 bab_aaaaaa = {sprite = "aaaaaa", color = [0, 3], tiling = "none"}
 
-bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = "none", extra_frames = [1]}
+bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = "none"}
 
 text_bab_therealbabdictator = {sprite = "txt_therealbabdictator", color = [0, 3], tiling = "none"}
 
@@ -1259,7 +1259,7 @@ bab_cheez = {sprite = "cheez", color = [2, 4], tiling = "none"}
 
 text_bab_cheez = {sprite = "txt_cheez", color = [2, 4], tiling = "none"}
 
-"text_bab_w/fren" = {sprite = "txt_wsolfren", color = [0, 3], tiling = "none"}
+"text_bab_w/fren" = {sprite = "txt_w2ffren", color = [0, 3], tiling = "none"}
 
 text_bab_lookat = {sprite = "txt_lookat", color = [0, 3], tiling = "none"}
 
@@ -1273,7 +1273,7 @@ text_bab_frenles = {sprite = "txt_frenles", color = [2, 2], tiling = "none"}
 
 text_bab_arond = {sprite = "txt_arond", color = [0, 3], tiling = "none"}
 
-"text_bab_wait..." = {sprite = "txt_wait...", color = [0, 3], tiling = "none"}
+"text_bab_wait..." = {sprite = "txt_wait2e2e2e", color = [0, 3], tiling = "none"}
 
 text_bab_sans = {sprite = "txt_sans", color = [1, 4], tiling = "none"}
 
@@ -1391,9 +1391,9 @@ bab_letter_y = {sprite = "letter_y", color = [0, 3], tiling = "none"}
 
 bab_letter_z = {sprite = "letter_z", color = [0, 3], tiling = "none"}
 
-"bab_letter_'" = {sprite = "letter_'", color = [0, 3], tiling = "none"}
+"bab_letter_'" = {sprite = "letter_27", color = [0, 3], tiling = "none"}
 
-"bab_letter_." = {sprite = "letter_.", color = [0, 3], tiling = "none"}
+"bab_letter_." = {sprite = "letter_2e", color = [0, 3], tiling = "none"}
 
 bab_letter_colon = {sprite = "letter_colon", color = [0, 3], tiling = "none"}
 
@@ -1417,15 +1417,15 @@ bab_letter_8 = {sprite = "letter_8", color = [0, 3], tiling = "none"}
 
 bab_letter_9 = {sprite = "letter_9", color = [0, 3], tiling = "none"}
 
-"bab_letter_;" = {sprite = "letter_;", color = [0, 3], tiling = "none"}
+"bab_letter_;" = {sprite = "letter_3b", color = [0, 3], tiling = "none"}
 
-"bab_letter_/" = {sprite = "letter_sol", color = [0, 3], tiling = "none"}
+"bab_letter_/" = {sprite = "letter_2f", color = [0, 3], tiling = "none"}
 
-bab_letter_gt = {sprite = "letter_gt", color = [0, 3], tiling = "none"}
+bab_letter_gt = {sprite = "letter_3e", color = [0, 3], tiling = "none"}
 
-"bab_letter_*" = {sprite = "letter_ast", color = [0, 3], tiling = "none"}
+"bab_letter_*" = {sprite = "letter_2a", color = [0, 3], tiling = "none"}
 
-"bab_letter_$" = {sprite = "letter_$", color = [0, 3], tiling = "none"}
+"bab_letter_$" = {sprite = "letter_24", color = [0, 3], tiling = "none"}
 
 "bab_letter_π" = {sprite = "letter_π", color = [0, 3], tiling = "none"}
 
@@ -1463,7 +1463,7 @@ text_bab_utres = {sprite = "txt_utres", color = [4, 1], tiling = "none"}
 
 text_bab_w = {sprite = "txt_w", color = [4, 1], tiling = "none"}
 
-"text_bab_y'all" = {sprite = "txt_y'all", color = [4, 2], tiling = "none"}
+"text_bab_y'all" = {sprite = "txt_y27all", color = [4, 2], tiling = "none"}
 
 text_bab_you = {sprite = "txt_you", color = [4, 1], tiling = "none"}
 
@@ -1579,7 +1579,7 @@ text_bab_visitfren = {sprite = "txt_visitfren", color = [1, 4], tiling = "none"}
 
 text_bab_stelth = {sprite = "txt_stelth", color = [1, 3], tiling = "none"}
 
-"text_bab_shy..." = {sprite = "txt_shy...", color = [6, 2], tiling = "none"}
+"text_bab_shy..." = {sprite = "txt_shy2e2e2e", color = [6, 2], tiling = "none"}
 
 text_bab_folowal = {sprite = "txt_folowal", color = [5, 3], tiling = "none"}
 
@@ -1633,9 +1633,9 @@ text_bab_txtify = {sprite = "txt_txtify", color = [4, 1], tiling = "none"}
 
 text_bab_thingify = {sprite = "txt_thingify", color = [3, 1], tiling = "none"}
 
-"text_bab_n'tify" = {sprite = "txt_n'tify", color = [2, 2], tiling = "none"}
+"text_bab_n'tify" = {sprite = "txt_n27tify", color = [2, 2], tiling = "none"}
 
-"text_bab_n'tifyyy" = {sprite = "txt_n'tifyyy", color = [2, 3], tiling = "none"}
+"text_bab_n'tifyyy" = {sprite = "txt_n27tifyyy", color = [2, 3], tiling = "none"}
 
 text_bab_ify = {sprite = "txt_ify", color = [3, 1], tiling = "none"}
 
@@ -1655,7 +1655,7 @@ text_bab_rotatbl = {sprite = "txt_rotatbl", color = [6, 2], tiling = "none"}
 
 text_bab_nuek = {sprite = "txt_nuek", color = [2, 2], tiling = "none"}
 
-"text_bab_uncolon)" = {sprite = "txt_uncolon)", color = [1, 2], tiling = "none"}
+"text_bab_uncolon)" = {sprite = "txt_un3a29", color = [1, 2], tiling = "none"}
 
 text_bab_notranform = {sprite = "txt_notranform", color = [2, 2], tiling = "none"}
 
@@ -1695,7 +1695,7 @@ text_bab_2pley = {sprite = "txt_2pley", color = [0, 3], tiling = "none"}
 
 text_bab_f1 = {sprite = "txt_f1", color = [0, 3], tiling = "none"}
 
-text_bab_amp = {sprite = "txt_&", color = [0, 3], tiling = "none"}
+text_bab_amp = {sprite = "txt_26", color = [0, 3], tiling = "none"}
 
 text_bab_txt = {sprite = "txt_txt", color = [4, 1], tiling = "none"}
 
@@ -1705,9 +1705,9 @@ text_bab_infloop = {sprite = "txt_infloop", color = [0, 3], tiling = "none"}
 
 text_bab_plsdont = {sprite = "txt_plsdont", color = [0, 3], tiling = "none"}
 
-"text_bab_..." = {sprite = "txt_...", color = [0, 3], tiling = "none"}
+"text_bab_..." = {sprite = "txt_2e2e2e", color = [0, 3], tiling = "none"}
 
-"text_bab_''" = {sprite = "txt_''", color = [0, 3], tiling = "none"}
+"text_bab_''" = {sprite = "txt_2727", color = [0, 3], tiling = "none"}
 
 text_bab_frens = {sprite = "txt_frens", color = [3, 1], tiling = "none"}
 
@@ -1731,7 +1731,7 @@ text_bab_samepaint = {sprite = "txt_samepaint", color = [4, 2], tiling = "none"}
 
 text_bab_sameface = {sprite = "txt_sameface", color = [2, 4], tiling = "none"}
 
-"text_bab_cann't" = {sprite = "txt_cann't", color = [2, 1], tiling = "none"}
+"text_bab_cann't" = {sprite = "txt_cann27t", color = [2, 1], tiling = "none"}
 
 text_bab_themself = {sprite = "txt_themself", color = [0, 3], tiling = "none"}
 
@@ -1761,7 +1761,7 @@ text_bab_gaem = {sprite = "txt_gaem", color = [3, 1], tiling = "none"}
 
 text_bab_be = {sprite = "txt_be", color = [0, 3], tiling = "none"}
 
-"text_bab_ben't" = {sprite = "txt_ben't", color = [0, 3], tiling = "none"}
+"text_bab_ben't" = {sprite = "txt_ben27t", color = [0, 3], tiling = "none"}
 
 text_bab_got = {sprite = "txt_got", color = [0, 3], tiling = "none"}
 
@@ -1797,10 +1797,10 @@ text_bab_rp = {sprite = "txt_rp", color = [3, 1], tiling = "none"}
 
 text_bab_wont = {sprite = "txt_wont", color = [2, 2], tiling = "none"}
 
-"text_bab_wontn't" = {sprite = "txt_wontn't", color = [2, 2], tiling = "none"}
+"text_bab_wontn't" = {sprite = "txt_wontn27t", color = [2, 2], tiling = "none"}
 
 text_bab_paint = {sprite = "txt_paint", color = [4, 2], tiling = "none"}
 
 text_bab_is = {sprite = "txt_is", color = [0, 3], tiling = "none"}
 
-"text_bab_isn't" = {sprite = "txt_isn't", color = [0, 3], tiling = "none"}
+"text_bab_isn't" = {sprite = "txt_isn27t", color = [0, 3], tiling = "none"}
