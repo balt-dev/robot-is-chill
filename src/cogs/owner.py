@@ -334,17 +334,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                                     default_palette.shape[1])
                 color_x, color_y = int(color_x), int(color_y)
             
-            sprite_name = (
-                name.replace("<", "lt")
-                    .replace(">", "gt")
-                    .replace(":", "colon")
-                    .replace("\"", "quot")
-                    .replace("/", "sol")
-                    .replace("\\", "bsol")
-                    .replace("|", "vert")
-                    .replace("?", "quest")
-                    .replace("*", "ast")
-            )
+            sprite_name = ""
+            for char in name:
+                if char.isalnum() or char == '_':
+                    sprite_name.push(char)
+                    continue
+                sprite_name.push(hex(ord(char))[2:])
 
             sprites: list[Image.Image] = []
             broken = False
