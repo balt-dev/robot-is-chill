@@ -188,8 +188,6 @@ class CommandErrorHandler(commands.Cog):
 
             elif isinstance(error, numpy.linalg.LinAlgError):
                 return await ctx.error("The given warp points are unsolvable.")
-            elif isinstance(error, sqlite3.OperationalError):
-                return await ctx.error(f"There was an error in your SQL.\n`{error}`")
             elif isinstance(error, requests.exceptions.ConnectionError):
                 return await ctx.error('A given link for the filterimage was invalid.')
             elif isinstance(error, errors.OverlayNotFound):
@@ -223,27 +221,18 @@ class CommandErrorHandler(commands.Cog):
                         error.__traceback__)).replace(
                     os.getcwd(),
                     os.path.curdir)
-            footer = None
-            if len(trace) > 4096:
-                footer = f'Message had to be shortened from {len(trace)} characters long'
-                trace = (trace[:2048] + '...' + trace[-2045 +
-                         len(f'{error} [[Jump]]({ctx.message.jump_url})\n``````'):])
+            if len(trace) > 1000:
+                trace = trace[:500] + "\n\n...\n\n" + trace[-500:] 
+            title = f'**Unhandled exception!**'
+            err_desc = str(error)
+            if len(err_desc) > 500:
+                err_desc = err_desc[:250] + "..." + err_desc[-250:]
             emb = discord.Embed(
-                title=f'**Error!** {type(error).__name__}',
-                description=(f"""{error} [[Jump]]({ctx.message.jump_url})
-{f"Server: {ctx.message.guild.name} ({ctx.message.guild.id})" if ctx.message.guild else 'Server: DMs'}
-User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.message.author.id})
-```{trace}```"""),
+                title=title,
+                description=(f"## {type(error).__name__}\n{err_desc}\n```\n{trace}\n```"),
                 color=15029051
             )
-            if footer:
-                emb.set_footer(text=footer)
             await self.logger.send(embed=emb)
-            if len(trace) > 1000:
-                trace = (trace[:500] + '...' + trace[-500 +
-                         len(f'{error} [[Jump]]({ctx.message.jump_url})\n``````'):])
-                emb.description = (
-                    f'{error} [[Jump]]({ctx.message.jump_url})\n```{trace}```')
             await ctx.error(msg='', embed=emb)
             print(
                 f'Ignoring exception in command {ctx.command}:',
@@ -253,14 +242,49 @@ User: @{ctx.message.author.name}#{ctx.message.author.discriminator} ({ctx.messag
                 error,
                 error.__traceback__,
                 file=sys.stderr)
-        except Exception as error:
-            await ctx.error('The error handler errored! Printing error to console...')
-            traceback.print_exception(
-                type(error),
-                error,
-                error.__traceback__,
-                file=sys.stderr)
-            return
+        except Exception as err:
+            try:
+                title = f'**Unhandled exception in fallback handler!!!**'
+                if len(title) > 32:
+                    title = title[:32]
+                if os.name == "nt":
+                    trace = '\n'.join(
+                        traceback.format_tb(
+                            err.__traceback__)).replace(
+                        os.getcwd(),
+                        os.path.curdir).replace(
+                        os.environ["USERPROFILE"],
+                        "")
+                else:
+                    trace = '\n'.join(
+                        traceback.format_tb(
+                            err.__traceback__)).replace(
+                        os.getcwd(),
+                        os.path.curdir)
+                if len(trace) > 1000:
+                    trace = trace[:500] + "\n\n...\n\n" + trace[-500:] 
+                emb = discord.Embed(
+                    title=title,
+                    description=(f"## {type(err).__name__}\n```\n{trace}\n```"),
+                    color=0xFF0000
+                )
+                await ctx.error(msg='', embed=emb)
+                print("--- ERROR HANDLER ERROR ---")
+                traceback.print_exception(
+                    type(error),
+                    error,
+                    error.__traceback__,
+                    file=sys.stderr)
+                print("--- ERROR HANDLER ERROR CRASH ---")
+                traceback.print_exception(
+                    type(err),
+                    err,
+                    err.__traceback__,
+                    file=sys.stderr)
+                print("-------------")
+                return
+            except:
+                await ctx.error(msg="Error handler fatally errored. Contact the bot owner as soon as possible.")
         finally:
             signal.alarm(0)
 

@@ -13,6 +13,8 @@ import requests
 import tldextract as tldextract
 from PIL import Image
 
+from .types import TilingMode
+
 from . import constants
 from .constants import DIRECTIONS
 
@@ -84,6 +86,8 @@ class Database:
 					text_type INTEGER NOT NULL DEFAULT 0,
 					text_direction INTEGER,
 					tags TEXT NOT NULL DEFAULT "",
+                    extra_frames TEXT,
+                    object_id TEXT,
 					UNIQUE(name, version)
 				);
 				'''
@@ -284,24 +288,38 @@ class TileData:
     source: str
     inactive_color: tuple[int, int]
     active_color: tuple[int, int]
-    tiling: int
+    tiling: TilingMode
     text_type: int
     text_direction: int | None
     tags: list[str]
+    extra_frames: list[int]
 
     @classmethod
     def from_row(cls, row: Row) -> TileData:
         """Create a tiledata object from a database row."""
+        tags: str | None = row["tags"]
+        if tags is not None:
+            tags = tags.strip()
+            if len(tags) == 0:
+                tags = None
+                
+        extra_frames: str | None = row["extra_frames"]
+        if extra_frames is not None:
+            extra_frames = extra_frames.strip()
+            if len(extra_frames) == 0:
+                extra_frames = None
+
         return TileData(
             row["name"],
             row["sprite"],
             row["source"],
             (row["inactive_color_x"], row["inactive_color_y"]),
             (row["active_color_x"], row["active_color_y"]),
-            row["tiling"],
+            TilingMode(row["tiling"]),
             row["text_type"],
             row["text_direction"],
-            row["tags"].split("\t")
+            tags.split("\t") if tags is not None else [],
+            [int(frame) for frame in (extra_frames).split("\t")] if extra_frames is not None else []
         )
 
 

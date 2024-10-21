@@ -4,17 +4,22 @@ import shutil
 from glob import glob
 from io import BytesIO
 import time
+import typing
 import zipfile
 import pathlib
 import re
 import json
 import tomlkit
 import urllib
+from pathlib import Path
 
 import requests
 import itertools
 import collections
+
+import tomlkit.exceptions
 from src import constants
+from src.types import TilingMode
 from typing import Any, Optional
 import os
 import numpy as np
@@ -138,7 +143,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         else:
             value = value[0]
         if attribute == 'tiling':
-            value = int(value)
+            value = TilingMode.parse(value)
         with open(f"data/custom/{pack_name}.toml", "r") as f:
             sprite_data = tomlkit.load(f)
         assert sprite_name in sprite_data, f"Sprite `{sprite_name}` not found!"
@@ -155,20 +160,18 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         return await ctx.reply(f'Done. Replaced the attribute `{attribute}` in sprite `{sprite_name}` with `{value}`.')
 
     @sprite.command()
-    async def add(self, ctx: Context, pack_name: str, sprite_name: str, color_x: int, color_y: int, tiling: str,
-                  *tags: str):  # int | str didn't wanna work for me
-        """Adds sprites to a specified sprite pack."""
-        try:
-            tiling = int(tiling)
-        except ValueError:
-            async with self.bot.db.conn.cursor() as cur:
-                result = await cur.execute('SELECT DISTINCT name FROM tiles WHERE name = (?)', sprite_name)
-                assert (await result.fetchone()) is None, "A sprite by that name already exists."
-                result = await cur.execute('SELECT DISTINCT tiling FROM tiles WHERE name = (?)', tiling)
-                try:
-                    tiling = (await result.fetchone())[0]
-                except BaseException:
-                    return await ctx.error(f'The specified tile doesn\'t exist.')
+    async def add(
+        self, ctx: Context, 
+        pack_name: str, sprite_name: str, color_x: int, color_y: int, 
+        tiling: typing.Literal["custom", "none", "directional", "tiling", "character", "animated_directional", "animated", "static_character", "diagonal_tiling"],
+        *tags: str
+    ):
+        """Adds a sprite to the specified source."""
+        tiling = TilingMode.parse(tiling)
+
+        async with self.bot.db.conn.cursor() as cur:
+            result = await cur.execute('SELECT DISTINCT name FROM tiles WHERE name = (?)', sprite_name)
+            assert (await result.fetchone()) is None, "A sprite by that name already exists."
         try:
             zip = zipfile.ZipFile(BytesIO(await ctx.message.attachments[0].read()))
         except IndexError:
@@ -198,7 +201,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         data = {
             "sprite": file_name,
             "color": [ color_x, color_y ],
-            "tiling": tiling
+            "tiling": str(tiling)
         }
         if len(tags):
             data['tags'] = tags
@@ -274,9 +277,6 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         data = {}
 
-        for file in glob("data/sprites/bab/*"):
-            os.remove(file)
-
         for directory, filenames in (  # i wish this could be a dict
                 ('objects', ("characters", "devs",
                                 "special", "thingify", "ui", "unsorted")),
@@ -295,13 +295,27 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         tiles.add(tomlkit.nl())
         
         last_update = time.perf_counter()
+
+        tilename_overrides = {
+            "txt_:)": "txt_yay",
+            "txt_:o": "txt_woah",
+            "txt_:(": "txt_aw"
+        }
+
         count = 0
         for name, tile in data.items():
+            name = tilename_overrides.get(name, name)
             if name.startswith("txt_"):
                 tilename = "text_bab_" + name[4:]
             else:
                 tilename = "bab_" + name
-            tilename = tilename.replace(":",  "colon").replace(";",  "semicolon").replace("/", "slash").replace(" ", "space")
+            
+            tilename = (
+                tilename
+                    .replace(">", "gt")
+                    .replace(":", "colon")
+                    .replace("&", "amp")
+            )
             multicolor = False
             if len(tile['sprite']) > 1:
                 color_x, color_y = 0, 3
@@ -321,10 +335,12 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                                     default_palette.shape[1])
                 color_x, color_y = int(color_x), int(color_y)
             
-            if len(tile['sprite']) > 1:
-                print(f"Bab tile {name} has more than one sprite")
-            
-            sprite_name = name.replace("/", "_").replace("'", "_").replace(" ", "_")
+            sprite_name = ""
+            for char in name:
+                if char.isalnum() or char == '_':
+                    sprite_name += char
+                    continue
+                sprite_name += hex(ord(char))[2:]
 
             sprites: list[Image.Image] = []
             broken = False
@@ -358,7 +374,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 sprite.save(f"data/sprites/bab/{sprite_name}_0_{i + 1}.png")
             
             table = tomlkit.inline_table()
-            table.update({"sprite": sprite_name, "color": [color_x, color_y], "tiling": -1})
+            table.update({"sprite": sprite_name, "color": [color_x, color_y], "tiling": str(TilingMode.NONE)})
             tiles.add(tomlkit.nl())
             tiles.add(tilename, table)
             
@@ -466,6 +482,132 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
     @commands.command()
     @commands.is_owner()
+    async def scrapevanilla(self, ctx: Context):
+        """Scrapes tile data from the vanilla worlds' .ld files."""
+        cached_exists = set()
+
+        async with self.bot.db.conn.cursor() as cur:
+            await cur.execute(
+                "DELETE FROM tiles WHERE source == 'baba' OR source == 'new_adv' OR source == 'museum'"
+            )
+
+        async def exists(tile: str):
+            nonlocal ctx, cached_exists
+            exists = tile in cached_exists or (await self.bot.db.tile(tile)) is not None
+            cached_exists.add(tile)
+            return exists
+
+        await ctx.reply("Scraping tile metadata...")
+        vanilla_worlds = ["baba", "new_adv", "museum"]
+        async with ctx.typing():
+            for world in vanilla_worlds:
+                print(f"Scraping from {world}...")
+                ld_files = (Path("data/levels") / world).glob("*.ld")
+                sprites = {}
+                for file in ld_files:
+                    with open(file, "r") as f:
+                        data = f.read().replace("\r\n", "\n")
+                    if (start := data.find("[tiles]")) == -1:
+                        continue
+                    data = data[start + len("[tiles]"):]
+                    end = data.find("\n[")
+                    if end != -1:
+                        data = data[:end]
+                    data = data.strip()
+                    # We now have a name=value file entry, essentially an ini
+                    entries = {}
+                    for line in data.splitlines():
+                        eq = line.find("=")
+                        if eq == -1: continue
+                        name, value = line[:eq], line[eq+1:]
+                        entries[name] = value
+                    if not len(entries):
+                        continue
+                    changed = [id for id in entries["changed"].split(",") if len(id)]
+                    tiles = {}
+                    for object_id in changed:
+                        try:
+                            sprite_name = entries[f"{object_id}_image"]
+                            if not await exists(sprite_name):
+                                data = {
+                                    name[len(object_id) + 1:]: value for name, value in entries.items()
+                                    if name.startswith(object_id) 
+                                        and name != sprite_name
+                                }
+                                data["object"] = object_id
+                                if len(data):
+                                    tiles[sprite_name] = data
+                        except KeyError:
+                            continue
+                    for name, data in tiles.items():
+                        if name not in sprites:
+                            sprites[name] = {}
+                        for key, value in data.items():
+                            if key not in sprites[name]:
+                                sprites[name][key] = []
+                            sprites[name][key].append(value)
+                # Consolidate the entries
+                world_data = {}
+                world_sprites = set()
+                for name, data in sprites.items():
+                    data = {key: collections.Counter(value).most_common(1)[0][0] for key, value in data.items()}
+                    if (a := data.get("activecolour")) is not None:
+                        data["colour"] = a
+                    if (c := data.get("colour")) is not None:
+                        data["colour"] = [int(c) for c in c.split(',')]
+                    async with self.bot.db.conn.cursor() as cur:
+                        res = await cur.execute(
+                            "SELECT active_color_x, active_color_y, tiling FROM tiles WHERE object_id == ?",
+                            data["object"]
+                        )
+                        row = await res.fetchone()
+                        orig_color_x, orig_color_y, orig_tiling = row
+                        data["colour"] = data.get("colour", [orig_color_x, orig_color_y])
+                        data["tiling"] = int(data.get("tiling", orig_tiling))
+                    data["tiling"] = str(TilingMode(data["tiling"]))
+                    final_data = {
+                        "color": data["colour"],
+                        "tiling": data["tiling"],
+                        "sprite": name
+                    }
+                    if "source" in data:
+                        final_data["source"] = data["source"]
+                    world_data[name] = final_data
+                    world_sprites.add(name)
+                
+                # Now that we have the metadata, we need to add the sprites
+                sprite_path = Path("data/sprites") / world
+                world_sprite_path = Path("data/levels") / world / "Sprites"
+                data_path = (Path("data/custom") / world).with_suffix(".toml")
+
+                if sprite_path.exists():
+                    shutil.rmtree(sprite_path)
+                
+                sprite_path.mkdir()
+                # Copy the sprites
+                for sprite in world_sprites:
+                    for file in world_sprite_path.glob(f"{sprite}_*.png"):
+                        shutil.copyfile(file, sprite_path / file.name)
+                
+                # Create the .toml
+                doc = tomlkit.document()
+                doc.add(tomlkit.comment("Generated by =scrapevanilla. Do not edit."))
+                doc.add(tomlkit.nl())
+                doc.add(tomlkit.nl())
+                for name, data in world_data.items():
+                    print(name, data)
+                    table = tomlkit.inline_table()
+                    table.update(data)
+                    doc.add(tomlkit.nl())
+                    doc.add(name, table)
+                with open(data_path, "w+") as f:
+                    tomlkit.dump(doc, f)
+        
+        await ctx.reply("Scraped vanilla worlds. Run =loadcustom.")
+        self.bot.loading = False
+
+    @commands.command()
+    @commands.is_owner()
     async def loaddata(self, ctx: Context, flag: bool = False):
         """Reloads tile data from the world map, editor, and custom files.
 
@@ -485,7 +627,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         return await ctx.send("Done. Loaded all tile data.")
 
     async def load_initial_tiles(self):
-        """Loads tile data from `data/values.lua` and `.ld` files."""
+        """Loads tile data from `data/values.lua` files."""
         # values.lua contains the data about which color (on the palette) is
         # associated with each tile.
         with open("data/values.lua", errors='ignore') as fp:
@@ -527,6 +669,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         initial_objects: dict[str, dict[str, Any]] = {}
         for match in re.finditer(object_pattern, spanned):
             obj, name, sprite, tiling, type, c_x, c_y, a_x, a_y = match.groups()
+            print(f"Loading {name}")
             if a_x is None or a_y is None:
                 inactive_x = active_x = int(c_x)
                 inactive_y = active_y = int(c_y)
@@ -536,6 +679,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 active_x = int(a_x)
                 active_y = int(a_y)
             tiling = int(tiling)
+            if tiling == TilingMode.TILING:
+                # Check for diagonal tiling
+                if pathlib.Path(f"data/sprites/vanilla/{sprite}_16_1.png").exists():
+                    tiling = +TilingMode.DIAGONAL_TILING
             type = int(type)
             initial_objects[obj] = dict(
                 name=name,
@@ -546,23 +693,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 inactive_color_y=inactive_y,
                 active_color_x=active_x,
                 active_color_y=active_y,
+                object_id=obj
             )
-
-        changed_objects: list[dict[str, Any]] = []
-
-        by_name = itertools.groupby(
-            sorted(changed_objects, key=lambda x: x["name"]),
-            key=lambda x: x["name"]
-        )
-        ready: list[dict[str, Any]] = []
-        for name, duplicates in by_name:
-            def freeze_dict(d: dict[str, Any]) -> tuple[tuple[str, Any], ...]:
-                """Hashable (frozen) dict."""
-                return tuple(d.items())
-
-            counts = collections.Counter(map(freeze_dict, duplicates))
-            most_common, _ = counts.most_common(1)[0]
-            ready.append(dict(most_common))
 
         await self.bot.db.conn.executemany(
             f'''
@@ -576,41 +708,13 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 active_color_x,
                 active_color_y,
                 tiling,
-                text_type
+                text_type,
+                object_id
             )
             VALUES (
                 :name,
                 :sprite,
-                {repr(constants.BABA_WORLD)},
-                0,
-                :inactive_color_x,
-                :inactive_color_y,
-                :active_color_x,
-                :active_color_y,
-                :tiling,
-                :text_type
-            )
-            ON CONFLICT(name, version)
-            DO UPDATE SET
-                sprite=excluded.sprite,
-                source={repr(constants.BABA_WORLD)},
-                inactive_color_x=excluded.inactive_color_x,
-                inactive_color_y=excluded.inactive_color_y,
-                active_color_x=excluded.active_color_x,
-                active_color_y=excluded.active_color_y,
-                tiling=excluded.tiling,
-                text_type=excluded.text_type;
-            ''',
-            initial_objects.values()
-        )
-
-        await self.bot.db.conn.executemany(
-            f'''
-            INSERT INTO tiles
-            VALUES (
-                :name,
-                :sprite,
-                {repr(constants.BABA_WORLD)},
+                'vanilla',
                 0,
                 :inactive_color_x,
                 :inactive_color_y,
@@ -618,12 +722,21 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :active_color_y,
                 :tiling,
                 :text_type,
-                NULL,
-                ""
+                :object_id
             )
-            ON CONFLICT(name, version) DO NOTHING;
+            ON CONFLICT(name, version)
+            DO UPDATE SET
+                sprite=excluded.sprite,
+                source='vanilla',
+                inactive_color_x=excluded.inactive_color_x,
+                inactive_color_y=excluded.inactive_color_y,
+                active_color_x=excluded.active_color_x,
+                active_color_y=excluded.active_color_y,
+                tiling=excluded.tiling,
+                object_id=excluded.object_id,
+                text_type=excluded.text_type;
             ''',
-            ready
+            initial_objects.values()
         )
 
     async def load_editor_tiles(self):
@@ -653,6 +766,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         objects = []
         for match in re.finditer(object_pattern, spanned):
             name, sprite, raw_tags, tiling, text_type, c_x, c_y, a_x, a_y = match.groups()
+            print(f"Loading {name}")
             sprite = name if sprite is None else sprite
             a_x = c_x if a_x is None else a_x
             a_y = c_y if a_y is None else a_y
@@ -661,6 +775,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             inactive_x = int(c_x)
             inactive_y = int(c_y)
             tiling = int(tiling)
+            if tiling == TilingMode.TILING:
+                # Check for diagonal tiling
+                if pathlib.Path(f"data/sprites/vanilla/{sprite}_16_1.png").exists():
+                    tiling = +TilingMode.DIAGONAL_TILING
             text_type = int(text_type)
             tag_list = []
             for tag in re.finditer(tag_pattern, raw_tags):
@@ -686,7 +804,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             VALUES (
                 :name,
                 :sprite,
-                {repr(constants.BABA_WORLD)},
+                'vanilla',
                 1,
                 :inactive_color_x,
                 :inactive_color_y,
@@ -695,12 +813,14 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 :tiling,
                 :text_type,
                 NULL,
-                :tags
+                :tags,
+                '',
+                NULL
             )
             ON CONFLICT(name, version)
             DO UPDATE SET
                 sprite=excluded.sprite,
-                source={repr(constants.BABA_WORLD)},
+                source='vanilla',
                 inactive_color_x=excluded.inactive_color_x,
                 inactive_color_y=excluded.inactive_color_y,
                 active_color_x=excluded.active_color_x,
@@ -717,6 +837,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
 
         def prepare(source: str, name: str, d: dict[str, Any]) -> dict[str, Any]:
             """From config format to db format."""
+            print(f"Loading {name}")
             db_dict = {key: value for key, value in d.items()}
             db_dict["name"] = name
             inactive = d.pop("color")
@@ -729,17 +850,22 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 db_dict["inactive_color_x"] = db_dict["active_color_x"] = inactive[0]
                 db_dict["inactive_color_y"] = db_dict["active_color_y"] = inactive[1]
             db_dict["source"] = d.get("source", source)
-            db_dict["tiling"] = d.get("tiling", -1)
+            db_dict["tiling"] = +TilingMode.parse(d.get("tiling", "none"))
             db_dict["text_type"] = d.get("text_type", 0)
             db_dict["text_direction"] = d.get("text_direction")
             db_dict["tags"] = "\t".join(d.get("tags", []))
+            db_dict["extra_frames"] = "\t".join(str(value) for value in d.get("extra_frames", []))
+            db_dict["object_id"] = d.get("object_id")
             return db_dict
 
         async with self.bot.db.conn.cursor() as cur:
             for path in pathlib.Path("data/custom").glob(f"{file}.toml"):
                 source = path.parts[-1].split(".")[0]
                 with open(path) as fp:
-                    objects = [prepare(source, name, obj) for name, obj in tomlkit.load(fp).items()]
+                    try:
+                        objects = [prepare(source, name, obj) for name, obj in tomlkit.load(fp).items()]
+                    except Exception as err:
+                        raise AssertionError(f"Failed to load `{path}`!\n```\n{err}\n```")
                 await cur.executemany(
                     '''
                     INSERT INTO tiles
@@ -755,7 +881,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         :tiling,
                         :text_type,
                         :text_direction,
-                        :tags
+                        :tags,
+                        :extra_frames,
+                        :object_id
                     )
                     ON CONFLICT(name, version)
                     DO UPDATE SET
@@ -768,14 +896,15 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         tiling=excluded.tiling,
                         text_type=excluded.text_type,
                         text_direction=excluded.text_direction,
-                        tags=excluded.tags;
+                        tags=excluded.tags,
+                        extra_frames=excluded.extra_frames,
+                        object_id=excluded.object_id;
                     ''',
                     objects
                 )
                 # this is a mega HACK, but I'm keeping it because the
                 # alternative is a headache
-                hacks = [
-                    x for x in objects if "baba_special" in x["tags"].split("\t")]
+                hacks = [x for x in objects if "baba_special" in x["tags"].split("\t")]
                 await cur.executemany(
                     '''
                     INSERT INTO tiles
@@ -791,7 +920,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         :tiling,
                         :text_type,
                         :text_direction,
-                        :tags
+                        :tags,
+                        :extra_frames,
+                        :object_id
                     )
                     ON CONFLICT(name, version)
                     DO UPDATE SET
@@ -804,7 +935,9 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                         tiling=excluded.tiling,
                         text_type=excluded.text_type,
                         text_direction=excluded.text_direction,
-                        tags=excluded.tags;
+                        tags=excluded.tags,
+                        extra_frames=excluded.extra_frames,
+                        object_id=excluded.object_id;
                     ''',
                     hacks
                 )
@@ -814,7 +947,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
     async def hidden(self, ctx: Context):
         """Lists all hidden commands."""
         cmds = "\n".join([cmd.name for cmd in self.bot.commands if cmd.hidden])
-        await ctx.send(f"All hidden commands:\n{cmds}")
+        await ctx.author.send(f"All hidden commands:\n{cmds}")
 
     @commands.command(aliases=['clear', 'cls'])
     @commands.is_owner()
@@ -888,7 +1021,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
             f'''
             SELECT * FROM tiles
             WHERE sprite LIKE "text\\___%" ESCAPE "\\"
-                AND source == {repr(constants.BABA_WORLD)}
+                AND (source == 'vanilla' OR source == 'baba' OR source == 'new_adv' OR source == 'museum')
                 AND text_direction IS NULL;
             '''
         )
@@ -898,7 +1031,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 try:
                     await self.load_letter(
                         data.sprite,
-                        data.text_type  # type: ignore
+                        data.text_type,  # type: ignore
+                        data.source
                     )
                 except FileNotFoundError:
                     pass
@@ -919,24 +1053,10 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         """Makes a directory for sprites to go in."""
         os.mkdir(f'data/sprites/{name}')
         with open(f'data/custom/{name}.toml', mode='x') as f:
-            f.write("""# ----------------------------------------------------------------------------
-# 
-# 
-#     Tile format:
-#         baba = { sprite = "baba", color = [ 0, 3 ], tiling = 2 } 
-#     Please do not use multiline tables, as it will cause merge conflicts with Git. 
-# 
-#     Note: If your tile has tiling type 1,
-#           you must add the "diagonal = true/false" attribute to the tile
-#           in order for it to pass CI.
-#           For example, "line" = { ..., diagonal = false }. 
-# 
-# 
-# ----------------------------------------------------------------------------            
-""")
+            f.write("# Please read CONTRIBUTING.md for guidance on how to properly edit this file.\n\n\n")
         await ctx.send(f"Made directory `{name}`.")
 
-    async def load_letter(self, word: str, tile_type: int):
+    async def load_letter(self, word: str, tile_type: int, source: str):
         """Scrapes letters from a sprite."""
         chars = word[5:]  # Strip "text_" prefix
 
@@ -957,7 +1077,7 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
         # frames
         for i, plate in enumerate(plates):
             # Get the alpha channel in 1-bit depth
-            alpha = Image.open(f"data/sprites/{constants.BABA_WORLD}/{word}_0_{i + 1}.png") \
+            alpha = Image.open(f"data/sprites/{source}/{word}_0_{i + 1}.png") \
                 .convert("RGBA") \
                 .getchannel("A") \
                 .convert("1")
@@ -1108,8 +1228,8 @@ class OwnerCog(commands.Cog, name="Admin", command_attrs=dict(hidden=True)):
                 shutil.copytree(src, dst, *args)
 
         message = await ctx.reply(f"Adding sprites...")
-        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "baba")
-        shutil.copytree(path / "Sprites", bot_path / "sprites" / "baba", dirs_exist_ok=True)
+        replace(path / "Worlds" / "baba" / "Sprites", bot_path / "sprites" / "vanilla")
+        shutil.copytree(path / "Sprites", bot_path / "sprites" / "vanilla", dirs_exist_ok=True)
         shutil.copytree(path / "Palettes", bot_path / "palettes", dirs_exist_ok=True)
         shutil.copy2(path / "merged.ttf", bot_path / "fonts" / "default.ttf")
         shutil.copy2(path / "Editor" / "editor_objectlist.lua", bot_path / "editor_objectlist.lua")

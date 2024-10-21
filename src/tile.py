@@ -6,6 +6,7 @@ from typing import Literal, Optional
 import re
 import numpy as np
 
+from src.types import TilingMode
 from . import errors, constants
 from .cogs.variants import parse_signature
 from .db import TileData
@@ -118,9 +119,6 @@ def handle_tiling(tile: Tile, grid, pos, tile_borders=False):
     adj_u = is_adjacent((w, x, y - 1, z), tile, grid, tile_borders)
     adj_l = is_adjacent((w, x - 1, y, z), tile, grid, tile_borders)
     adj_d = is_adjacent((w, x, y + 1, z), tile, grid, tile_borders)
-    fallback = constants.TILING_VARIANTS[get_bitfield(adj_r, adj_u, adj_l, adj_d, False, False, False, False)]
-    # Variant with diagonal tiles as well, not guaranteed to exist
-    # The renderer falls back to the simple variant if it doesn't
     adj_ru = adj_r and adj_u and is_adjacent(
         (w, x + 1, y - 1, z), tile, grid, tile_borders)
     adj_lu = adj_u and adj_l and is_adjacent(
@@ -129,20 +127,17 @@ def handle_tiling(tile: Tile, grid, pos, tile_borders=False):
         (w, x - 1, y + 1, z), tile, grid, tile_borders)
     adj_rd = adj_d and adj_r and is_adjacent(
         (w, x + 1, y + 1, z), tile, grid, tile_borders)
-    tile.frame = constants.TILING_VARIANTS.get(get_bitfield(adj_r, adj_u, adj_l, adj_d, adj_ru, adj_lu, adj_ld, adj_rd),
-                                               fallback)
-    tile.fallback_frame = fallback
+    tile.frame = constants.TILING_VARIANTS.get(get_bitfield(adj_r, adj_u, adj_l, adj_d, adj_ru, adj_lu, adj_ld, adj_rd))
 
 
 @dataclass
 class Tile:
     """A tile that's ready for processing."""
     name: str = "Undefined (if this is showing, something's gone horribly wrong)"
-    sprite: tuple[str, str] | np.ndarray = (constants.BABA_WORLD, "error")
-    tiling: int = constants.TILING_NONE
+    sprite: tuple[str, str] | np.ndarray = ('vanilla', "error")
+    tiling: TilingMode = TilingMode.NONE
     surrounding: int = 0b00000000  # RULDEQZC
     frame: int = 0
-    fallback_frame: int = 0
     wobble_frames: tuple[int] | None = None
     custom_color: bool = False
     color: tuple[int, int] = (0, 3)
@@ -165,7 +160,7 @@ class Tile:
     altered_frame: bool = False
 
     def __hash__(self):
-        return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame, self.fallback_frame,
+        return hash((self.name, self.sprite if type(self.sprite) is tuple else 0, self.frame,
                      self.empty, self.custom, self.color,
                      self.style, self.palette, self.overlay, self.hue,
                      self.gamma, self.saturation, self.filterimage,
@@ -180,37 +175,41 @@ class Tile:
         if tile.empty:
             return cls(name="<empty>")
         name = tile.name
+        metadata = None
         try:
             metadata = tile_data_cache[name]
             style = constants.TEXT_TYPES[metadata.text_type]
             value = cls(name=tile.name, sprite=(metadata.source, metadata.sprite), tiling=metadata.tiling,
                         color=metadata.active_color, variants=tile.variants, empty=False, style=style,
                         palette=tile.palette)
-            if metadata.tiling == constants.TILING_TILE:
+            if metadata.tiling == TilingMode.TILING or metadata.tiling == TilingMode.DIAGONAL_TILING:
                 handle_tiling(value, grid, position, tile_borders=tile_borders)
         except KeyError:
             if name[:5] == "text_":
-                value = cls(name=name, tiling=constants.TILING_NONE, variants=tile.variants, empty=False, custom=True,
+                value = cls(name=name, tiling=TilingMode.NONE, variants=tile.variants, empty=False, custom=True,
                             palette=tile.palette)
             elif name[:5] == "char_" and ctx is not None:  # allow external calling for potential future things?
                 seed = int(name[5:]) if re.fullmatch(r'-?\d+', name[5:]) else name[5:]
                 character = ctx.bot.generator.generate(seed=seed)
                 color = character[1]["color"]
-                value = cls(name=name, tiling=constants.TILING_CHAR, variants=tile.variants, empty=False, custom=True,
+                value = cls(name=name, tiling=TilingMode.CHARACTER, variants=tile.variants, empty=False, custom=True,
                             sprite=character[0], color=color, palette=tile.palette)
             elif name[:6] == "cchar_" and ctx is not None:  # allow external calling for potential future things? again?
                 customid = int(name[6:]) if re.fullmatch(r'-?\d+', name[6:]) else name[6:]
                 character = ctx.bot.generator.generate(customid=customid)
                 color = character[1]["color"]
-                value = cls(name=name, tiling=constants.TILING_CHAR, variants=tile.variants, empty=False, custom=True,
+                value = cls(name=name, tiling=TilingMode.CHARACTER, variants=tile.variants, empty=False, custom=True,
                             sprite=character[0], color=color, palette=tile.palette)
             else:
                 raise errors.TileNotFound(name)
         for variant in value.variants["tile"]:
             await variant.apply(value)
             if value.surrounding != 0:
+                if metadata.tiling == TilingMode.TILING:
+                    value.surrounding &= 0b11110000
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
-                value.fallback_frame = constants.TILING_VARIANTS[value.surrounding & 0b11110000]
+        assert metadata is None or value.frame in metadata.extra_frames or value.frame in metadata.tiling.expected(), \
+            f"The tile `{name}` has an unsupported frame index of `{value.frame}`! Check its tiling type and extra frames in `=search {name}`."
         value.variants["sprite"].append(
             possible_variants["0/3"](value.color, _default_color=True)
         )

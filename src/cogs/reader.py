@@ -93,8 +93,7 @@ class Grid:
             else:
                 paths = [f"data/sprites/{{}}/{sprite}_{variant}_{wobble}.png", f"data/sprites/{{}}/{sprite}_{variant}_1.png"]
 
-            for maybe_world in (world, constants.BABA_WORLD,
-                                constants.EXTENSIONS_WORLD):
+            for maybe_world in (world, *constants.VANILLA_WORLDS):
                 for path in paths:
                     try:
                         return cached_open(
@@ -106,7 +105,7 @@ class Grid:
             else:
                 warnings.warn(f"Using default sprite! {path.format(world)}")
                 return cached_open(
-                    f"data/sprites/{constants.BABA_WORLD}/default_{wobble}.png",
+                    f"data/sprites/vanilla/default_{wobble}.png",
                     cache=cache,
                     fn=Image.open).convert("RGBA")
 
@@ -429,7 +428,7 @@ class Reader(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="loadworld")
     @commands.is_owner()
-    async def load_world(self, ctx: Context, world: str, also_mobile: bool = True):
+    async def load_world(self, ctx: Context, world: str):
         """Loads and renders levels in a world and its mobile variant.
 
         Initializes the level tree unless otherwise specified. Cuts off

@@ -17,6 +17,8 @@ from discord.ext import commands, menus
 from discord.ext.menus.views import ViewMenuPages
 from PIL import Image, ImageFont, ImageDraw
 
+import src.types
+
 from . import flags
 from .. import constants
 from ..tile import Tile
@@ -40,10 +42,13 @@ class SearchPageSource(menus.ListPageSource):
         for (type, short), long in entries:
             if isinstance(long, TileData):
                 lines.append(
-                    f"({type}) {short} sprite: {long.sprite} source: {long.source}\n")
+                    f"({type}) {short}\n    sprite: {long.sprite} source: {long.source}\n")
                 lines.append(
-                    f"    color: {long.inactive_color}, active color: {long.active_color} tiling: {long.tiling}\n")
-                lines.append(f"    tags: {', '.join(long.tags)}")
+                    f"    color: {long.inactive_color} active color: {long.active_color}\n    tiling: {src.types.TilingMode(long.tiling)}")
+                if len(long.tags) > 0:
+                    lines.append(f"\n    tags: {', '.join(long.tags)}")
+                if len(long.extra_frames) > 0:
+                    lines.append(f"\n    extra_frames: {', '.join(str(n) for n in long.extra_frames)}")
             elif isinstance(long, LevelData):
                 lines.append(f"({type}) {short} {long.display()}")
             elif isinstance(long, CustomLevelData):
@@ -153,7 +158,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
         * `source`: The source of the sprite. This should be a sprite mod.
         * `modded`: Whether to only return modded tiles (either `true` or `false`).
         * `color`: The color of the sprite. This can be a color name (`red`) or a palette (`0/3`).
-        * `tiling`: The tiling type of the object. This must be one of `-1`, `0`, `1`, `2`, `3` or `4`.
+        * `tiling`: The tiling type of the object.
         * `tag`: A tile tag, e.g. `animal` or `common`.
 
         **Levels** can be filtered with the flags:
@@ -164,12 +169,6 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
 
         You can also filter by the result type:
         * `type`: What results to return. This can be `tile`, `level`, `palette`, `variant`, `world`, or `mod`.
-
-        **Example commands:**
-        `search baba`
-        `search text:false source:vanilla sta`
-        `search source:modded sort:color page:4`
-        `search text:true color:0,3 reverse:true`
         """
         # Pattern to match flags in the format (flag)=(value)
         flag_pattern = r"--([\d\w_/]+)=([\d\w\-_/]+)"
@@ -205,6 +204,9 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 else:
                     f_color_x = int(match.group(1))
                     f_color_y = int(match.group(2))
+            tiling = flags.get("tiling")
+            if tiling is not None:
+                tiling = +src.types.TilingMode.parse(tiling)
             rows = await self.bot.db.conn.fetchall(
                 f'''
                 SELECT * FROM tiles
@@ -220,8 +222,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 ) AND (
                     CASE :f_modded
                         WHEN NULL THEN 1
-                        WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
-                        WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
+                        WHEN "false" THEN (source == 'vanilla' OR source == 'baba' OR source == 'new_adv' OR source == 'museum')
+                        WHEN "true" THEN (source != 'vanilla' AND source != 'baba' AND source != 'new_adv' AND source != 'museum')
                         ELSE 1
                     END
                 ) AND (
@@ -248,7 +250,7 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                     f_modded=flags.get("modded"),
                     f_color_x=f_color_x,
                     f_color_y=f_color_y,
-                    f_tiling=flags.get("tiling"),
+                    f_tiling=tiling,
                     f_tag=flags.get("tag")
                 )
             )

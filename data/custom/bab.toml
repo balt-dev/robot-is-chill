@@ -3,1804 +3,1804 @@
 
 
 
-bab_bab = {sprite = "bab", color = [0, 3], tiling = -1}
+bab_bab = {sprite = "bab", color = [0, 3], tiling = "none"}
 
-text_bab_bab = {sprite = "txt_bab", color = [4, 1], tiling = -1}
+text_bab_bab = {sprite = "txt_bab", color = [4, 1], tiling = "none"}
 
-"text_bab_babn't" = {sprite = "txt_babn_t", color = [0, 3], tiling = -1}
+"text_bab_babn't" = {sprite = "txt_babn27t", color = [0, 3], tiling = "none"}
 
-bab_skul = {sprite = "skul", color = [2, 1], tiling = -1}
+bab_skul = {sprite = "skul", color = [2, 1], tiling = "none"}
 
-text_bab_skul = {sprite = "txt_skul", color = [2, 1], tiling = -1}
+text_bab_skul = {sprite = "txt_skul", color = [2, 1], tiling = "none"}
 
-bab_keek = {sprite = "keek", color = [2, 2], tiling = -1}
+bab_keek = {sprite = "keek", color = [2, 2], tiling = "none"}
 
-text_bab_keek = {sprite = "txt_keek", color = [2, 2], tiling = -1}
+text_bab_keek = {sprite = "txt_keek", color = [2, 2], tiling = "none"}
 
-bab_meem = {sprite = "meem", color = [3, 1], tiling = -1}
+bab_meem = {sprite = "meem", color = [3, 1], tiling = "none"}
 
-text_bab_meem = {sprite = "txt_meem", color = [3, 1], tiling = -1}
+text_bab_meem = {sprite = "txt_meem", color = [3, 1], tiling = "none"}
 
-bab_os = {sprite = "os", color = [0, 3], tiling = -1}
+bab_os = {sprite = "os", color = [0, 3], tiling = "none"}
 
-text_bab_os = {sprite = "txt_os", color = [4, 1], tiling = -1}
+text_bab_os = {sprite = "txt_os", color = [4, 1], tiling = "none"}
 
-bab_wog = {sprite = "wog", color = [2, 4], tiling = -1}
+bab_wog = {sprite = "wog", color = [2, 4], tiling = "none"}
 
-text_bab_wog = {sprite = "txt_wog", color = [2, 4], tiling = -1}
+text_bab_wog = {sprite = "txt_wog", color = [2, 4], tiling = "none"}
 
-bab_bup = {sprite = "bup", color = [0, 3], tiling = -1}
+bab_bup = {sprite = "bup", color = [0, 3], tiling = "none"}
 
-text_bab_bup = {sprite = "txt_bup", color = [6, 2], tiling = -1}
+text_bab_bup = {sprite = "txt_bup", color = [6, 2], tiling = "none"}
 
-bab_kirb = {sprite = "kirb", color = [4, 2], tiling = -1}
+bab_kirb = {sprite = "kirb", color = [4, 2], tiling = "none"}
 
-text_bab_kirb = {sprite = "txt_kirb", color = [4, 2], tiling = -1}
+text_bab_kirb = {sprite = "txt_kirb", color = [4, 2], tiling = "none"}
 
-bab_han = {sprite = "han", color = [0, 3], tiling = -1}
+bab_han = {sprite = "han", color = [0, 3], tiling = "none"}
 
-text_bab_han = {sprite = "txt_han", color = [0, 3], tiling = -1}
+text_bab_han = {sprite = "txt_han", color = [0, 3], tiling = "none"}
 
-bab_steev = {sprite = "steev", color = [2, 3], tiling = -1}
+bab_steev = {sprite = "steev", color = [2, 3], tiling = "none"}
 
-text_bab_steev = {sprite = "txt_steev", color = [2, 3], tiling = -1}
+text_bab_steev = {sprite = "txt_steev", color = [2, 3], tiling = "none"}
 
-bab_boy = {sprite = "boy", color = [0, 2], tiling = -1}
+bab_boy = {sprite = "boy", color = [0, 2], tiling = "none"}
 
-text_bab_boy = {sprite = "txt_boy", color = [0, 2], tiling = -1}
+text_bab_boy = {sprite = "txt_boy", color = [0, 2], tiling = "none"}
 
-bab_ghostfren = {sprite = "ghostfren", color = [4, 2], tiling = -1}
+bab_ghostfren = {sprite = "ghostfren", color = [4, 2], tiling = "none"}
 
-text_bab_ghostfren = {sprite = "txt_ghostfren", color = [4, 2], tiling = -1}
+text_bab_ghostfren = {sprite = "txt_ghostfren", color = [4, 2], tiling = "none"}
 
-bab_robobot = {sprite = "robobot", color = [6, 1], tiling = -1}
+bab_robobot = {sprite = "robobot", color = [6, 1], tiling = "none"}
 
-text_bab_robobot = {sprite = "txt_robobot", color = [6, 1], tiling = -1}
+text_bab_robobot = {sprite = "txt_robobot", color = [6, 1], tiling = "none"}
 
-bab_creb = {sprite = "creb", color = [2, 2], tiling = -1}
+bab_creb = {sprite = "creb", color = [2, 2], tiling = "none"}
 
-text_bab_creb = {sprite = "txt_creb", color = [2, 2], tiling = -1}
+text_bab_creb = {sprite = "txt_creb", color = [2, 2], tiling = "none"}
 
-bab_hors = {sprite = "hors", color = [6, 1], tiling = -1}
+bab_hors = {sprite = "hors", color = [6, 1], tiling = "none"}
 
-text_bab_hors = {sprite = "txt_hors", color = [6, 1], tiling = -1}
+text_bab_hors = {sprite = "txt_hors", color = [6, 1], tiling = "none"}
 
-bab_snoman = {sprite = "snoman", color = [0, 3], tiling = -1}
+bab_snoman = {sprite = "snoman", color = [0, 3], tiling = "none"}
 
-text_bab_snoman = {sprite = "txt_snoman", color = [0, 3], tiling = -1}
+text_bab_snoman = {sprite = "txt_snoman", color = [0, 3], tiling = "none"}
 
-bab_beeee = {sprite = "beeee", color = [0, 3], tiling = -1}
+bab_beeee = {sprite = "beeee", color = [0, 3], tiling = "none"}
 
-text_bab_beeee = {sprite = "txt_beeee", color = [2, 4], tiling = -1}
+text_bab_beeee = {sprite = "txt_beeee", color = [2, 4], tiling = "none"}
 
-bab_fishe = {sprite = "fishe", color = [0, 3], tiling = -1}
+bab_fishe = {sprite = "fishe", color = [0, 3], tiling = "none"}
 
-text_bab_fishe = {sprite = "txt_fishe", color = [0, 2], tiling = -1}
+text_bab_fishe = {sprite = "txt_fishe", color = [0, 2], tiling = "none"}
 
-bab_statoo = {sprite = "statoo", color = [0, 1], tiling = -1}
+bab_statoo = {sprite = "statoo", color = [0, 1], tiling = "none"}
 
-text_bab_statoo = {sprite = "txt_statoo", color = [0, 1], tiling = -1}
+text_bab_statoo = {sprite = "txt_statoo", color = [0, 1], tiling = "none"}
 
-bab_bunmy = {sprite = "bunmy", color = [0, 3], tiling = -1}
+bab_bunmy = {sprite = "bunmy", color = [0, 3], tiling = "none"}
 
-text_bab_bunmy = {sprite = "txt_bunmy", color = [0, 3], tiling = -1}
+text_bab_bunmy = {sprite = "txt_bunmy", color = [0, 3], tiling = "none"}
 
-bab_bog = {sprite = "bog", color = [6, 1], tiling = -1}
+bab_bog = {sprite = "bog", color = [6, 1], tiling = "none"}
 
-text_bab_bog = {sprite = "txt_bog", color = [6, 1], tiling = -1}
+text_bab_bog = {sprite = "txt_bog", color = [6, 1], tiling = "none"}
 
-bab_pingu = {sprite = "pingu", color = [1, 3], tiling = -1}
+bab_pingu = {sprite = "pingu", color = [1, 3], tiling = "none"}
 
-text_bab_pingu = {sprite = "txt_pingu", color = [1, 3], tiling = -1}
+text_bab_pingu = {sprite = "txt_pingu", color = [1, 3], tiling = "none"}
 
-bab_snek = {sprite = "snek", color = [5, 3], tiling = -1}
+bab_snek = {sprite = "snek", color = [5, 3], tiling = "none"}
 
-text_bab_snek = {sprite = "txt_snek", color = [5, 3], tiling = -1}
+text_bab_snek = {sprite = "txt_snek", color = [5, 3], tiling = "none"}
 
-bab_ripof = {sprite = "ripof", color = [1, 3], tiling = -1}
+bab_ripof = {sprite = "ripof", color = [1, 3], tiling = "none"}
 
-text_bab_ripof = {sprite = "txt_ripof", color = [1, 3], tiling = -1}
+text_bab_ripof = {sprite = "txt_ripof", color = [1, 3], tiling = "none"}
 
-bab_butflye = {sprite = "butflye", color = [1, 4], tiling = -1}
+bab_butflye = {sprite = "butflye", color = [1, 4], tiling = "none"}
 
-text_bab_butflye = {sprite = "txt_butflye", color = [1, 4], tiling = -1}
+text_bab_butflye = {sprite = "txt_butflye", color = [1, 4], tiling = "none"}
 
-bab_wurm = {sprite = "wurm", color = [3, 1], tiling = -1}
+bab_wurm = {sprite = "wurm", color = [3, 1], tiling = "none"}
 
-text_bab_wurm = {sprite = "txt_wurm", color = [3, 1], tiling = -1}
+text_bab_wurm = {sprite = "txt_wurm", color = [3, 1], tiling = "none"}
 
-bab_ratt = {sprite = "ratt", color = [0, 1], tiling = -1}
+bab_ratt = {sprite = "ratt", color = [0, 1], tiling = "none"}
 
-text_bab_ratt = {sprite = "txt_ratt", color = [0, 1], tiling = -1}
+text_bab_ratt = {sprite = "txt_ratt", color = [0, 1], tiling = "none"}
 
-bab_moo = {sprite = "moo", color = [0, 3], tiling = -1}
+bab_moo = {sprite = "moo", color = [0, 3], tiling = "none"}
 
-text_bab_moo = {sprite = "txt_moo", color = [0, 3], tiling = -1}
+text_bab_moo = {sprite = "txt_moo", color = [0, 3], tiling = "none"}
 
-bab_enbybog = {sprite = "enbybog", color = [2, 2], tiling = -1}
+bab_enbybog = {sprite = "enbybog", color = [2, 2], tiling = "none"}
 
-text_bab_enbybog = {sprite = "txt_enbybog", color = [2, 2], tiling = -1}
+text_bab_enbybog = {sprite = "txt_enbybog", color = [2, 2], tiling = "none"}
 
-bab_shrim = {sprite = "shrim", color = [2, 2], tiling = -1}
+bab_shrim = {sprite = "shrim", color = [2, 2], tiling = "none"}
 
-text_bab_shrim = {sprite = "txt_shrim", color = [2, 2], tiling = -1}
+text_bab_shrim = {sprite = "txt_shrim", color = [2, 2], tiling = "none"}
 
-bab_flamgo = {sprite = "flamgo", color = [4, 1], tiling = -1}
+bab_flamgo = {sprite = "flamgo", color = [4, 1], tiling = "none"}
 
-text_bab_flamgo = {sprite = "txt_flamgo", color = [4, 1], tiling = -1}
+text_bab_flamgo = {sprite = "txt_flamgo", color = [4, 1], tiling = "none"}
 
-bab_gul = {sprite = "gul", color = [0, 3], tiling = -1}
+bab_gul = {sprite = "gul", color = [0, 3], tiling = "none"}
 
-text_bab_gul = {sprite = "txt_gul", color = [0, 3], tiling = -1}
+text_bab_gul = {sprite = "txt_gul", color = [0, 3], tiling = "none"}
 
-bab_starrfishe = {sprite = "starrfishe", color = [4, 2], tiling = -1}
+bab_starrfishe = {sprite = "starrfishe", color = [4, 2], tiling = "none"}
 
-text_bab_starrfishe = {sprite = "txt_starrfishe", color = [4, 2], tiling = -1}
+text_bab_starrfishe = {sprite = "txt_starrfishe", color = [4, 2], tiling = "none"}
 
-bab_sneel = {sprite = "sneel", color = [4, 2], tiling = -1}
+bab_sneel = {sprite = "sneel", color = [4, 2], tiling = "none"}
 
-text_bab_sneel = {sprite = "txt_sneel", color = [4, 2], tiling = -1}
+text_bab_sneel = {sprite = "txt_sneel", color = [4, 2], tiling = "none"}
 
-bab_kapa = {sprite = "kapa", color = [5, 2], tiling = -1}
+bab_kapa = {sprite = "kapa", color = [5, 2], tiling = "none"}
 
-text_bab_kapa = {sprite = "txt_kapa", color = [5, 2], tiling = -1}
+text_bab_kapa = {sprite = "txt_kapa", color = [5, 2], tiling = "none"}
 
-bab_urei = {sprite = "urei", color = [0, 3], tiling = -1}
+bab_urei = {sprite = "urei", color = [0, 3], tiling = "none"}
 
-text_bab_urei = {sprite = "txt_urei", color = [0, 3], tiling = -1}
+text_bab_urei = {sprite = "txt_urei", color = [0, 3], tiling = "none"}
 
-bab_ryugon = {sprite = "ryugon", color = [5, 2], tiling = -1}
+bab_ryugon = {sprite = "ryugon", color = [5, 2], tiling = "none"}
 
-text_bab_ryugon = {sprite = "txt_ryugon", color = [5, 2], tiling = -1}
+text_bab_ryugon = {sprite = "txt_ryugon", color = [5, 2], tiling = "none"}
 
-bab_iy = {sprite = "iy", color = [0, 3], tiling = -1}
+bab_iy = {sprite = "iy", color = [0, 3], tiling = "none"}
 
-text_bab_iy = {sprite = "txt_iy", color = [0, 1], tiling = -1}
+text_bab_iy = {sprite = "txt_iy", color = [0, 1], tiling = "none"}
 
-bab_lisp = {sprite = "lisp", color = [2, 2], tiling = -1}
+bab_lisp = {sprite = "lisp", color = [2, 2], tiling = "none"}
 
-text_bab_lisp = {sprite = "txt_lisp", color = [2, 2], tiling = -1}
+text_bab_lisp = {sprite = "txt_lisp", color = [2, 2], tiling = "none"}
 
-bab_paw = {sprite = "paw", color = [0, 3], tiling = -1}
+bab_paw = {sprite = "paw", color = [0, 3], tiling = "none"}
 
-text_bab_paw = {sprite = "txt_paw", color = [0, 3], tiling = -1}
+text_bab_paw = {sprite = "txt_paw", color = [0, 3], tiling = "none"}
 
-bab_cavebab = {sprite = "cavebab", color = [3, 1], tiling = -1}
+bab_cavebab = {sprite = "cavebab", color = [3, 1], tiling = "none"}
 
-text_bab_cavebab = {sprite = "txt_cavebab", color = [3, 1], tiling = -1}
+text_bab_cavebab = {sprite = "txt_cavebab", color = [3, 1], tiling = "none"}
 
-bab_migri = {sprite = "migri", color = [4, 0], tiling = -1}
+bab_migri = {sprite = "migri", color = [4, 0], tiling = "none"}
 
-text_bab_migri = {sprite = "txt_migri", color = [4, 0], tiling = -1}
+text_bab_migri = {sprite = "txt_migri", color = [4, 0], tiling = "none"}
 
-bab_boooo = {sprite = "boooo", color = [0, 3], tiling = -1}
+bab_boooo = {sprite = "boooo", color = [0, 3], tiling = "none"}
 
-text_bab_boooo = {sprite = "txt_boooo", color = [4, 2], tiling = -1}
+text_bab_boooo = {sprite = "txt_boooo", color = [4, 2], tiling = "none"}
 
-bab_madi = {sprite = "madi", color = [0, 3], tiling = -1}
+bab_madi = {sprite = "madi", color = [0, 3], tiling = "none"}
 
-text_bab_madi = {sprite = "txt_madi", color = [2, 2], tiling = -1}
+text_bab_madi = {sprite = "txt_madi", color = [2, 2], tiling = "none"}
 
-bab_badi = {sprite = "badi", color = [0, 3], tiling = -1}
+bab_badi = {sprite = "badi", color = [0, 3], tiling = "none"}
 
-text_bab_badi = {sprite = "txt_badi", color = [3, 1], tiling = -1}
+text_bab_badi = {sprite = "txt_badi", color = [3, 1], tiling = "none"}
 
-bab_pidgin = {sprite = "pidgin", color = [0, 2], tiling = -1}
+bab_pidgin = {sprite = "pidgin", color = [0, 2], tiling = "none"}
 
-text_bab_pidgin = {sprite = "txt_pidgin", color = [0, 2], tiling = -1}
+text_bab_pidgin = {sprite = "txt_pidgin", color = [0, 2], tiling = "none"}
 
-bab_kva = {sprite = "kva", color = [5, 3], tiling = -1}
+bab_kva = {sprite = "kva", color = [5, 3], tiling = "none"}
 
-text_bab_kva = {sprite = "txt_kva", color = [5, 3], tiling = -1}
+text_bab_kva = {sprite = "txt_kva", color = [5, 3], tiling = "none"}
 
-bab_kat = {sprite = "kat", color = [0, 3], tiling = -1}
+bab_kat = {sprite = "kat", color = [0, 3], tiling = "none"}
 
-text_bab_kat = {sprite = "txt_kat", color = [4, 1], tiling = -1}
+text_bab_kat = {sprite = "txt_kat", color = [4, 1], tiling = "none"}
 
-bab_swan = {sprite = "swan", color = [0, 3], tiling = -1}
+bab_swan = {sprite = "swan", color = [0, 3], tiling = "none"}
 
-text_bab_swan = {sprite = "txt_swan", color = [1, 3], tiling = -1}
+text_bab_swan = {sprite = "txt_swan", color = [1, 3], tiling = "none"}
 
-bab_spoder = {sprite = "spoder", color = [3, 1], tiling = -1}
+bab_spoder = {sprite = "spoder", color = [3, 1], tiling = "none"}
 
-text_bab_spoder = {sprite = "txt_spoder", color = [3, 1], tiling = -1}
+text_bab_spoder = {sprite = "txt_spoder", color = [3, 1], tiling = "none"}
 
-bab_flof = {sprite = "flof", color = [0, 3], tiling = -1}
+bab_flof = {sprite = "flof", color = [0, 3], tiling = "none"}
 
-text_bab_flof = {sprite = "txt_flof", color = [4, 1], tiling = -1}
+text_bab_flof = {sprite = "txt_flof", color = [4, 1], tiling = "none"}
 
-bab_err = {sprite = "err", color = [0, 3], tiling = -1}
+bab_err = {sprite = "err", color = [0, 3], tiling = "none"}
 
-text_bab_err = {sprite = "txt_err", color = [0, 3], tiling = -1}
+text_bab_err = {sprite = "txt_err", color = [0, 3], tiling = "none"}
 
-bab_mimi = {sprite = "mimi", color = [2, 2], tiling = -1}
+bab_mimi = {sprite = "mimi", color = [2, 2], tiling = "none"}
 
-text_bab_mimi = {sprite = "txt_mimi", color = [2, 2], tiling = -1}
+text_bab_mimi = {sprite = "txt_mimi", color = [2, 2], tiling = "none"}
 
-bab_der = {sprite = "der", color = [6, 1], tiling = -1}
+bab_der = {sprite = "der", color = [6, 1], tiling = "none"}
 
-text_bab_der = {sprite = "txt_der", color = [6, 1], tiling = -1}
+text_bab_der = {sprite = "txt_der", color = [6, 1], tiling = "none"}
 
-bab_ginn = {sprite = "ginn", color = [6, 2], tiling = -1}
+bab_ginn = {sprite = "ginn", color = [6, 2], tiling = "none"}
 
-text_bab_ginn = {sprite = "txt_ginn", color = [6, 2], tiling = -1}
+text_bab_ginn = {sprite = "txt_ginn", color = [6, 2], tiling = "none"}
 
-bab_toby = {sprite = "toby", color = [0, 3], tiling = -1}
+bab_toby = {sprite = "toby", color = [0, 3], tiling = "none"}
 
-text_bab_toby = {sprite = "txt_toby", color = [0, 3], tiling = -1}
+text_bab_toby = {sprite = "txt_toby", color = [0, 3], tiling = "none"}
 
-bab_angle = {sprite = "angle", color = [0, 3], tiling = -1}
+bab_angle = {sprite = "angle", color = [0, 3], tiling = "none"}
 
-text_bab_angle = {sprite = "txt_angle", color = [0, 3], tiling = -1}
+text_bab_angle = {sprite = "txt_angle", color = [0, 3], tiling = "none"}
 
-bab_dvl = {sprite = "dvl", color = [2, 2], tiling = -1}
+bab_dvl = {sprite = "dvl", color = [2, 2], tiling = "none"}
 
-text_bab_dvl = {sprite = "txt_dvl", color = [2, 2], tiling = -1}
+text_bab_dvl = {sprite = "txt_dvl", color = [2, 2], tiling = "none"}
 
-bab_temmi = {sprite = "temmi", color = [0, 3], tiling = -1}
+bab_temmi = {sprite = "temmi", color = [0, 3], tiling = "none"}
 
-text_bab_temmi = {sprite = "txt_temmi", color = [0, 3], tiling = -1}
+text_bab_temmi = {sprite = "txt_temmi", color = [0, 3], tiling = "none"}
 
-bab_detox = {sprite = "detox", color = [2, 4], tiling = -1}
+bab_detox = {sprite = "detox", color = [2, 4], tiling = "none"}
 
-text_bab_detox = {sprite = "txt_detox", color = [3, 1], tiling = -1}
+text_bab_detox = {sprite = "txt_detox", color = [3, 1], tiling = "none"}
 
-bab_viruse = {sprite = "viruse", color = [2, 4], tiling = -1}
+bab_viruse = {sprite = "viruse", color = [2, 4], tiling = "none"}
 
-text_bab_viruse = {sprite = "txt_viruse", color = [2, 4], tiling = -1}
+text_bab_viruse = {sprite = "txt_viruse", color = [2, 4], tiling = "none"}
 
-bab_nyowo = {sprite = "nyowo", color = [0, 3], tiling = -1}
+bab_nyowo = {sprite = "nyowo", color = [0, 3], tiling = "none"}
 
-text_bab_nyowo = {sprite = "txt_nyowo", color = [2, 4], tiling = -1}
+text_bab_nyowo = {sprite = "txt_nyowo", color = [2, 4], tiling = "none"}
 
-bab_grimkid = {sprite = "grimkid", color = [0, 3], tiling = -1}
+bab_grimkid = {sprite = "grimkid", color = [0, 3], tiling = "none"}
 
-text_bab_grimkid = {sprite = "txt_grimkid", color = [2, 2], tiling = -1}
+text_bab_grimkid = {sprite = "txt_grimkid", color = [2, 2], tiling = "none"}
 
-bab_prime = {sprite = "prime", color = [2, 3], tiling = -1}
+bab_prime = {sprite = "prime", color = [2, 3], tiling = "none"}
 
-text_bab_prime = {sprite = "txt_prime", color = [2, 3], tiling = -1}
+text_bab_prime = {sprite = "txt_prime", color = [2, 3], tiling = "none"}
 
-bab_assh = {sprite = "assh", color = [0, 3], tiling = -1}
+bab_assh = {sprite = "assh", color = [0, 3], tiling = "none"}
 
-text_bab_assh = {sprite = "txt_assh", color = [0, 1], tiling = -1}
+text_bab_assh = {sprite = "txt_assh", color = [0, 1], tiling = "none"}
 
-bab_boogie = {sprite = "boogie", color = [1, 3], tiling = -1}
+bab_boogie = {sprite = "boogie", color = [1, 3], tiling = "none"}
 
-text_bab_boogie = {sprite = "txt_boogie", color = [1, 3], tiling = -1}
+text_bab_boogie = {sprite = "txt_boogie", color = [1, 3], tiling = "none"}
 
-bab_babby = {sprite = "babby", color = [0, 3], tiling = -1}
+bab_babby = {sprite = "babby", color = [0, 3], tiling = "none"}
 
-text_bab_babby = {sprite = "txt_babby", color = [4, 1], tiling = -1}
+text_bab_babby = {sprite = "txt_babby", color = [4, 1], tiling = "none"}
 
-bab_snom = {sprite = "snom", color = [0, 3], tiling = -1}
+bab_snom = {sprite = "snom", color = [0, 3], tiling = "none"}
 
-text_bab_snom = {sprite = "txt_snom", color = [0, 3], tiling = -1}
+text_bab_snom = {sprite = "txt_snom", color = [0, 3], tiling = "none"}
 
-bab_baba = {sprite = "baba", color = [0, 3], tiling = -1}
+bab_baba = {sprite = "baba", color = [0, 3], tiling = "none"}
 
-text_bab_baba = {sprite = "txt_baba", color = [4, 1], tiling = -1}
+text_bab_baba = {sprite = "txt_baba", color = [4, 1], tiling = "none"}
 
-bab_bad = {sprite = "bad", color = [0, 3], tiling = -1}
+bab_bad = {sprite = "bad", color = [0, 3], tiling = "none"}
 
-text_bab_bad = {sprite = "txt_bad", color = [1, 4], tiling = -1}
+text_bab_bad = {sprite = "txt_bad", color = [1, 4], tiling = "none"}
 
-bab_niko = {sprite = "niko", color = [0, 3], tiling = -1}
+bab_niko = {sprite = "niko", color = [0, 3], tiling = "none"}
 
-text_bab_niko = {sprite = "txt_niko", color = [0, 3], tiling = -1}
+text_bab_niko = {sprite = "txt_niko", color = [0, 3], tiling = "none"}
 
-"bab_humuhumunukunukuapua'a" = {sprite = "humuhumunukunukuapua_a", color = [0, 3], tiling = -1}
+"bab_humuhumunukunukuapua'a" = {sprite = "humuhumunukunukuapua27a", color = [0, 3], tiling = "none"}
 
-"text_bab_humuhumunukunukuapua'a" = {sprite = "txt_humuhumunukunukuapua_a", color = [2, 3], tiling = -1}
+"text_bab_humuhumunukunukuapua'a" = {sprite = "txt_humuhumunukunukuapua27a", color = [2, 3], tiling = "none"}
 
-bab_miku = {sprite = "miku", color = [0, 3], tiling = -1}
+bab_miku = {sprite = "miku", color = [0, 3], tiling = "none"}
 
-text_bab_miku = {sprite = "txt_miku", color = [1, 4], tiling = -1}
+text_bab_miku = {sprite = "txt_miku", color = [1, 4], tiling = "none"}
 
-bab_slogkat = {sprite = "slogkat", color = [0, 3], tiling = -1}
+bab_slogkat = {sprite = "slogkat", color = [0, 3], tiling = "none"}
 
-text_bab_slogkat = {sprite = "txt_slogkat", color = [4, 1], tiling = -1}
+text_bab_slogkat = {sprite = "txt_slogkat", color = [4, 1], tiling = "none"}
 
-"bab_b..er" = {sprite = "b..er", color = [6, 1], tiling = -1}
+"bab_b..er" = {sprite = "b2e2eer", color = [6, 1], tiling = "none"}
 
-"text_bab_b..er" = {sprite = "txt_b..er", color = [6, 1], tiling = -1}
+"text_bab_b..er" = {sprite = "txt_b2e2eer", color = [6, 1], tiling = "none"}
 
-bab_slog = {sprite = "slog", color = [3, 1], tiling = -1}
+bab_slog = {sprite = "slog", color = [3, 1], tiling = "none"}
 
-text_bab_slog = {sprite = "txt_slog", color = [3, 0], tiling = -1}
+text_bab_slog = {sprite = "txt_slog", color = [3, 0], tiling = "none"}
 
-bab_scorpino = {sprite = "scorpino", color = [1, 3], tiling = -1}
+bab_scorpino = {sprite = "scorpino", color = [1, 3], tiling = "none"}
 
-text_bab_scorpino = {sprite = "txt_scorpino", color = [1, 4], tiling = -1}
+text_bab_scorpino = {sprite = "txt_scorpino", color = [1, 4], tiling = "none"}
 
-bab_jij = {sprite = "jij", color = [6, 2], tiling = -1}
+bab_jij = {sprite = "jij", color = [6, 2], tiling = "none"}
 
-text_bab_jij = {sprite = "txt_jij", color = [6, 2], tiling = -1}
+text_bab_jij = {sprite = "txt_jij", color = [6, 2], tiling = "none"}
 
-bab_fof = {sprite = "fof", color = [5, 3], tiling = -1}
+bab_fof = {sprite = "fof", color = [5, 3], tiling = "none"}
 
-text_bab_fof = {sprite = "txt_fof", color = [5, 3], tiling = -1}
+text_bab_fof = {sprite = "txt_fof", color = [5, 3], tiling = "none"}
 
-bab_ballt = {sprite = "ballt", color = [0, 1], tiling = -1}
+bab_ballt = {sprite = "ballt", color = [0, 1], tiling = "none"}
 
-text_bab_ballt = {sprite = "txt_ballt", color = [0, 1], tiling = -1}
+text_bab_ballt = {sprite = "txt_ballt", color = [0, 1], tiling = "none"}
 
-bab_she = {sprite = "she", color = [0, 3], tiling = -1}
+bab_she = {sprite = "she", color = [0, 3], tiling = "none"}
 
-text_bab_she = {sprite = "txt_she", color = [1, 4], tiling = -1}
+text_bab_she = {sprite = "txt_she", color = [1, 4], tiling = "none"}
 
-bab_oat = {sprite = "oat", color = [2, 4], tiling = -1}
+bab_oat = {sprite = "oat", color = [2, 4], tiling = "none"}
 
-text_bab_oat = {sprite = "txt_oat", color = [2, 4], tiling = -1}
+text_bab_oat = {sprite = "txt_oat", color = [2, 4], tiling = "none"}
 
-bab_pata = {sprite = "pata", color = [3, 1], tiling = -1}
+bab_pata = {sprite = "pata", color = [3, 1], tiling = "none"}
 
-text_bab_pata = {sprite = "txt_pata", color = [3, 1], tiling = -1}
+text_bab_pata = {sprite = "txt_pata", color = [3, 1], tiling = "none"}
 
-bab_vite = {sprite = "vite", color = [2, 4], tiling = -1}
+bab_vite = {sprite = "vite", color = [2, 4], tiling = "none"}
 
-text_bab_vite = {sprite = "txt_vite", color = [2, 4], tiling = -1}
+text_bab_vite = {sprite = "txt_vite", color = [2, 4], tiling = "none"}
 
-bab_lila = {sprite = "lila", color = [4, 2], tiling = -1}
+bab_lila = {sprite = "lila", color = [4, 2], tiling = "none"}
 
-text_bab_lila = {sprite = "txt_lila", color = [4, 2], tiling = -1}
+text_bab_lila = {sprite = "txt_lila", color = [4, 2], tiling = "none"}
 
-bab_zsoob = {sprite = "zsoob", color = [4, 1], tiling = -1}
+bab_zsoob = {sprite = "zsoob", color = [4, 1], tiling = "none"}
 
-text_bab_zsoob = {sprite = "txt_zsoob", color = [4, 1], tiling = -1}
+text_bab_zsoob = {sprite = "txt_zsoob", color = [4, 1], tiling = "none"}
 
-bab_jill = {sprite = "jill", color = [1, 3], tiling = -1}
+bab_jill = {sprite = "jill", color = [1, 3], tiling = "none"}
 
-text_bab_jill = {sprite = "txt_jill", color = [1, 3], tiling = -1}
+text_bab_jill = {sprite = "txt_jill", color = [1, 3], tiling = "none"}
 
-bab_slab = {sprite = "slab", color = [1, 4], tiling = -1}
+bab_slab = {sprite = "slab", color = [1, 4], tiling = "none"}
 
-text_bab_slab = {sprite = "txt_slab", color = [1, 4], tiling = -1}
+text_bab_slab = {sprite = "txt_slab", color = [1, 4], tiling = "none"}
 
-bab_butcher = {sprite = "butcher", color = [1, 2], tiling = -1}
+bab_butcher = {sprite = "butcher", color = [1, 2], tiling = "none"}
 
-text_bab_butcher = {sprite = "txt_butcher", color = [1, 2], tiling = -1}
+text_bab_butcher = {sprite = "txt_butcher", color = [1, 2], tiling = "none"}
 
-bab_notnat = {sprite = "notnat", color = [1, 4], tiling = -1}
+bab_notnat = {sprite = "notnat", color = [1, 4], tiling = "none"}
 
-text_bab_notnat = {sprite = "txt_notnat", color = [1, 4], tiling = -1}
+text_bab_notnat = {sprite = "txt_notnat", color = [1, 4], tiling = "none"}
 
-bab_ally = {sprite = "ally", color = [0, 3], tiling = -1}
+bab_ally = {sprite = "ally", color = [0, 3], tiling = "none"}
 
-text_bab_ally = {sprite = "txt_ally", color = [4, 2], tiling = -1}
+text_bab_ally = {sprite = "txt_ally", color = [4, 2], tiling = "none"}
 
-bab_pitta = {sprite = "pitta", color = [0, 3], tiling = -1}
+bab_pitta = {sprite = "pitta", color = [0, 3], tiling = "none"}
 
-text_bab_pitta = {sprite = "txt_pitta", color = [1, 3], tiling = -1}
+text_bab_pitta = {sprite = "txt_pitta", color = [1, 3], tiling = "none"}
 
-text_bab_mous = {sprite = "txt_mous", color = [3, 1], tiling = -1}
+text_bab_mous = {sprite = "txt_mous", color = [3, 1], tiling = "none"}
 
-text_bab_no1 = {sprite = "txt_no1", color = [0, 3], tiling = -1}
+text_bab_no1 = {sprite = "txt_no1", color = [0, 3], tiling = "none"}
 
-bab_no1 = {sprite = "no1", color = [0, 4], tiling = -1}
+bab_no1 = {sprite = "no1", color = [0, 4], tiling = "none"}
 
-text_bab_lvl = {sprite = "txt_lvl", color = [4, 1], tiling = -1}
+text_bab_lvl = {sprite = "txt_lvl", color = [4, 1], tiling = "none"}
 
-bab_lvl = {sprite = "lvl", color = [0, 3], tiling = -1}
+bab_lvl = {sprite = "lvl", color = [0, 3], tiling = "none"}
 
-bab_bordr = {sprite = "bordr", color = [1, 0], tiling = -1}
+bab_bordr = {sprite = "bordr", color = [1, 0], tiling = "none"}
 
-text_bab_bordr = {sprite = "txt_bordr", color = [2, 0], tiling = -1}
+text_bab_bordr = {sprite = "txt_bordr", color = [2, 0], tiling = "none"}
 
-bab_this = {sprite = "this", color = [0, 3], tiling = -1}
+bab_this = {sprite = "this", color = [0, 3], tiling = "none"}
 
-bab_camra = {sprite = "camra", color = [0, 1], tiling = -1}
+bab_camra = {sprite = "camra", color = [0, 1], tiling = "none"}
 
-text_bab_camra = {sprite = "txt_camra", color = [0, 1], tiling = -1}
+text_bab_camra = {sprite = "txt_camra", color = [0, 1], tiling = "none"}
 
-bab_sans = {sprite = "sans", color = [0, 3], tiling = -1}
+bab_sans = {sprite = "sans", color = [0, 3], tiling = "none"}
 
-bab_ditto = {sprite = "ditto", color = [3, 1], tiling = -1}
+bab_ditto = {sprite = "ditto", color = [3, 1], tiling = "none"}
 
-bab_copkat = {sprite = "copkat", color = [0, 3], tiling = -1}
+bab_copkat = {sprite = "copkat", color = [0, 3], tiling = "none"}
 
-bab_zawarudo = {sprite = "zawarudo", color = [2, 4], tiling = -1}
+bab_zawarudo = {sprite = "zawarudo", color = [2, 4], tiling = "none"}
 
-"bab_&" = {sprite = "&", color = [0, 3], tiling = -1}
+bab_amp = {sprite = "26", color = [0, 3], tiling = "none"}
 
-"bab_&n't" = {sprite = "&n_t", color = [0, 3], tiling = -1}
+"bab_ampn't" = {sprite = "26n27t", color = [0, 3], tiling = "none"}
 
-bab_therealqt = {sprite = "therealqt", color = [4, 2], tiling = -1}
+bab_therealqt = {sprite = "therealqt", color = [4, 2], tiling = "none"}
 
-bab_ui_1 = {sprite = "ui_1", color = [0, 3], tiling = -1}
+bab_ui_1 = {sprite = "ui_1", color = [0, 3], tiling = "none"}
 
-bab_ui_2 = {sprite = "ui_2", color = [0, 3], tiling = -1}
+bab_ui_2 = {sprite = "ui_2", color = [0, 3], tiling = "none"}
 
-bab_ui_3 = {sprite = "ui_3", color = [0, 3], tiling = -1}
+bab_ui_3 = {sprite = "ui_3", color = [0, 3], tiling = "none"}
 
-bab_ui_4 = {sprite = "ui_4", color = [0, 3], tiling = -1}
+bab_ui_4 = {sprite = "ui_4", color = [0, 3], tiling = "none"}
 
-bab_ui_6 = {sprite = "ui_6", color = [0, 3], tiling = -1}
+bab_ui_6 = {sprite = "ui_6", color = [0, 3], tiling = "none"}
 
-bab_ui_7 = {sprite = "ui_7", color = [0, 3], tiling = -1}
+bab_ui_7 = {sprite = "ui_7", color = [0, 3], tiling = "none"}
 
-bab_ui_8 = {sprite = "ui_8", color = [0, 3], tiling = -1}
+bab_ui_8 = {sprite = "ui_8", color = [0, 3], tiling = "none"}
 
-bab_ui_9 = {sprite = "ui_9", color = [0, 3], tiling = -1}
+bab_ui_9 = {sprite = "ui_9", color = [0, 3], tiling = "none"}
 
-bab_ui_w = {sprite = "ui_w", color = [0, 3], tiling = -1}
+bab_ui_w = {sprite = "ui_w", color = [0, 3], tiling = "none"}
 
-bab_ui_a = {sprite = "ui_a", color = [0, 3], tiling = -1}
+bab_ui_a = {sprite = "ui_a", color = [0, 3], tiling = "none"}
 
-bab_ui_s = {sprite = "ui_s", color = [0, 3], tiling = -1}
+bab_ui_s = {sprite = "ui_s", color = [0, 3], tiling = "none"}
 
-bab_ui_d = {sprite = "ui_d", color = [0, 3], tiling = -1}
+bab_ui_d = {sprite = "ui_d", color = [0, 3], tiling = "none"}
 
-bab_ui_arrow = {sprite = "ui_arrow", color = [0, 3], tiling = -1}
+bab_ui_arrow = {sprite = "ui_arrow", color = [0, 3], tiling = "none"}
 
-bab_ui_i = {sprite = "ui_i", color = [0, 3], tiling = -1}
+bab_ui_i = {sprite = "ui_i", color = [0, 3], tiling = "none"}
 
-bab_ui_j = {sprite = "ui_j", color = [0, 3], tiling = -1}
+bab_ui_j = {sprite = "ui_j", color = [0, 3], tiling = "none"}
 
-bab_ui_k = {sprite = "ui_k", color = [0, 3], tiling = -1}
+bab_ui_k = {sprite = "ui_k", color = [0, 3], tiling = "none"}
 
-bab_ui_l = {sprite = "ui_l", color = [0, 3], tiling = -1}
+bab_ui_l = {sprite = "ui_l", color = [0, 3], tiling = "none"}
 
-bab_ui_e = {sprite = "ui_e", color = [0, 3], tiling = -1}
+bab_ui_e = {sprite = "ui_e", color = [0, 3], tiling = "none"}
 
-bab_ui_walk = {sprite = "ui_walk", color = [0, 3], tiling = -1}
+bab_ui_walk = {sprite = "ui_walk", color = [0, 3], tiling = "none"}
 
-bab_ui_activat = {sprite = "ui_activat", color = [0, 3], tiling = -1}
+bab_ui_activat = {sprite = "ui_activat", color = [0, 3], tiling = "none"}
 
-bab_ui_leftclick = {sprite = "ui_leftclick", color = [0, 3], tiling = -1}
+bab_ui_leftclick = {sprite = "ui_leftclick", color = [0, 3], tiling = "none"}
 
-bab_ui_rightclick = {sprite = "ui_rightclick", color = [0, 3], tiling = -1}
+bab_ui_rightclick = {sprite = "ui_rightclick", color = [0, 3], tiling = "none"}
 
-bab_ui_clik = {sprite = "ui_clik", color = [0, 3], tiling = -1}
+bab_ui_clik = {sprite = "ui_clik", color = [0, 3], tiling = "none"}
 
-bab_ui_5 = {sprite = "ui_5", color = [0, 3], tiling = -1}
+bab_ui_5 = {sprite = "ui_5", color = [0, 3], tiling = "none"}
 
-bab_ui_space = {sprite = "ui_space", color = [0, 3], tiling = -1}
+bab_ui_space = {sprite = "ui_space", color = [0, 3], tiling = "none"}
 
-bab_ui_z = {sprite = "ui_z", color = [0, 3], tiling = -1}
+bab_ui_z = {sprite = "ui_z", color = [0, 3], tiling = "none"}
 
-bab_ui_r = {sprite = "ui_r", color = [0, 3], tiling = -1}
+bab_ui_r = {sprite = "ui_r", color = [0, 3], tiling = "none"}
 
-bab_ui_reset = {sprite = "ui_reset", color = [0, 3], tiling = -1}
+bab_ui_reset = {sprite = "ui_reset", color = [0, 3], tiling = "none"}
 
-bab_ui_undo = {sprite = "ui_undo", color = [0, 3], tiling = -1}
+bab_ui_undo = {sprite = "ui_undo", color = [0, 3], tiling = "none"}
 
-bab_ui_wait = {sprite = "ui_wait", color = [0, 3], tiling = -1}
+bab_ui_wait = {sprite = "ui_wait", color = [0, 3], tiling = "none"}
 
-bab_ui_0 = {sprite = "ui_0", color = [0, 3], tiling = -1}
+bab_ui_0 = {sprite = "ui_0", color = [0, 3], tiling = "none"}
 
-bab_ui_box = {sprite = "ui_box", color = [0, 3], tiling = -1}
+bab_ui_box = {sprite = "ui_box", color = [0, 3], tiling = "none"}
 
-bab_ui_q = {sprite = "ui_q", color = [0, 3], tiling = -1}
+bab_ui_q = {sprite = "ui_q", color = [0, 3], tiling = "none"}
 
-bab_ui_t = {sprite = "ui_t", color = [0, 3], tiling = -1}
+bab_ui_t = {sprite = "ui_t", color = [0, 3], tiling = "none"}
 
-bab_ui_y = {sprite = "ui_y", color = [0, 3], tiling = -1}
+bab_ui_y = {sprite = "ui_y", color = [0, 3], tiling = "none"}
 
-bab_ui_u = {sprite = "ui_u", color = [0, 3], tiling = -1}
+bab_ui_u = {sprite = "ui_u", color = [0, 3], tiling = "none"}
 
-bab_ui_o = {sprite = "ui_o", color = [0, 3], tiling = -1}
+bab_ui_o = {sprite = "ui_o", color = [0, 3], tiling = "none"}
 
-bab_ui_p = {sprite = "ui_p", color = [0, 3], tiling = -1}
+bab_ui_p = {sprite = "ui_p", color = [0, 3], tiling = "none"}
 
-bab_ui_f = {sprite = "ui_f", color = [0, 3], tiling = -1}
+bab_ui_f = {sprite = "ui_f", color = [0, 3], tiling = "none"}
 
-bab_ui_g = {sprite = "ui_g", color = [0, 3], tiling = -1}
+bab_ui_g = {sprite = "ui_g", color = [0, 3], tiling = "none"}
 
-bab_ui_h = {sprite = "ui_h", color = [0, 3], tiling = -1}
+bab_ui_h = {sprite = "ui_h", color = [0, 3], tiling = "none"}
 
-bab_ui_semicolon = {sprite = "ui_;", color = [0, 3], tiling = -1}
+"bab_ui_;" = {sprite = "ui_3b", color = [0, 3], tiling = "none"}
 
-"bab_ui_'" = {sprite = "ui__", color = [0, 3], tiling = -1}
+"bab_ui_'" = {sprite = "ui_27", color = [0, 3], tiling = "none"}
 
-bab_ui_return = {sprite = "ui_return", color = [0, 3], tiling = -1}
+bab_ui_return = {sprite = "ui_return", color = [0, 3], tiling = "none"}
 
-bab_ui_x = {sprite = "ui_x", color = [0, 3], tiling = -1}
+bab_ui_x = {sprite = "ui_x", color = [0, 3], tiling = "none"}
 
-bab_ui_c = {sprite = "ui_c", color = [0, 3], tiling = -1}
+bab_ui_c = {sprite = "ui_c", color = [0, 3], tiling = "none"}
 
-bab_ui_v = {sprite = "ui_v", color = [0, 3], tiling = -1}
+bab_ui_v = {sprite = "ui_v", color = [0, 3], tiling = "none"}
 
-bab_ui_b = {sprite = "ui_b", color = [0, 3], tiling = -1}
+bab_ui_b = {sprite = "ui_b", color = [0, 3], tiling = "none"}
 
-bab_ui_n = {sprite = "ui_n", color = [0, 3], tiling = -1}
+bab_ui_n = {sprite = "ui_n", color = [0, 3], tiling = "none"}
 
-bab_ui_m = {sprite = "ui_m", color = [0, 3], tiling = -1}
+bab_ui_m = {sprite = "ui_m", color = [0, 3], tiling = "none"}
 
-"bab_ui_," = {sprite = "ui_,", color = [0, 3], tiling = -1}
+"bab_ui_," = {sprite = "ui_2c", color = [0, 3], tiling = "none"}
 
-"bab_ui_." = {sprite = "ui_.", color = [0, 3], tiling = -1}
+"bab_ui_." = {sprite = "ui_2e", color = [0, 3], tiling = "none"}
 
-bab_ui_slash = {sprite = "ui__", color = [0, 3], tiling = -1}
+"bab_ui_/" = {sprite = "ui_2f", color = [0, 3], tiling = "none"}
 
-bab_ui_- = {sprite = "ui_-", color = [0, 3], tiling = -1}
+bab_ui_- = {sprite = "ui_2d", color = [0, 3], tiling = "none"}
 
-"bab_ui_=" = {sprite = "ui_=", color = [0, 3], tiling = -1}
+"bab_ui_=" = {sprite = "ui_3d", color = [0, 3], tiling = "none"}
 
-"bab_ui_grave" = {sprite = "ui_`", color = [0, 3], tiling = -1}
+"bab_ui_`" = {sprite = "ui_60", color = [0, 3], tiling = "none"}
 
-bab_ui_ctrl = {sprite = "ui_ctrl", color = [0, 3], tiling = -1}
+bab_ui_ctrl = {sprite = "ui_ctrl", color = [0, 3], tiling = "none"}
 
-bab_ui_alt = {sprite = "ui_alt", color = [0, 3], tiling = -1}
+bab_ui_alt = {sprite = "ui_alt", color = [0, 3], tiling = "none"}
 
-bab_ui_shift = {sprite = "ui_shift", color = [0, 3], tiling = -1}
+bab_ui_shift = {sprite = "ui_shift", color = [0, 3], tiling = "none"}
 
-bab_ui_del = {sprite = "ui_del", color = [0, 3], tiling = -1}
+bab_ui_del = {sprite = "ui_del", color = [0, 3], tiling = "none"}
 
-"bab_ui_[" = {sprite = "ui_[", color = [0, 3], tiling = -1}
+"bab_ui_[" = {sprite = "ui_5b", color = [0, 3], tiling = "none"}
 
-bab_ui_gui = {sprite = "ui_gui", color = [0, 3], tiling = -1}
+bab_ui_gui = {sprite = "ui_gui", color = [0, 3], tiling = "none"}
 
-bab_ui_tab = {sprite = "ui_tab", color = [0, 3], tiling = -1}
+bab_ui_tab = {sprite = "ui_tab", color = [0, 3], tiling = "none"}
 
-bab_ui_cap = {sprite = "ui_cap", color = [0, 3], tiling = -1}
+bab_ui_cap = {sprite = "ui_cap", color = [0, 3], tiling = "none"}
 
-bab_ui_esc = {sprite = "ui_esc", color = [0, 3], tiling = -1}
+bab_ui_esc = {sprite = "ui_esc", color = [0, 3], tiling = "none"}
 
-bab_wal = {sprite = "wal", color = [1, 1], tiling = -1}
+bab_wal = {sprite = "wal", color = [1, 1], tiling = "none"}
 
-text_bab_wal = {sprite = "txt_wal", color = [0, 1], tiling = -1}
+text_bab_wal = {sprite = "txt_wal", color = [0, 1], tiling = "none"}
 
-"text_bab_waln't" = {sprite = "txt_waln_t", color = [0, 3], tiling = -1}
+"text_bab_waln't" = {sprite = "txt_waln27t", color = [0, 3], tiling = "none"}
 
-bab_roc = {sprite = "roc", color = [6, 2], tiling = -1}
+bab_roc = {sprite = "roc", color = [6, 2], tiling = "none"}
 
-text_bab_roc = {sprite = "txt_roc", color = [6, 1], tiling = -1}
+text_bab_roc = {sprite = "txt_roc", color = [6, 1], tiling = "none"}
 
-"text_bab_rocn't" = {sprite = "txt_rocn_t", color = [0, 3], tiling = -1}
+"text_bab_rocn't" = {sprite = "txt_rocn27t", color = [0, 3], tiling = "none"}
 
-bab_dor = {sprite = "dor", color = [2, 2], tiling = -1}
+bab_dor = {sprite = "dor", color = [2, 2], tiling = "none"}
 
-text_bab_dor = {sprite = "txt_dor", color = [2, 2], tiling = -1}
+text_bab_dor = {sprite = "txt_dor", color = [2, 2], tiling = "none"}
 
-bab_kee = {sprite = "kee", color = [2, 4], tiling = -1}
+bab_kee = {sprite = "kee", color = [2, 4], tiling = "none"}
 
-text_bab_kee = {sprite = "txt_kee", color = [2, 4], tiling = -1}
+text_bab_kee = {sprite = "txt_kee", color = [2, 4], tiling = "none"}
 
-bab_flog = {sprite = "flog", color = [2, 4], tiling = -1}
+bab_flog = {sprite = "flog", color = [2, 4], tiling = "none"}
 
-text_bab_flog = {sprite = "txt_flog", color = [2, 4], tiling = -1}
+text_bab_flog = {sprite = "txt_flog", color = [2, 4], tiling = "none"}
 
-bab_til = {sprite = "til", color = [1, 0], tiling = -1}
+bab_til = {sprite = "til", color = [1, 0], tiling = "none"}
 
-bab_watr = {sprite = "watr", color = [1, 3], tiling = -1}
+bab_watr = {sprite = "watr", color = [1, 3], tiling = "none"}
 
-text_bab_watr = {sprite = "txt_watr", color = [1, 3], tiling = -1}
+text_bab_watr = {sprite = "txt_watr", color = [1, 3], tiling = "none"}
 
-text_bab_boux = {sprite = "txt_boux", color = [6, 1], tiling = -1}
+text_bab_boux = {sprite = "txt_boux", color = [6, 1], tiling = "none"}
 
-bab_boux = {sprite = "boux", color = [6, 2], tiling = -1}
+bab_boux = {sprite = "boux", color = [6, 2], tiling = "none"}
 
-text_bab_laav = {sprite = "txt_laav", color = [2, 3], tiling = -1}
+text_bab_laav = {sprite = "txt_laav", color = [2, 3], tiling = "none"}
 
-bab_laav = {sprite = "laav", color = [2, 3], tiling = -1}
+bab_laav = {sprite = "laav", color = [2, 3], tiling = "none"}
 
-text_bab_til = {sprite = "txt_til", color = [0, 1], tiling = -1}
+text_bab_til = {sprite = "txt_til", color = [0, 1], tiling = "none"}
 
-"bab_l..uv" = {sprite = "l..uv", color = [4, 2], tiling = -1}
+"bab_l..uv" = {sprite = "l2e2euv", color = [4, 2], tiling = "none"}
 
-"text_bab_l..uv" = {sprite = "txt_l..uv", color = [4, 2], tiling = -1}
+"text_bab_l..uv" = {sprite = "txt_l2e2euv", color = [4, 2], tiling = "none"}
 
-bab_frut = {sprite = "frut", color = [2, 2], tiling = -1}
+bab_frut = {sprite = "frut", color = [2, 2], tiling = "none"}
 
-text_bab_frut = {sprite = "txt_frut", color = [2, 2], tiling = -1}
+text_bab_frut = {sprite = "txt_frut", color = [2, 2], tiling = "none"}
 
-bab_tre = {sprite = "tre", color = [5, 2], tiling = -1}
+bab_tre = {sprite = "tre", color = [5, 2], tiling = "none"}
 
-text_bab_tre = {sprite = "txt_tre", color = [5, 2], tiling = -1}
+text_bab_tre = {sprite = "txt_tre", color = [5, 2], tiling = "none"}
 
-text_bab_boll = {sprite = "txt_boll", color = [4, 1], tiling = -1}
+text_bab_boll = {sprite = "txt_boll", color = [4, 1], tiling = "none"}
 
-bab_boll = {sprite = "boll", color = [4, 1], tiling = -1}
+bab_boll = {sprite = "boll", color = [4, 1], tiling = "none"}
 
-text_bab_bellt = {sprite = "txt_bellt", color = [1, 3], tiling = -1}
+text_bab_bellt = {sprite = "txt_bellt", color = [1, 3], tiling = "none"}
 
-bab_bellt = {sprite = "bellt", color = [1, 1], tiling = -1}
+bab_bellt = {sprite = "bellt", color = [1, 1], tiling = "none"}
 
-bab_gunne = {sprite = "gunne", color = [0, 3], tiling = -1}
+bab_gunne = {sprite = "gunne", color = [0, 3], tiling = "none"}
 
-text_bab_gunne = {sprite = "txt_gunne", color = [0, 3], tiling = -1}
+text_bab_gunne = {sprite = "txt_gunne", color = [0, 3], tiling = "none"}
 
-bab_gras = {sprite = "gras", color = [5, 1], tiling = -1}
+bab_gras = {sprite = "gras", color = [5, 1], tiling = "none"}
 
-text_bab_gras = {sprite = "txt_gras", color = [5, 3], tiling = -1}
+text_bab_gras = {sprite = "txt_gras", color = [5, 3], tiling = "none"}
 
-bab_dayzy = {sprite = "dayzy", color = [3, 1], tiling = -1}
+bab_dayzy = {sprite = "dayzy", color = [3, 1], tiling = "none"}
 
-text_bab_dayzy = {sprite = "txt_dayzy", color = [3, 1], tiling = -1}
+text_bab_dayzy = {sprite = "txt_dayzy", color = [3, 1], tiling = "none"}
 
-bab_hurcane = {sprite = "hurcane", color = [3, 1], tiling = -1}
+bab_hurcane = {sprite = "hurcane", color = [3, 1], tiling = "none"}
 
-text_bab_hurcane = {sprite = "txt_hurcane", color = [3, 1], tiling = -1}
+text_bab_hurcane = {sprite = "txt_hurcane", color = [3, 1], tiling = "none"}
 
-bab_hatt = {sprite = "hatt", color = [3, 1], tiling = -1}
+bab_hatt = {sprite = "hatt", color = [3, 1], tiling = "none"}
 
-text_bab_hatt = {sprite = "txt_hatt", color = [3, 1], tiling = -1}
+text_bab_hatt = {sprite = "txt_hatt", color = [3, 1], tiling = "none"}
 
-bab_press = {sprite = "press", color = [0, 3], tiling = -1}
+bab_press = {sprite = "press", color = [0, 3], tiling = "none"}
 
-bab_chekr = {sprite = "chekr", color = [3, 0], tiling = -1}
+bab_chekr = {sprite = "chekr", color = [3, 0], tiling = "none"}
 
-text_bab_chekr = {sprite = "txt_chekr", color = [3, 0], tiling = -1}
+text_bab_chekr = {sprite = "txt_chekr", color = [3, 0], tiling = "none"}
 
-bab_arro = {sprite = "arro", color = [0, 3], tiling = -1}
+bab_arro = {sprite = "arro", color = [0, 3], tiling = "none"}
 
-text_bab_arro = {sprite = "txt_arro", color = [0, 3], tiling = -1}
+text_bab_arro = {sprite = "txt_arro", color = [0, 3], tiling = "none"}
 
-text_bab_colld = {sprite = "txt_colld", color = [1, 4], tiling = -1}
+text_bab_colld = {sprite = "txt_colld", color = [1, 4], tiling = "none"}
 
-bab_colld = {sprite = "colld", color = [1, 4], tiling = -1}
+bab_colld = {sprite = "colld", color = [1, 4], tiling = "none"}
 
-text_bab_piler = {sprite = "txt_piler", color = [0, 1], tiling = -1}
+text_bab_piler = {sprite = "txt_piler", color = [0, 1], tiling = "none"}
 
-bab_piler = {sprite = "piler", color = [0, 1], tiling = -1}
+bab_piler = {sprite = "piler", color = [0, 1], tiling = "none"}
 
-bab_clowd = {sprite = "clowd", color = [0, 3], tiling = -1}
+bab_clowd = {sprite = "clowd", color = [0, 3], tiling = "none"}
 
-text_bab_clowd = {sprite = "txt_clowd", color = [0, 3], tiling = -1}
+text_bab_clowd = {sprite = "txt_clowd", color = [0, 3], tiling = "none"}
 
-bab_infloop = {sprite = "infloop", color = [0, 3], tiling = -1}
+bab_infloop = {sprite = "infloop", color = [0, 3], tiling = "none"}
 
-bab_plsdont = {sprite = "plsdont", color = [0, 3], tiling = -1}
+bab_plsdont = {sprite = "plsdont", color = [0, 3], tiling = "none"}
 
-bab_petnygrame = {sprite = "petnygrame", color = [2, 1], tiling = -1}
+bab_petnygrame = {sprite = "petnygrame", color = [2, 1], tiling = "none"}
 
-text_bab_petnygrame = {sprite = "txt_petnygrame", color = [2, 1], tiling = -1}
+text_bab_petnygrame = {sprite = "txt_petnygrame", color = [2, 1], tiling = "none"}
 
-bab_katany = {sprite = "katany", color = [0, 1], tiling = -1}
+bab_katany = {sprite = "katany", color = [0, 1], tiling = "none"}
 
-text_bab_katany = {sprite = "txt_katany", color = [0, 1], tiling = -1}
+text_bab_katany = {sprite = "txt_katany", color = [0, 1], tiling = "none"}
 
-bab_scarr = {sprite = "scarr", color = [2, 1], tiling = -1}
+bab_scarr = {sprite = "scarr", color = [2, 1], tiling = "none"}
 
-text_bab_scarr = {sprite = "txt_scarr", color = [2, 1], tiling = -1}
+text_bab_scarr = {sprite = "txt_scarr", color = [2, 1], tiling = "none"}
 
-bab_pepis = {sprite = "pepis", color = [0, 3], tiling = -1}
+bab_pepis = {sprite = "pepis", color = [0, 3], tiling = "none"}
 
-text_bab_pepis = {sprite = "txt_pepis", color = [3, 0], tiling = -1}
+text_bab_pepis = {sprite = "txt_pepis", color = [3, 0], tiling = "none"}
 
-bab_clok = {sprite = "clok", color = [3, 1], tiling = -1}
+bab_clok = {sprite = "clok", color = [3, 1], tiling = "none"}
 
-text_bab_clok = {sprite = "txt_clok", color = [3, 1], tiling = -1}
+text_bab_clok = {sprite = "txt_clok", color = [3, 1], tiling = "none"}
 
-bab_splittr = {sprite = "splittr", color = [0, 3], tiling = -1}
+bab_splittr = {sprite = "splittr", color = [0, 3], tiling = "none"}
 
-text_bab_splittr = {sprite = "txt_splittr", color = [0, 3], tiling = -1}
+text_bab_splittr = {sprite = "txt_splittr", color = [0, 3], tiling = "none"}
 
-text_bab_slippers = {sprite = "txt_slippers", color = [1, 4], tiling = -1}
+text_bab_slippers = {sprite = "txt_slippers", color = [1, 4], tiling = "none"}
 
-bab_slippers = {sprite = "slippers", color = [1, 3], tiling = -1}
+bab_slippers = {sprite = "slippers", color = [1, 3], tiling = "none"}
 
-bab_selctr = {sprite = "selctr", color = [3, 1], tiling = -1}
+bab_selctr = {sprite = "selctr", color = [3, 1], tiling = "none"}
 
-text_bab_selctr = {sprite = "txt_selctr", color = [2, 3], tiling = -1}
+text_bab_selctr = {sprite = "txt_selctr", color = [2, 3], tiling = "none"}
 
-bab_lin = {sprite = "lin", color = [0, 3], tiling = -1}
+bab_lin = {sprite = "lin", color = [0, 3], tiling = "none"}
 
-text_bab_lin = {sprite = "txt_lin", color = [0, 3], tiling = -1}
+text_bab_lin = {sprite = "txt_lin", color = [0, 3], tiling = "none"}
 
-bab_firbolt = {sprite = "firbolt", color = [6, 2], tiling = -1}
+bab_firbolt = {sprite = "firbolt", color = [6, 2], tiling = "none"}
 
-text_bab_firbolt = {sprite = "txt_firbolt", color = [6, 2], tiling = -1}
+text_bab_firbolt = {sprite = "txt_firbolt", color = [6, 2], tiling = "none"}
 
-bab_icbolt = {sprite = "icbolt", color = [1, 4], tiling = -1}
+bab_icbolt = {sprite = "icbolt", color = [1, 4], tiling = "none"}
 
-text_bab_icbolt = {sprite = "txt_icbolt", color = [1, 4], tiling = -1}
+text_bab_icbolt = {sprite = "txt_icbolt", color = [1, 4], tiling = "none"}
 
-bab_hedg = {sprite = "hedg", color = [5, 1], tiling = -1}
+bab_hedg = {sprite = "hedg", color = [5, 1], tiling = "none"}
 
-text_bab_hedg = {sprite = "txt_hedg", color = [5, 1], tiling = -1}
+text_bab_hedg = {sprite = "txt_hedg", color = [5, 1], tiling = "none"}
 
-bab_fenss = {sprite = "fenss", color = [6, 2], tiling = -1}
+bab_fenss = {sprite = "fenss", color = [6, 2], tiling = "none"}
 
-text_bab_fenss = {sprite = "txt_fenss", color = [6, 2], tiling = -1}
+text_bab_fenss = {sprite = "txt_fenss", color = [6, 2], tiling = "none"}
 
-bab_metl = {sprite = "metl", color = [0, 2], tiling = -1}
+bab_metl = {sprite = "metl", color = [0, 2], tiling = "none"}
 
-text_bab_metl = {sprite = "txt_metl", color = [0, 2], tiling = -1}
+text_bab_metl = {sprite = "txt_metl", color = [0, 2], tiling = "none"}
 
-bab_sparkl = {sprite = "sparkl", color = [2, 4], tiling = -1}
+bab_sparkl = {sprite = "sparkl", color = [2, 4], tiling = "none"}
 
-text_bab_sparkl = {sprite = "txt_sparkl", color = [2, 4], tiling = -1}
+text_bab_sparkl = {sprite = "txt_sparkl", color = [2, 4], tiling = "none"}
 
-bab_spik = {sprite = "spik", color = [0, 2], tiling = -1}
+bab_spik = {sprite = "spik", color = [0, 2], tiling = "none"}
 
-text_bab_spik = {sprite = "txt_spik", color = [0, 2], tiling = -1}
+text_bab_spik = {sprite = "txt_spik", color = [0, 2], tiling = "none"}
 
-bab_spiky = {sprite = "spiky", color = [0, 2], tiling = -1}
+bab_spiky = {sprite = "spiky", color = [0, 2], tiling = "none"}
 
-text_bab_spiky = {sprite = "txt_spiky", color = [0, 2], tiling = -1}
+text_bab_spiky = {sprite = "txt_spiky", color = [0, 2], tiling = "none"}
 
-bab_platfor = {sprite = "platfor", color = [6, 2], tiling = -1}
+bab_platfor = {sprite = "platfor", color = [6, 2], tiling = "none"}
 
-text_bab_platfor = {sprite = "txt_platfor", color = [6, 2], tiling = -1}
+text_bab_platfor = {sprite = "txt_platfor", color = [6, 2], tiling = "none"}
 
-bab_jail = {sprite = "jail", color = [0, 2], tiling = -1}
+bab_jail = {sprite = "jail", color = [0, 2], tiling = "none"}
 
-text_bab_jail = {sprite = "txt_jail", color = [0, 2], tiling = -1}
+text_bab_jail = {sprite = "txt_jail", color = [0, 2], tiling = "none"}
 
-bab_hol = {sprite = "hol", color = [3, 1], tiling = -1}
+bab_hol = {sprite = "hol", color = [3, 1], tiling = "none"}
 
-text_bab_hol = {sprite = "txt_hol", color = [3, 0], tiling = -1}
+text_bab_hol = {sprite = "txt_hol", color = [3, 0], tiling = "none"}
 
-bab_rif = {sprite = "rif", color = [2, 4], tiling = -1}
+bab_rif = {sprite = "rif", color = [2, 4], tiling = "none"}
 
-text_bab_rif = {sprite = "txt_rif", color = [2, 4], tiling = -1}
+text_bab_rif = {sprite = "txt_rif", color = [2, 4], tiling = "none"}
 
-bab_lie = {sprite = "lie", color = [4, 1], tiling = -1}
+bab_lie = {sprite = "lie", color = [4, 1], tiling = "none"}
 
-text_bab_lie = {sprite = "txt_lie", color = [4, 1], tiling = -1}
+text_bab_lie = {sprite = "txt_lie", color = [4, 1], tiling = "none"}
 
-bab_lieslash8 = {sprite = "lie_8", color = [4, 2], tiling = -1}
+"bab_lie/8" = {sprite = "lie2f8", color = [4, 2], tiling = "none"}
 
-text_bab_lieslash8 = {sprite = "txt_lie_8", color = [4, 2], tiling = -1}
+"text_bab_lie/8" = {sprite = "txt_lie2f8", color = [4, 2], tiling = "none"}
 
-bab_sine = {sprite = "sine", color = [6, 2], tiling = -1}
+bab_sine = {sprite = "sine", color = [6, 2], tiling = "none"}
 
-text_bab_sine = {sprite = "txt_sine", color = [6, 2], tiling = -1}
+text_bab_sine = {sprite = "txt_sine", color = [6, 2], tiling = "none"}
 
-bab_buble = {sprite = "buble", color = [1, 3], tiling = -1}
+bab_buble = {sprite = "buble", color = [1, 3], tiling = "none"}
 
-text_bab_buble = {sprite = "txt_buble", color = [1, 3], tiling = -1}
+text_bab_buble = {sprite = "txt_buble", color = [1, 3], tiling = "none"}
 
-bab_icecub = {sprite = "icecub", color = [1, 4], tiling = -1}
+bab_icecub = {sprite = "icecub", color = [1, 4], tiling = "none"}
 
-text_bab_icecub = {sprite = "txt_icecub", color = [1, 4], tiling = -1}
+text_bab_icecub = {sprite = "txt_icecub", color = [1, 4], tiling = "none"}
 
-bab_paint = {sprite = "paint", color = [0, 3], tiling = -1}
+bab_paint = {sprite = "paint", color = [0, 3], tiling = "none"}
 
-bab_ger = {sprite = "ger", color = [6, 1], tiling = -1}
+bab_ger = {sprite = "ger", color = [6, 1], tiling = "none"}
 
-text_bab_ger = {sprite = "txt_ger", color = [6, 1], tiling = -1}
+text_bab_ger = {sprite = "txt_ger", color = [6, 1], tiling = "none"}
 
-bab_can = {sprite = "can", color = [2, 1], tiling = -1}
+bab_can = {sprite = "can", color = [2, 1], tiling = "none"}
 
-text_bab_can = {sprite = "txt_can", color = [2, 1], tiling = -1}
+text_bab_can = {sprite = "txt_can", color = [2, 1], tiling = "none"}
 
-bab_toggl = {sprite = "toggl", color = [0, 3], tiling = -1}
+bab_toggl = {sprite = "toggl", color = [0, 3], tiling = "none"}
 
-text_bab_toggl = {sprite = "txt_toggl", color = [0, 3], tiling = -1}
+text_bab_toggl = {sprite = "txt_toggl", color = [0, 3], tiling = "none"}
 
-bab_bom = {sprite = "bom", color = [0, 1], tiling = -1}
+bab_bom = {sprite = "bom", color = [0, 1], tiling = "none"}
 
-text_bab_bom = {sprite = "txt_bom", color = [0, 1], tiling = -1}
+text_bab_bom = {sprite = "txt_bom", color = [0, 1], tiling = "none"}
 
-bab_xplod = {sprite = "xplod", color = [2, 2], tiling = -1}
+bab_xplod = {sprite = "xplod", color = [2, 2], tiling = "none"}
 
-bab_square = {sprite = "square", color = [2, 4], tiling = -1}
+bab_square = {sprite = "square", color = [2, 4], tiling = "none"}
 
-bab_triangle = {sprite = "triangle", color = [2, 4], tiling = -1}
+bab_triangle = {sprite = "triangle", color = [2, 4], tiling = "none"}
 
-text_bab_square = {sprite = "txt_square", color = [2, 4], tiling = -1}
+text_bab_square = {sprite = "txt_square", color = [2, 4], tiling = "none"}
 
-text_bab_triangle = {sprite = "txt_triangle", color = [2, 4], tiling = -1}
+text_bab_triangle = {sprite = "txt_triangle", color = [2, 4], tiling = "none"}
 
-bab_snoflak = {sprite = "snoflak", color = [0, 3], tiling = -1}
+bab_snoflak = {sprite = "snoflak", color = [0, 3], tiling = "none"}
 
-text_bab_snoflak = {sprite = "txt_snoflak", color = [0, 3], tiling = -1}
+text_bab_snoflak = {sprite = "txt_snoflak", color = [0, 3], tiling = "none"}
 
-bab_fir = {sprite = "fir", color = [2, 2], tiling = -1}
+bab_fir = {sprite = "fir", color = [2, 2], tiling = "none"}
 
-text_bab_fir = {sprite = "txt_fir", color = [2, 2], tiling = -1}
+text_bab_fir = {sprite = "txt_fir", color = [2, 2], tiling = "none"}
 
-bab_sanglas = {sprite = "sanglas", color = [2, 4], tiling = -1}
+bab_sanglas = {sprite = "sanglas", color = [2, 4], tiling = "none"}
 
-text_bab_sanglas = {sprite = "txt_sanglas", color = [2, 4], tiling = -1}
+text_bab_sanglas = {sprite = "txt_sanglas", color = [2, 4], tiling = "none"}
 
-bab_ladr = {sprite = "ladr", color = [6, 0], tiling = -1}
+bab_ladr = {sprite = "ladr", color = [6, 0], tiling = "none"}
 
-text_bab_ladr = {sprite = "txt_ladr", color = [6, 0], tiling = -1}
+text_bab_ladr = {sprite = "txt_ladr", color = [6, 0], tiling = "none"}
 
-bab_cobll = {sprite = "cobll", color = [0, 1], tiling = -1}
+bab_cobll = {sprite = "cobll", color = [0, 1], tiling = "none"}
 
-text_bab_cobll = {sprite = "txt_cobll", color = [0, 1], tiling = -1}
+text_bab_cobll = {sprite = "txt_cobll", color = [0, 1], tiling = "none"}
 
-bab_wuud = {sprite = "wuud", color = [6, 2], tiling = -1}
+bab_wuud = {sprite = "wuud", color = [6, 2], tiling = "none"}
 
-text_bab_wuud = {sprite = "txt_wuud", color = [6, 2], tiling = -1}
+text_bab_wuud = {sprite = "txt_wuud", color = [6, 2], tiling = "none"}
 
-bab_wut = {sprite = "wut", color = [0, 3], tiling = -1}
+bab_wut = {sprite = "wut", color = [0, 3], tiling = "none"}
 
-text_bab_wut = {sprite = "txt_wut", color = [0, 3], tiling = -1}
+text_bab_wut = {sprite = "txt_wut", color = [0, 3], tiling = "none"}
 
-bab_wat = {sprite = "wat", color = [0, 3], tiling = -1}
+bab_wat = {sprite = "wat", color = [0, 3], tiling = "none"}
 
-text_bab_wat = {sprite = "txt_wat", color = [0, 3], tiling = -1}
+text_bab_wat = {sprite = "txt_wat", color = [0, 3], tiling = "none"}
 
-bab_brik = {sprite = "brik", color = [2, 1], tiling = -1}
+bab_brik = {sprite = "brik", color = [2, 1], tiling = "none"}
 
-text_bab_brik = {sprite = "txt_brik", color = [2, 1], tiling = -1}
+text_bab_brik = {sprite = "txt_brik", color = [2, 1], tiling = "none"}
 
-bab_litbolt = {sprite = "litbolt", color = [2, 4], tiling = -1}
+bab_litbolt = {sprite = "litbolt", color = [2, 4], tiling = "none"}
 
-text_bab_litbolt = {sprite = "txt_litbolt", color = [2, 4], tiling = -1}
+text_bab_litbolt = {sprite = "txt_litbolt", color = [2, 4], tiling = "none"}
 
-bab_rouz = {sprite = "rouz", color = [4, 1], tiling = -1}
+bab_rouz = {sprite = "rouz", color = [4, 1], tiling = "none"}
 
-text_bab_rouz = {sprite = "txt_rouz", color = [4, 1], tiling = -1}
+text_bab_rouz = {sprite = "txt_rouz", color = [4, 1], tiling = "none"}
 
-bab_san = {sprite = "san", color = [2, 4], tiling = -1}
+bab_san = {sprite = "san", color = [2, 4], tiling = "none"}
 
-text_bab_san = {sprite = "txt_san", color = [2, 4], tiling = -1}
+text_bab_san = {sprite = "txt_san", color = [2, 4], tiling = "none"}
 
-bab_fungye = {sprite = "fungye", color = [6, 2], tiling = -1}
+bab_fungye = {sprite = "fungye", color = [6, 2], tiling = "none"}
 
-text_bab_fungye = {sprite = "txt_fungye", color = [6, 2], tiling = -1}
+text_bab_fungye = {sprite = "txt_fungye", color = [6, 2], tiling = "none"}
 
-bab_kar = {sprite = "kar", color = [5, 2], tiling = -1}
+bab_kar = {sprite = "kar", color = [5, 2], tiling = "none"}
 
-text_bab_kar = {sprite = "txt_kar", color = [5, 2], tiling = -1}
+text_bab_kar = {sprite = "txt_kar", color = [5, 2], tiling = "none"}
 
-bab_tor = {sprite = "tor", color = [2, 1], tiling = -1}
+bab_tor = {sprite = "tor", color = [2, 1], tiling = "none"}
 
-text_bab_tor = {sprite = "txt_tor", color = [2, 1], tiling = -1}
+text_bab_tor = {sprite = "txt_tor", color = [2, 1], tiling = "none"}
 
-bab_son = {sprite = "son", color = [2, 4], tiling = -1}
+bab_son = {sprite = "son", color = [2, 4], tiling = "none"}
 
-text_bab_son = {sprite = "txt_son", color = [2, 4], tiling = -1}
+text_bab_son = {sprite = "txt_son", color = [2, 4], tiling = "none"}
 
-bab_muun = {sprite = "muun", color = [1, 2], tiling = -1}
+bab_muun = {sprite = "muun", color = [1, 2], tiling = "none"}
 
-text_bab_muun = {sprite = "txt_muun", color = [1, 2], tiling = -1}
+text_bab_muun = {sprite = "txt_muun", color = [1, 2], tiling = "none"}
 
-bab_leef = {sprite = "leef", color = [5, 2], tiling = -1}
+bab_leef = {sprite = "leef", color = [5, 2], tiling = "none"}
 
-text_bab_leef = {sprite = "txt_leef", color = [5, 2], tiling = -1}
+text_bab_leef = {sprite = "txt_leef", color = [5, 2], tiling = "none"}
 
-bab_starr = {sprite = "starr", color = [2, 4], tiling = -1}
+bab_starr = {sprite = "starr", color = [2, 4], tiling = "none"}
 
-text_bab_starr = {sprite = "txt_starr", color = [2, 4], tiling = -1}
+text_bab_starr = {sprite = "txt_starr", color = [2, 4], tiling = "none"}
 
-bab_shel = {sprite = "shel", color = [4, 2], tiling = -1}
+bab_shel = {sprite = "shel", color = [4, 2], tiling = "none"}
 
-text_bab_shel = {sprite = "txt_shel", color = [4, 2], tiling = -1}
+text_bab_shel = {sprite = "txt_shel", color = [4, 2], tiling = "none"}
 
-bab_sancastl = {sprite = "sancastl", color = [2, 4], tiling = -1}
+bab_sancastl = {sprite = "sancastl", color = [2, 4], tiling = "none"}
 
-text_bab_sancastl = {sprite = "txt_sancastl", color = [2, 4], tiling = -1}
+text_bab_sancastl = {sprite = "txt_sancastl", color = [2, 4], tiling = "none"}
 
-bab_parsol = {sprite = "parsol", color = [2, 2], tiling = -1}
+bab_parsol = {sprite = "parsol", color = [2, 2], tiling = "none"}
 
-text_bab_parsol = {sprite = "txt_parsol", color = [2, 2], tiling = -1}
+text_bab_parsol = {sprite = "txt_parsol", color = [2, 2], tiling = "none"}
 
-bab_pallm = {sprite = "pallm", color = [5, 2], tiling = -1}
+bab_pallm = {sprite = "pallm", color = [5, 2], tiling = "none"}
 
-text_bab_pallm = {sprite = "txt_pallm", color = [5, 2], tiling = -1}
+text_bab_pallm = {sprite = "txt_pallm", color = [5, 2], tiling = "none"}
 
-bab_coco = {sprite = "coco", color = [6, 1], tiling = -1}
+bab_coco = {sprite = "coco", color = [6, 1], tiling = "none"}
 
-text_bab_coco = {sprite = "txt_coco", color = [6, 1], tiling = -1}
+text_bab_coco = {sprite = "txt_coco", color = [6, 1], tiling = "none"}
 
-bab_glas = {sprite = "glas", color = [0, 3], tiling = -1}
+bab_glas = {sprite = "glas", color = [0, 3], tiling = "none"}
 
-text_bab_glas = {sprite = "txt_glas", color = [0, 2], tiling = -1}
+text_bab_glas = {sprite = "txt_glas", color = [0, 2], tiling = "none"}
 
-bab_vien = {sprite = "vien", color = [5, 1], tiling = -1}
+bab_vien = {sprite = "vien", color = [5, 1], tiling = "none"}
 
-text_bab_vien = {sprite = "txt_vien", color = [5, 1], tiling = -1}
+text_bab_vien = {sprite = "txt_vien", color = [5, 1], tiling = "none"}
 
-bab_pudll = {sprite = "pudll", color = [1, 3], tiling = -1}
+bab_pudll = {sprite = "pudll", color = [1, 3], tiling = "none"}
 
-text_bab_pudll = {sprite = "txt_pudll", color = [1, 3], tiling = -1}
+text_bab_pudll = {sprite = "txt_pudll", color = [1, 3], tiling = "none"}
 
-bab_red = {sprite = "red", color = [6, 2], tiling = -1}
+bab_red = {sprite = "red", color = [6, 2], tiling = "none"}
 
-text_bab_red = {sprite = "txt_red", color = [6, 2], tiling = -1}
+text_bab_red = {sprite = "txt_red", color = [6, 2], tiling = "none"}
 
-bab_stum = {sprite = "stum", color = [6, 1], tiling = -1}
+bab_stum = {sprite = "stum", color = [6, 1], tiling = "none"}
 
-text_bab_stum = {sprite = "txt_stum", color = [6, 1], tiling = -1}
+text_bab_stum = {sprite = "txt_stum", color = [6, 1], tiling = "none"}
 
-bab_bullb = {sprite = "bullb", color = [2, 4], tiling = -1}
+bab_bullb = {sprite = "bullb", color = [2, 4], tiling = "none"}
 
-text_bab_bullb = {sprite = "txt_bullb", color = [2, 4], tiling = -1}
+text_bab_bullb = {sprite = "txt_bullb", color = [2, 4], tiling = "none"}
 
-bab_battry = {sprite = "battry", color = [4, 1], tiling = -1}
+bab_battry = {sprite = "battry", color = [4, 1], tiling = "none"}
 
-text_bab_battry = {sprite = "txt_battry", color = [4, 1], tiling = -1}
+text_bab_battry = {sprite = "txt_battry", color = [4, 1], tiling = "none"}
 
-bab_smol = {sprite = "smol", color = [5, 2], tiling = -1}
+bab_smol = {sprite = "smol", color = [5, 2], tiling = "none"}
 
-text_bab_smol = {sprite = "txt_smol", color = [5, 2], tiling = -1}
+text_bab_smol = {sprite = "txt_smol", color = [5, 2], tiling = "none"}
 
-bab_win = {sprite = "win", color = [1, 4], tiling = -1}
+bab_win = {sprite = "win", color = [1, 4], tiling = "none"}
 
-text_bab_win = {sprite = "txt_win", color = [1, 4], tiling = -1}
+text_bab_win = {sprite = "txt_win", color = [1, 4], tiling = "none"}
 
-bab_bon = {sprite = "bon", color = [0, 3], tiling = -1}
+bab_bon = {sprite = "bon", color = [0, 3], tiling = "none"}
 
-text_bab_bon = {sprite = "txt_bon", color = [0, 3], tiling = -1}
+text_bab_bon = {sprite = "txt_bon", color = [0, 3], tiling = "none"}
 
-bab_rockit = {sprite = "rockit", color = [1, 3], tiling = -1}
+bab_rockit = {sprite = "rockit", color = [1, 3], tiling = "none"}
 
-text_bab_rockit = {sprite = "txt_rockit", color = [1, 3], tiling = -1}
+text_bab_rockit = {sprite = "txt_rockit", color = [1, 3], tiling = "none"}
 
-bab_ufu = {sprite = "ufu", color = [3, 1], tiling = -1}
+bab_ufu = {sprite = "ufu", color = [3, 1], tiling = "none"}
 
-text_bab_ufu = {sprite = "txt_ufu", color = [3, 1], tiling = -1}
+text_bab_ufu = {sprite = "txt_ufu", color = [3, 1], tiling = "none"}
 
-bab_rein = {sprite = "rein", color = [1, 3], tiling = -1}
+bab_rein = {sprite = "rein", color = [1, 3], tiling = "none"}
 
-text_bab_rein = {sprite = "txt_rein", color = [1, 3], tiling = -1}
+text_bab_rein = {sprite = "txt_rein", color = [1, 3], tiling = "none"}
 
-bab_algay = {sprite = "algay", color = [5, 1], tiling = -1}
+bab_algay = {sprite = "algay", color = [5, 1], tiling = "none"}
 
-text_bab_algay = {sprite = "txt_algay", color = [5, 1], tiling = -1}
+text_bab_algay = {sprite = "txt_algay", color = [5, 1], tiling = "none"}
 
-bab_noet = {sprite = "noet", color = [4, 1], tiling = -1}
+bab_noet = {sprite = "noet", color = [4, 1], tiling = "none"}
 
-text_bab_noet = {sprite = "txt_noet", color = [4, 1], tiling = -1}
+text_bab_noet = {sprite = "txt_noet", color = [4, 1], tiling = "none"}
 
-bab_banboo = {sprite = "banboo", color = [5, 1], tiling = -1}
+bab_banboo = {sprite = "banboo", color = [5, 1], tiling = "none"}
 
-text_bab_banboo = {sprite = "txt_banboo", color = [5, 1], tiling = -1}
+text_bab_banboo = {sprite = "txt_banboo", color = [5, 1], tiling = "none"}
 
-bab_karot = {sprite = "karot", color = [2, 3], tiling = -1}
+bab_karot = {sprite = "karot", color = [2, 3], tiling = "none"}
 
-text_bab_karot = {sprite = "txt_karot", color = [2, 3], tiling = -1}
+text_bab_karot = {sprite = "txt_karot", color = [2, 3], tiling = "none"}
 
-bab_poisbolt = {sprite = "poisbolt", color = [5, 3], tiling = -1}
+bab_poisbolt = {sprite = "poisbolt", color = [5, 3], tiling = "none"}
 
-text_bab_poisbolt = {sprite = "txt_poisbolt", color = [5, 3], tiling = -1}
+text_bab_poisbolt = {sprite = "txt_poisbolt", color = [5, 3], tiling = "none"}
 
-bab_knif = {sprite = "knif", color = [0, 3], tiling = -1}
+bab_knif = {sprite = "knif", color = [0, 3], tiling = "none"}
 
-text_bab_knif = {sprite = "txt_knif", color = [0, 3], tiling = -1}
+text_bab_knif = {sprite = "txt_knif", color = [0, 3], tiling = "none"}
 
-bab_timbolt = {sprite = "timbolt", color = [3, 1], tiling = -1}
+bab_timbolt = {sprite = "timbolt", color = [3, 1], tiling = "none"}
 
-text_bab_timbolt = {sprite = "txt_timbolt", color = [3, 1], tiling = -1}
+text_bab_timbolt = {sprite = "txt_timbolt", color = [3, 1], tiling = "none"}
 
-bab_cor = {sprite = "cor", color = [4, 0], tiling = -1}
+bab_cor = {sprite = "cor", color = [4, 0], tiling = "none"}
 
-text_bab_cor = {sprite = "txt_cor", color = [4, 0], tiling = -1}
+text_bab_cor = {sprite = "txt_cor", color = [4, 0], tiling = "none"}
 
-bab_sirn = {sprite = "sirn", color = [2, 2], tiling = -1}
+bab_sirn = {sprite = "sirn", color = [2, 2], tiling = "none"}
 
-text_bab_sirn = {sprite = "txt_sirn", color = [2, 2], tiling = -1}
+text_bab_sirn = {sprite = "txt_sirn", color = [2, 2], tiling = "none"}
 
-bab_wips = {sprite = "wips", color = [0, 3], tiling = -1}
+bab_wips = {sprite = "wips", color = [0, 3], tiling = "none"}
 
-text_bab_wips = {sprite = "txt_wips", color = [0, 3], tiling = -1}
+text_bab_wips = {sprite = "txt_wips", color = [0, 3], tiling = "none"}
 
-bab_eeg = {sprite = "eeg", color = [6, 2], tiling = -1}
+bab_eeg = {sprite = "eeg", color = [6, 2], tiling = "none"}
 
-text_bab_eeg = {sprite = "txt_eeg", color = [6, 2], tiling = -1}
+text_bab_eeg = {sprite = "txt_eeg", color = [6, 2], tiling = "none"}
 
-bab_foreeg = {sprite = "foreeg", color = [6, 1], tiling = -1}
+bab_foreeg = {sprite = "foreeg", color = [6, 1], tiling = "none"}
 
-text_bab_foreeg = {sprite = "txt_foreeg", color = [6, 1], tiling = -1}
+text_bab_foreeg = {sprite = "txt_foreeg", color = [6, 1], tiling = "none"}
 
-bab_extre = {sprite = "extre", color = [6, 1], tiling = -1}
+bab_extre = {sprite = "extre", color = [6, 1], tiling = "none"}
 
-text_bab_extre = {sprite = "txt_extre", color = [6, 1], tiling = -1}
+text_bab_extre = {sprite = "txt_extre", color = [6, 1], tiling = "none"}
 
-bab_heg = {sprite = "heg", color = [5, 2], tiling = -1}
+bab_heg = {sprite = "heg", color = [5, 2], tiling = "none"}
 
-text_bab_heg = {sprite = "txt_heg", color = [5, 2], tiling = -1}
+text_bab_heg = {sprite = "txt_heg", color = [5, 2], tiling = "none"}
 
-bab_byc = {sprite = "byc", color = [0, 3], tiling = -1}
+bab_byc = {sprite = "byc", color = [0, 3], tiling = "none"}
 
-text_bab_byc = {sprite = "txt_byc", color = [2, 2], tiling = -1}
+text_bab_byc = {sprite = "txt_byc", color = [2, 2], tiling = "none"}
 
-bab_bac = {sprite = "bac", color = [0, 3], tiling = -1}
+bab_bac = {sprite = "bac", color = [0, 3], tiling = "none"}
 
-text_bab_bac = {sprite = "txt_bac", color = [2, 2], tiling = -1}
+text_bab_bac = {sprite = "txt_bac", color = [2, 2], tiling = "none"}
 
-bab_golf = {sprite = "golf", color = [1, 2], tiling = -1}
+bab_golf = {sprite = "golf", color = [1, 2], tiling = "none"}
 
-text_bab_golf = {sprite = "txt_golf", color = [1, 2], tiling = -1}
+text_bab_golf = {sprite = "txt_golf", color = [1, 2], tiling = "none"}
 
-bab_sloop = {sprite = "sloop", color = [0, 3], tiling = -1}
+bab_sloop = {sprite = "sloop", color = [0, 3], tiling = "none"}
 
-text_bab_sloop = {sprite = "txt_sloop", color = [0, 3], tiling = -1}
+text_bab_sloop = {sprite = "txt_sloop", color = [0, 3], tiling = "none"}
 
-bab_chain = {sprite = "chain", color = [0, 2], tiling = -1}
+bab_chain = {sprite = "chain", color = [0, 2], tiling = "none"}
 
-text_bab_chain = {sprite = "txt_chain", color = [0, 2], tiling = -1}
+text_bab_chain = {sprite = "txt_chain", color = [0, 2], tiling = "none"}
 
-bab_lili = {sprite = "lili", color = [5, 1], tiling = -1}
+bab_lili = {sprite = "lili", color = [5, 1], tiling = "none"}
 
-text_bab_lili = {sprite = "txt_lili", color = [5, 1], tiling = -1}
+text_bab_lili = {sprite = "txt_lili", color = [5, 1], tiling = "none"}
 
-bab_swim = {sprite = "swim", color = [6, 1], tiling = -1}
+bab_swim = {sprite = "swim", color = [6, 1], tiling = "none"}
 
-text_bab_swim = {sprite = "txt_swim", color = [6, 1], tiling = -1}
+text_bab_swim = {sprite = "txt_swim", color = [6, 1], tiling = "none"}
 
-bab_gorder = {sprite = "gorder", color = [0, 2], tiling = -1}
+bab_gorder = {sprite = "gorder", color = [0, 2], tiling = "none"}
 
-text_bab_gorder = {sprite = "txt_gorder", color = [0, 2], tiling = -1}
+text_bab_gorder = {sprite = "txt_gorder", color = [0, 2], tiling = "none"}
 
-bab_piep = {sprite = "piep", color = [5, 2], tiling = -1}
+bab_piep = {sprite = "piep", color = [5, 2], tiling = "none"}
 
-text_bab_piep = {sprite = "txt_piep", color = [5, 2], tiling = -1}
+text_bab_piep = {sprite = "txt_piep", color = [5, 2], tiling = "none"}
 
-bab_tuba = {sprite = "tuba", color = [5, 2], tiling = -1}
+bab_tuba = {sprite = "tuba", color = [5, 2], tiling = "none"}
 
-text_bab_tuba = {sprite = "txt_tuba", color = [5, 2], tiling = -1}
+text_bab_tuba = {sprite = "txt_tuba", color = [5, 2], tiling = "none"}
 
-bab_forbeeee = {sprite = "forbeeee", color = [6, 2], tiling = -1}
+bab_forbeeee = {sprite = "forbeeee", color = [6, 2], tiling = "none"}
 
-text_bab_forbeeee = {sprite = "txt_forbeeee", color = [6, 2], tiling = -1}
+text_bab_forbeeee = {sprite = "txt_forbeeee", color = [6, 2], tiling = "none"}
 
-"bab_do$h" = {sprite = "do$h", color = [5, 2], tiling = -1}
+"bab_do$h" = {sprite = "do24h", color = [5, 2], tiling = "none"}
 
-"text_bab_do$h" = {sprite = "txt_do$h", color = [5, 2], tiling = -1}
+"text_bab_do$h" = {sprite = "txt_do24h", color = [5, 2], tiling = "none"}
 
-bab_dling = {sprite = "dling", color = [2, 4], tiling = -1}
+bab_dling = {sprite = "dling", color = [2, 4], tiling = "none"}
 
-text_bab_dling = {sprite = "txt_dling", color = [2, 4], tiling = -1}
+text_bab_dling = {sprite = "txt_dling", color = [2, 4], tiling = "none"}
 
-bab_warn = {sprite = "warn", color = [0, 3], tiling = -1}
+bab_warn = {sprite = "warn", color = [0, 3], tiling = "none"}
 
-text_bab_warn = {sprite = "txt_warn", color = [2, 4], tiling = -1}
+text_bab_warn = {sprite = "txt_warn", color = [2, 4], tiling = "none"}
 
-bab_reffil = {sprite = "reffil", color = [5, 3], tiling = -1}
+bab_reffil = {sprite = "reffil", color = [5, 3], tiling = "none"}
 
-text_bab_reffil = {sprite = "txt_reffil", color = [5, 3], tiling = -1}
+text_bab_reffil = {sprite = "txt_reffil", color = [5, 3], tiling = "none"}
 
-bab_yanying = {sprite = "yanying", color = [0, 3], tiling = -1}
+bab_yanying = {sprite = "yanying", color = [0, 3], tiling = "none"}
 
-text_bab_yanying = {sprite = "txt_yanying", color = [2, 2], tiling = -1}
+text_bab_yanying = {sprite = "txt_yanying", color = [2, 2], tiling = "none"}
 
-bab_vlc = {sprite = "vlc", color = [2, 3], tiling = -1}
+bab_vlc = {sprite = "vlc", color = [2, 3], tiling = "none"}
 
-text_bab_vlc = {sprite = "txt_vlc", color = [2, 3], tiling = -1}
+text_bab_vlc = {sprite = "txt_vlc", color = [2, 3], tiling = "none"}
 
-bab_foru = {sprite = "foru", color = [0, 1], tiling = -1}
+bab_foru = {sprite = "foru", color = [0, 1], tiling = "none"}
 
-text_bab_foru = {sprite = "txt_foru", color = [0, 1], tiling = -1}
+text_bab_foru = {sprite = "txt_foru", color = [0, 1], tiling = "none"}
 
-bab_rod = {sprite = "rod", color = [0, 3], tiling = -1}
+bab_rod = {sprite = "rod", color = [0, 3], tiling = "none"}
 
-text_bab_rod = {sprite = "txt_rod", color = [0, 3], tiling = -1}
+text_bab_rod = {sprite = "txt_rod", color = [0, 3], tiling = "none"}
 
-bab_ofin = {sprite = "ofin", color = [2, 3], tiling = -1}
+bab_ofin = {sprite = "ofin", color = [2, 3], tiling = "none"}
 
-text_bab_ofin = {sprite = "txt_ofin", color = [2, 3], tiling = -1}
+text_bab_ofin = {sprite = "txt_ofin", color = [2, 3], tiling = "none"}
 
-bab_casete = {sprite = "casete", color = [0, 2], tiling = -1}
+bab_casete = {sprite = "casete", color = [0, 2], tiling = "none"}
 
-text_bab_casete = {sprite = "txt_casete", color = [0, 2], tiling = -1}
+text_bab_casete = {sprite = "txt_casete", color = [0, 2], tiling = "none"}
 
-bab_weeb = {sprite = "weeb", color = [0, 3], tiling = -1}
+bab_weeb = {sprite = "weeb", color = [0, 3], tiling = "none"}
 
-text_bab_weeb = {sprite = "txt_weeb", color = [0, 3], tiling = -1}
+text_bab_weeb = {sprite = "txt_weeb", color = [0, 3], tiling = "none"}
 
-bab_ches = {sprite = "ches", color = [2, 2], tiling = -1}
+bab_ches = {sprite = "ches", color = [2, 2], tiling = "none"}
 
-text_bab_ches = {sprite = "txt_ches", color = [2, 2], tiling = -1}
+text_bab_ches = {sprite = "txt_ches", color = [2, 2], tiling = "none"}
 
-bab_3den = {sprite = "3den", color = [1, 2], tiling = -1}
+bab_3den = {sprite = "3den", color = [1, 2], tiling = "none"}
 
-text_bab_3den = {sprite = "txt_3den", color = [1, 2], tiling = -1}
+text_bab_3den = {sprite = "txt_3den", color = [1, 2], tiling = "none"}
 
-bab_pen = {sprite = "pen", color = [2, 4], tiling = -1}
+bab_pen = {sprite = "pen", color = [2, 4], tiling = "none"}
 
-text_bab_pen = {sprite = "txt_pen", color = [2, 4], tiling = -1}
+text_bab_pen = {sprite = "txt_pen", color = [2, 4], tiling = "none"}
 
-bab_cil = {sprite = "cil", color = [2, 4], tiling = -1}
+bab_cil = {sprite = "cil", color = [2, 4], tiling = "none"}
 
-text_bab_cil = {sprite = "txt_cil", color = [2, 4], tiling = -1}
+text_bab_cil = {sprite = "txt_cil", color = [2, 4], tiling = "none"}
 
-bab_grav = {sprite = "grav", color = [0, 1], tiling = -1}
+bab_grav = {sprite = "grav", color = [0, 1], tiling = "none"}
 
-text_bab_grav = {sprite = "txt_grav", color = [0, 1], tiling = -1}
+text_bab_grav = {sprite = "txt_grav", color = [0, 1], tiling = "none"}
 
-bab_pumkin = {sprite = "pumkin", color = [2, 3], tiling = -1}
+bab_pumkin = {sprite = "pumkin", color = [2, 3], tiling = "none"}
 
-text_bab_pumkin = {sprite = "txt_pumkin", color = [2, 3], tiling = -1}
+text_bab_pumkin = {sprite = "txt_pumkin", color = [2, 3], tiling = "none"}
 
-bab_bel = {sprite = "bel", color = [2, 4], tiling = -1}
+bab_bel = {sprite = "bel", color = [2, 4], tiling = "none"}
 
-text_bab_bel = {sprite = "txt_bel", color = [2, 4], tiling = -1}
+text_bab_bel = {sprite = "txt_bel", color = [2, 4], tiling = "none"}
 
-bab_wres = {sprite = "wres", color = [5, 2], tiling = -1}
+bab_wres = {sprite = "wres", color = [5, 2], tiling = "none"}
 
-text_bab_wres = {sprite = "txt_wres", color = [5, 2], tiling = -1}
+text_bab_wres = {sprite = "txt_wres", color = [5, 2], tiling = "none"}
 
-bab_bowie = {sprite = "bowie", color = [2, 2], tiling = -1}
+bab_bowie = {sprite = "bowie", color = [2, 2], tiling = "none"}
 
-text_bab_bowie = {sprite = "txt_bowie", color = [2, 2], tiling = -1}
+text_bab_bowie = {sprite = "txt_bowie", color = [2, 2], tiling = "none"}
 
-bab_sant = {sprite = "sant", color = [0, 3], tiling = -1}
+bab_sant = {sprite = "sant", color = [0, 3], tiling = "none"}
 
-text_bab_sant = {sprite = "txt_sant", color = [2, 2], tiling = -1}
+text_bab_sant = {sprite = "txt_sant", color = [2, 2], tiling = "none"}
 
-bab_gato = {sprite = "gato", color = [0, 2], tiling = -1}
+bab_gato = {sprite = "gato", color = [0, 2], tiling = "none"}
 
-text_bab_gato = {sprite = "txt_gato", color = [0, 2], tiling = -1}
+text_bab_gato = {sprite = "txt_gato", color = [0, 2], tiling = "none"}
 
-bab_canedy = {sprite = "canedy", color = [0, 3], tiling = -1}
+bab_canedy = {sprite = "canedy", color = [0, 3], tiling = "none"}
 
-text_bab_canedy = {sprite = "txt_canedy", color = [2, 2], tiling = -1}
+text_bab_canedy = {sprite = "txt_canedy", color = [2, 2], tiling = "none"}
 
-bab_now = {sprite = "now", color = [0, 3], tiling = -1}
+bab_now = {sprite = "now", color = [0, 3], tiling = "none"}
 
-text_bab_now = {sprite = "txt_now", color = [2, 2], tiling = -1}
+text_bab_now = {sprite = "txt_now", color = [2, 2], tiling = "none"}
 
-bab_bolble = {sprite = "bolble", color = [2, 2], tiling = -1}
+bab_bolble = {sprite = "bolble", color = [2, 2], tiling = "none"}
 
-text_bab_bolble = {sprite = "txt_bolble", color = [2, 2], tiling = -1}
+text_bab_bolble = {sprite = "txt_bolble", color = [2, 2], tiling = "none"}
 
-bab_sno = {sprite = "sno", color = [0, 3], tiling = -1}
+bab_sno = {sprite = "sno", color = [0, 3], tiling = "none"}
 
-text_bab_sno = {sprite = "txt_sno", color = [0, 3], tiling = -1}
+text_bab_sno = {sprite = "txt_sno", color = [0, 3], tiling = "none"}
 
-bab_cooky = {sprite = "cooky", color = [6, 2], tiling = -1}
+bab_cooky = {sprite = "cooky", color = [6, 2], tiling = "none"}
 
-text_bab_cooky = {sprite = "txt_cooky", color = [6, 2], tiling = -1}
+text_bab_cooky = {sprite = "txt_cooky", color = [6, 2], tiling = "none"}
 
-bab_pot = {sprite = "pot", color = [0, 3], tiling = -1}
+bab_pot = {sprite = "pot", color = [0, 3], tiling = "none"}
 
-text_bab_pot = {sprite = "txt_pot", color = [0, 3], tiling = -1}
+text_bab_pot = {sprite = "txt_pot", color = [0, 3], tiling = "none"}
 
-bab_sweep = {sprite = "sweep", color = [6, 1], tiling = -1}
+bab_sweep = {sprite = "sweep", color = [6, 1], tiling = "none"}
 
-text_bab_sweep = {sprite = "txt_sweep", color = [6, 1], tiling = -1}
+text_bab_sweep = {sprite = "txt_sweep", color = [6, 1], tiling = "none"}
 
-bab_which = {sprite = "which", color = [0, 3], tiling = -1}
+bab_which = {sprite = "which", color = [0, 3], tiling = "none"}
 
-text_bab_which = {sprite = "txt_which", color = [3, 1], tiling = -1}
+text_bab_which = {sprite = "txt_which", color = [3, 1], tiling = "none"}
 
-bab_wan = {sprite = "wan", color = [0, 3], tiling = -1}
+bab_wan = {sprite = "wan", color = [0, 3], tiling = "none"}
 
-text_bab_wan = {sprite = "txt_wan", color = [0, 1], tiling = -1}
+text_bab_wan = {sprite = "txt_wan", color = [0, 1], tiling = "none"}
 
-bab_mug = {sprite = "mug", color = [0, 3], tiling = -1}
+bab_mug = {sprite = "mug", color = [0, 3], tiling = "none"}
 
-text_bab_mug = {sprite = "txt_mug", color = [0, 3], tiling = -1}
+text_bab_mug = {sprite = "txt_mug", color = [0, 3], tiling = "none"}
 
-bab_corndy = {sprite = "corndy", color = [0, 3], tiling = -1}
+bab_corndy = {sprite = "corndy", color = [0, 3], tiling = "none"}
 
-text_bab_corndy = {sprite = "txt_corndy", color = [0, 1], tiling = -1}
+text_bab_corndy = {sprite = "txt_corndy", color = [0, 1], tiling = "none"}
 
-bab_die = {sprite = "die", color = [0, 3], tiling = -1}
+bab_die = {sprite = "die", color = [0, 3], tiling = "none"}
 
-text_bab_die = {sprite = "txt_die", color = [0, 3], tiling = -1}
+text_bab_die = {sprite = "txt_die", color = [0, 3], tiling = "none"}
 
-bab_tronk = {sprite = "tronk", color = [1, 4], tiling = -1}
+bab_tronk = {sprite = "tronk", color = [1, 4], tiling = "none"}
 
-text_bab_tronk = {sprite = "txt_tronk", color = [1, 4], tiling = -1}
+text_bab_tronk = {sprite = "txt_tronk", color = [1, 4], tiling = "none"}
 
-bab_aaaaaa = {sprite = "aaaaaa", color = [0, 3], tiling = -1}
+bab_aaaaaa = {sprite = "aaaaaa", color = [0, 3], tiling = "none"}
 
-bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = -1}
+bab_therealbabdictator = {sprite = "therealbabdictator", color = [0, 3], tiling = "none"}
 
-text_bab_therealbabdictator = {sprite = "txt_therealbabdictator", color = [0, 3], tiling = -1}
+text_bab_therealbabdictator = {sprite = "txt_therealbabdictator", color = [0, 3], tiling = "none"}
 
-bab_fube = {sprite = "fube", color = [0, 3], tiling = -1}
+bab_fube = {sprite = "fube", color = [0, 3], tiling = "none"}
 
-text_bab_fube = {sprite = "txt_fube", color = [0, 3], tiling = -1}
+text_bab_fube = {sprite = "txt_fube", color = [0, 3], tiling = "none"}
 
-bab_prop = {sprite = "prop", color = [0, 3], tiling = -1}
+bab_prop = {sprite = "prop", color = [0, 3], tiling = "none"}
 
-text_bab_prop = {sprite = "txt_prop", color = [0, 3], tiling = -1}
+text_bab_prop = {sprite = "txt_prop", color = [0, 3], tiling = "none"}
 
-bab_colect = {sprite = "colect", color = [0, 2], tiling = -1}
+bab_colect = {sprite = "colect", color = [0, 2], tiling = "none"}
 
-text_bab_colect = {sprite = "txt_colect", color = [0, 3], tiling = -1}
+text_bab_colect = {sprite = "txt_colect", color = [0, 3], tiling = "none"}
 
-bab_whee = {sprite = "whee", color = [0, 3], tiling = -1}
+bab_whee = {sprite = "whee", color = [0, 3], tiling = "none"}
 
-text_bab_whee = {sprite = "txt_whee", color = [0, 3], tiling = -1}
+text_bab_whee = {sprite = "txt_whee", color = [0, 3], tiling = "none"}
 
-bab_joycon = {sprite = "joycon", color = [2, 2], tiling = -1}
+bab_joycon = {sprite = "joycon", color = [2, 2], tiling = "none"}
 
-text_bab_joycon = {sprite = "txt_joycon", color = [0, 3], tiling = -1}
+text_bab_joycon = {sprite = "txt_joycon", color = [0, 3], tiling = "none"}
 
-bab_cart = {sprite = "cart", color = [0, 2], tiling = -1}
+bab_cart = {sprite = "cart", color = [0, 2], tiling = "none"}
 
-text_bab_cart = {sprite = "txt_cart", color = [0, 2], tiling = -1}
+text_bab_cart = {sprite = "txt_cart", color = [0, 2], tiling = "none"}
 
-bab_drop = {sprite = "drop", color = [1, 3], tiling = -1}
+bab_drop = {sprite = "drop", color = [1, 3], tiling = "none"}
 
-text_bab_drop = {sprite = "txt_drop", color = [1, 3], tiling = -1}
+text_bab_drop = {sprite = "txt_drop", color = [1, 3], tiling = "none"}
 
-bab_woosh = {sprite = "woosh", color = [0, 3], tiling = -1}
+bab_woosh = {sprite = "woosh", color = [0, 3], tiling = "none"}
 
-text_bab_woosh = {sprite = "txt_woosh", color = [5, 3], tiling = -1}
+text_bab_woosh = {sprite = "txt_woosh", color = [5, 3], tiling = "none"}
 
-bab_candl = {sprite = "candl", color = [2, 2], tiling = -1}
+bab_candl = {sprite = "candl", color = [2, 2], tiling = "none"}
 
-text_bab_candl = {sprite = "txt_candl", color = [2, 2], tiling = -1}
+text_bab_candl = {sprite = "txt_candl", color = [2, 2], tiling = "none"}
 
-bab_maglit = {sprite = "maglit", color = [0, 3], tiling = -1}
+bab_maglit = {sprite = "maglit", color = [0, 3], tiling = "none"}
 
-text_bab_maglit = {sprite = "txt_maglit", color = [0, 2], tiling = -1}
+text_bab_maglit = {sprite = "txt_maglit", color = [0, 2], tiling = "none"}
 
-text_bab_xplod = {sprite = "txt_xplod", color = [2, 2], tiling = -1}
+text_bab_xplod = {sprite = "txt_xplod", color = [2, 2], tiling = "none"}
 
-bab_zig = {sprite = "zig", color = [0, 3], tiling = -1}
+bab_zig = {sprite = "zig", color = [0, 3], tiling = "none"}
 
-text_bab_zig = {sprite = "txt_zig", color = [0, 3], tiling = -1}
+text_bab_zig = {sprite = "txt_zig", color = [0, 3], tiling = "none"}
 
-bab_cracc = {sprite = "cracc", color = [0, 0], tiling = -1}
+bab_cracc = {sprite = "cracc", color = [0, 0], tiling = "none"}
 
-text_bab_cracc = {sprite = "txt_cracc", color = [0, 1], tiling = -1}
+text_bab_cracc = {sprite = "txt_cracc", color = [0, 1], tiling = "none"}
 
-bab_pixl = {sprite = "pixl", color = [0, 3], tiling = -1}
+bab_pixl = {sprite = "pixl", color = [0, 3], tiling = "none"}
 
-text_bab_pixl = {sprite = "txt_pixl", color = [0, 3], tiling = -1}
+text_bab_pixl = {sprite = "txt_pixl", color = [0, 3], tiling = "none"}
 
-bab_voom = {sprite = "voom", color = [0, 3], tiling = -1}
+bab_voom = {sprite = "voom", color = [0, 3], tiling = "none"}
 
-text_bab_voom = {sprite = "txt_voom", color = [2, 4], tiling = -1}
+text_bab_voom = {sprite = "txt_voom", color = [2, 4], tiling = "none"}
 
-bab_qb = {sprite = "qb", color = [5, 2], tiling = -1}
+bab_qb = {sprite = "qb", color = [5, 2], tiling = "none"}
 
-text_bab_qb = {sprite = "txt_qb", color = [5, 2], tiling = -1}
+text_bab_qb = {sprite = "txt_qb", color = [5, 2], tiling = "none"}
 
-bab_tanc = {sprite = "tanc", color = [5, 1], tiling = -1}
+bab_tanc = {sprite = "tanc", color = [5, 1], tiling = "none"}
 
-text_bab_tanc = {sprite = "txt_tanc", color = [5, 1], tiling = -1}
+text_bab_tanc = {sprite = "txt_tanc", color = [5, 1], tiling = "none"}
 
-bab_panlie = {sprite = "panlie", color = [0, 3], tiling = -1}
+bab_panlie = {sprite = "panlie", color = [0, 3], tiling = "none"}
 
-text_bab_panlie = {sprite = "txt_panlie", color = [6, 2], tiling = -1}
+text_bab_panlie = {sprite = "txt_panlie", color = [6, 2], tiling = "none"}
 
-bab_pixbolt = {sprite = "pixbolt", color = [0, 3], tiling = -1}
+bab_pixbolt = {sprite = "pixbolt", color = [0, 3], tiling = "none"}
 
-text_bab_pixbolt = {sprite = "txt_pixbolt", color = [0, 3], tiling = -1}
+text_bab_pixbolt = {sprite = "txt_pixbolt", color = [0, 3], tiling = "none"}
 
-bab_painbuct = {sprite = "painbuct", color = [0, 3], tiling = -1}
+bab_painbuct = {sprite = "painbuct", color = [0, 3], tiling = "none"}
 
-text_bab_painbuct = {sprite = "txt_painbuct", color = [4, 2], tiling = -1}
+text_bab_painbuct = {sprite = "txt_painbuct", color = [4, 2], tiling = "none"}
 
-bab_sinyroc = {sprite = "sinyroc", color = [4, 2], tiling = -1}
+bab_sinyroc = {sprite = "sinyroc", color = [4, 2], tiling = "none"}
 
-text_bab_sinyroc = {sprite = "txt_sinyroc", color = [4, 2], tiling = -1}
+text_bab_sinyroc = {sprite = "txt_sinyroc", color = [4, 2], tiling = "none"}
 
-bab_nuzt = {sprite = "nuzt", color = [6, 2], tiling = -1}
+bab_nuzt = {sprite = "nuzt", color = [6, 2], tiling = "none"}
 
-text_bab_nuzt = {sprite = "txt_nuzt", color = [6, 2], tiling = -1}
+text_bab_nuzt = {sprite = "txt_nuzt", color = [6, 2], tiling = "none"}
 
-bab_cheez = {sprite = "cheez", color = [2, 4], tiling = -1}
+bab_cheez = {sprite = "cheez", color = [2, 4], tiling = "none"}
 
-text_bab_cheez = {sprite = "txt_cheez", color = [2, 4], tiling = -1}
+text_bab_cheez = {sprite = "txt_cheez", color = [2, 4], tiling = "none"}
 
-text_bab_wslashfren = {sprite = "txt_w_fren", color = [0, 3], tiling = -1}
+"text_bab_w/fren" = {sprite = "txt_w2ffren", color = [0, 3], tiling = "none"}
 
-text_bab_lookat = {sprite = "txt_lookat", color = [0, 3], tiling = -1}
+text_bab_lookat = {sprite = "txt_lookat", color = [0, 3], tiling = "none"}
 
-text_bab_lookaway = {sprite = "txt_lookaway", color = [0, 3], tiling = -1}
+text_bab_lookaway = {sprite = "txt_lookaway", color = [0, 3], tiling = "none"}
 
-text_bab_behind = {sprite = "txt_behind", color = [0, 3], tiling = -1}
+text_bab_behind = {sprite = "txt_behind", color = [0, 3], tiling = "none"}
 
-text_bab_beside = {sprite = "txt_beside", color = [0, 3], tiling = -1}
+text_bab_beside = {sprite = "txt_beside", color = [0, 3], tiling = "none"}
 
-text_bab_frenles = {sprite = "txt_frenles", color = [2, 2], tiling = -1}
+text_bab_frenles = {sprite = "txt_frenles", color = [2, 2], tiling = "none"}
 
-text_bab_arond = {sprite = "txt_arond", color = [0, 3], tiling = -1}
+text_bab_arond = {sprite = "txt_arond", color = [0, 3], tiling = "none"}
 
-"text_bab_wait..." = {sprite = "txt_wait...", color = [0, 3], tiling = -1}
+"text_bab_wait..." = {sprite = "txt_wait2e2e2e", color = [0, 3], tiling = "none"}
 
-text_bab_sans = {sprite = "txt_sans", color = [1, 4], tiling = -1}
+text_bab_sans = {sprite = "txt_sans", color = [1, 4], tiling = "none"}
 
-text_bab_mayb = {sprite = "txt_mayb", color = [0, 3], tiling = -1}
+text_bab_mayb = {sprite = "txt_mayb", color = [0, 3], tiling = "none"}
 
-text_bab_seenby = {sprite = "txt_seenby", color = [0, 3], tiling = -1}
+text_bab_seenby = {sprite = "txt_seenby", color = [0, 3], tiling = "none"}
 
-text_bab_lit = {sprite = "txt_lit", color = [2, 4], tiling = -1}
+text_bab_lit = {sprite = "txt_lit", color = [2, 4], tiling = "none"}
 
-text_bab_an = {sprite = "txt_an", color = [0, 3], tiling = -1}
+text_bab_an = {sprite = "txt_an", color = [0, 3], tiling = "none"}
 
-text_bab_reed = {sprite = "txt_reed", color = [2, 2], tiling = -1}
+text_bab_reed = {sprite = "txt_reed", color = [2, 2], tiling = "none"}
 
-text_bab_bleu = {sprite = "txt_bleu", color = [1, 3], tiling = -1}
+text_bab_bleu = {sprite = "txt_bleu", color = [1, 3], tiling = "none"}
 
-text_bab_grun = {sprite = "txt_grun", color = [5, 2], tiling = -1}
+text_bab_grun = {sprite = "txt_grun", color = [5, 2], tiling = "none"}
 
-text_bab_yello = {sprite = "txt_yello", color = [2, 4], tiling = -1}
+text_bab_yello = {sprite = "txt_yello", color = [2, 4], tiling = "none"}
 
-text_bab_purp = {sprite = "txt_purp", color = [3, 1], tiling = -1}
+text_bab_purp = {sprite = "txt_purp", color = [3, 1], tiling = "none"}
 
-text_bab_orang = {sprite = "txt_orang", color = [2, 3], tiling = -1}
+text_bab_orang = {sprite = "txt_orang", color = [2, 3], tiling = "none"}
 
-text_bab_cyeann = {sprite = "txt_cyeann", color = [1, 4], tiling = -1}
+text_bab_cyeann = {sprite = "txt_cyeann", color = [1, 4], tiling = "none"}
 
-text_bab_whit = {sprite = "txt_whit", color = [0, 3], tiling = -1}
+text_bab_whit = {sprite = "txt_whit", color = [0, 3], tiling = "none"}
 
-text_bab_blacc = {sprite = "txt_blacc", color = [0, 0], tiling = -1}
+text_bab_blacc = {sprite = "txt_blacc", color = [0, 0], tiling = "none"}
 
-text_bab_pinc = {sprite = "txt_pinc", color = [4, 1], tiling = -1}
+text_bab_pinc = {sprite = "txt_pinc", color = [4, 1], tiling = "none"}
 
-text_bab_graey = {sprite = "txt_graey", color = [0, 1], tiling = -1}
+text_bab_graey = {sprite = "txt_graey", color = [0, 1], tiling = "none"}
 
-text_bab_brwn = {sprite = "txt_brwn", color = [6, 0], tiling = -1}
+text_bab_brwn = {sprite = "txt_brwn", color = [6, 0], tiling = "none"}
 
-text_bab_corekt = {sprite = "txt_corekt", color = [5, 2], tiling = -1}
+text_bab_corekt = {sprite = "txt_corekt", color = [5, 2], tiling = "none"}
 
-text_bab_rong = {sprite = "txt_rong", color = [2, 2], tiling = -1}
+text_bab_rong = {sprite = "txt_rong", color = [2, 2], tiling = "none"}
 
-text_bab_the = {sprite = "txt_the", color = [0, 3], tiling = -1}
+text_bab_the = {sprite = "txt_the", color = [0, 3], tiling = "none"}
 
-text_bab_that = {sprite = "txt_that", color = [0, 3], tiling = -1}
+text_bab_that = {sprite = "txt_that", color = [0, 3], tiling = "none"}
 
-text_bab_thatbe = {sprite = "txt_thatbe", color = [0, 3], tiling = -1}
+text_bab_thatbe = {sprite = "txt_thatbe", color = [0, 3], tiling = "none"}
 
-text_bab_thatgot = {sprite = "txt_thatgot", color = [0, 3], tiling = -1}
+text_bab_thatgot = {sprite = "txt_thatgot", color = [0, 3], tiling = "none"}
 
-text_bab_timles = {sprite = "txt_timles", color = [2, 4], tiling = -1}
+text_bab_timles = {sprite = "txt_timles", color = [2, 4], tiling = "none"}
 
-text_bab_clikt = {sprite = "txt_clikt", color = [3, 1], tiling = -1}
+text_bab_clikt = {sprite = "txt_clikt", color = [3, 1], tiling = "none"}
 
-text_bab_wun = {sprite = "txt_wun", color = [2, 4], tiling = -1}
+text_bab_wun = {sprite = "txt_wun", color = [2, 4], tiling = "none"}
 
-text_bab_past = {sprite = "txt_past", color = [3, 1], tiling = -1}
+text_bab_past = {sprite = "txt_past", color = [3, 1], tiling = "none"}
 
-text_bab_oob = {sprite = "txt_oob", color = [1, 2], tiling = -1}
+text_bab_oob = {sprite = "txt_oob", color = [1, 2], tiling = "none"}
 
-text_bab_alt = {sprite = "txt_alt", color = [1, 3], tiling = -1}
+text_bab_alt = {sprite = "txt_alt", color = [1, 3], tiling = "none"}
 
-text_bab_deez = {sprite = "txt_deez", color = [0, 3], tiling = -1}
+text_bab_deez = {sprite = "txt_deez", color = [0, 3], tiling = "none"}
 
-text_bab_meow = {sprite = "txt_meow", color = [2, 4], tiling = -1}
+text_bab_meow = {sprite = "txt_meow", color = [2, 4], tiling = "none"}
 
-text_bab_offgrid = {sprite = "txt_offgrid", color = [5, 2], tiling = -1}
+text_bab_offgrid = {sprite = "txt_offgrid", color = [5, 2], tiling = "none"}
 
-bab_letter_a = {sprite = "letter_a", color = [0, 3], tiling = -1}
+bab_letter_a = {sprite = "letter_a", color = [0, 3], tiling = "none"}
 
-bab_letter_b = {sprite = "letter_b", color = [0, 3], tiling = -1}
+bab_letter_b = {sprite = "letter_b", color = [0, 3], tiling = "none"}
 
-bab_letter_c = {sprite = "letter_c", color = [0, 3], tiling = -1}
+bab_letter_c = {sprite = "letter_c", color = [0, 3], tiling = "none"}
 
-bab_letter_d = {sprite = "letter_d", color = [0, 3], tiling = -1}
+bab_letter_d = {sprite = "letter_d", color = [0, 3], tiling = "none"}
 
-bab_letter_e = {sprite = "letter_e", color = [0, 3], tiling = -1}
+bab_letter_e = {sprite = "letter_e", color = [0, 3], tiling = "none"}
 
-bab_letter_f = {sprite = "letter_f", color = [0, 3], tiling = -1}
+bab_letter_f = {sprite = "letter_f", color = [0, 3], tiling = "none"}
 
-bab_letter_g = {sprite = "letter_g", color = [0, 3], tiling = -1}
+bab_letter_g = {sprite = "letter_g", color = [0, 3], tiling = "none"}
 
-bab_letter_h = {sprite = "letter_h", color = [0, 3], tiling = -1}
+bab_letter_h = {sprite = "letter_h", color = [0, 3], tiling = "none"}
 
-bab_letter_i = {sprite = "letter_i", color = [0, 3], tiling = -1}
+bab_letter_i = {sprite = "letter_i", color = [0, 3], tiling = "none"}
 
-bab_letter_j = {sprite = "letter_j", color = [0, 3], tiling = -1}
+bab_letter_j = {sprite = "letter_j", color = [0, 3], tiling = "none"}
 
-bab_letter_k = {sprite = "letter_k", color = [0, 3], tiling = -1}
+bab_letter_k = {sprite = "letter_k", color = [0, 3], tiling = "none"}
 
-bab_letter_l = {sprite = "letter_l", color = [0, 3], tiling = -1}
+bab_letter_l = {sprite = "letter_l", color = [0, 3], tiling = "none"}
 
-bab_letter_m = {sprite = "letter_m", color = [0, 3], tiling = -1}
+bab_letter_m = {sprite = "letter_m", color = [0, 3], tiling = "none"}
 
-bab_letter_n = {sprite = "letter_n", color = [0, 3], tiling = -1}
+bab_letter_n = {sprite = "letter_n", color = [0, 3], tiling = "none"}
 
-bab_letter_o = {sprite = "letter_o", color = [0, 3], tiling = -1}
+bab_letter_o = {sprite = "letter_o", color = [0, 3], tiling = "none"}
 
-bab_letter_p = {sprite = "letter_p", color = [0, 3], tiling = -1}
+bab_letter_p = {sprite = "letter_p", color = [0, 3], tiling = "none"}
 
-bab_letter_q = {sprite = "letter_q", color = [0, 3], tiling = -1}
+bab_letter_q = {sprite = "letter_q", color = [0, 3], tiling = "none"}
 
-bab_letter_r = {sprite = "letter_r", color = [0, 3], tiling = -1}
+bab_letter_r = {sprite = "letter_r", color = [0, 3], tiling = "none"}
 
-bab_letter_s = {sprite = "letter_s", color = [0, 3], tiling = -1}
+bab_letter_s = {sprite = "letter_s", color = [0, 3], tiling = "none"}
 
-bab_letter_t = {sprite = "letter_t", color = [0, 3], tiling = -1}
+bab_letter_t = {sprite = "letter_t", color = [0, 3], tiling = "none"}
 
-bab_letter_u = {sprite = "letter_u", color = [0, 3], tiling = -1}
+bab_letter_u = {sprite = "letter_u", color = [0, 3], tiling = "none"}
 
-bab_letter_v = {sprite = "letter_v", color = [0, 3], tiling = -1}
+bab_letter_v = {sprite = "letter_v", color = [0, 3], tiling = "none"}
 
-bab_letter_w = {sprite = "letter_w", color = [0, 3], tiling = -1}
+bab_letter_w = {sprite = "letter_w", color = [0, 3], tiling = "none"}
 
-bab_letter_x = {sprite = "letter_x", color = [0, 3], tiling = -1}
+bab_letter_x = {sprite = "letter_x", color = [0, 3], tiling = "none"}
 
-bab_letter_y = {sprite = "letter_y", color = [0, 3], tiling = -1}
+bab_letter_y = {sprite = "letter_y", color = [0, 3], tiling = "none"}
 
-bab_letter_z = {sprite = "letter_z", color = [0, 3], tiling = -1}
+bab_letter_z = {sprite = "letter_z", color = [0, 3], tiling = "none"}
 
-"bab_letter_'" = {sprite = "letter__", color = [0, 3], tiling = -1}
+"bab_letter_'" = {sprite = "letter_27", color = [0, 3], tiling = "none"}
 
-"bab_letter_." = {sprite = "letter_.", color = [0, 3], tiling = -1}
+"bab_letter_." = {sprite = "letter_2e", color = [0, 3], tiling = "none"}
 
-bab_letter_colon = {sprite = "letter_colon", color = [0, 3], tiling = -1}
+bab_letter_colon = {sprite = "letter_colon", color = [0, 3], tiling = "none"}
 
-bab_letter_parenthesis = {sprite = "letter_parenthesis", color = [0, 3], tiling = -1}
+bab_letter_parenthesis = {sprite = "letter_parenthesis", color = [0, 3], tiling = "none"}
 
-bab_letter_1 = {sprite = "letter_1", color = [0, 3], tiling = -1}
+bab_letter_1 = {sprite = "letter_1", color = [0, 3], tiling = "none"}
 
-bab_letter_2 = {sprite = "letter_2", color = [0, 3], tiling = -1}
+bab_letter_2 = {sprite = "letter_2", color = [0, 3], tiling = "none"}
 
-bab_letter_3 = {sprite = "letter_3", color = [0, 3], tiling = -1}
+bab_letter_3 = {sprite = "letter_3", color = [0, 3], tiling = "none"}
 
-bab_letter_4 = {sprite = "letter_4", color = [0, 3], tiling = -1}
+bab_letter_4 = {sprite = "letter_4", color = [0, 3], tiling = "none"}
 
-bab_letter_5 = {sprite = "letter_5", color = [0, 3], tiling = -1}
+bab_letter_5 = {sprite = "letter_5", color = [0, 3], tiling = "none"}
 
-bab_letter_6 = {sprite = "letter_6", color = [0, 3], tiling = -1}
+bab_letter_6 = {sprite = "letter_6", color = [0, 3], tiling = "none"}
 
-bab_letter_7 = {sprite = "letter_7", color = [0, 3], tiling = -1}
+bab_letter_7 = {sprite = "letter_7", color = [0, 3], tiling = "none"}
 
-bab_letter_8 = {sprite = "letter_8", color = [0, 3], tiling = -1}
+bab_letter_8 = {sprite = "letter_8", color = [0, 3], tiling = "none"}
 
-bab_letter_9 = {sprite = "letter_9", color = [0, 3], tiling = -1}
+bab_letter_9 = {sprite = "letter_9", color = [0, 3], tiling = "none"}
 
-bab_letter_semicolon = {sprite = "letter_;", color = [0, 3], tiling = -1}
+"bab_letter_;" = {sprite = "letter_3b", color = [0, 3], tiling = "none"}
 
-bab_letter_slash = {sprite = "letter__", color = [0, 3], tiling = -1}
+"bab_letter_/" = {sprite = "letter_2f", color = [0, 3], tiling = "none"}
 
-"bab_letter_>" = {sprite = "letter_>", color = [0, 3], tiling = -1}
+bab_letter_gt = {sprite = "letter_3e", color = [0, 3], tiling = "none"}
 
-"bab_letter_*" = {sprite = "letter_*", color = [0, 3], tiling = -1}
+"bab_letter_*" = {sprite = "letter_2a", color = [0, 3], tiling = "none"}
 
-"bab_letter_$" = {sprite = "letter_$", color = [0, 3], tiling = -1}
+"bab_letter_$" = {sprite = "letter_24", color = [0, 3], tiling = "none"}
 
-"bab_letter_π" = {sprite = "letter_π", color = [0, 3], tiling = -1}
+"bab_letter_π" = {sprite = "letter_π", color = [0, 3], tiling = "none"}
 
-bab_letter_go = {sprite = "letter_go", color = [0, 3], tiling = -1}
+bab_letter_go = {sprite = "letter_go", color = [0, 3], tiling = "none"}
 
-bab_letter_come = {sprite = "letter_come", color = [0, 3], tiling = -1}
+bab_letter_come = {sprite = "letter_come", color = [0, 3], tiling = "none"}
 
-bab_letter_pls = {sprite = "letter_pls", color = [0, 3], tiling = -1}
+bab_letter_pls = {sprite = "letter_pls", color = [0, 3], tiling = "none"}
 
-bab_letter_away = {sprite = "letter_away", color = [0, 3], tiling = -1}
+bab_letter_away = {sprite = "letter_away", color = [0, 3], tiling = "none"}
 
-bab_letter_my = {sprite = "letter_my", color = [0, 3], tiling = -1}
+bab_letter_my = {sprite = "letter_my", color = [0, 3], tiling = "none"}
 
-bab_letter_no = {sprite = "letter_no", color = [0, 3], tiling = -1}
+bab_letter_no = {sprite = "letter_no", color = [0, 3], tiling = "none"}
 
-bab_letter_way = {sprite = "letter_way", color = [0, 3], tiling = -1}
+bab_letter_way = {sprite = "letter_way", color = [0, 3], tiling = "none"}
 
-bab_letter_ee = {sprite = "letter_ee", color = [0, 3], tiling = -1}
+bab_letter_ee = {sprite = "letter_ee", color = [0, 3], tiling = "none"}
 
-bab_letter_fren = {sprite = "letter_fren", color = [0, 3], tiling = -1}
+bab_letter_fren = {sprite = "letter_fren", color = [0, 3], tiling = "none"}
 
-bab_letter_ll = {sprite = "letter_ll", color = [0, 3], tiling = -1}
+bab_letter_ll = {sprite = "letter_ll", color = [0, 3], tiling = "none"}
 
-bab_letter_bolt = {sprite = "letter_bolt", color = [0, 3], tiling = -1}
+bab_letter_bolt = {sprite = "letter_bolt", color = [0, 3], tiling = "none"}
 
-bab_letter_ol = {sprite = "letter_ol", color = [0, 3], tiling = -1}
+bab_letter_ol = {sprite = "letter_ol", color = [0, 3], tiling = "none"}
 
-bab_letter_custom = {sprite = "letter_custom", color = [0, 3], tiling = -1}
+bab_letter_custom = {sprite = "letter_custom", color = [0, 3], tiling = "none"}
 
-text_bab_u = {sprite = "txt_u", color = [4, 1], tiling = -1}
+text_bab_u = {sprite = "txt_u", color = [4, 1], tiling = "none"}
 
-text_bab_utoo = {sprite = "txt_utoo", color = [4, 1], tiling = -1}
+text_bab_utoo = {sprite = "txt_utoo", color = [4, 1], tiling = "none"}
 
-text_bab_utres = {sprite = "txt_utres", color = [4, 1], tiling = -1}
+text_bab_utres = {sprite = "txt_utres", color = [4, 1], tiling = "none"}
 
-text_bab_w = {sprite = "txt_w", color = [4, 1], tiling = -1}
+text_bab_w = {sprite = "txt_w", color = [4, 1], tiling = "none"}
 
-"text_bab_y'all" = {sprite = "txt_y_all", color = [4, 2], tiling = -1}
+"text_bab_y'all" = {sprite = "txt_y27all", color = [4, 2], tiling = "none"}
 
-text_bab_you = {sprite = "txt_you", color = [4, 1], tiling = -1}
+text_bab_you = {sprite = "txt_you", color = [4, 1], tiling = "none"}
 
-text_bab_nogo = {sprite = "txt_nogo", color = [5, 1], tiling = -1}
+text_bab_nogo = {sprite = "txt_nogo", color = [5, 1], tiling = "none"}
 
-text_bab_gomyway = {sprite = "txt_gomyway", color = [1, 3], tiling = -1}
+text_bab_gomyway = {sprite = "txt_gomyway", color = [1, 3], tiling = "none"}
 
-text_bab_goawaypls = {sprite = "txt_goawaypls", color = [6, 1], tiling = -1}
+text_bab_goawaypls = {sprite = "txt_goawaypls", color = [6, 1], tiling = "none"}
 
-text_bab_push = {sprite = "txt_push", color = [6, 1], tiling = -1}
+text_bab_push = {sprite = "txt_push", color = [6, 1], tiling = "none"}
 
-text_bab_comepls = {sprite = "txt_comepls", color = [6, 2], tiling = -1}
+text_bab_comepls = {sprite = "txt_comepls", color = [6, 2], tiling = "none"}
 
-text_bab_sidekik = {sprite = "txt_sidekik", color = [6, 1], tiling = -1}
+text_bab_sidekik = {sprite = "txt_sidekik", color = [6, 1], tiling = "none"}
 
-text_bab_diagkik = {sprite = "txt_diagkik", color = [6, 1], tiling = -1}
+text_bab_diagkik = {sprite = "txt_diagkik", color = [6, 1], tiling = "none"}
 
-text_bab_nedkee = {sprite = "txt_nedkee", color = [2, 2], tiling = -1}
+text_bab_nedkee = {sprite = "txt_nedkee", color = [2, 2], tiling = "none"}
 
-text_bab_fordor = {sprite = "txt_fordor", color = [2, 4], tiling = -1}
+text_bab_fordor = {sprite = "txt_fordor", color = [2, 4], tiling = "none"}
 
-"text_bab_yay" = {sprite = "txt_:)", color = [2, 4], tiling = -1}
+text_bab_yay = {sprite = "txt_yay", color = [2, 4], tiling = "none"}
 
-text_bab_noswim = {sprite = "txt_noswim", color = [1, 3], tiling = -1}
+text_bab_noswim = {sprite = "txt_noswim", color = [1, 3], tiling = "none"}
 
-text_bab_colrful = {sprite = "txt_colrful", color = [0, 3], tiling = -1}
+text_bab_colrful = {sprite = "txt_colrful", color = [0, 3], tiling = "none"}
 
-text_bab_rave = {sprite = "txt_rave", color = [0, 3], tiling = -1}
+text_bab_rave = {sprite = "txt_rave", color = [0, 3], tiling = "none"}
 
-text_bab_tranz = {sprite = "txt_tranz", color = [0, 3], tiling = -1}
+text_bab_tranz = {sprite = "txt_tranz", color = [0, 3], tiling = "none"}
 
-text_bab_gay = {sprite = "txt_gay", color = [0, 3], tiling = -1}
+text_bab_gay = {sprite = "txt_gay", color = [0, 3], tiling = "none"}
 
-text_bab_enby = {sprite = "txt_enby", color = [0, 3], tiling = -1}
+text_bab_enby = {sprite = "txt_enby", color = [0, 3], tiling = "none"}
 
-text_bab_ace = {sprite = "txt_ace", color = [0, 3], tiling = -1}
+text_bab_ace = {sprite = "txt_ace", color = [0, 3], tiling = "none"}
 
-text_bab_pan = {sprite = "txt_pan", color = [0, 3], tiling = -1}
+text_bab_pan = {sprite = "txt_pan", color = [0, 3], tiling = "none"}
 
-text_bab_bi = {sprite = "txt_bi", color = [0, 3], tiling = -1}
+text_bab_bi = {sprite = "txt_bi", color = [0, 3], tiling = "none"}
 
-text_bab_lesbab = {sprite = "txt_lesbab", color = [0, 3], tiling = -1}
+text_bab_lesbab = {sprite = "txt_lesbab", color = [0, 3], tiling = "none"}
 
-text_bab_aro = {sprite = "txt_aro", color = [0, 3], tiling = -1}
+text_bab_aro = {sprite = "txt_aro", color = [0, 3], tiling = "none"}
 
-text_bab_fluid = {sprite = "txt_fluid", color = [0, 3], tiling = -1}
+text_bab_fluid = {sprite = "txt_fluid", color = [0, 3], tiling = "none"}
 
-"text_bab_πoly" = {sprite = "txt_πoly", color = [0, 3], tiling = -1}
+"text_bab_πoly" = {sprite = "txt_πoly", color = [0, 3], tiling = "none"}
 
-text_bab_slep = {sprite = "txt_slep", color = [1, 3], tiling = -1}
+text_bab_slep = {sprite = "txt_slep", color = [1, 3], tiling = "none"}
 
-"text_bab_aw" = {sprite = "txt_:(", color = [2, 1], tiling = -1}
+text_bab_aw = {sprite = "txt_aw", color = [2, 1], tiling = "none"}
 
-text_bab_walk = {sprite = "txt_walk", color = [5, 3], tiling = -1}
+text_bab_walk = {sprite = "txt_walk", color = [5, 3], tiling = "none"}
 
-text_bab_whoa = {sprite = "txt_:o", color = [4, 1], tiling = -1}
+text_bab_woah = {sprite = "txt_woah", color = [4, 1], tiling = "none"}
 
-text_bab_direction = {sprite = "txt_direction", color = [1, 4], tiling = -1}
+text_bab_direction = {sprite = "txt_direction", color = [1, 4], tiling = "none"}
 
-text_bab_up = {sprite = "txt_up", color = [1, 4], tiling = -1}
+text_bab_up = {sprite = "txt_up", color = [1, 4], tiling = "none"}
 
-text_bab_left = {sprite = "txt_left", color = [1, 4], tiling = -1}
+text_bab_left = {sprite = "txt_left", color = [1, 4], tiling = "none"}
 
-text_bab_down = {sprite = "txt_down", color = [1, 4], tiling = -1}
+text_bab_down = {sprite = "txt_down", color = [1, 4], tiling = "none"}
 
-text_bab_right = {sprite = "txt_right", color = [1, 4], tiling = -1}
+text_bab_right = {sprite = "txt_right", color = [1, 4], tiling = "none"}
 
-text_bab_upleft = {sprite = "txt_upleft", color = [1, 4], tiling = -1}
+text_bab_upleft = {sprite = "txt_upleft", color = [1, 4], tiling = "none"}
 
-text_bab_upright = {sprite = "txt_upright", color = [1, 4], tiling = -1}
+text_bab_upright = {sprite = "txt_upright", color = [1, 4], tiling = "none"}
 
-text_bab_downleft = {sprite = "txt_downleft", color = [1, 4], tiling = -1}
+text_bab_downleft = {sprite = "txt_downleft", color = [1, 4], tiling = "none"}
 
-text_bab_downright = {sprite = "txt_downright", color = [1, 4], tiling = -1}
+text_bab_downright = {sprite = "txt_downright", color = [1, 4], tiling = "none"}
 
-text_bab_behinu = {sprite = "txt_behinu", color = [3, 1], tiling = -1}
+text_bab_behinu = {sprite = "txt_behinu", color = [3, 1], tiling = "none"}
 
-text_bab_ouch = {sprite = "txt_ouch", color = [1, 2], tiling = -1}
+text_bab_ouch = {sprite = "txt_ouch", color = [1, 2], tiling = "none"}
 
-text_bab_qt = {sprite = "txt_qt", color = [4, 2], tiling = -1}
+text_bab_qt = {sprite = "txt_qt", color = [4, 2], tiling = "none"}
 
-text_bab_go = {sprite = "txt_go", color = [1, 3], tiling = -1}
+text_bab_go = {sprite = "txt_go", color = [1, 3], tiling = "none"}
 
-text_bab_goooo = {sprite = "txt_goooo", color = [1, 3], tiling = -1}
+text_bab_goooo = {sprite = "txt_goooo", color = [1, 3], tiling = "none"}
 
-text_bab_icy = {sprite = "txt_icy", color = [1, 4], tiling = -1}
+text_bab_icy = {sprite = "txt_icy", color = [1, 4], tiling = "none"}
 
-text_bab_icyyyy = {sprite = "txt_icyyyy", color = [1, 4], tiling = -1}
+text_bab_icyyyy = {sprite = "txt_icyyyy", color = [1, 4], tiling = "none"}
 
-text_bab_delet = {sprite = "txt_delet", color = [2, 2], tiling = -1}
+text_bab_delet = {sprite = "txt_delet", color = [2, 2], tiling = "none"}
 
-text_bab_diag = {sprite = "txt_diag", color = [3, 0], tiling = -1}
+text_bab_diag = {sprite = "txt_diag", color = [3, 0], tiling = "none"}
 
-text_bab_ortho = {sprite = "txt_ortho", color = [3, 0], tiling = -1}
+text_bab_ortho = {sprite = "txt_ortho", color = [3, 0], tiling = "none"}
 
-text_bab_hotte = {sprite = "txt_hotte", color = [2, 3], tiling = -1}
+text_bab_hotte = {sprite = "txt_hotte", color = [2, 3], tiling = "none"}
 
-text_bab_fridgd = {sprite = "txt_fridgd", color = [1, 4], tiling = -1}
+text_bab_fridgd = {sprite = "txt_fridgd", color = [1, 4], tiling = "none"}
 
-text_bab_protecc = {sprite = "txt_protecc", color = [0, 3], tiling = -1}
+text_bab_protecc = {sprite = "txt_protecc", color = [0, 3], tiling = "none"}
 
-text_bab_flye = {sprite = "txt_flye", color = [1, 4], tiling = -1}
+text_bab_flye = {sprite = "txt_flye", color = [1, 4], tiling = "none"}
 
-text_bab_tall = {sprite = "txt_tall", color = [0, 1], tiling = -1}
+text_bab_tall = {sprite = "txt_tall", color = [0, 1], tiling = "none"}
 
-text_bab_haetskye = {sprite = "txt_haetskye", color = [5, 3], tiling = -1}
+text_bab_haetskye = {sprite = "txt_haetskye", color = [5, 3], tiling = "none"}
 
-text_bab_haetflor = {sprite = "txt_haetflor", color = [2, 2], tiling = -1}
+text_bab_haetflor = {sprite = "txt_haetflor", color = [2, 2], tiling = "none"}
 
-text_bab_moar = {sprite = "txt_moar", color = [4, 1], tiling = -1}
+text_bab_moar = {sprite = "txt_moar", color = [4, 1], tiling = "none"}
 
-text_bab_visitfren = {sprite = "txt_visitfren", color = [1, 4], tiling = -1}
+text_bab_visitfren = {sprite = "txt_visitfren", color = [1, 4], tiling = "none"}
 
-text_bab_stelth = {sprite = "txt_stelth", color = [1, 3], tiling = -1}
+text_bab_stelth = {sprite = "txt_stelth", color = [1, 3], tiling = "none"}
 
-"text_bab_shy..." = {sprite = "txt_shy...", color = [6, 2], tiling = -1}
+"text_bab_shy..." = {sprite = "txt_shy2e2e2e", color = [6, 2], tiling = "none"}
 
-text_bab_folowal = {sprite = "txt_folowal", color = [5, 3], tiling = -1}
+text_bab_folowal = {sprite = "txt_folowal", color = [5, 3], tiling = "none"}
 
-text_bab_turncornr = {sprite = "txt_turncornr", color = [5, 3], tiling = -1}
+text_bab_turncornr = {sprite = "txt_turncornr", color = [5, 3], tiling = "none"}
 
-text_bab_nxt = {sprite = "txt_nxt", color = [0, 3], tiling = -1}
+text_bab_nxt = {sprite = "txt_nxt", color = [0, 3], tiling = "none"}
 
-text_bab_tryagain = {sprite = "txt_tryagain", color = [3, 1], tiling = -1}
+text_bab_tryagain = {sprite = "txt_tryagain", color = [3, 1], tiling = "none"}
 
-text_bab_noundo = {sprite = "txt_noundo", color = [5, 3], tiling = -1}
+text_bab_noundo = {sprite = "txt_noundo", color = [5, 3], tiling = "none"}
 
-text_bab_undo = {sprite = "txt_undo", color = [6, 1], tiling = -1}
+text_bab_undo = {sprite = "txt_undo", color = [6, 1], tiling = "none"}
 
-text_bab_stubbn = {sprite = "txt_stubbn", color = [6, 1], tiling = -1}
+text_bab_stubbn = {sprite = "txt_stubbn", color = [6, 1], tiling = "none"}
 
-text_bab_goarnd = {sprite = "txt_goarnd", color = [3, 0], tiling = -1}
+text_bab_goarnd = {sprite = "txt_goarnd", color = [3, 0], tiling = "none"}
 
-text_bab_mirrarnd = {sprite = "txt_mirrarnd", color = [3, 0], tiling = -1}
+text_bab_mirrarnd = {sprite = "txt_mirrarnd", color = [3, 0], tiling = "none"}
 
-text_bab_poortoll = {sprite = "txt_poortoll", color = [3, 0], tiling = -1}
+text_bab_poortoll = {sprite = "txt_poortoll", color = [3, 0], tiling = "none"}
 
-text_bab_split = {sprite = "txt_split", color = [4, 1], tiling = -1}
+text_bab_split = {sprite = "txt_split", color = [4, 1], tiling = "none"}
 
-text_bab_munwalk = {sprite = "txt_munwalk", color = [1, 4], tiling = -1}
+text_bab_munwalk = {sprite = "txt_munwalk", color = [1, 4], tiling = "none"}
 
-text_bab_sidestep = {sprite = "txt_sidestep", color = [1, 3], tiling = -1}
+text_bab_sidestep = {sprite = "txt_sidestep", color = [1, 3], tiling = "none"}
 
-text_bab_diagstep = {sprite = "txt_diagstep", color = [3, 0], tiling = -1}
+text_bab_diagstep = {sprite = "txt_diagstep", color = [3, 0], tiling = "none"}
 
-text_bab_knightstep = {sprite = "txt_knightstep", color = [0, 2], tiling = -1}
+text_bab_knightstep = {sprite = "txt_knightstep", color = [0, 2], tiling = "none"}
 
-text_bab_hopovr = {sprite = "txt_hopovr", color = [5, 2], tiling = -1}
+text_bab_hopovr = {sprite = "txt_hopovr", color = [5, 2], tiling = "none"}
 
-text_bab_halfstep = {sprite = "txt_halfstep", color = [5, 2], tiling = -1}
+text_bab_halfstep = {sprite = "txt_halfstep", color = [5, 2], tiling = "none"}
 
-text_bab_spin = {sprite = "txt_spin", color = [4, 1], tiling = -1}
+text_bab_spin = {sprite = "txt_spin", color = [4, 1], tiling = "none"}
 
-text_bab_brite = {sprite = "txt_brite", color = [2, 4], tiling = -1}
+text_bab_brite = {sprite = "txt_brite", color = [2, 4], tiling = "none"}
 
-text_bab_tranparnt = {sprite = "txt_tranparnt", color = [0, 1], tiling = -1}
+text_bab_tranparnt = {sprite = "txt_tranparnt", color = [0, 1], tiling = "none"}
 
-text_bab_torc = {sprite = "txt_torc", color = [2, 2], tiling = -1}
+text_bab_torc = {sprite = "txt_torc", color = [2, 2], tiling = "none"}
 
-text_bab_noturn = {sprite = "txt_noturn", color = [2, 3], tiling = -1}
+text_bab_noturn = {sprite = "txt_noturn", color = [2, 3], tiling = "none"}
 
-text_bab_wurd = {sprite = "txt_wurd", color = [0, 3], tiling = -1}
+text_bab_wurd = {sprite = "txt_wurd", color = [0, 3], tiling = "none"}
 
-text_bab_zawarudo = {sprite = "txt_zawarudo", color = [2, 4], tiling = -1}
+text_bab_zawarudo = {sprite = "txt_zawarudo", color = [2, 4], tiling = "none"}
 
-text_bab_txtify = {sprite = "txt_txtify", color = [4, 1], tiling = -1}
+text_bab_txtify = {sprite = "txt_txtify", color = [4, 1], tiling = "none"}
 
-text_bab_thingify = {sprite = "txt_thingify", color = [3, 1], tiling = -1}
+text_bab_thingify = {sprite = "txt_thingify", color = [3, 1], tiling = "none"}
 
-"text_bab_n'tify" = {sprite = "txt_n_tify", color = [2, 2], tiling = -1}
+"text_bab_n'tify" = {sprite = "txt_n27tify", color = [2, 2], tiling = "none"}
 
-"text_bab_n'tifyyy" = {sprite = "txt_n_tifyyy", color = [2, 3], tiling = -1}
+"text_bab_n'tifyyy" = {sprite = "txt_n27tifyyy", color = [2, 3], tiling = "none"}
 
-text_bab_ify = {sprite = "txt_ify", color = [3, 1], tiling = -1}
+text_bab_ify = {sprite = "txt_ify", color = [3, 1], tiling = "none"}
 
-text_bab_curse = {sprite = "txt_curse", color = [3, 1], tiling = -1}
+text_bab_curse = {sprite = "txt_curse", color = [3, 1], tiling = "none"}
 
-text_bab_her = {sprite = "txt_her", color = [1, 3], tiling = -1}
+text_bab_her = {sprite = "txt_her", color = [1, 3], tiling = "none"}
 
-text_bab_thr = {sprite = "txt_thr", color = [3, 0], tiling = -1}
+text_bab_thr = {sprite = "txt_thr", color = [3, 0], tiling = "none"}
 
-text_bab_rithere = {sprite = "txt_rithere", color = [4, 0], tiling = -1}
+text_bab_rithere = {sprite = "txt_rithere", color = [4, 0], tiling = "none"}
 
-text_bab_stayther = {sprite = "txt_stayther", color = [0, 3], tiling = -1}
+text_bab_stayther = {sprite = "txt_stayther", color = [0, 3], tiling = "none"}
 
-text_bab_glued = {sprite = "txt_glued", color = [2, 4], tiling = -1}
+text_bab_glued = {sprite = "txt_glued", color = [2, 4], tiling = "none"}
 
-text_bab_rotatbl = {sprite = "txt_rotatbl", color = [6, 2], tiling = -1}
+text_bab_rotatbl = {sprite = "txt_rotatbl", color = [6, 2], tiling = "none"}
 
-text_bab_nuek = {sprite = "txt_nuek", color = [2, 2], tiling = -1}
+text_bab_nuek = {sprite = "txt_nuek", color = [2, 2], tiling = "none"}
 
-"text_bab_unyay" = {sprite = "txt_un:)", color = [1, 2], tiling = -1}
+"text_bab_uncolon)" = {sprite = "txt_un3a29", color = [1, 2], tiling = "none"}
 
-text_bab_notranform = {sprite = "txt_notranform", color = [2, 2], tiling = -1}
+text_bab_notranform = {sprite = "txt_notranform", color = [2, 2], tiling = "none"}
 
-text_bab_reflecc = {sprite = "txt_reflecc", color = [5, 2], tiling = -1}
+text_bab_reflecc = {sprite = "txt_reflecc", color = [5, 2], tiling = "none"}
 
-text_bab_stukc = {sprite = "txt_stukc", color = [1, 1], tiling = -1}
+text_bab_stukc = {sprite = "txt_stukc", color = [1, 1], tiling = "none"}
 
-text_bab_gone = {sprite = "txt_gone", color = [0, 3], tiling = -1}
+text_bab_gone = {sprite = "txt_gone", color = [0, 3], tiling = "none"}
 
-text_bab_dragbl = {sprite = "txt_dragbl", color = [3, 1], tiling = -1}
+text_bab_dragbl = {sprite = "txt_dragbl", color = [3, 1], tiling = "none"}
 
-text_bab_nodrag = {sprite = "txt_nodrag", color = [4, 0], tiling = -1}
+text_bab_nodrag = {sprite = "txt_nodrag", color = [4, 0], tiling = "none"}
 
-text_bab_thicc = {sprite = "txt_thicc", color = [1, 3], tiling = -1}
+text_bab_thicc = {sprite = "txt_thicc", color = [1, 3], tiling = "none"}
 
-text_bab_rythm = {sprite = "txt_rythm", color = [4, 1], tiling = -1}
+text_bab_rythm = {sprite = "txt_rythm", color = [4, 1], tiling = "none"}
 
-text_bab_cool = {sprite = "txt_cool", color = [1, 4], tiling = -1}
+text_bab_cool = {sprite = "txt_cool", color = [1, 4], tiling = "none"}
 
-text_bab_thonk = {sprite = "txt_thonk", color = [2, 4], tiling = -1}
+text_bab_thonk = {sprite = "txt_thonk", color = [2, 4], tiling = "none"}
 
-text_bab_zomb = {sprite = "txt_zomb", color = [3, 1], tiling = -1}
+text_bab_zomb = {sprite = "txt_zomb", color = [3, 1], tiling = "none"}
 
-text_bab_boring = {sprite = "txt_boring", color = [4, 1], tiling = -1}
+text_bab_boring = {sprite = "txt_boring", color = [4, 1], tiling = "none"}
 
-text_bab_bce = {sprite = "txt_bce", color = [0, 3], tiling = -1}
+text_bab_bce = {sprite = "txt_bce", color = [0, 3], tiling = "none"}
 
-text_bab_rond = {sprite = "txt_rond", color = [1, 4], tiling = -1}
+text_bab_rond = {sprite = "txt_rond", color = [1, 4], tiling = "none"}
 
-text_bab_press = {sprite = "txt_press", color = [0, 3], tiling = -1}
+text_bab_press = {sprite = "txt_press", color = [0, 3], tiling = "none"}
 
-text_bab_f2 = {sprite = "txt_f2", color = [0, 3], tiling = -1}
+text_bab_f2 = {sprite = "txt_f2", color = [0, 3], tiling = "none"}
 
-text_bab_2edit = {sprite = "txt_2edit", color = [0, 3], tiling = -1}
+text_bab_2edit = {sprite = "txt_2edit", color = [0, 3], tiling = "none"}
 
-text_bab_2pley = {sprite = "txt_2pley", color = [0, 3], tiling = -1}
+text_bab_2pley = {sprite = "txt_2pley", color = [0, 3], tiling = "none"}
 
-text_bab_f1 = {sprite = "txt_f1", color = [0, 3], tiling = -1}
+text_bab_f1 = {sprite = "txt_f1", color = [0, 3], tiling = "none"}
 
-"text_bab_&" = {sprite = "txt_&", color = [0, 3], tiling = -1}
+text_bab_amp = {sprite = "txt_26", color = [0, 3], tiling = "none"}
 
-text_bab_txt = {sprite = "txt_txt", color = [4, 1], tiling = -1}
+text_bab_txt = {sprite = "txt_txt", color = [4, 1], tiling = "none"}
 
-text_bab_nt = {sprite = "txt_nt", color = [2, 2], tiling = -1}
+text_bab_nt = {sprite = "txt_nt", color = [2, 2], tiling = "none"}
 
-text_bab_infloop = {sprite = "txt_infloop", color = [0, 3], tiling = -1}
+text_bab_infloop = {sprite = "txt_infloop", color = [0, 3], tiling = "none"}
 
-text_bab_plsdont = {sprite = "txt_plsdont", color = [0, 3], tiling = -1}
+text_bab_plsdont = {sprite = "txt_plsdont", color = [0, 3], tiling = "none"}
 
-"text_bab_..." = {sprite = "txt_...", color = [0, 3], tiling = -1}
+"text_bab_..." = {sprite = "txt_2e2e2e", color = [0, 3], tiling = "none"}
 
-"text_bab_''" = {sprite = "txt___", color = [0, 3], tiling = -1}
+"text_bab_''" = {sprite = "txt_2727", color = [0, 3], tiling = "none"}
 
-text_bab_frens = {sprite = "txt_frens", color = [3, 1], tiling = -1}
+text_bab_frens = {sprite = "txt_frens", color = [3, 1], tiling = "none"}
 
-text_bab_groop = {sprite = "txt_groop", color = [3, 1], tiling = -1}
+text_bab_groop = {sprite = "txt_groop", color = [3, 1], tiling = "none"}
 
-text_bab_gang = {sprite = "txt_gang", color = [0, 1], tiling = -1}
+text_bab_gang = {sprite = "txt_gang", color = [0, 1], tiling = "none"}
 
-text_bab_sharp = {sprite = "txt_sharp", color = [0, 3], tiling = -1}
+text_bab_sharp = {sprite = "txt_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_flat = {sprite = "txt_flat", color = [0, 3], tiling = -1}
+text_bab_flat = {sprite = "txt_flat", color = [0, 3], tiling = "none"}
 
-text_bab_every1 = {sprite = "txt_every1", color = [0, 3], tiling = -1}
+text_bab_every1 = {sprite = "txt_every1", color = [0, 3], tiling = "none"}
 
-text_bab_every2 = {sprite = "txt_every2", color = [3, 1], tiling = -1}
+text_bab_every2 = {sprite = "txt_every2", color = [3, 1], tiling = "none"}
 
-text_bab_every3 = {sprite = "txt_every3", color = [4, 1], tiling = -1}
+text_bab_every3 = {sprite = "txt_every3", color = [4, 1], tiling = "none"}
 
-text_bab_samefloat = {sprite = "txt_samefloat", color = [1, 4], tiling = -1}
+text_bab_samefloat = {sprite = "txt_samefloat", color = [1, 4], tiling = "none"}
 
-text_bab_samepaint = {sprite = "txt_samepaint", color = [4, 2], tiling = -1}
+text_bab_samepaint = {sprite = "txt_samepaint", color = [4, 2], tiling = "none"}
 
-text_bab_sameface = {sprite = "txt_sameface", color = [2, 4], tiling = -1}
+text_bab_sameface = {sprite = "txt_sameface", color = [2, 4], tiling = "none"}
 
-"text_bab_cann't" = {sprite = "txt_cann_t", color = [2, 1], tiling = -1}
+"text_bab_cann't" = {sprite = "txt_cann27t", color = [2, 1], tiling = "none"}
 
-text_bab_themself = {sprite = "txt_themself", color = [0, 3], tiling = -1}
+text_bab_themself = {sprite = "txt_themself", color = [0, 3], tiling = "none"}
 
-text_bab_anti = {sprite = "txt_anti", color = [2, 2], tiling = -1}
+text_bab_anti = {sprite = "txt_anti", color = [2, 2], tiling = "none"}
 
-text_bab_c_sharp = {sprite = "txt_c_sharp", color = [0, 3], tiling = -1}
+text_bab_c_sharp = {sprite = "txt_c_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_d_sharp = {sprite = "txt_d_sharp", color = [0, 3], tiling = -1}
+text_bab_d_sharp = {sprite = "txt_d_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_f_sharp = {sprite = "txt_f_sharp", color = [0, 3], tiling = -1}
+text_bab_f_sharp = {sprite = "txt_f_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_g_sharp = {sprite = "txt_g_sharp", color = [0, 3], tiling = -1}
+text_bab_g_sharp = {sprite = "txt_g_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_a_sharp = {sprite = "txt_a_sharp", color = [0, 3], tiling = -1}
+text_bab_a_sharp = {sprite = "txt_a_sharp", color = [0, 3], tiling = "none"}
 
-text_bab_toen = {sprite = "txt_toen", color = [4, 1], tiling = -1}
+text_bab_toen = {sprite = "txt_toen", color = [4, 1], tiling = "none"}
 
-text_bab_lethers = {sprite = "txt_lethers", color = [2, 4], tiling = -1}
+text_bab_lethers = {sprite = "txt_lethers", color = [2, 4], tiling = "none"}
 
-text_bab_yuiy = {sprite = "txt_yuiy", color = [0, 2], tiling = -1}
+text_bab_yuiy = {sprite = "txt_yuiy", color = [0, 2], tiling = "none"}
 
-text_bab_numa = {sprite = "txt_numa", color = [3, 1], tiling = -1}
+text_bab_numa = {sprite = "txt_numa", color = [3, 1], tiling = "none"}
 
-text_bab_gravy = {sprite = "txt_gravy", color = [6, 2], tiling = -1}
+text_bab_gravy = {sprite = "txt_gravy", color = [6, 2], tiling = "none"}
 
-text_bab_gaem = {sprite = "txt_gaem", color = [3, 1], tiling = -1}
+text_bab_gaem = {sprite = "txt_gaem", color = [3, 1], tiling = "none"}
 
-text_bab_be = {sprite = "txt_be", color = [0, 3], tiling = -1}
+text_bab_be = {sprite = "txt_be", color = [0, 3], tiling = "none"}
 
-"text_bab_ben't" = {sprite = "txt_ben_t", color = [0, 3], tiling = -1}
+"text_bab_ben't" = {sprite = "txt_ben27t", color = [0, 3], tiling = "none"}
 
-text_bab_got = {sprite = "txt_got", color = [0, 3], tiling = -1}
+text_bab_got = {sprite = "txt_got", color = [0, 3], tiling = "none"}
 
-text_bab_creat = {sprite = "txt_creat", color = [0, 3], tiling = -1}
+text_bab_creat = {sprite = "txt_creat", color = [0, 3], tiling = "none"}
 
-text_bab_snacc = {sprite = "txt_snacc", color = [2, 2], tiling = -1}
+text_bab_snacc = {sprite = "txt_snacc", color = [2, 2], tiling = "none"}
 
-text_bab_moov = {sprite = "txt_moov", color = [1, 3], tiling = -1}
+text_bab_moov = {sprite = "txt_moov", color = [1, 3], tiling = "none"}
 
-text_bab_yeet = {sprite = "txt_yeet", color = [0, 3], tiling = -1}
+text_bab_yeet = {sprite = "txt_yeet", color = [0, 3], tiling = "none"}
 
-text_bab_spoop = {sprite = "txt_spoop", color = [2, 2], tiling = -1}
+text_bab_spoop = {sprite = "txt_spoop", color = [2, 2], tiling = "none"}
 
-text_bab_stalk = {sprite = "txt_stalk", color = [5, 2], tiling = -1}
+text_bab_stalk = {sprite = "txt_stalk", color = [5, 2], tiling = "none"}
 
-text_bab_haet = {sprite = "txt_haet", color = [2, 3], tiling = -1}
+text_bab_haet = {sprite = "txt_haet", color = [2, 3], tiling = "none"}
 
-text_bab_liek = {sprite = "txt_liek", color = [5, 3], tiling = -1}
+text_bab_liek = {sprite = "txt_liek", color = [5, 3], tiling = "none"}
 
-text_bab_copkat = {sprite = "txt_copkat", color = [0, 3], tiling = -1}
+text_bab_copkat = {sprite = "txt_copkat", color = [0, 3], tiling = "none"}
 
-text_bab_ignor = {sprite = "txt_ignor", color = [0, 1], tiling = -1}
+text_bab_ignor = {sprite = "txt_ignor", color = [0, 1], tiling = "none"}
 
-text_bab_vs = {sprite = "txt_vs", color = [2, 1], tiling = -1}
+text_bab_vs = {sprite = "txt_vs", color = [2, 1], tiling = "none"}
 
-text_bab_sing = {sprite = "txt_sing", color = [4, 1], tiling = -1}
+text_bab_sing = {sprite = "txt_sing", color = [4, 1], tiling = "none"}
 
-text_bab_soko = {sprite = "txt_soko", color = [6, 2], tiling = -1}
+text_bab_soko = {sprite = "txt_soko", color = [6, 2], tiling = "none"}
 
-text_bab_giv = {sprite = "txt_giv", color = [2, 4], tiling = -1}
+text_bab_giv = {sprite = "txt_giv", color = [2, 4], tiling = "none"}
 
-text_bab_rp = {sprite = "txt_rp", color = [3, 1], tiling = -1}
+text_bab_rp = {sprite = "txt_rp", color = [3, 1], tiling = "none"}
 
-text_bab_wont = {sprite = "txt_wont", color = [2, 2], tiling = -1}
+text_bab_wont = {sprite = "txt_wont", color = [2, 2], tiling = "none"}
 
-"text_bab_wontn't" = {sprite = "txt_wontn_t", color = [2, 2], tiling = -1}
+"text_bab_wontn't" = {sprite = "txt_wontn27t", color = [2, 2], tiling = "none"}
 
-text_bab_paint = {sprite = "txt_paint", color = [4, 2], tiling = -1}
+text_bab_paint = {sprite = "txt_paint", color = [4, 2], tiling = "none"}
 
-text_bab_is = {sprite = "txt_is", color = [0, 3], tiling = -1}
+text_bab_is = {sprite = "txt_is", color = [0, 3], tiling = "none"}
 
-"text_bab_isn't" = {sprite = "txt_isn_t", color = [0, 3], tiling = -1}
+"text_bab_isn't" = {sprite = "txt_isn27t", color = [0, 3], tiling = "none"}
