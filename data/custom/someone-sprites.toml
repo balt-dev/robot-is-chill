@@ -14,7 +14,8 @@ dtfort = {sprite = "fort", color = [1, 1], tiling = "diagonal_tiling"}
 
 tileedge2 = {sprite = "tileedge", tiling = "tiling", color = [0, 3]}
 
-gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = "directional"}
+# NOTE: This tile is unfinished, and is intended to have tiling "character".
+gtfo = {sprite = "greaterthanfofo", color = [5, 2], tiling = "none"}
 
 catsnake = {sprite = "catsnake", color = [0, 3], tiling = "tiling"}
 

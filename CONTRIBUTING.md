@@ -36,3 +36,6 @@ The entry's values are as follows:
 - `tags`: Optional. List of attributes the sprite has to allow for easier searching. Mostly seen within imported base-game sprites. Must be a `list` of `strings`.
 - `active`: Not recommended. Specifies the "active color" of text when activated inside Baba Is You - should only be seen within imported files. Same format as `color`.
 - `source`: Not recommended. Overrides the directory to look for sprites in. Must be a `string`.
+
+**DO NOT ADD UNFINISHED SPRITES.**
+If a sprite does not have all of its frames, do not add it to the bot until it does.
