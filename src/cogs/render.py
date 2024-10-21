@@ -403,16 +403,9 @@ class Renderer:
             try:
                 sprite = cached_open(
                     path, cache=raw_sprite_cache, fn=Image.open).convert("RGBA")
-            except FileNotFoundError:
-                try:
-                    assert path_fallback is not None
-                    sprite = cached_open(
-                        path_fallback,
-                        cache=raw_sprite_cache,
-                        fn=Image.open).convert("RGBA")
-                except (FileNotFoundError, AssertionError):
-                    raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
-                                         f'don\'t exist for it.\nSearched paths: `{path}, {path_fallback}`')
+            except (FileNotFoundError, AssertionError):
+                raise AssertionError(f'The tile `{tile.name}:{tile.frame}` was found, but the files '
+                                         f'don\'t exist for it.\nThis is a bug - please notify the author of the tile.\nSearched path: `{path}`')
             sprite = np.array(sprite)
         sprite = cv2.resize(sprite, (int(sprite.shape[1] * ctx.gscale), int(sprite.shape[0] * ctx.gscale)),
                             interpolation=cv2.INTER_NEAREST)
