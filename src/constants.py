@@ -235,8 +235,7 @@ PALETTE_PIXEL_SIZE = 32
 SEARCH_RESULT_UNITS_PER_PAGE = 20  # roughtly half the number of lines
 OTHER_LEVELS_CUTOFF = 20
 
-BABA_WORLD = "baba"
-EXTENSIONS_WORLD = "baba-extensions"
+VANILLA_WORLDS = ("baba", "vanilla", "new_adv", "museum")
 
 COMBINE_MAX_FILESIZE = 5242880  # in bytes
 

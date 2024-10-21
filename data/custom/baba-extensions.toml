@@ -140,3 +140,34 @@ never = {sprite = "never", color = [2, 2], tiling = "none"}
 
 edge_old = {sprite = "edge_old", color = [0, 1], tiling = "diagonal_tiling"}
 
+icon_abc = {sprite = "icon_abc", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_abstract = {sprite = "icon_abstract", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_cave = {sprite = "icon_cave", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_dust = {sprite = "icon_dust", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_fall = {sprite = "icon_fall", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_forest = {sprite = "icon_forest", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_garden = {sprite = "icon_garden", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_island = {sprite = "icon_island", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_lake = {sprite = "icon_lake", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_level = {sprite = "icon_level", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_meta = {sprite = "icon_meta", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_mountain = {sprite = "icon_mountain", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_ruins = {sprite = "icon_ruins", color = [0, 3], tiling = "none", source = "vanilla"}
+
+icon_space = {sprite = "icon_space", color = [0, 3], tiling = "none", source = "vanilla"}
+
+error = {sprite = "error", color = [0, 3], tiling = "none", source = "vanilla"}
+
+mpipe = {sprite = "mpipe", color = [5, 4], tiling = "tiling"}

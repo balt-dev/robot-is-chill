@@ -86,6 +86,8 @@ class Database:
 					text_type INTEGER NOT NULL DEFAULT 0,
 					text_direction INTEGER,
 					tags TEXT NOT NULL DEFAULT "",
+                    extra_frames TEXT,
+                    object_id TEXT,
 					UNIQUE(name, version)
 				);
 				'''

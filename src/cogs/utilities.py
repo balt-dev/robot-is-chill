@@ -222,8 +222,8 @@ class UtilityCommandsCog(commands.Cog, name="Utility Commands"):
                 ) AND (
                     CASE :f_modded
                         WHEN NULL THEN 1
-                        WHEN "false" THEN (source == {repr(constants.BABA_WORLD)})
-                        WHEN "true" THEN (source != {repr(constants.BABA_WORLD)})
+                        WHEN "false" THEN (source == 'vanilla' OR source == 'baba' OR source == 'new_adv' OR source == 'museum')
+                        WHEN "true" THEN (source != 'vanilla' AND source != 'baba' AND source != 'new_adv' AND source != 'museum')
                         ELSE 1
                     END
                 ) AND (

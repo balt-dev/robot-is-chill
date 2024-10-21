@@ -224,7 +224,7 @@ diamond = {sprite = "diamond", color = [2, 2], tiling = "none"}
 
 spade = {sprite = "spade", color = [0, 0], tiling = "none"}
 
-heart = {sprite = "../baba/love", color = [2, 2], tiling = "none"}
+heart = {sprite = "../vanilla/love", color = [2, 2], tiling = "none"}
 
 text_club = {sprite = "text_club", color = [0, 0], tiling = "none"}
 

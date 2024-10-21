@@ -393,7 +393,7 @@ class Renderer:
         else:
             source, sprite_name = tile.sprite
             path = f"data/sprites/{source}/{sprite_name}_{tile.frame}_{frame + 1}.png"
-            if source == constants.BABA_WORLD:
+            if source in constants.VANILLA_WORLDS:
                 if tile.name == "icon":
                     path = f"data/sprites/{source}/{sprite_name}.png"
                 elif tile.name in ("smiley", "hi") or tile.name.startswith("icon"):

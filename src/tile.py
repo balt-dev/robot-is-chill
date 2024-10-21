@@ -134,7 +134,7 @@ def handle_tiling(tile: Tile, grid, pos, tile_borders=False):
 class Tile:
     """A tile that's ready for processing."""
     name: str = "Undefined (if this is showing, something's gone horribly wrong)"
-    sprite: tuple[str, str] | np.ndarray = (constants.BABA_WORLD, "error")
+    sprite: tuple[str, str] | np.ndarray = ('vanilla', "error")
     tiling: TilingMode = TilingMode.NONE
     surrounding: int = 0b00000000  # RULDEQZC
     frame: int = 0
@@ -175,6 +175,7 @@ class Tile:
         if tile.empty:
             return cls(name="<empty>")
         name = tile.name
+        metadata = None
         try:
             metadata = tile_data_cache[name]
             style = constants.TEXT_TYPES[metadata.text_type]
@@ -207,9 +208,8 @@ class Tile:
                 if metadata.tiling == TilingMode.TILING:
                     value.surrounding &= 0b11110000
                 value.frame = constants.TILING_VARIANTS[value.surrounding]
-        assert value.frame in metadata.extra_frames or value.frame in metadata.tiling.expected(), \
+        assert metadata is None or value.frame in metadata.extra_frames or value.frame in metadata.tiling.expected(), \
             f"The tile `{name}` has an unsupported frame index of `{value.frame}`! Check its tiling type and extra frames in `=search {name}`."
-        assert metadata
         value.variants["sprite"].append(
             possible_variants["0/3"](value.color, _default_color=True)
         )

@@ -4,7 +4,6 @@ import cv2
 from discord.ext import menus
 from discord.ext.menus.views import ViewMenuPages
 
-from src.constants import BABA_WORLD
 
 from typing import Callable, List, Optional, Tuple, TypeVar
 from PIL import Image
@@ -29,7 +28,7 @@ class Tile:
             name: Optional[str] = None,
             variant: Optional[int] = None,
             color: Optional[Tuple[int, int]] = None,
-            source: str = BABA_WORLD,
+            source: str = "vanilla",
             meta_level: int = 0,
             style: Optional[str] = None,
             custom: bool = False,
